@@ -47,9 +47,12 @@ var CUI = CUI || {};
             }
         }
 
-        // Call super-method:
+        // === Call super-method ===
         // this.$super.method.call(this,args);
+        //  -- or --
         // SubClass.$super.method.call(this,args);
+        //  -- or --
+        // SuperClass.prototype.method.call(this,args);
 
         constructor.$super = superProto;
         constructor.superclass = superclass;

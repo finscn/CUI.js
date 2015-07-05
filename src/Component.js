@@ -24,9 +24,9 @@ var CUI = CUI || {};
         alpha: 1,
         scale: 1,
 
-        // relative: "root", // 相对于 root容器 定位
+        // relative: "root", // 相对于 root容器 定位, 类似dom的position:absolute
         // relative: "parent", // 相对于 parent容器 定位
-        // relative: "self", // 相对于 自己(layout后) 定位
+        // relative: "self", // 相对于 自己(layout后) 定位, 类似dom的position:relative
         relative: false, // 其他 :遵循parent容器的layout
 
         index: 0,
