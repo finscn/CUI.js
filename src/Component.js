@@ -94,11 +94,13 @@ var CUI = CUI || {};
 
             this.setParent(this.parent || this.root);
 
+            this.recompute();
         },
 
-        setParent: function(parent, force) {
-            if (parent != this.parent || force) {
+        setParent: function(parent, forceUpdate) {
+            if (parent != this.parent || forceUpdate) {
                 this.parent = parent;
+                this.changedFlag["parent"] = true;
                 // TODO : update
             }
 
@@ -191,11 +193,11 @@ var CUI = CUI || {};
 
         moveTo: function(x, y) {
 
-            this.changedFlag.position = true;
+            this.changedFlag["position"] = true;
         },
         setSize: function(width, height) {
 
-            this.changedFlag.size = true;
+            this.changedFlag["size"] = true;
         },
 
         updateSelf: function(timeStep, now) {
