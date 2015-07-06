@@ -87,6 +87,7 @@ var CUI = CUI || {};
             this.root = this.root || Component.root;
             this.aabb = [];
             this.pixel = {};
+            this.changedFlag = {};
 
             EventDispatcher.apply(this);
             Composite.apply(this);
@@ -98,22 +99,34 @@ var CUI = CUI || {};
         setParent: function(parent, force) {
             if (parent != this.parent || force) {
                 this.parent = parent;
-                this.initPixelData();
                 // TODO : update
             }
+
         },
 
-        computeMargin: function() {
-            var pixel = this.pixel;
-            this.marginLeft = this.marginLeft === null ? this.margin : this.marginLeft;
-            this.marginTop = this.marginTop === null ? this.margin : this.marginTop;
-            this.marginRight = this.marginRight === null ? this.margin : this.marginRight;
-            this.marginBottom = this.marginBottom === null ? this.margin : this.marginBottom;
+        recompute: function() {
+            this.computeSize();
+            this.computePosition();
+            this.computePadding();
+            this.computeMargin();
+            this.computeAbsoluteData();
+        },
 
-            pixel.marginLeft = this.parseValue(this.marginLeft, parent.pixel.width);
-            pixel.marginRight = this.parseValue(this.marginRight, parent.pixel.width);
-            pixel.marginTop = this.parseValue(this.marginTop, parent.pixel.height);
-            pixel.marginBottom = this.parseValue(this.marginBottom, parent.pixel.height);
+        computeSize: function() {
+            var parent = this.parent;
+            var pixel = this.pixel;
+            pixel.width = this.parseValue(this.width, parent.innerWidth);
+            pixel.height = this.parseValue(this.height, parent.innerHeight);
+        },
+
+        computePosition: function() {
+            var parent = this.parent;
+            var pixel = this.pixel;
+            pixel.left = this.parseValue(this.left, parent.innerWidth);
+            pixel.top = this.parseValue(this.top, parent.innerHeight);
+
+            pixel.right = this.parseValue(this.right, parent.innerWidth);
+            pixel.bottom = this.parseValue(this.bottom, parent.innerHeight);
         },
 
         computePadding: function() {
@@ -131,20 +144,18 @@ var CUI = CUI || {};
             pixel.innerWidth = pixel.width - pixel.paddingLeft - pixel.paddingRight;
             pixel.innerHeight = pixel.height - pixel.paddingTop - pixel.paddingBottom;
         },
-        computeSize: function(){
-            var pixel = this.pixel;
-            var parent = this.parent;
-            pixel.width = this.parseValue(this.width, parent.innerWidth);
-            pixel.height = this.parseValue(this.height, parent.innerHeight);
-        },
-        computePosition: function(){
-            var pixel = this.pixel;
-            var parent = this.parent;
-            pixel.left = this.parseValue(this.left, parent.innerWidth);
-            pixel.top = this.parseValue(this.top, parent.innerHeight);
 
-            pixel.right = this.parseValue(this.right, parent.innerWidth);
-            pixel.bottom = this.parseValue(this.bottom, parent.innerHeight);
+        computeMargin: function() {
+            var pixel = this.pixel;
+            this.marginLeft = this.marginLeft === null ? this.margin : this.marginLeft;
+            this.marginTop = this.marginTop === null ? this.margin : this.marginTop;
+            this.marginRight = this.marginRight === null ? this.margin : this.marginRight;
+            this.marginBottom = this.marginBottom === null ? this.margin : this.marginBottom;
+
+            pixel.marginLeft = this.parseValue(this.marginLeft, parent.pixel.width);
+            pixel.marginRight = this.parseValue(this.marginRight, parent.pixel.width);
+            pixel.marginTop = this.parseValue(this.marginTop, parent.pixel.height);
+            pixel.marginBottom = this.parseValue(this.marginBottom, parent.pixel.height);
         },
 
         computeAbsoluteData: function() {
@@ -178,25 +189,13 @@ var CUI = CUI || {};
             this.aabb[3] = this.y + this.h + this.extBottom;
         },
 
-        parseValue: function(value, relativeValue) {
-            if (typeof value == "number" || value === true || value === false || value === null || value === undefined) {
-                return value;
-            }
-            value = String(value);
-            if (value.indexOf("%") > 0) {
-                value = (parseFloat(value) / 100) * (relativeValue || 0);
-                return value;
-            }
-            return parseFloat(value);
-        },
-
         moveTo: function(x, y) {
 
-            this.positionChanged = true;
+            this.changedFlag.position = true;
         },
         setSize: function(width, height) {
 
-            this.sizeChanged = true;
+            this.changedFlag.size = true;
         },
 
         updateSelf: function(timeStep, now) {
@@ -219,6 +218,21 @@ var CUI = CUI || {};
         render: function(conttext, timeStep, now) {
             this.renderSelf(conttext, timeStep, now);
             this.renderChildren(conttext, timeStep, now);
+
+            this.changedFlag = {};
+        },
+
+
+        parseValue: function(value, relativeValue) {
+            if (typeof value == "number" || value === true || value === false || value === null || value === undefined) {
+                return value;
+            }
+            value = String(value);
+            if (value.indexOf("%") > 0) {
+                value = (parseFloat(value) / 100) * (relativeValue || 0);
+                return value;
+            }
+            return parseFloat(value);
         },
 
         destructor: function() {
