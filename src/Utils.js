@@ -23,7 +23,7 @@ var CUI = CUI || {};
             return canvas;
         },
 
-        createBgImageByBorder: function(w, h, T, R, B, L, fill, img, sx, sy, sw, sh) {
+        createImageByBorder: function(w, h, T, R, B, L, fill, img, sx, sy, sw, sh) {
             var canvas = Utils.createCanvas(w, h);
             var context = canvas.getContext("2d");
             Utils.renderBorderImage(context, 0, 0, w, h, T, R, B, L, fill, img, sx, sy, sw, sh);
