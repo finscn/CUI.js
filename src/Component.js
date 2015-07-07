@@ -85,9 +85,11 @@ var CUI = CUI || {};
         h: 0,
         aabb: null,
 
+        composite: true,
         children: null,
         childrenMap: null,
         needToRecompute: true,
+
 
         init: function() {
             this.root = this.root || Component.root;
@@ -95,12 +97,18 @@ var CUI = CUI || {};
             this.pixel = {};
 
             EventDispatcher.apply(this);
-            Composite.apply(this);
+
+            if (this.composite) {
+                Composite.apply(this);
+            }
 
             this.setParent(this.parent || this.root, true);
             this.setMargin(this.margin || 0);
             this.setPadding(this.padding || 0);
-            this.setLayout(this.layout || Layout.commonLayout);
+
+            if (this.composite) {
+                this.setLayout(this.layout || Layout.commonLayout);
+            }
         },
 
         setLayout: function(layout) {
@@ -174,14 +182,14 @@ var CUI = CUI || {};
         },
 
         computeLayout: function(force) {
-            if (this.needToRecompute || force) {
+            if (this.composite && (this.needToRecompute || force)) {
                 this.layout.compute(this);
                 this.needToRecompute = false;
             }
         },
 
         getChildrenCount: function() {
-            return this.children.length;
+            return this.composite ? this.children.length : 0;
         },
 
         isInRegion: function(x, y) {
@@ -205,7 +213,9 @@ var CUI = CUI || {};
         update: function(timeStep, now) {
             this.computeLayout();
             this.updateSelf(timeStep, now);
-            this.updateChildren(timeStep, now);
+            if (this.composite) {
+                this.updateChildren(timeStep, now);
+            }
         },
 
         renderSelf: function(context, timeStep, now) {
@@ -222,7 +232,9 @@ var CUI = CUI || {};
         },
         render: function(context, timeStep, now) {
             this.renderSelf(context, timeStep, now);
-            this.renderChildren(context, timeStep, now);
+            if (this.composite) {
+                this.renderChildren(context, timeStep, now);
+            }
         },
 
         destructor: function() {
@@ -231,11 +243,13 @@ var CUI = CUI || {};
             this.layout = null;
 
             // 不会自动显式的销毁子元素.
-            this.children.forEach(function(child) {
-                child.setParent(child.root);
-            })
-            this.children = null;
-            this.childrenMap = null;
+            if (this.composite) {
+                this.children.forEach(function(child) {
+                    child.setParent(child.root);
+                })
+                this.children = null;
+                this.childrenMap = null;
+            }
         },
     });
 

@@ -100,6 +100,7 @@ function beforeStart(timeStep, now) {
         row:0,
         colspan:1,
         rowspan:3,
+        composite:false,
     });
     uiC.init();
 
@@ -110,6 +111,7 @@ function beforeStart(timeStep, now) {
         row:0,
         colspan:3,
         rowspan:1,
+        composite:false,
     });
     uiC.init();
     var uiC = new Component({
