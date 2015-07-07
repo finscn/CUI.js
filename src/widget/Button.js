@@ -13,30 +13,21 @@ var CUI = CUI || {};
         disabled: false,
         // TODO
         initStates: function() {
-            this.normalState = {
-                scale:1,
-                alpha:1,
-                offsetX:0,
-                offsetY:0,
-                bgInfo: null,
-                iconInfo: null,
-                textInfo: null,
-            };
-            this.downState = {
-
-            };
+            this.normalState = {}
+            this.downState = { };
             this.disabledState = {
 
             };
             this.state = this.normalState;
         },
 
-        render: function(context, timeStep, now) {
-            // TODO
-        },
+        // TODO
+        // render: function(context, timeStep, now) {
+
+        // },
 
         onTouchStart: function(x, y, id) {
-            if (this.disabled){
+            if (this.disabled) {
                 return false;
             }
             this.state = this.downState;
@@ -44,24 +35,24 @@ var CUI = CUI || {};
         },
 
         onTouchMove: function(x, y, id) {
-            if (this.disabled){
+            if (this.disabled) {
                 return false;
             }
-            if (!this.isInRegion(x,y)){
+            if (!this.isInRegion(x, y)) {
                 this.state = this.normalState;
                 return false;
             }
         },
 
         onTouchEnd: function(x, y, id) {
-            if (this.disabled){
+            if (this.disabled) {
                 return false;
             }
             this.state = this.normalState;
         },
 
         onTap: function(x, y, id) {
-            if (this.disabled){
+            if (this.disabled) {
                 return false;
             }
             this.state = this.normalState;

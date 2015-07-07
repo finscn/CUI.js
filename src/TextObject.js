@@ -8,18 +8,18 @@ var CUI = CUI || {};
     var Class = exports.Class;
     var Utils = exports.Utils;
 
-    var DisplayObject = Class.create({
+    var TextObject = Class.create({
 
         DEG_TO_RAD: Math.PI / 180,
         RAD_TO_DEG: 180 / Math.PI,
         HALF_PI: Math.PI / 2,
         DOUBLE_PI: Math.PI * 2,
 
-        img: null,
-        sx: null,
-        sy: null,
-        sw: null,
-        sh: null,
+        text:null,
+        color:null,
+        fontName:null,
+        fontSize:null,
+        fontWeight:null,
 
         x: 0,
         y: 0,
@@ -110,10 +110,10 @@ var CUI = CUI || {};
     });
 
 
-    exports.DisplayObject = DisplayObject;
+    exports.TextObject = TextObject;
 
     if (typeof module != "undefined") {
-        module.exports = DisplayObject;
+        module.exports = TextObject;
     }
 
 }(CUI));
