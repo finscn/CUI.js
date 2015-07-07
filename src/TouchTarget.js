@@ -11,7 +11,7 @@ var CUI = CUI || {};
 
         modalFlag: -0x100000,
 
-        checkTouchSelf: function(type, args) {
+        checkTouch: function(type, args) {
             if (!this.visible || this.alpha <= 0) {
                 return false;
             }
