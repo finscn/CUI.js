@@ -8,8 +8,7 @@ var game = {};
 var canvas, context;
 var loopId;
 window.onload = function() {
-    game.width = Config.width;
-    game.height = Config.height;
+
     init();
     start();
 };
@@ -94,38 +93,90 @@ function beforeStart(timeStep, now) {
 
     var uiC = new Component({
         backgroundColor: "rgba(255,100,50,1)",
+        normalBG: "rgba(255,100,50,1)",
         margin: 10,
         parent: uiT,
-        col:0,
-        row:0,
-        colspan:1,
-        rowspan:3,
-        composite:false,
+        col: 0,
+        row: 0,
+        colspan: 1,
+        rowspan: 3,
+        composite: false,
+        onTouchStartAction: function(x, y, id) {
+            this.backgroundColor = "red";
+        },
+        onTouchEndAction: function(x, y, id) {
+            this.backgroundColor = this.normalBG;
+        },
+        onTapAction: function(x, y, id) {
+            this.backgroundColor = this.normalBG;
+            setTimeout(function() {
+                alert("别点我 a, " + id);
+            }, 10);
+        }
     });
     uiC.init();
 
     var uiC = new Component({
         backgroundColor: "rgba(255,100,50,1)",
+        normalBG: "rgba(255,100,50,1)",
         parent: uiT,
-        col:1,
-        row:0,
-        colspan:3,
-        rowspan:1,
-        composite:false,
+        col: 1,
+        row: 0,
+        colspan: 3,
+        rowspan: 1,
+        composite: false,
+        onTouchStartAction: function(x, y, id) {
+            this.backgroundColor = "red";
+        },
+        onTouchEndAction: function(x, y, id) {
+            this.backgroundColor = this.normalBG;
+        },
+        onTapAction: function(x, y, id) {
+            this.backgroundColor = this.normalBG;
+            setTimeout(function() {
+                alert("别点我 b, " + id);
+            }, 10);
+        }
     });
     uiC.init();
     var uiC = new Component({
         backgroundColor: "rgba(255,100,50,1)",
+        normalBG: "rgba(255,100,50,1)",
         parent: uiT,
-        col:1,
-        row:1,
-        colspan:3,
-        rowspan:2,
+        col: 1,
+        row: 1,
+        colspan: 3,
+        rowspan: 2,
+        onTouchStartAction: function(x, y, id) {
+            this.backgroundColor = "red";
+        },
+        onTouchEndAction: function(x, y, id) {
+            this.backgroundColor = this.normalBG;
+        },
+        onTapAction: function(x, y, id) {
+            this.backgroundColor = this.normalBG;
+            setTimeout(function() {
+                alert("别点我 c, " + id);
+            }, 10);
+        }
     });
     uiC.init();
 }
 
 function update(timeStep, now) {
+    if (TouchInfo.firstTap) {
+        var data = TouchInfo.firstTap;
+        CUI.Component.root.onTap(data.x, data.y, data.id);
+        TouchInfo.firstTap = null;
+    } else if (TouchInfo.firstStart) {
+        var data = TouchInfo.firstStart;
+        CUI.Component.root.onTouchStart(data.x, data.y, data.id);
+        TouchInfo.firstStart = null;
+    } else if (TouchInfo.firstEnd) {
+        var data = TouchInfo.firstEnd;
+        CUI.Component.root.onTouchEnd(data.x, data.y, data.id);
+        TouchInfo.firstEnd = null;
+    }
     CUI.Component.root.update();
 }
 
@@ -142,6 +193,13 @@ function init() {
     canvas.width = Config.width;
     canvas.height = Config.height;
     context = canvas.getContext("2d");
+    game.width = Config.width;
+    game.height = Config.height;
+    var rect = canvas.getBoundingClientRect();
+    game.offsetX = rect.left;
+    game.offsetY = rect.top;
+    initTouchController();
+    initTapListener();
 
 }
 

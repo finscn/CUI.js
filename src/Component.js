@@ -272,6 +272,9 @@ var CUI = CUI || {};
             paddingRight: 0,
             paddingBottom: 0,
         };
+        root.aabb=[
+            0,0,game.width,game.height
+        ];
         Component.root = root;
         return root;
     };
