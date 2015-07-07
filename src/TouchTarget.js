@@ -20,6 +20,10 @@ var CUI = CUI || {};
                 var x = args[0],
                     y = args[1];
                 if (!this.isInRegion(x, y)) {
+                    if (this.modal && type == "onTap") {
+                        this.onTapMask.apply(this, args);
+                        return this.modalFlag;
+                    }
                     return false;
                 }
             }
@@ -40,10 +44,6 @@ var CUI = CUI || {};
                     return rs;
                 }
             }
-            if (this.modal && type == "onTap") {
-                this.onTapMask.apply(this, args);
-                return this.modalFlag;
-            }
             return false;
         },
         checkTouchChildren: function(type, args) {
@@ -59,10 +59,6 @@ var CUI = CUI || {};
                 rs = ui.checkTouch.apply(ui, args);
                 if (rs) {
                     return rs;
-                }
-                if (ui.modal && type == "onTap") {
-                    ui.onTapMask.apply(ui, args);
-                    return this.modalFlag;
                 }
             }
             return false;
