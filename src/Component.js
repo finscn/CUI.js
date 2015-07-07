@@ -93,7 +93,7 @@ var CUI = CUI || {};
 
 
         init: function() {
-            this.root = this.root || Component.root;
+            this.root = this.root || (this.parent && this.parent.root);
             this.aabb = [];
             this.pixel = {};
 
@@ -276,7 +276,6 @@ var CUI = CUI || {};
         root.aabb = [
             0, 0, game.width, game.height
         ];
-        Component.root = root;
         return root;
     };
 

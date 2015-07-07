@@ -14,10 +14,10 @@ window.onload = function() {
 };
 
 var Component = CUI.Component;
+var rootUI;
 
 function beforeStart(timeStep, now) {
-    Component.initRoot(game);
-
+    rootUI = Component.initRoot(game);
     var topUI = new Component({
         id: "topUI",
         left: 0,
@@ -25,7 +25,7 @@ function beforeStart(timeStep, now) {
         backgroundColor: "rgba(255,240,230,1)",
         width: "100%",
         height: "100%",
-        parent: Component.root,
+        parent: rootUI,
         layout: new CUI.HBoxLayout(),
         padding: 20,
     });
@@ -175,25 +175,25 @@ function beforeStart(timeStep, now) {
 function update(timeStep, now) {
     if (TouchInfo.firstTap) {
         var data = TouchInfo.firstTap;
-        CUI.Component.root.checkTouch("onTap", data.x, data.y, data.id);
+        rootUI.checkTouch("onTap", data.x, data.y, data.id);
         TouchInfo.firstTap = null;
     } else if (TouchInfo.firstStart) {
         var data = TouchInfo.firstStart;
-        CUI.Component.root.checkTouch("onTouchStart", data.x, data.y, data.id);
+        rootUI.checkTouch("onTouchStart", data.x, data.y, data.id);
         TouchInfo.firstStart = null;
     } else if (TouchInfo.firstEnd) {
         var data = TouchInfo.firstEnd;
-        CUI.Component.root.checkTouch("onTouchEnd", data.x, data.y, data.id);
+        rootUI.checkTouch("onTouchEnd", data.x, data.y, data.id);
         TouchInfo.firstEnd = null;
     }
-    CUI.Component.root.update();
+    rootUI.update();
 }
 
 function render(context, timeStep, now) {
     context.fillStyle = "rgba(0,0,0,1)";
     context.fillRect(0, 0, Config.width, Config.height);
 
-    CUI.Component.root.render(context);
+    rootUI.render(context);
 
 }
 
