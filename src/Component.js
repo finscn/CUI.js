@@ -46,8 +46,8 @@ var CUI = CUI || {};
         /////////////////////////////////////////////
         // 对象创建后, 以下属性不可更改
 
-        centerX: false,
-        centerY: false,
+        centerH: false,
+        centerV: false,
 
         padding: null,
         paddingTop: null,

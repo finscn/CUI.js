@@ -92,7 +92,7 @@ var CUI = CUI || {};
             pixel.right = Utils.parseValue(comp.right, relativeWidth);
 
             var x = 0;
-            if (comp.centerX === true) {
+            if (comp.centerH === true) {
                 x = (relativeWidth - pixel.width) / 2;
             } else if (pixel.left === null && pixel.right !== null) {
                 x = relativeWidth - pixel.width - pixel.right; // - pixel.marginRight;
@@ -112,7 +112,7 @@ var CUI = CUI || {};
             pixel.bottom = Utils.parseValue(comp.bottom, relativeHeight);
 
             var y = 0;
-            if (comp.centerY === true) {
+            if (comp.centerV === true) {
                 y = (relativeHeight - pixel.height) / 2;
             } else if (pixel.top === null && pixel.bottom !== null) {
                 y = relativeHeight - pixel.height - pixel.bottom;
