@@ -173,11 +173,25 @@ var CUI = CUI || {};
             }
         },
 
-        computeLayout: function(force){
+        computeLayout: function(force) {
             if (this.needToRecompute || force) {
                 this.layout.compute(this);
                 this.needToRecompute = false;
             }
+        },
+
+        getChildrenCount: function() {
+            return this.children.length;
+        },
+
+        isInRegion: function(x, y) {
+            var aabb = this.aabb;
+            return aabb[0] < x && x < aabb[2] && aabb[1] < y && y < aabb[3];
+        },
+
+        checkCollideAABB: function(aabb) {
+            var aabb2 = this.aabb;
+            return aabb[0] < aabb2[2] && aabb[2] > aabb2[0] && aabb[1] < aabb2[3] && aabb[3] > aabb2[1];
         },
 
         updateSelf: function(timeStep, now) {
@@ -195,16 +209,13 @@ var CUI = CUI || {};
         },
 
         renderSelf: function(context, timeStep, now) {
-
             context.fillStyle = this.backgroundColor;
             context.fillRect(this.x, this.y, this.w, this.h);
             context.lineWidth = this.borderWidth;
             context.strokeStyle = this.borderColor;
             context.strokeRect(this.x, this.y, this.w, this.h);
         },
-
         renderChildren: function(context, timeStep, now) {
-
             this.children.forEach(function(child) {
                 child.render(context, timeStep, now);
             });
