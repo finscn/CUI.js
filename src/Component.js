@@ -8,6 +8,7 @@ var CUI = CUI || {};
     var Utils = exports.Utils;
     var Composite = exports.Composite;
     var EventDispatcher = exports.EventDispatcher;
+    var TouchTarget = exports.TouchTarget;
     var Layout = exports.Layout;
 
 
@@ -97,6 +98,7 @@ var CUI = CUI || {};
             this.pixel = {};
 
             EventDispatcher.apply(this);
+            TouchTarget.apply(this);
 
             if (this.composite) {
                 Composite.apply(this);
