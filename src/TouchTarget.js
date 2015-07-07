@@ -98,7 +98,6 @@ var CUI = CUI || {};
 
     TouchTarget.apply = function(object, override) {
         var proto = TouchTarget.prototype;
-        // override = override !== false;
         for (var p in proto) {
             var v = proto[p];
             if (typeof v == "function") {

@@ -7,6 +7,7 @@ var CUI = CUI || {};
     var Class = exports.Class;
     var Utils = exports.Utils;
     var Composite = exports.Composite;
+    var DisplayObject = exports.DisplayObject;
     var EventDispatcher = exports.EventDispatcher;
     var TouchTarget = exports.TouchTarget;
     var Layout = exports.Layout;
@@ -44,6 +45,8 @@ var CUI = CUI || {};
 
         modal: false,
 
+        displayObject: null,
+
         /////////////////////////////////////////////
         // 对象创建后, 以下属性不可更改
 
@@ -65,8 +68,7 @@ var CUI = CUI || {};
 
         // relative: "root", // 相对于 root容器 定位, 类似dom的position:absolute
         // relative: "parent", // 相对于 parent容器 定位
-        // relative: "self", // 相对于 自己(layout后) 定位, 类似dom的position:relative
-        relative: false, // 其他(默认值) :遵循parent容器的layout
+        relative: false, // 其他(默认值) :遵循parent容器的layout, left,top按偏移量处理( 类似dom的position:relative )
 
 
         backgroundColor: "rgba(200,220,255,1)",
@@ -117,12 +119,11 @@ var CUI = CUI || {};
             this.layout = layout;
         },
 
-        setParent: function(parent, forceUpdate) {
-            if (parent && (parent != this.parent || forceUpdate)) {
+        setParent: function(parent, forceCompute) {
+            if (parent && (parent != this.parent || forceCompute)) {
                 this.parent = parent;
                 this.parent.addChild(this);
                 this.needToRecompute = true;
-                // TODO : update
             }
         },
 
@@ -183,8 +184,8 @@ var CUI = CUI || {};
             }
         },
 
-        computeLayout: function(force) {
-            if (this.composite && (this.needToRecompute || force)) {
+        computeLayout: function(forceCompute) {
+            if (this.composite && (this.needToRecompute || forceCompute)) {
                 this.layout.compute(this);
                 this.needToRecompute = false;
             }
@@ -255,26 +256,33 @@ var CUI = CUI || {};
         },
     });
 
-    Component.initRoot = function(game) {
+    Component.noop = function() {};
+    Component.createRoot = function(viewportWidth, viewportHeight) {
         var root = new Component({
             id: "_root",
             x: 0,
             y: 0,
-            w: game.width,
-            h: game.height,
-            relative: "root"
+            w: viewportWidth,
+            h: viewportHeight,
+            relative: "root",
+
+            updateSelf: Component.noop,
+            renderSelf: Component.noop,
+            checkTouchSelf: Component.noop,
+            viewportWidth: viewportWidth,
+            viewportHeight: viewportHeight,
         });
         root.init();
         root.pixel = {
-            width: game.width,
-            height: game.height,
+            width: viewportWidth,
+            height: viewportHeight,
             paddingLeft: 0,
             paddingTop: 0,
             paddingRight: 0,
             paddingBottom: 0,
         };
         root.aabb = [
-            0, 0, game.width, game.height
+            0, 0, viewportWidth, viewportHeight
         ];
         return root;
     };

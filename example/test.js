@@ -1,5 +1,5 @@
 var Config = {
-    width: 600,
+    width: 560,
     height: 400,
     FPS: 30,
 };
@@ -14,10 +14,11 @@ window.onload = function() {
 };
 
 var Component = CUI.Component;
+var Button = CUI.Button;
 var rootUI;
 
 function beforeStart(timeStep, now) {
-    rootUI = Component.initRoot(game);
+    rootUI = Component.createRoot(game.width, game.height);
     var topUI = new Component({
         id: "topUI",
         left: 0,
@@ -79,8 +80,9 @@ function beforeStart(timeStep, now) {
         id: "ttt",
 
         relative: "parent",
+        centerH: true,
         left: 0,
-        top: 150,
+        top: 160,
         backgroundColor: "rgba(255,200,100,1)",
         width: "50%",
         height: 150,
@@ -121,7 +123,7 @@ function beforeStart(timeStep, now) {
     });
     uiC.init();
 
-    var uiC = new Component({
+    var uiC = new Button({
         id: "b",
         backgroundColor: "rgba(255,100,50,1)",
         normalBG: "rgba(255,100,50,1)",
@@ -130,7 +132,6 @@ function beforeStart(timeStep, now) {
         row: 0,
         colspan: 3,
         rowspan: 1,
-        composite: false,
         onTouchStart: function(x, y, id) {
             this.backgroundColor = "red";
         },
