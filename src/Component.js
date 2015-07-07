@@ -5,6 +5,11 @@ var CUI = CUI || {};
 (function(exports) {
 
     var Class = exports.Class;
+    var Utils = exports.Utils;
+    var Composite = exports.Composite;
+    var EventDispatcher = exports.EventDispatcher;
+    var Layout = exports.Layout;
+
 
     var Component = Class.create({
         constructor: Component,
@@ -21,7 +26,7 @@ var CUI = CUI || {};
         width: null,
         height: null,
 
-        visible: false,
+        visible: true,
         alpha: 1,
         scale: 1,
         index: 0,
@@ -63,13 +68,13 @@ var CUI = CUI || {};
         relative: false, // 其他(默认值) :遵循parent容器的layout
 
 
-        borderColor: null,
-        borderWidth: null,
-        borderImage: null,
+        backgroundColor: "rgba(200,220,255,1)",
+        borderColor: "rgba(30,50,80,1)",
+        borderWidth: 2,
+        borderImage: null, // { img , ix, iy, iw, ih, top, right, bottom, left }
 
         ////////////////////////////////////////
         // 以下属性为内部属性, 用户通常不需要关心
-
 
         pixel: null,
 
@@ -82,106 +87,49 @@ var CUI = CUI || {};
 
         children: null,
         childrenMap: null,
+        needToRecompute: true,
 
         init: function() {
             this.root = this.root || Component.root;
             this.aabb = [];
             this.pixel = {};
-            this.changedFlag = {};
 
             EventDispatcher.apply(this);
             Composite.apply(this);
 
-            this.setParent(this.parent || this.root);
+            this.setParent(this.parent || this.root, true);
+            this.setMargin(this.margin || 0);
+            this.setPadding(this.padding || 0);
+            this.setLayout(this.layout || Layout.commonLayout);
+        },
 
-            this.recompute();
+        setLayout: function(layout) {
+            this.layout = layout;
         },
 
         setParent: function(parent, forceUpdate) {
-            if (parent != this.parent || forceUpdate) {
+            if (parent && (parent != this.parent || forceUpdate)) {
                 this.parent = parent;
-                this.changedFlag["parent"] = true;
+                this.parent.addChild(this);
+                this.needToRecompute = true;
                 // TODO : update
             }
-
         },
 
-        recompute: function() {
-            this.computeSize();
-            this.computePosition();
-            this.computePadding();
-            this.computeMargin();
-            this.computeAbsoluteData();
-        },
-
-        computeSize: function() {
-            var parent = this.parent;
-            var pixel = this.pixel;
-            pixel.width = this.parseValue(this.width, parent.innerWidth);
-            pixel.height = this.parseValue(this.height, parent.innerHeight);
-        },
-
-        computePosition: function() {
-            var parent = this.parent;
-            var pixel = this.pixel;
-            pixel.left = this.parseValue(this.left, parent.innerWidth);
-            pixel.top = this.parseValue(this.top, parent.innerHeight);
-
-            pixel.right = this.parseValue(this.right, parent.innerWidth);
-            pixel.bottom = this.parseValue(this.bottom, parent.innerHeight);
-        },
-
-        computePadding: function() {
-            var pixel = this.pixel;
-            this.paddingLeft = this.paddingLeft === null ? this.padding : this.paddingLeft;
-            this.paddingTop = this.paddingTop === null ? this.padding : this.paddingTop;
-            this.paddingRight = this.paddingRight === null ? this.padding : this.paddingRight;
-            this.paddingBottom = this.paddingBottom === null ? this.padding : this.paddingBottom;
-
-            pixel.paddingLeft = this.parseValue(this.paddingLeft, parent.pixel.width);
-            pixel.paddingRight = this.parseValue(this.paddingRight, parent.pixel.width);
-            pixel.paddingTop = this.parseValue(this.paddingTop, parent.pixel.height);
-            pixel.paddingBottom = this.parseValue(this.paddingBottom, parent.pixel.height);
-
-            pixel.innerWidth = pixel.width - pixel.paddingLeft - pixel.paddingRight;
-            pixel.innerHeight = pixel.height - pixel.paddingTop - pixel.paddingBottom;
-        },
-
-        computeMargin: function() {
-            var pixel = this.pixel;
+        setMargin: function(margin) {
+            this.margin = margin;
             this.marginLeft = this.marginLeft === null ? this.margin : this.marginLeft;
             this.marginTop = this.marginTop === null ? this.margin : this.marginTop;
             this.marginRight = this.marginRight === null ? this.margin : this.marginRight;
             this.marginBottom = this.marginBottom === null ? this.margin : this.marginBottom;
-
-            pixel.marginLeft = this.parseValue(this.marginLeft, parent.pixel.width);
-            pixel.marginRight = this.parseValue(this.marginRight, parent.pixel.width);
-            pixel.marginTop = this.parseValue(this.marginTop, parent.pixel.height);
-            pixel.marginBottom = this.parseValue(this.marginBottom, parent.pixel.height);
         },
 
-        computeAbsoluteData: function() {
-            var pixel = this.pixel;
-            var parent = this.parent;
-
-            var x = 0,
-                y = 0;
-            if (this.centerX === true) {
-                x = (parent.innerWidth - pixel.width) / 2;
-            } else if (pixel.left === null && pixel.right !== null) {
-                x = parent.innerWidth - pixel.width;
-            }
-            if (this.centerY === true) {
-                y = (parent.innerHeight - pixel.height) / 2;
-            } else if (pixel.top === null && pixel.bottom !== null) {
-                y = parent.innerHeight - pixel.height;
-            }
-            this.x = x + pixel.left + parent.x;
-            this.y = y + pixel.top + parent.y;
-            this.w = pixel.width;
-            this.h = pixel.height;
-
-            this.updateAABB();
+        setPadding: function(padding) {
+            this.padding = padding;
+            this.paddingLeft = this.paddingLeft === null ? this.padding : this.paddingLeft;
+            this.paddingTop = this.paddingTop === null ? this.padding : this.paddingTop;
+            this.paddingRight = this.paddingRight === null ? this.padding : this.paddingRight;
+            this.paddingBottom = this.paddingBottom === null ? this.padding : this.paddingBottom;
         },
 
         updateAABB: function() {
@@ -191,50 +139,79 @@ var CUI = CUI || {};
             this.aabb[3] = this.y + this.h + this.extBottom;
         },
 
-        moveTo: function(x, y) {
+        /////////////////////////////////////////////////////////////////////////////
+        /////////////////////////////////////////////////////////////////////////////
+        /////////////////////////////////////////////////////////////////////////////
 
-            this.changedFlag["position"] = true;
-        },
         setSize: function(width, height) {
+            this.width = width;
+            this.height = height;
+            this.needToRecompute = this.width !== width || this.height !== height;
+        },
+        setLeft: function(left) {
+            if (this.left !== left) {
+                this.left = left;
+                this.needToRecompute = true;
+            }
+        },
+        setRight: function(right) {
+            if (this.right !== right) {
+                this.right = right;
+                this.needToRecompute = true;
+            }
+        },
+        setTop: function(top) {
+            if (this.top !== top) {
+                this.top = top;
+                this.needToRecompute = true;
+            }
+        },
+        setBottom: function(bottom) {
+            if (this.bottom !== bottom) {
+                this.bottom = bottom;
+                this.needToRecompute = true;
+            }
+        },
 
-            this.changedFlag["size"] = true;
+        computeLayout: function(force){
+            if (this.needToRecompute || force) {
+                this.layout.compute(this);
+                this.needToRecompute = false;
+            }
         },
 
         updateSelf: function(timeStep, now) {
 
         },
         updateChildren: function(timeStep, now) {
-
+            this.children.forEach(function(child) {
+                child.update(timeStep, now);
+            });
         },
         update: function(timeStep, now) {
+            this.computeLayout();
             this.updateSelf(timeStep, now);
             this.updateChildren(timeStep, now);
         },
 
-        renderSelf: function(conttext, timeStep, now) {
+        renderSelf: function(context, timeStep, now) {
 
-        },
-        renderChildren: function(conttext, timeStep, now) {
-
-        },
-        render: function(conttext, timeStep, now) {
-            this.renderSelf(conttext, timeStep, now);
-            this.renderChildren(conttext, timeStep, now);
-
-            this.changedFlag = {};
+            context.fillStyle = this.backgroundColor;
+            context.fillRect(this.x, this.y, this.w, this.h);
+            context.lineWidth = this.borderWidth;
+            context.strokeStyle = this.borderColor;
+            context.strokeRect(this.x, this.y, this.w, this.h);
         },
 
+        renderChildren: function(context, timeStep, now) {
 
-        parseValue: function(value, relativeValue) {
-            if (typeof value == "number" || value === true || value === false || value === null || value === undefined) {
-                return value;
-            }
-            value = String(value);
-            if (value.indexOf("%") > 0) {
-                value = (parseFloat(value) / 100) * (relativeValue || 0);
-                return value;
-            }
-            return parseFloat(value);
+            this.children.forEach(function(child) {
+                child.render(context, timeStep, now);
+            });
+        },
+        render: function(context, timeStep, now) {
+            this.renderSelf(context, timeStep, now);
+            this.renderChildren(context, timeStep, now);
         },
 
         destructor: function() {
@@ -250,6 +227,27 @@ var CUI = CUI || {};
             this.childrenMap = null;
         },
     });
+
+    Component.initRoot = function(game) {
+        var root = new Component({
+            x: 0,
+            y: 0,
+            w: game.width,
+            h: game.height,
+            relative: "root"
+        });
+        root.init();
+        root.pixel = {
+            width: game.width,
+            height: game.height,
+            paddingLeft: 0,
+            paddingTop: 0,
+            paddingRight: 0,
+            paddingBottom: 0,
+        };
+        Component.root = root;
+        return root;
+    };
 
 
     exports.Component = Component;
