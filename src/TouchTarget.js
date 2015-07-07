@@ -15,12 +15,18 @@ var CUI = CUI || {};
             if (!this.visible || this.alpha <= 0) {
                 return false;
             }
+            if (type != "onSwipe") {
+                if (!this.isInRegion(x, y)) {
+                    return false;
+                }
+            }
+            args = Array.prototype.slice.call(arguments, 1);
             var rs;
             if (this.composite) {
-                rs = this.checkTouchChildren(type, arguments);
+                rs = this.checkTouchChildren(type, args);
             }
             if (!rs) {
-                this.checkTouchSelf(type, arguments);
+                this.checkTouchSelf(type, args);
             }
         },
 
