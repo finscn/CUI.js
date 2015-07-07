@@ -15,25 +15,27 @@ var CUI = CUI || {};
             if (!this.visible || this.alpha <= 0) {
                 return false;
             }
+            args = Array.prototype.slice.call(arguments, 1);
             if (type != "onSwipe") {
+                var x = args[0],
+                    y = args[1];
                 if (!this.isInRegion(x, y)) {
                     return false;
                 }
             }
-            args = Array.prototype.slice.call(arguments, 1);
             var rs;
             if (this.composite) {
-                rs = this.checkTouchChildren(type, args);
+                rs = this.checkTouchChildren(type, arguments);
             }
             if (!rs) {
-                this.checkTouchSelf(type, args);
+                return this.checkTouchSelf(type, args);
             }
+            return false;
         },
 
         checkTouchSelf: function(type, args) {
-            var action = type + "Action";
-            if (this[action]) {
-                var rs = this[action].apply(this, args);
+            if (this[type]) {
+                var rs = this[type].apply(this, args);
                 if (rs) {
                     return rs;
                 }
@@ -42,6 +44,7 @@ var CUI = CUI || {};
                 this.onTapMask.apply(this, args);
                 return this.modalFlag;
             }
+            return false;
         },
         checkTouchChildren: function(type, args) {
             var list = this.children;
@@ -52,7 +55,8 @@ var CUI = CUI || {};
                 if (!ui.visible || ui.alpha <= 0) {
                     continue;
                 }
-                rs = ui[type].apply(ui, args);
+                // rs = ui[type].apply(ui, args);
+                rs = ui.checkTouch.apply(ui, args);
                 if (rs) {
                     return rs;
                 }
@@ -67,111 +71,32 @@ var CUI = CUI || {};
         ///////////////////////////////////////////////////////
 
         onTouchStart: function(x, y, id) {
-            if (!this.visible || this.alpha <= 0) {
-                return false;
-            }
-            if (!this.isInRegion(x, y)) {
-                return false;
-            }
-            var rs;
-            if (this.composite) {
-                rs = this.checkTouchChildren("onTouchStart", arguments);
-            }
-            if (!rs) {
-                this.checkTouchSelf("onTouchStart", arguments);
-            }
+
         },
 
         onTouchMove: function(x, y, id) {
-            if (!this.visible || this.alpha <= 0) {
-                return false;
-            }
-            if (!this.isInRegion(x, y)) {
-                return false;
-            }
-            var rs;
-            if (this.composite) {
-                rs = this.checkTouchChildren("onTouchMove", arguments);
-            }
-            if (!rs) {
-                this.checkTouchSelf("onTouchMove", arguments);
-            }
+
         },
 
         onTouchEnd: function(x, y, id) {
-            if (!this.visible || this.alpha <= 0) {
-                return false;
-            }
-            if (!this.isInRegion(x, y)) {
-                return false;
-            }
-            var rs;
-            if (this.composite) {
-                rs = this.checkTouchChildren("onTouchEnd", arguments);
-            }
-            if (!rs) {
-                this.checkTouchSelf("onTouchEnd", arguments);
-            }
+
         },
 
         onTap: function(x, y, id) {
-            if (!this.visible || this.alpha <= 0) {
-                return false;
-            }
-            if (!this.isInRegion(x, y)) {
-                return false;
-            }
-            var rs;
-            if (this.composite) {
-                rs = this.checkTouchChildren("onTap", arguments);
-            }
-            if (!rs) {
-                this.checkTouchSelf("onTap", arguments);
-            }
+
         },
 
         onPan: function(x, y, dx, dy, startX, startY, id) {
-            if (!this.visible || this.alpha <= 0) {
-                return false;
-            }
-            if (!this.isInRegion(x, y)) {
-                return false;
-            }
-            var rs;
-            if (this.composite) {
-                rs = this.checkTouchChildren("onPan", arguments);
-            }
-            if (!rs) {
-                this.checkTouchSelf("onPan", arguments);
-            }
+
         },
 
         onSwipe: function(x, y, vx, vy, startX, startY, id) {
-            if (!this.visible || this.alpha <= 0) {
-                return false;
-            }
-            // if (!this.isInRegion(x,y)){
-            //     return false;
-            // }
-            var rs;
-            if (this.composite) {
-                rs = this.checkTouchChildren("onSwipe", arguments);
-            }
-            if (!rs) {
-                this.checkTouchSelf("onSwipe", arguments);
-            }
+
         },
 
         onTapMask: function(x, y, id) {
 
         },
-
-        onTouchStartAction: null,
-        onTouchMoveAction: null,
-        onTouchEndAction: null,
-        onTapAction: null,
-        onPanAction: null,
-        onSwipeAction: null,
 
     });
 

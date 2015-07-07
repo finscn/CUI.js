@@ -19,6 +19,7 @@ function beforeStart(timeStep, now) {
     Component.initRoot(game);
 
     var topUI = new Component({
+        id: "topUI",
         left: 0,
         top: 0,
         backgroundColor: "rgba(255,240,230,1)",
@@ -75,6 +76,8 @@ function beforeStart(timeStep, now) {
 
 
     var uiT = new Component({
+        id: "ttt",
+
         relative: "parent",
         left: 0,
         top: 150,
@@ -92,6 +95,7 @@ function beforeStart(timeStep, now) {
     uiT.init();
 
     var uiC = new Component({
+        id: "a",
         backgroundColor: "rgba(255,100,50,1)",
         normalBG: "rgba(255,100,50,1)",
         margin: 10,
@@ -101,22 +105,24 @@ function beforeStart(timeStep, now) {
         colspan: 1,
         rowspan: 3,
         composite: false,
-        onTouchStartAction: function(x, y, id) {
+        onTouchStart: function(x, y, id) {
             this.backgroundColor = "red";
         },
-        onTouchEndAction: function(x, y, id) {
+        onTouchEnd: function(x, y, id) {
             this.backgroundColor = this.normalBG;
         },
-        onTapAction: function(x, y, id) {
+        onTap: function(x, y, id) {
             this.backgroundColor = this.normalBG;
+            var Me = this;
             setTimeout(function() {
-                alert("别点我 a, " + id);
+                alert("别点我 " + Me.id + " , " + id);
             }, 10);
         }
     });
     uiC.init();
 
     var uiC = new Component({
+        id: "b",
         backgroundColor: "rgba(255,100,50,1)",
         normalBG: "rgba(255,100,50,1)",
         parent: uiT,
@@ -125,21 +131,23 @@ function beforeStart(timeStep, now) {
         colspan: 3,
         rowspan: 1,
         composite: false,
-        onTouchStartAction: function(x, y, id) {
+        onTouchStart: function(x, y, id) {
             this.backgroundColor = "red";
         },
-        onTouchEndAction: function(x, y, id) {
+        onTouchEnd: function(x, y, id) {
             this.backgroundColor = this.normalBG;
         },
-        onTapAction: function(x, y, id) {
+        onTap: function(x, y, id) {
             this.backgroundColor = this.normalBG;
+            var Me = this;
             setTimeout(function() {
-                alert("别点我 b, " + id);
+                alert("别点我 " + Me.id + " , " + id);
             }, 10);
         }
     });
     uiC.init();
     var uiC = new Component({
+        id: "c",
         backgroundColor: "rgba(255,100,50,1)",
         normalBG: "rgba(255,100,50,1)",
         parent: uiT,
@@ -147,16 +155,17 @@ function beforeStart(timeStep, now) {
         row: 1,
         colspan: 3,
         rowspan: 2,
-        onTouchStartAction: function(x, y, id) {
+        onTouchStart: function(x, y, id) {
             this.backgroundColor = "red";
         },
-        onTouchEndAction: function(x, y, id) {
+        onTouchEnd: function(x, y, id) {
             this.backgroundColor = this.normalBG;
         },
-        onTapAction: function(x, y, id) {
+        onTap: function(x, y, id) {
             this.backgroundColor = this.normalBG;
+            var Me = this;
             setTimeout(function() {
-                alert("别点我 c, " + id);
+                alert("别点我 " + Me.id + " , " + id);
             }, 10);
         }
     });
@@ -166,15 +175,15 @@ function beforeStart(timeStep, now) {
 function update(timeStep, now) {
     if (TouchInfo.firstTap) {
         var data = TouchInfo.firstTap;
-        CUI.Component.root.onTap(data.x, data.y, data.id);
+        CUI.Component.root.checkTouch("onTap", data.x, data.y, data.id);
         TouchInfo.firstTap = null;
     } else if (TouchInfo.firstStart) {
         var data = TouchInfo.firstStart;
-        CUI.Component.root.onTouchStart(data.x, data.y, data.id);
+        CUI.Component.root.checkTouch("onTouchStart", data.x, data.y, data.id);
         TouchInfo.firstStart = null;
     } else if (TouchInfo.firstEnd) {
         var data = TouchInfo.firstEnd;
-        CUI.Component.root.onTouchEnd(data.x, data.y, data.id);
+        CUI.Component.root.checkTouch("onTouchEnd", data.x, data.y, data.id);
         TouchInfo.firstEnd = null;
     }
     CUI.Component.root.update();
