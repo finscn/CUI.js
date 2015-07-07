@@ -12,6 +12,19 @@ var CUI = CUI || {};
         modalFlag: -0x100000,
 
         checkTouchSelf: function(type, args) {
+            if (!this.visible || this.alpha <= 0) {
+                return false;
+            }
+            var rs;
+            if (this.composite) {
+                rs = this.checkTouchChildren(type, arguments);
+            }
+            if (!rs) {
+                this.checkTouchSelf(type, arguments);
+            }
+        },
+
+        checkTouchSelf: function(type, args) {
             var action = type + "Action";
             if (this[action]) {
                 var rs = this[action].apply(this, args);
