@@ -21,7 +21,7 @@ var CUI = CUI || {};
                     y = args[1];
                 if (!this.isInRegion(x, y)) {
                     if (this.modal && type == "onTap") {
-                        this.onTapMask.apply(this, args);
+                        this.onTapOut.apply(this, args);
                         return this.modalFlag;
                     }
                     return false;
@@ -90,7 +90,7 @@ var CUI = CUI || {};
 
         },
 
-        onTapMask: function(x, y, id) {
+        onTapOut: function(x, y, id) {
 
         },
 

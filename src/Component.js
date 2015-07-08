@@ -126,7 +126,10 @@ var CUI = CUI || {};
                 this.needToRecompute = true;
             }
         },
-
+        addChild: function(child) {
+            Composite.prototype.addChild.call(this, child);
+            this.needToRecompute = true;
+        },
         setMargin: function(margin) {
             this.margin = margin;
             this.marginLeft = this.marginLeft === null ? this.margin : this.marginLeft;

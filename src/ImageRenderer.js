@@ -8,18 +8,18 @@ var CUI = CUI || {};
     var Class = exports.Class;
     var Utils = exports.Utils;
 
-    var TextObject = Class.create({
+    var ImageRenderer = Class.create({
 
         DEG_TO_RAD: Math.PI / 180,
         RAD_TO_DEG: 180 / Math.PI,
         HALF_PI: Math.PI / 2,
         DOUBLE_PI: Math.PI * 2,
 
-        text:null,
-        color:null,
-        fontName:null,
-        fontSize:null,
-        fontWeight:null,
+        img: null,
+        sx: null,
+        sy: null,
+        sw: null,
+        sh: null,
 
         x: 0,
         y: 0,
@@ -43,14 +43,8 @@ var CUI = CUI || {};
         offsetH: 0,
         offsetAlpha: 0,
 
-        init: function() {
-            this.setImg(this.img);
-            this.setImgInfo(this.sx, this.sy, this.sw, this.sh);
-        },
-        setImg: function(img) {
+        setImgInfo: function(img, sx, sy, sw, sh) {
             this.img = img;
-        },
-        setImgInfo: function(sx, sy, sw, sh) {
             if (sx === null || sx === undefined) {
                 sx = 0;
             }
@@ -68,10 +62,23 @@ var CUI = CUI || {};
             this.sw = sw;
             this.sh = sh;
         },
+
         setScale: function(scale) {
             this.scale = scale;
             this.scaleX = scale;
             this.scaleY = scale;
+        },
+        setAnchor: function(x, y) {
+            this.anchorX = x;
+            this.anchorY = y;
+        },
+
+        quickRender: function(context, timeStep, now) {
+            var x = this.x - this.anchorX + this.offsetX;
+            var y = this.y - this.anchorY + this.offsetY;
+            var w = this.width + this.offsetW;
+            var h = this.height + this.offsetH;
+            context.drawImage(this.img, this.sx, this.sy, this.sw, this.sh, x, y, w, h);
         },
 
         render: function(context, timeStep, now) {
@@ -98,7 +105,7 @@ var CUI = CUI || {};
                 y += this.y + this.offsetY;
             }
             context.globalAlpha = alpha > 1 ? 1 : alpha;
-            context.drawImage(this.img, this.sx, this.sy, this.sw, this.sh, x, y, this.w + this.offsetW, this.h + this.offsetH);
+            context.drawImage(this.img, this.sx, this.sy, this.sw, this.sh, x, y, this.width + this.offsetW, this.height + this.offsetH);
 
             if (scaleX != 1 || scaleY != 1 || rotation != 0) {
                 context.restore();
@@ -110,10 +117,10 @@ var CUI = CUI || {};
     });
 
 
-    exports.TextObject = TextObject;
+    exports.ImageRenderer = ImageRenderer;
 
     if (typeof module != "undefined") {
-        module.exports = TextObject;
+        module.exports = ImageRenderer;
     }
 
 }(CUI));
