@@ -153,10 +153,12 @@ function beforeStart(timeStep, now) {
         },
         iconInfo: {
             img: Images["btn-icon"],
-            offsetX: -22
+            offsetX: -24,
+            width:24,
+            height:24,
         },
         textInfo: {
-            offsetX: 12,
+            offsetX: 10,
             text: "Hello",
             color: "black"
         },
