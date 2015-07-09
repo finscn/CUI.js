@@ -16,9 +16,12 @@ var rootUI;
 window.onload = function() {
     init();
 
-    CUI.Utils.loadImage("./res/btn-blue.png", function(img) {
-        Images["btn-blue"] = img;
-        start();
+    CUI.Utils.loadImage("./res/btn-bg.png", function(img) {
+        Images["btn-bg"] = img;
+        CUI.Utils.loadImage("./res/btn-icon.png", function(img) {
+            Images["btn-icon"] = img;
+            start();
+        });
     });
 };
 
@@ -146,9 +149,14 @@ function beforeStart(timeStep, now) {
         colspan: 3,
         rowspan: 1,
         bgInfo: {
-            img: Images["btn-blue"]
+            img: Images["btn-bg"]
+        },
+        iconInfo: {
+            img: Images["btn-icon"],
+            offsetX: -22
         },
         textInfo: {
+            offsetX: 12,
             text: "Hello",
             color: "black"
         },
