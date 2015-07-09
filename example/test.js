@@ -93,6 +93,12 @@ function beforeStart(timeStep, now) {
             rows: 3,
             cellSpace: 10,
         }),
+        onTouchStart: function(x, y, id) {
+            this.scale = 0.8;
+        },
+        onTouchEnd: function(x, y, id) {
+            this.scale = 1;
+        },
     });
     uiT.init();
 

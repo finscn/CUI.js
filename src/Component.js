@@ -30,9 +30,16 @@ var CUI = CUI || {};
 
         visible: true,
         alpha: 1,
-        scale: 1,
         index: 0,
         zIndex: 0,
+
+        // 缩放只适合用来做瞬间的、纯视觉上的动画效果, 它不会改变UI的响应区域和行为
+        // 如果要真正改变UI的大小, 请通过修改UI(以及内部元素的)width/height来实现
+        scale: 1,
+        // 缩放时才需要
+        anchorX: "50%",
+        anchorY: "50%",
+
 
         extLeft: 0,
         extRight: 0,
@@ -192,6 +199,9 @@ var CUI = CUI || {};
                 this.layout.compute(this);
                 this.needToRecompute = false;
             }
+            this.pixel.anchorX = Utils.parseValue(this.anchorX, this.w) || 0;
+            this.pixel.anchorY = Utils.parseValue(this.anchorY, this.h) || 0;
+
         },
 
         getChildrenCount: function() {
@@ -236,10 +246,24 @@ var CUI = CUI || {};
                 child.render(context, timeStep, now);
             });
         },
+
+        doRenderScale: function(context, timeStep, now) {
+            context.save();
+            context.translate(this.x + this.pixel.anchorX, this.y + this.pixel.anchorY);
+            console.log(this.x + this.w / 2, this.y + this.h / 2)
+            context.scale(this.scale, this.scale);
+            context.translate(-this.x - this.pixel.anchorX, -this.y - this.pixel.anchorY);
+        },
         render: function(context, timeStep, now) {
+            if (this.scale != 1) {
+                this.doRenderScale(context, timeStep, now);
+            }
             this.renderSelf(context, timeStep, now);
             if (this.composite) {
                 this.renderChildren(context, timeStep, now);
+            }
+            if (this.scale != 1) {
+                context.restore();
             }
         },
 
