@@ -113,7 +113,10 @@ var CUI = CUI || {};
         init: function() {
             this.root = this.root || (this.parent && this.parent.root);
             this.aabb = [];
-            this.pixel = {};
+            this.pixel = {
+                relativeX: 0,
+                relativeY: 0,
+            };
 
             EventDispatcher.apply(this);
             TouchTarget.apply(this);
@@ -163,6 +166,12 @@ var CUI = CUI || {};
             this.paddingTop = this.paddingTop === null ? this.padding : this.paddingTop;
             this.paddingRight = this.paddingRight === null ? this.padding : this.paddingRight;
             this.paddingBottom = this.paddingBottom === null ? this.padding : this.paddingBottom;
+        },
+
+        updatePosition: function() {
+            this.x = this.pixel.relativeX + this.parent.x;
+            this.y = this.pixel.relativeY + this.parent.y;
+            this.updateAABB();
         },
 
         updateAABB: function() {

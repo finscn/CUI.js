@@ -95,11 +95,14 @@ var CUI = CUI || {};
             if (comp.centerH === true) {
                 x = (relativeWidth - pixel.width) / 2;
             } else if (pixel.left === null && pixel.right !== null) {
-                x = relativeWidth - pixel.width - pixel.right; // - pixel.marginRight;
+                x = relativeWidth - pixel.width - pixel.right;
             } else {
                 x = pixel.left;
             }
-            comp.x = x + pixel.realMarginLeft + relativeComp.x;
+            pixel.relativeX = x + pixel.realMarginLeft;
+
+            comp.x = pixel.relativeX + relativeComp.x;
+
         },
 
         computePositionY: function(comp, relativeComp) {
@@ -119,7 +122,9 @@ var CUI = CUI || {};
             } else {
                 y = pixel.top;
             }
-            comp.y = y + pixel.realMarginTop + relativeComp.y;
+            pixel.relativeY = y + pixel.realMarginTop;
+
+            comp.y = pixel.relativeY + relativeComp.y;
         },
 
         computePadding: function(comp) {
