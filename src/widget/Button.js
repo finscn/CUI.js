@@ -22,11 +22,11 @@ var CUI = CUI || {};
                 this.bgRenderer.init();
 
                 if (this.width === null) {
-                    this.width = this.bgRenderer.width || this.bgRenderer.sw;
+                    this.width = this.bgRenderer.sw;
                 }
 
                 if (this.height === null) {
-                    this.height = this.bgRenderer.height || this.bgRenderer.sh;
+                    this.height = this.bgRenderer.sh;
                 }
             }
 
@@ -52,8 +52,14 @@ var CUI = CUI || {};
         },
 
         computeLayout: function(forceCompute) {
-            this.bgRenderer && this.bgRenderer.updatePosition();
-            this.iconRenderer && this.iconRenderer.updatePosition();
+            if (this.bgRenderer) {
+                this.bgRenderer.updateSize();
+                this.bgRenderer.updatePosition();
+            }
+            if (this.iconRenderer) {
+                this.iconRenderer.updateSize();
+                this.iconRenderer.updatePosition();
+            }
             this.textRenderer && this.textRenderer.updatePosition();
             this.needToCompute = false;
 

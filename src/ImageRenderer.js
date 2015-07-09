@@ -35,12 +35,17 @@ var CUI = CUI || {};
         offsetH: 0,
         offsetAlpha: 0,
 
+        // auto : 显示大小等于 图片实际大小.
+        width: "auto",
+        height: "auto",
+
         init: function() {
+            this.pixel = {};
             this.setImgInfo(this);
             this.setParent(this.parent);
         },
 
-        setImgInfo: function(info, syncSize) {
+        setImgInfo: function(info) {
             this.img = info.img;
             var sx = info.sx;
             var sy = info.sy;
@@ -64,11 +69,23 @@ var CUI = CUI || {};
             this.sw = sw;
             this.sh = sh;
 
-            if (syncSize || this.width === null) {
-                this.width = this.sw;
+            if (this.width === "auto") {
+                this.pixel.width = this.sw;
             }
-            if (syncSize || this.height === null) {
-                this.height = this.sh;
+            if (this.height === "auto") {
+                this.pixel.height = this.sh;
+            }
+
+        },
+
+        updateSize: function() {
+            if (this.parent) {
+                if (this.width !== "auto") {
+                    this.pixel.width = Utils.parseValue(this.width, this.parent.pixel.width) || 0;
+                }
+                if (this.height !== "auto") {
+                    this.pixel.height = Utils.parseValue(this.height, this.parent.pixel.height) || 0;
+                }
             }
         },
 
@@ -81,8 +98,8 @@ var CUI = CUI || {};
         quickRender: function(context, timeStep, now) {
             var x = this.x - this.anchorX + this.offsetX;
             var y = this.y - this.anchorY + this.offsetY;
-            var w = this.width + this.offsetW;
-            var h = this.height + this.offsetH;
+            var w = this.pixel.width + this.offsetW;
+            var h = this.pixel.height + this.offsetH;
             context.drawImage(this.img, this.sx, this.sy, this.sw, this.sh, x, y, w, h);
         },
 
@@ -95,8 +112,8 @@ var CUI = CUI || {};
 
             var x = -this.anchorX;
             var y = -this.anchorY;
-            var width = this.width;
-            var height = this.height;
+            var width = this.pixel.width;
+            var height = this.pixel.height;
 
             var scaleX = this.scaleX * (this.flipX ? -1 : 1);
             var scaleY = this.scaleY * (this.flipY ? -1 : 1);

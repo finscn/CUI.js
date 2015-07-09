@@ -142,14 +142,16 @@ function beforeStart(timeStep, now) {
     var uiC = new Button({
         id: "button2",
         backgroundColor: "rgba(255,100,50,1)",
-        normalBG: "rgba(255,100,50,1)",
         parent: uiT,
         col: 1,
         row: 0,
         colspan: 3,
         rowspan: 1,
+        width:null,
+        height:null,
         bgInfo: {
-            img: Images["btn-bg"]
+            img: Images["btn-bg"],
+            // width:"100%"
         },
         iconInfo: {
             img: Images["btn-icon"],
@@ -163,15 +165,13 @@ function beforeStart(timeStep, now) {
             color: "black"
         },
         onTouchStart: function(x, y, id) {
-            this.backgroundColor = "red";
             this.scale = 0.9;
         },
         onTouchEnd: function(x, y, id) {
-            this.backgroundColor = this.normalBG;
             this.scale = 1;
         },
         onTap: function(x, y, id) {
-            this.backgroundColor = this.normalBG;
+
         }
     });
     uiC.init();

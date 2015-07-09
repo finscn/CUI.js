@@ -54,6 +54,10 @@ var CUI = CUI || {};
             this.offsetY = y;
         },
 
+        updateSize: function() {
+
+        },
+
         updatePosition: function() {
             var parent = this.parent;
             if (this.alignH == "center") {
