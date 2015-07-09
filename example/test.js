@@ -147,11 +147,8 @@ function beforeStart(timeStep, now) {
         row: 0,
         colspan: 3,
         rowspan: 1,
-        width:null,
-        height:null,
         bgInfo: {
             img: Images["btn-bg"],
-            // width:"100%"
         },
         iconInfo: {
             img: Images["btn-icon"],

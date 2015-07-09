@@ -13,7 +13,11 @@ var CUI = CUI || {};
 
         composite: false,
         disabled: false,
-        // TODO
+
+        // 不指定宽高, 大小由 bgRenderer 的实际大小决定
+        width: null,
+        height: null,
+
         init: function() {
 
             if (this.bgInfo) {
