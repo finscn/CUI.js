@@ -7,14 +7,10 @@ var CUI = CUI || {};
 
     var Class = exports.Class;
     var Utils = exports.Utils;
+    var BaseRenderer = exports.BaseRenderer;
     var Font = exports.Font;
 
     var TextRenderer = Class.create({
-
-        DEG_TO_RAD: Math.PI / 180,
-        RAD_TO_DEG: 180 / Math.PI,
-        HALF_PI: Math.PI / 2,
-        DOUBLE_PI: Math.PI * 2,
 
         text: null,
         color: null,
@@ -28,52 +24,59 @@ var CUI = CUI || {};
 
         strokeWidth: 0,
 
-        x: 0,
-        y: 0,
-        width: 0,
-        height: 0,
+        init: function() {
+            this.setTextInfo(this);
+            this.setParent(this.parent);
+        },
 
-        initFont: function() {
-            this.fontName = Font.getName(this.fontName || "Arial");
-            this.fontSize = this.fontSize || 12;
-            this.fontColor = this.color;
-            this.fontWeight = this.fontWeight || "bold";
+        setTextInfo: function(info) {
+            this.text = info.text || "";
+            this.fontName = Font.getName(info.fontName || "Arial");
+            this.fontSize = info.fontSize || 12;
+            this.color = info.color;
+            this.fontWeight = info.fontWeight;
             this.fontStyleText = Font.getStyle(this.fontSize, this.fontName, this.fontWeight);
+            this.needToCompute = true;
         },
 
         computeSize: function(context) {
             context.font = this.fontStyleText;
             var measure = context.measureText(this.text);
-            measure.height = this.lineHeight || this.fontSize;
+            measure.height = this.lineHeight || this.fontSize * 3 / 2;
             this.measure = measure;
             this.width = measure.width;
             this.height = measure.height;
-        },
-
-        alignH: function(align, parent) {
-
-        },
-        alignV: function(align, parent) {
-
+            this.updatePosition();
+            this.needToCompute = false;
         },
 
         render: function(context, timeStep, now) {
+            if (this.needToCompute) {
+                this.computeSize(context);
+            }
+
+            var alpha = this.alpha + this.offsetAlpha;
+            if (alpha <= 0) {
+                return false;
+            }
+            // debugger;
+            var x = this.x - this.anchorX + this.offsetX;
+            var y = this.y - this.anchorY + this.offsetY + this.fontSize;
+
             context.font = this.fontStyleText;
-            var x = this.x;
-            var y = this.y;
             if (this.strokeWidth) {
                 context.lineCap = "round";
                 context.lineWidth = this.strokeWidth;
                 context.strokeStyle = this.strokeColor;
                 context.strokeText(this.text, x, y);
             }
-            if (this.fontColor) {
-                context.fillStyle = this.fontColor;
+            if (this.color) {
+                context.fillStyle = this.color;
             }
             context.fillText(this.text, x, y);
         },
 
-    });
+    }, BaseRenderer);
 
 
     exports.TextRenderer = TextRenderer;

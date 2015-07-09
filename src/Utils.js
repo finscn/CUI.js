@@ -4,6 +4,18 @@ var CUI = CUI || {};
 
     var Utils = {
 
+        loadImage: function(src, callback) {
+            var img = new Image();
+            img.onload = function(event) {
+                callback(img, event);
+            };
+            img.onerror = function(event) {
+                callback(null, event);
+            };
+            img.src = src;
+            return img;
+        },
+
         parseValue: function(value, relativeValue) {
             if (typeof value == "number" || value === true || value === false || value === null || value === undefined) {
                 return value;

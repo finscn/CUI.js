@@ -21,6 +21,8 @@ var CUI = CUI || {};
         /////////////////////////////////////////////
         // 对象创建后, 以下属性可更改
 
+        // 以下 6 个属性支持数字(代表像素), 和百分比
+        // 百分比时, 相对参照物为 父元素 的实际宽高(像素)
         left: null,
         top: null,
         right: null,
@@ -30,8 +32,8 @@ var CUI = CUI || {};
 
         visible: true,
         alpha: 1,
-        index: 0,
         zIndex: 0,
+        index: 0,
 
         // 缩放只适合用来做瞬间的、纯视觉上的动画效果, 它不会改变UI的响应区域和行为
         // 如果要真正改变UI的大小, 请通过修改UI(以及内部元素的)width/height来实现
@@ -39,7 +41,6 @@ var CUI = CUI || {};
         // 缩放时才需要
         anchorX: "50%",
         anchorY: "50%",
-
 
         extLeft: 0,
         extRight: 0,
@@ -60,12 +61,20 @@ var CUI = CUI || {};
         centerH: false,
         centerV: false,
 
+        // 子元素的默认对齐方式.  是否有必要? 子元素上定义自己的对齐方式真的很麻烦吗?
+        // contentAlignH: "auto", //  "left" "center" "right"
+        // contentAlignV: "auto", //  "top" "middle" "bottom"
+
+        // 以下 5 个属性支持数字(代表像素), 和百分比
+        // 百分比时, 相对参照物为 自身 的实际宽高(像素)
         padding: null,
         paddingTop: null,
         paddingRight: null,
         paddingBottom: null,
         paddingLeft: null,
 
+        // 以下 5 个属性支持数字(代表像素), 和百分比
+        // 百分比时, 相对参照物为 父元素 的实际宽高(像素)
         margin: null,
         marginTop: null,
         marginRight: null,
@@ -86,19 +95,19 @@ var CUI = CUI || {};
         ////////////////////////////////////////
         // 以下属性为内部属性, 用户通常不需要关心
 
-        pixel: null,
-
-        // 绝对定位和大小, 单位pixel
+        // 绝对定位和大小, 单位:像素
         x: 0,
         y: 0,
         w: 0,
         h: 0,
+
         aabb: null,
+        pixel: null,
 
         composite: true,
         children: null,
         childrenMap: null,
-        needToRecompute: true,
+        needToCompute: true,
 
 
         init: function() {
@@ -130,13 +139,16 @@ var CUI = CUI || {};
             if (parent && (parent != this.parent || forceCompute)) {
                 this.parent = parent;
                 this.parent.addChild(this);
-                this.needToRecompute = true;
+                this.needToCompute = true;
             }
         },
         addChild: function(child) {
-            Composite.prototype.addChild.call(this, child);
-            this.needToRecompute = true;
+            if (this.composite) {
+                Composite.prototype.addChild.call(this, child);
+            }
+            this.needToCompute = true;
         },
+
         setMargin: function(margin) {
             this.margin = margin;
             this.marginLeft = this.marginLeft === null ? this.margin : this.marginLeft;
@@ -167,41 +179,39 @@ var CUI = CUI || {};
         setSize: function(width, height) {
             this.width = width;
             this.height = height;
-            this.needToRecompute = this.width !== width || this.height !== height;
+            this.needToCompute = this.width !== width || this.height !== height;
         },
         setLeft: function(left) {
             if (this.left !== left) {
                 this.left = left;
-                this.needToRecompute = true;
+                this.needToCompute = true;
             }
         },
         setRight: function(right) {
             if (this.right !== right) {
                 this.right = right;
-                this.needToRecompute = true;
+                this.needToCompute = true;
             }
         },
         setTop: function(top) {
             if (this.top !== top) {
                 this.top = top;
-                this.needToRecompute = true;
+                this.needToCompute = true;
             }
         },
         setBottom: function(bottom) {
             if (this.bottom !== bottom) {
                 this.bottom = bottom;
-                this.needToRecompute = true;
+                this.needToCompute = true;
             }
         },
 
         computeLayout: function(forceCompute) {
-            if (this.composite && (this.needToRecompute || forceCompute)) {
+            if (this.composite && (this.needToCompute || forceCompute)) {
                 this.layout.compute(this);
-                this.needToRecompute = false;
+                this.needToCompute = false;
             }
-            this.pixel.anchorX = Utils.parseValue(this.anchorX, this.w) || 0;
-            this.pixel.anchorY = Utils.parseValue(this.anchorY, this.h) || 0;
-
+            this.updateAnchor();
         },
 
         getChildrenCount: function() {
@@ -216,6 +226,11 @@ var CUI = CUI || {};
         checkCollideAABB: function(aabb) {
             var aabb2 = this.aabb;
             return aabb[0] < aabb2[2] && aabb[2] > aabb2[0] && aabb[1] < aabb2[3] && aabb[3] > aabb2[1];
+        },
+
+        updateAnchor: function() {
+            this.pixel.anchorX = Utils.parseValue(this.anchorX, this.w) || 0;
+            this.pixel.anchorY = Utils.parseValue(this.anchorY, this.h) || 0;
         },
 
         updateSelf: function(timeStep, now) {
@@ -250,7 +265,7 @@ var CUI = CUI || {};
         doRenderScale: function(context, timeStep, now) {
             context.save();
             context.translate(this.x + this.pixel.anchorX, this.y + this.pixel.anchorY);
-            console.log(this.x + this.w / 2, this.y + this.h / 2)
+            console.log(this.x, this.pixel.anchorX)
             context.scale(this.scale, this.scale);
             context.translate(-this.x - this.pixel.anchorX, -this.y - this.pixel.anchorY);
         },

@@ -7,15 +7,22 @@ var Config = {
 var game = {};
 var canvas, context;
 var loopId;
-window.onload = function() {
-
-    init();
-    start();
-};
 
 var Component = CUI.Component;
 var Button = CUI.Button;
+var Utils = CUI.Utils;
 var rootUI;
+
+window.onload = function() {
+    init();
+
+    CUI.Utils.loadImage("./res/btn-blue.png", function(img) {
+        Images["btn-blue"] = img;
+        start();
+    });
+};
+
+
 
 function beforeStart(timeStep, now) {
     rootUI = Component.createRoot(game.width, game.height);
@@ -130,7 +137,7 @@ function beforeStart(timeStep, now) {
     uiC.init();
 
     var uiC = new Button({
-        id: "b",
+        id: "button2",
         backgroundColor: "rgba(255,100,50,1)",
         normalBG: "rgba(255,100,50,1)",
         parent: uiT,
@@ -138,18 +145,23 @@ function beforeStart(timeStep, now) {
         row: 0,
         colspan: 3,
         rowspan: 1,
+        bgInfo: {
+            img: Images["btn-blue"]
+        },
+        textInfo: {
+            text: "Hello",
+            color: "black"
+        },
         onTouchStart: function(x, y, id) {
             this.backgroundColor = "red";
+            this.scale = 0.9;
         },
         onTouchEnd: function(x, y, id) {
             this.backgroundColor = this.normalBG;
+            this.scale = 1;
         },
         onTap: function(x, y, id) {
             this.backgroundColor = this.normalBG;
-            var Me = this;
-            setTimeout(function() {
-                alert("别点我 " + Me.id + " , " + id);
-            }, 10);
         }
     });
     uiC.init();
@@ -218,6 +230,8 @@ function init() {
     initTapListener();
 
 }
+
+var Images = {};
 
 function start() {
     beforeStart();

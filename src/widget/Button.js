@@ -6,25 +6,69 @@ var CUI = CUI || {};
 
     var Class = exports.Class;
     var Component = exports.Component;
+    var ImageRenderer = exports.ImageRenderer;
+    var TextRenderer = exports.TextRenderer;
 
     var Button = Class.create({
 
         composite: false,
         disabled: false,
         // TODO
-        initStates: function() {
-            this.normalState = {}
-            this.downState = { };
-            this.disabledState = {
+        init: function() {
 
-            };
-            this.state = this.normalState;
+            if (this.bgInfo) {
+                this.bgRenderer = new ImageRenderer(this.bgInfo);
+                this.bgRenderer.setParent(this);
+                this.bgRenderer.init();
+
+                if (this.width === null) {
+                    this.width = this.bgRenderer.width || this.bgRenderer.sw;
+                }
+
+                if (this.height === null) {
+                    this.height = this.bgRenderer.height || this.bgRenderer.sh;
+                }
+            }
+
+            this.$super.init.call(this);
+
+            if (this.iconInfo) {
+                this.iconRenderer = new ImageRenderer(this.iconInfo);
+                this.iconRenderer.setParent(this);
+                this.iconRenderer.init();
+            }
+            if (this.textInfo) {
+                this.textRenderer = new TextRenderer(this.textInfo);
+                this.textRenderer.setParent(this);
+                this.textRenderer.init();
+            }
         },
 
-        // TODO
-        // render: function(context, timeStep, now) {
+        setText: function(text) {
+            this.textRenderer.setText(text);
+        },
+        setTextInfo: function(textInfo) {
+            this.textRenderer.setTextInfo(textInfo);
+        },
 
-        // },
+        computeLayout: function(forceCompute) {
+            this.bgRenderer && this.bgRenderer.updatePosition();
+            this.iconRenderer && this.iconRenderer.updatePosition();
+            this.textRenderer && this.textRenderer.updatePosition();
+            this.needToCompute = false;
+
+            this.updateAnchor();
+        },
+
+        renderSelf: function(context, timeStep, now) {
+            if (this.backgroundColor) {
+                context.fillStyle = this.backgroundColor;
+                context.fillRect(this.x, this.y, this.w, this.h);
+            }
+            this.bgRenderer && this.bgRenderer.render(context);
+            this.iconRenderer && this.iconRenderer.render(context);
+            this.textRenderer && this.textRenderer.render(context);
+        },
 
         onTouchStart: function(x, y, id) {
             if (this.disabled) {

@@ -7,6 +7,7 @@ var CUI = CUI || {};
 
     var Class = exports.Class;
     var Utils = exports.Utils;
+    var BaseRenderer = exports.BaseRenderer;
 
     var ImageRenderer = Class.create({
 
@@ -21,13 +22,6 @@ var CUI = CUI || {};
         sw: null,
         sh: null,
 
-        x: 0,
-        y: 0,
-        width: 0,
-        height: 0,
-        anchorX: 0,
-        anchorY: 0,
-
         scale: 1,
         scaleX: 1,
         scaleY: 1,
@@ -35,16 +29,24 @@ var CUI = CUI || {};
         flipY: false,
         rotation: 0,
 
-        visible: true,
-
         offsetX: 0,
         offsetY: 0,
         offsetW: 0,
         offsetH: 0,
         offsetAlpha: 0,
 
-        setImgInfo: function(img, sx, sy, sw, sh) {
-            this.img = img;
+        init: function() {
+            this.setImgInfo(this);
+            this.setParent(this.parent);
+        },
+
+        setImgInfo: function(info, syncSize) {
+            this.img = info.img;
+            var sx = info.sx;
+            var sy = info.sy;
+            var sw = info.sw;
+            var sh = info.sh;
+
             if (sx === null || sx === undefined) {
                 sx = 0;
             }
@@ -61,16 +63,19 @@ var CUI = CUI || {};
             this.sy = sy;
             this.sw = sw;
             this.sh = sh;
+
+            if (syncSize || this.width === null) {
+                this.width = this.sw;
+            }
+            if (syncSize || this.height === null) {
+                this.height = this.sh;
+            }
         },
 
         setScale: function(scale) {
             this.scale = scale;
             this.scaleX = scale;
             this.scaleY = scale;
-        },
-        setAnchor: function(x, y) {
-            this.anchorX = x;
-            this.anchorY = y;
         },
 
         quickRender: function(context, timeStep, now) {
@@ -82,16 +87,20 @@ var CUI = CUI || {};
         },
 
         render: function(context, timeStep, now) {
-            if (!this.visible || this.alpha <= 0) {
+
+            var alpha = this.alpha + this.offsetAlpha;
+            if (alpha <= 0) {
                 return false;
             }
 
             var x = -this.anchorX;
             var y = -this.anchorY;
+            var width = this.width;
+            var height = this.height;
+
             var scaleX = this.scaleX * (this.flipX ? -1 : 1);
             var scaleY = this.scaleY * (this.flipY ? -1 : 1);
             var rotation = this.rotation % this.DOUBLE_PI;
-            var alpha = this.alpha + this.offsetAlpha;
 
             if (scaleX != 1 || scaleY != 1 || rotation != 0) {
                 context.save();
@@ -105,7 +114,7 @@ var CUI = CUI || {};
                 y += this.y + this.offsetY;
             }
             context.globalAlpha = alpha > 1 ? 1 : alpha;
-            context.drawImage(this.img, this.sx, this.sy, this.sw, this.sh, x, y, this.width + this.offsetW, this.height + this.offsetH);
+            context.drawImage(this.img, this.sx, this.sy, this.sw, this.sh, x, y, width + this.offsetW, height + this.offsetH);
 
             if (scaleX != 1 || scaleY != 1 || rotation != 0) {
                 context.restore();
@@ -114,7 +123,7 @@ var CUI = CUI || {};
             }
         },
 
-    });
+    }, BaseRenderer);
 
 
     exports.ImageRenderer = ImageRenderer;

@@ -15,6 +15,7 @@ var CUI = CUI || {};
             if (!this.visible || this.alpha <= 0) {
                 return false;
             }
+
             args = Array.prototype.slice.call(arguments, 1);
             if (type != "onSwipe") {
                 var x = args[0],
@@ -27,20 +28,19 @@ var CUI = CUI || {};
                     return false;
                 }
             }
-            var rs;
             if (this.composite) {
-                rs = this.checkTouchChildren(type, arguments);
+                var rs = this.checkTouchChildren(type, arguments);
+                if (rs !== false) {
+                    return rs;
+                }
             }
-            if (!rs) {
-                return this.checkTouchSelf(type, args);
-            }
-            return false;
+            return this.checkTouchSelf(type, args);
         },
 
         checkTouchSelf: function(type, args) {
             if (this[type]) {
                 var rs = this[type].apply(this, args);
-                if (rs) {
+                if (rs !== false) {
                     return rs;
                 }
             }
@@ -57,7 +57,7 @@ var CUI = CUI || {};
                 }
                 // rs = ui[type].apply(ui, args);
                 rs = ui.checkTouch.apply(ui, args);
-                if (rs) {
+                if (rs !== false) {
                     return rs;
                 }
             }
@@ -67,23 +67,23 @@ var CUI = CUI || {};
         ///////////////////////////////////////////////////////
 
         onTouchStart: function(x, y, id) {
-
+            return false;
         },
 
         onTouchMove: function(x, y, id) {
-
+            return false;
         },
 
         onTouchEnd: function(x, y, id) {
-
+            return false;
         },
 
         onTap: function(x, y, id) {
-
+            return false;
         },
 
         onPan: function(x, y, dx, dy, startX, startY, id) {
-
+            return false;
         },
 
         onSwipe: function(x, y, vx, vy, startX, startY, id) {
