@@ -24,17 +24,17 @@ var CUI = CUI || {};
                 } else if (child.relative == "root") {
                     this.computeChild(child, child.root)
                 } else {
-                    this.computeMargin(child, parent);
-                    this.computeRealMargin(child, parent);
-                    this.computeSize(child);
-                    this.computePositionX(child, parent);
+                    child.computeMargin(parent);
+                    child.computeRealMargin(parent);
+                    child.computeSize();
+                    child.computePositionX(parent);
 
                     margin = Math.max(margin, child.pixel.marginTop);
                     var y = currentY + margin;
-                    child.pixel.top = y + (child.pixel.top || 0);
-                    child.y = child.pixel.top + parent.y;
+                    child.pixel.top = Utils.parseValue(child.top, child.pixel.realOuterHeight);
+                    child.y = y + child.pixel.top + parent.y;
 
-                    this.computePadding(child);
+                    child.computePadding();
                     child.updateAABB();
 
                     currentY = y + child.pixel.height;

@@ -116,16 +116,17 @@ var CUI = CUI || {};
             this.parentCell.pixel.width = child.colspan * w;
             this.parentCell.pixel.height = child.rowspan * h;
 
-            this.computeMargin(child, this.parentCell);
+            child.computeMargin(this.parentCell);
 
             this.parentCell.pixel.paddingLeft = this.pixel.cellSpaceH + pixel.marginLeft;
             this.parentCell.pixel.paddingTop = this.pixel.cellSpaceV + pixel.marginTop;
 
-            this.computeRealMargin(child, this.parentCell);
-            this.computeSize(child);
-            this.computePositionX(child, this.parentCell);
-            this.computePositionY(child, this.parentCell);
-            this.computePadding(child);
+            child.computeRealMargin(this.parentCell);
+            child.computeWidth();
+            child.computeHeight();
+            child.computePositionX(this.parentCell);
+            child.computePositionY(this.parentCell);
+            child.computePadding();
             child.updateAABB();
 
         }

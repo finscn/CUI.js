@@ -26,17 +26,18 @@ var CUI = CUI || {};
                 } else if (child.relative == "root") {
                     this.computeChild(child, child.root)
                 } else {
-                    this.computeMargin(child, parent);
-                    this.computeRealMargin(child, parent);
-                    this.computeSize(child);
+                    child.computeMargin(parent);
+                    child.computeRealMargin(parent);
+                    child.computeWidth();
+                    child.computeHeight();
 
                     margin = Math.max(margin, child.pixel.marginLeft);
                     var x = currentX + margin;
-                    child.pixel.left = x + (child.pixel.left || 0);
-                    child.x = child.pixel.left + parent.x;
+                    child.pixel.left = Utils.parseValue(child.left, child.pixel.realOuterWidth);
+                    child.x = x + child.pixel.left + parent.x;
 
-                    this.computePositionY(child, parent);
-                    this.computePadding(child);
+                    child.computePositionY(parent);
+                    child.computePadding();
                     child.updateAABB();
 
                     currentX = x + child.pixel.width;

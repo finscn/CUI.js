@@ -168,6 +168,37 @@ var CUI = CUI || {};
             this.paddingBottom = this.paddingBottom === null ? this.padding : this.paddingBottom;
         },
 
+
+        /////////////////////////////////////////////////////////////////////////
+        /////////////////////////////////////////////////////////////////////////
+        //            以下方法在父元素已经init 并 至少计算过一次之后才可调用
+        /////////////////////////////////////////////////////////////////////////
+        /////////////////////////////////////////////////////////////////////////
+
+        setPosition: function(left, top) {
+            if (this.left != left) {
+                this.left = left;
+                this.computePositionX();
+            }
+            if (this.top != top) {
+                this.top = top;
+                this.computePositionY();
+            }
+            // this.syncPosition();
+            this.needToCompute = true;
+        },
+
+        setSize: function(width, height) {
+            if (this.width != width) {
+                this.width = width;
+                this.computeWidth();
+            }
+            if (this.height != height) {
+                this.height = height;
+                this.computeHeight();
+            }
+        },
+
         syncPosition: function() {
             this.x = this.pixel.relativeX + this.parent.x;
             this.y = this.pixel.relativeY + this.parent.y;
@@ -187,6 +218,18 @@ var CUI = CUI || {};
             this.aabb[3] = this.y + this.h + this.extBottom;
         },
 
+        // 在移动UI时, 可以用以下两个方法 , 更快捷, 但是不严谨.
+        // 严谨的方法是调用  setPosition .
+        moveTo: function(x, y) {
+            this.pixel.relativeX = x;
+            this.pixel.relativeY = y;
+            this.syncPosition();
+        },
+        moveBy: function(dx, dy) {
+            this.pixel.relativeX += dx;
+            this.pixel.relativeY += dy;
+            this.syncPosition();
+        },
         /////////////////////////////////////////////////////////////////////////////
         /////////////////////////////////////////////////////////////////////////////
         /////////////////////////////////////////////////////////////////////////////
@@ -219,6 +262,26 @@ var CUI = CUI || {};
                 this.bottom = bottom;
                 this.needToCompute = true;
             }
+        },
+
+        computeBody: function(parent) {
+            this.computeSelf(parent);
+            if (this.composite) {
+                this.children.forEach(function(child) {
+                    child.computeSelf();
+                });
+            }
+        },
+
+        computeSelf: function(parent) {
+            this.computeMargin(parent);
+            this.computeRealMargin(parent);
+            this.computeWidth();
+            this.computeHeight();
+            this.computePositionX(parent);
+            this.computePositionY(parent);
+            this.computePadding();
+            this.updateAABB();
         },
 
         computeLayout: function(forceCompute) {
@@ -296,6 +359,118 @@ var CUI = CUI || {};
                 context.restore();
             }
         },
+
+        ////////////////////////////////////////////////////////////////////////
+        ////////////////////////////////////////////////////////////////////////
+        ////////////////////////////////////////////////////////////////////////
+        computeMargin: function(parent) {
+            // parent.pixel.width/height
+            parent = parent || this.parent;
+            var relativePixel = parent.pixel;
+            var pixel = this.pixel;
+            this.marginLeft = this.marginLeft === null ? this.margin : this.marginLeft;
+            this.marginTop = this.marginTop === null ? this.margin : this.marginTop;
+            this.marginRight = this.marginRight === null ? this.margin : this.marginRight;
+            this.marginBottom = this.marginBottom === null ? this.margin : this.marginBottom;
+
+            pixel.marginLeft = Utils.parseValue(this.marginLeft, relativePixel.width) || 0;
+            pixel.marginRight = Utils.parseValue(this.marginRight, relativePixel.width) || 0;
+            pixel.marginTop = Utils.parseValue(this.marginTop, relativePixel.height) || 0;
+            pixel.marginBottom = Utils.parseValue(this.marginBottom, relativePixel.height) || 0;
+        },
+
+        computeRealMargin: function(parent) {
+            // parent.pixel.padding
+            parent = parent || this.parent;
+
+            var relativePixel = parent.pixel;
+            var pixel = this.pixel;
+            pixel.realMarginLeft = Math.max(relativePixel.paddingLeft, pixel.marginLeft) || 0;
+            pixel.realMarginTop = Math.max(relativePixel.paddingTop, pixel.marginTop) || 0;
+            pixel.realMarginRight = Math.max(relativePixel.paddingRight, pixel.marginRight) || 0;
+            pixel.realMarginBottom = Math.max(relativePixel.paddingBottom, pixel.marginBottom) || 0;
+            pixel.realOuterWidth = relativePixel.width - pixel.realMarginLeft - pixel.realMarginRight;
+            pixel.realOuterHeight = relativePixel.height - pixel.realMarginTop - pixel.realMarginBottom;
+        },
+
+        computeWidth: function() {
+            var pixel = this.pixel;
+            var relativeWidth = pixel.realOuterWidth;
+            pixel.width = Utils.parseValue(this.width, relativeWidth);
+            this.w = pixel.width;
+        },
+        computeHeight: function() {
+            var pixel = this.pixel;
+            var relativeHeight = pixel.realOuterHeight;
+            pixel.height = Utils.parseValue(this.height, relativeHeight);
+            this.h = pixel.height;
+        },
+
+
+        computePadding: function() {
+            var pixel = this.pixel;
+            this.paddingLeft = this.paddingLeft === null ? this.padding : this.paddingLeft;
+            this.paddingTop = this.paddingTop === null ? this.padding : this.paddingTop;
+            this.paddingRight = this.paddingRight === null ? this.padding : this.paddingRight;
+            this.paddingBottom = this.paddingBottom === null ? this.padding : this.paddingBottom;
+
+            pixel.paddingLeft = Utils.parseValue(this.paddingLeft, pixel.width) || 0;
+            pixel.paddingRight = Utils.parseValue(this.paddingRight, pixel.width) || 0;
+            pixel.paddingTop = Utils.parseValue(this.paddingTop, pixel.height) || 0;
+            pixel.paddingBottom = Utils.parseValue(this.paddingBottom, pixel.height) || 0;
+        },
+
+        computePositionX: function(parent) {
+            // parent.pixel.innerWidth/innerHeight ( size - Math.max(padding, margin) );
+            parent = parent || this.parent;
+
+            var pixel = this.pixel;
+            var relativeWidth = pixel.realOuterWidth;
+
+            pixel.left = Utils.parseValue(this.left, relativeWidth);
+            pixel.right = Utils.parseValue(this.right, relativeWidth);
+
+            var x = 0;
+            if (this.centerH === true) {
+                x = (relativeWidth - pixel.width) / 2;
+            } else if (pixel.left === null && pixel.right !== null) {
+                x = relativeWidth - pixel.width - pixel.right;
+            } else {
+                x = pixel.left;
+            }
+            pixel.relativeX = x + pixel.realMarginLeft;
+
+            this.x = pixel.relativeX + parent.x;
+        },
+
+        computePositionY: function(parent) {
+            // parent.pixel.innerWidth/innerHeight ( size - Math.max(padding, margin) );
+            parent = parent || this.parent;
+            var pixel = this.pixel;
+            var relativeHeight = pixel.realOuterHeight;
+
+            pixel.top = Utils.parseValue(this.top, relativeHeight);
+            pixel.bottom = Utils.parseValue(this.bottom, relativeHeight);
+
+            var y = 0;
+            if (this.centerV === true) {
+                y = (relativeHeight - pixel.height) / 2;
+            } else if (pixel.top === null && pixel.bottom !== null) {
+                y = relativeHeight - pixel.height - pixel.bottom;
+            } else {
+                y = pixel.top;
+            }
+            pixel.relativeY = y + pixel.realMarginTop;
+
+            this.y = pixel.relativeY + parent.y;
+        },
+
+
+
+        ////////////////////////////////////////////////////////////////////////
+        ////////////////////////////////////////////////////////////////////////
+        ////////////////////////////////////////////////////////////////////////
+
 
         destructor: function() {
             this.root = null;

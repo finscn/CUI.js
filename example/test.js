@@ -12,6 +12,7 @@ var Component = CUI.Component;
 var Button = CUI.Button;
 var Utils = CUI.Utils;
 var rootUI;
+var topUI;
 
 window.onload = function() {
     init();
@@ -26,10 +27,10 @@ window.onload = function() {
 };
 
 
-
+var uiT;
 function beforeStart(timeStep, now) {
     rootUI = Component.createRoot(game.width, game.height);
-    var topUI = new Component({
+    topUI = new Component({
         id: "topUI",
         left: 0,
         top: 0,
@@ -86,7 +87,7 @@ function beforeStart(timeStep, now) {
     }
 
 
-    var uiT = new Component({
+    uiT = new Component({
         id: "ttt",
 
         relative: "parent",
@@ -198,6 +199,7 @@ function beforeStart(timeStep, now) {
     uiC.init();
 }
 
+var uiX=0;
 function update(timeStep, now) {
     if (TouchInfo.firstTap) {
         var data = TouchInfo.firstTap;
@@ -212,6 +214,8 @@ function update(timeStep, now) {
         rootUI.checkTouch("onTouchEnd", data.x, data.y, data.id);
         TouchInfo.firstEnd = null;
     }
+    uiX+=1;
+    topUI.setPosition(uiX,topUI.top);
     rootUI.update();
 }
 
