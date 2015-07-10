@@ -168,10 +168,16 @@ var CUI = CUI || {};
             this.paddingBottom = this.paddingBottom === null ? this.padding : this.paddingBottom;
         },
 
-        updatePosition: function() {
+        syncPosition: function() {
             this.x = this.pixel.relativeX + this.parent.x;
             this.y = this.pixel.relativeY + this.parent.y;
             this.updateAABB();
+
+            if (this.composite) {
+                this.children.forEach(function(child) {
+                    child.syncPosition();
+                });
+            }
         },
 
         updateAABB: function() {
