@@ -477,7 +477,7 @@ var CUI = CUI || {};
             this.parent = null;
             this.layout = null;
 
-            // 不会自动显式的销毁子元素.
+            // 不会自动显式的销毁子元素. (不会调用子元素的destructor)
             if (this.composite) {
                 this.children.forEach(function(child) {
                     child.setParent(child.root);
