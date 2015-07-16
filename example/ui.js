@@ -1,34 +1,8 @@
-var Config = {
-    width: 560,
-    height: 400,
-    FPS: 30,
-};
-
-var game = {};
-var canvas, context;
-var loopId;
-
-var Component = CUI.Component;
-var Button = CUI.Button;
-var Utils = CUI.Utils;
-var rootUI;
-var topUI;
-
-window.onload = function() {
-    init();
-
-    CUI.Utils.loadImage("./res/btn-bg.png", function(img) {
-        Images["btn-bg"] = img;
-        CUI.Utils.loadImage("./res/btn-icon.png", function(img) {
-            Images["btn-icon"] = img;
-            start();
-        });
-    });
-};
-
-
+var rootUI, topUI;
 var uiT;
-function beforeStart(timeStep, now) {
+var uiX = 0;
+
+function initUI() {
     rootUI = Component.createRoot(game.width, game.height);
     topUI = new Component({
         id: "topUI",
@@ -45,6 +19,7 @@ function beforeStart(timeStep, now) {
 
     for (var i = 0; i < 3; i++) {
         var ui1 = new Component({
+            id: "ui-1-"+i,
             left: 0,
             top: 0,
             backgroundColor: "rgba(255,240,230,1)",
@@ -53,42 +28,45 @@ function beforeStart(timeStep, now) {
             height: 120,
             margin: 10,
             parent: topUI,
-            layout: new CUI.HBoxLayout(),
+            // layout: new CUI.HBoxLayout(),
         });
         ui1.init();
 
-        for (var j = 0; j < 2; j++) {
-            var ui2 = new Component({
-                left: 0,
-                bottom: 0,
-                backgroundColor: "rgba(255,240,230,1)",
-                width: "30%",
-                height: 25,
-                margin: 10,
-                parent: ui1
-            });
-            ui2.init();
+        var ui2 = new Button({
+            left: 0,
+            bottom: 0,
+            backgroundColor: "rgba(255,240,230,1)",
+            width: 60,
+            // height: "33%",
+            height: 50,
+            margin: 10,
+            parent: ui1,
 
-            for (var k = 0; k < 2; k++) {
-                var ui3 = new Component({
-                    centerX: true,
-                    left: 0,
-                    top: 0,
-                    backgroundColor: "rgba(255,240,230,1)",
-                    width: "50%",
-                    height: "50%",
-                    margin: 4,
-                    parent: ui2,
-                    layout: new CUI.VBoxLayout(),
-                });
-                ui3.init();
-            }
-        }
+            textInfo: {
+                offsetX: -5,
+                text: "Button",
+                color: "black"
+            },
+            onTouchStart: function(x, y, id) {
+                this.scale = 0.9;
+            },
+            onTouchEnd: function(x, y, id) {
+                this.scale = 1;
+            },
+            onTap: function(x, y, id) {
+
+            },
+        });
+        ui2.init();
     }
+
+//////////////////////////////////////////////////////
+//////////////////////////////////////////////////////
+//////////////////////////////////////////////////////
 
 
     uiT = new Component({
-        id: "ttt",
+        id: "ui-t",
 
         relative: "parent",
         centerH: true,
@@ -96,6 +74,8 @@ function beforeStart(timeStep, now) {
         top: 160,
         backgroundColor: "rgba(255,200,100,1)",
         width: "50%",
+        anchorX: "50%",
+        anchorY: "50%",
         height: 150,
         margin: 10,
         parent: topUI,
@@ -154,8 +134,8 @@ function beforeStart(timeStep, now) {
         iconInfo: {
             img: Images["btn-icon"],
             offsetX: -24,
-            width:24,
-            height:24,
+            width: 24,
+            height: 24,
         },
         textInfo: {
             offsetX: 10,
@@ -173,8 +153,10 @@ function beforeStart(timeStep, now) {
         }
     });
     uiC.init();
+
+
     var uiC = new Component({
-        id: "c",
+        id: "bad",
         backgroundColor: "rgba(255,100,50,1)",
         normalBG: "rgba(255,100,50,1)",
         parent: uiT,
@@ -182,6 +164,8 @@ function beforeStart(timeStep, now) {
         row: 1,
         colspan: 3,
         rowspan: 2,
+        visible: true,
+        // composite: false,
         onTouchStart: function(x, y, id) {
             this.backgroundColor = "red";
         },
@@ -197,65 +181,5 @@ function beforeStart(timeStep, now) {
         }
     });
     uiC.init();
-}
 
-var uiX=0;
-function update(timeStep, now) {
-    if (TouchInfo.firstTap) {
-        var data = TouchInfo.firstTap;
-        rootUI.checkTouch("onTap", data.x, data.y, data.id);
-        TouchInfo.firstTap = null;
-    } else if (TouchInfo.firstStart) {
-        var data = TouchInfo.firstStart;
-        rootUI.checkTouch("onTouchStart", data.x, data.y, data.id);
-        TouchInfo.firstStart = null;
-    } else if (TouchInfo.firstEnd) {
-        var data = TouchInfo.firstEnd;
-        rootUI.checkTouch("onTouchEnd", data.x, data.y, data.id);
-        TouchInfo.firstEnd = null;
-    }
-    uiX+=1;
-    topUI.setPosition(uiX,topUI.top);
-    rootUI.update();
-}
-
-function render(context, timeStep, now) {
-    context.fillStyle = "rgba(0,0,0,1)";
-    context.fillRect(0, 0, Config.width, Config.height);
-
-    rootUI.render(context);
-
-}
-
-function init() {
-    canvas = $id("canvas");
-    canvas.width = Config.width;
-    canvas.height = Config.height;
-    context = canvas.getContext("2d");
-    game.width = Config.width;
-    game.height = Config.height;
-    var rect = canvas.getBoundingClientRect();
-    game.offsetX = rect.left;
-    game.offsetY = rect.top;
-    initTouchController();
-    initTapListener();
-
-}
-
-var Images = {};
-
-function start() {
-    beforeStart();
-    var staticTimeStep = 1000 / Config.FPS >> 0;
-    loopId = setInterval(function() {
-        var now = Date.now();
-        var timeStep = staticTimeStep;
-        update(timeStep, now);
-        render(context, timeStep, now);
-    }, staticTimeStep);
-}
-
-
-function $id(id) {
-    return document.getElementById(id);
 }

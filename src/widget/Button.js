@@ -70,14 +70,31 @@ var CUI = CUI || {};
             this.updateAnchor();
         },
 
+        syncPosition: function() {
+            this.x = this.pixel.relativeX + this.parent.x;
+            this.y = this.pixel.relativeY + this.parent.y;
+            this.updateAABB();
+
+            this.bgRenderer && this.bgRenderer.updatePosition();
+            this.iconRenderer && this.iconRenderer.updatePosition();
+            this.textRenderer && this.textRenderer.updatePosition();
+        },
+
         renderSelf: function(context, timeStep, now) {
             if (this.backgroundColor) {
                 context.fillStyle = this.backgroundColor;
                 context.fillRect(this.x, this.y, this.w, this.h);
             }
+
             this.bgRenderer && this.bgRenderer.render(context);
             this.iconRenderer && this.iconRenderer.render(context);
             this.textRenderer && this.textRenderer.render(context);
+
+            if (this.borderColor && this.borderWidth) {
+                context.lineWidth = this.borderWidth;
+                context.strokeStyle = this.borderColor;
+                context.strokeRect(this.x, this.y, this.w, this.h);
+            }
         },
 
         onTouchStart: function(x, y, id) {

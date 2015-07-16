@@ -10,11 +10,8 @@ var CUI = CUI || {};
     var HBoxLayout = Class.create({
         constructor: HBoxLayout,
 
-        owner: null,
-
-        compute: function(parent, children) {
-            parent = parent || this.parent;
-            children = children || parent.children;
+        compute: function(parent) {
+            var children = parent.children;
 
             var idx = 0;
             var margin = parent.pixel.paddingLeft;
@@ -34,7 +31,8 @@ var CUI = CUI || {};
                     margin = Math.max(margin, child.pixel.marginLeft);
                     var x = currentX + margin;
                     child.pixel.left = Utils.parseValue(child.left, child.pixel.realOuterWidth);
-                    child.x = x + child.pixel.left + parent.x;
+                    child.pixel.relativeX = x + child.pixel.left;
+                    child.x = child.pixel.relativeX + parent.x;
 
                     child.computePositionY(parent);
                     child.computePadding();

@@ -10,11 +10,8 @@ var CUI = CUI || {};
     var BaseLayout = Class.create({
         constructor: BaseLayout,
 
-        parent: null,
-
-        compute: function(parent, children) {
-            parent = parent || this.parent;
-            children = children || parent.children;
+        compute: function(parent) {
+            var children = parent.children;
 
             var idx = 0;
             for (var i = 0, len = children.length; i < len; i++) {

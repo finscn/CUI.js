@@ -87,11 +87,11 @@ var CUI = CUI || {};
         },
 
         onSwipe: function(x, y, vx, vy, startX, startY, id) {
-
+            return false;
         },
 
         onTapOut: function(x, y, id) {
-
+            return false;
         },
 
     });

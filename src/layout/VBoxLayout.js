@@ -10,9 +10,8 @@ var CUI = CUI || {};
     var VBoxLayout = Class.create({
         constructor: VBoxLayout,
 
-        compute: function(parent, children) {
-            parent = parent || this.parent;
-            children = children || parent.children;
+        compute: function(parent) {
+            var children = parent.children;
 
             var idx = 0;
             var margin = parent.pixel.paddingTop;
@@ -32,7 +31,8 @@ var CUI = CUI || {};
                     margin = Math.max(margin, child.pixel.marginTop);
                     var y = currentY + margin;
                     child.pixel.top = Utils.parseValue(child.top, child.pixel.realOuterHeight);
-                    child.y = y + child.pixel.top + parent.y;
+                    child.pixel.relativeY = y + child.pixel.top;
+                    child.y = child.pixel.relativeY + parent.y;
 
                     child.computePadding();
                     child.updateAABB();

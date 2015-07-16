@@ -12,6 +12,7 @@ var CUI = CUI || {};
     var TouchTarget = exports.TouchTarget;
     var Layout = exports.Layout;
 
+    var noop = function() {};
 
     var Component = Class.create({
         constructor: Component,
@@ -111,6 +112,9 @@ var CUI = CUI || {};
 
 
         init: function() {
+            this.id = this.id || "cmp_" + Component._SN++;
+            Component.addUI(this);
+
             this.root = this.root || (this.parent && this.parent.root);
             this.aabb = [];
             this.pixel = {
@@ -143,6 +147,7 @@ var CUI = CUI || {};
                 this.parent = parent;
                 this.parent.addChild(this);
                 this.needToCompute = true;
+                parent.needToCompute = true;
             }
         },
         addChild: function(child) {
@@ -197,6 +202,16 @@ var CUI = CUI || {};
                 this.height = height;
                 this.computeHeight();
             }
+        },
+
+        setAnchor: function(x, y) {
+            this.anchorX = x;
+            this.anchorY = y;
+        },
+
+        updateAnchor: function() {
+            this.pixel.anchorX = Utils.parseValue(this.anchorX, this.w) || 0;
+            this.pixel.anchorY = Utils.parseValue(this.anchorY, this.h) || 0;
         },
 
         syncPosition: function() {
@@ -264,15 +279,6 @@ var CUI = CUI || {};
             }
         },
 
-        computeBody: function(parent) {
-            this.computeSelf(parent);
-            if (this.composite) {
-                this.children.forEach(function(child) {
-                    child.computeSelf();
-                });
-            }
-        },
-
         computeSelf: function(parent) {
             this.computeMargin(parent);
             this.computeRealMargin(parent);
@@ -289,7 +295,6 @@ var CUI = CUI || {};
                 this.layout.compute(this);
                 this.needToCompute = false;
             }
-            this.updateAnchor();
         },
 
         getChildrenCount: function() {
@@ -306,11 +311,6 @@ var CUI = CUI || {};
             return aabb[0] < aabb2[2] && aabb[2] > aabb2[0] && aabb[1] < aabb2[3] && aabb[3] > aabb2[1];
         },
 
-        updateAnchor: function() {
-            this.pixel.anchorX = Utils.parseValue(this.anchorX, this.w) || 0;
-            this.pixel.anchorY = Utils.parseValue(this.anchorY, this.h) || 0;
-        },
-
         updateSelf: function(timeStep, now) {
 
         },
@@ -325,7 +325,9 @@ var CUI = CUI || {};
             if (this.composite) {
                 this.updateChildren(timeStep, now);
             }
+            this.onUpdate(timeStep, now);
         },
+        onUpdate: noop,
 
         renderSelf: function(context, timeStep, now) {
             context.fillStyle = this.backgroundColor;
@@ -343,11 +345,13 @@ var CUI = CUI || {};
         doRenderScale: function(context, timeStep, now) {
             context.save();
             context.translate(this.x + this.pixel.anchorX, this.y + this.pixel.anchorY);
-            console.log(this.x, this.pixel.anchorX)
             context.scale(this.scale, this.scale);
             context.translate(-this.x - this.pixel.anchorX, -this.y - this.pixel.anchorY);
         },
         render: function(context, timeStep, now) {
+            if (!this.visible){
+                return;
+            }
             if (this.scale != 1) {
                 this.doRenderScale(context, timeStep, now);
             }
@@ -363,6 +367,7 @@ var CUI = CUI || {};
         ////////////////////////////////////////////////////////////////////////
         ////////////////////////////////////////////////////////////////////////
         ////////////////////////////////////////////////////////////////////////
+
         computeMargin: function(parent) {
             // parent.pixel.width/height
             parent = parent || this.parent;
@@ -397,12 +402,14 @@ var CUI = CUI || {};
             var pixel = this.pixel;
             var relativeWidth = pixel.realOuterWidth;
             pixel.width = Utils.parseValue(this.width, relativeWidth);
+            pixel.anchorX = Utils.parseValue(this.anchorX, pixel.width) || 0;
             this.w = pixel.width;
         },
         computeHeight: function() {
             var pixel = this.pixel;
             var relativeHeight = pixel.realOuterHeight;
             pixel.height = Utils.parseValue(this.height, relativeHeight);
+            pixel.anchorY = Utils.parseValue(this.anchorY, pixel.height) || 0;
             this.h = pixel.height;
         },
 
@@ -488,19 +495,23 @@ var CUI = CUI || {};
         },
     });
 
-    Component.noop = function() {};
     Component.createRoot = function(viewportWidth, viewportHeight) {
         var root = new Component({
-            id: "_root",
+            id: "cmp_root",
+            left: 0,
+            top: 0,
+            width: viewportWidth,
+            height: viewportHeight,
+
             x: 0,
             y: 0,
             w: viewportWidth,
             h: viewportHeight,
-            relative: "root",
 
-            updateSelf: Component.noop,
-            renderSelf: Component.noop,
-            checkTouchSelf: Component.noop,
+            relative: "root",
+            updateSelf: noop,
+            renderSelf: noop,
+            checkTouchSelf: noop,
             viewportWidth: viewportWidth,
             viewportHeight: viewportHeight,
         });
@@ -517,6 +528,19 @@ var CUI = CUI || {};
             0, 0, viewportWidth, viewportHeight
         ];
         return root;
+    };
+
+    Component._SN = 0;
+    Component.all = {};
+    Component.addUI = function(ui) {
+        if (!ui) {
+            return false;
+        }
+        Component.all[ui.id] = ui;
+        return ui.id;
+    };
+    Component.getUI = function(id) {
+        return Component.all[id];
     };
 
 

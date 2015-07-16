@@ -20,9 +20,8 @@ var CUI = CUI || {};
         cols: 1,
         rows: 1,
 
-        compute: function(parent, children) {
-            parent = parent || this.parent;
-            children = children || parent.children;
+        compute: function(parent) {
+            var children = parent.children;
 
             var idx = 0;
             this.initTable(parent);
@@ -111,8 +110,8 @@ var CUI = CUI || {};
             var x = col * w;
             var y = row * h;
 
-            this.parentCell.x = col * w + parent.x;
-            this.parentCell.y = row * h + parent.y;
+            this.parentCell.x = parent.x;
+            this.parentCell.y = parent.y;
             this.parentCell.pixel.width = child.colspan * w;
             this.parentCell.pixel.height = child.rowspan * h;
 
@@ -122,6 +121,10 @@ var CUI = CUI || {};
             this.parentCell.pixel.paddingTop = this.pixel.cellSpaceV + pixel.marginTop;
 
             child.computeRealMargin(this.parentCell);
+
+            child.pixel.realMarginLeft += col * w;
+            child.pixel.realMarginTop += row * h;
+
             child.computeWidth();
             child.computeHeight();
             child.computePositionX(this.parentCell);
