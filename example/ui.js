@@ -4,13 +4,15 @@ var uiX = 0;
 
 function initUI() {
     rootUI = Component.createRoot(game.width, game.height);
-    topUI = new Component({
+    topUI = new ScrollArea({
         id: "topUI",
         left: 0,
         top: 0,
         backgroundColor: "rgba(255,240,230,1)",
         width: "100%",
-        height: "100%",
+        // height: "100%",
+        height: 300,
+        scrollHeight:400,
         parent: rootUI,
         layout: new CUI.HBoxLayout(),
         padding: 20,
@@ -59,6 +61,26 @@ function initUI() {
         });
         ui2.init();
     }
+
+
+        var ui3 = new Label({
+            id: "ui-3",
+            left: 0,
+            top: 0,
+            backgroundColor: "rgba(255,240,230,1)",
+            // width: 100,
+            // height: "33%",
+            // height: 120,
+            margin: 10,
+            parent: topUI,
+            textInfo: {
+                // offsetX: -5,
+                text: "test text 123",
+                color: "black"
+            },
+            // layout: new CUI.HBoxLayout(),
+        });
+        ui3.init();
 
 //////////////////////////////////////////////////////
 //////////////////////////////////////////////////////

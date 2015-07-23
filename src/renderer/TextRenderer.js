@@ -14,11 +14,16 @@ var CUI = CUI || {};
 
         text: null,
         color: null,
-        fontName: null,
-        fontSize: null,
+
+
+        fontStyle: null,
         fontWeight: null,
+        fontSize: null,
+        fontName: null,
         fontStyleText: null,
         lineHeight: null,
+
+        textAlign: "left",
 
         measure: null,
 
@@ -64,6 +69,7 @@ var CUI = CUI || {};
             var y = this.y - this.anchorY + this.offsetY + this.fontSize;
 
             context.font = this.fontStyleText;
+            context.textAlign = this.textAlign;
             if (this.strokeWidth) {
                 context.lineCap = "round";
                 context.lineWidth = this.strokeWidth;

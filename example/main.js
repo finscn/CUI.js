@@ -9,7 +9,9 @@ var canvas, context;
 var loopId;
 
 var Component = CUI.Component;
+var Label = CUI.Label;
 var Button = CUI.Button;
+var ScrollArea = CUI.ScrollArea;
 var Utils = CUI.Utils;
 
 window.onload = function() {
@@ -31,6 +33,8 @@ function beforeStart(timeStep, now) {
 }
 
 function update(timeStep, now) {
+    TWEEN.update();
+
     if (TouchInfo.firstTap) {
         var data = TouchInfo.firstTap;
         rootUI.checkTouch("onTap", data.x, data.y, data.id);
@@ -43,11 +47,19 @@ function update(timeStep, now) {
         var data = TouchInfo.firstEnd;
         rootUI.checkTouch("onTouchEnd", data.x, data.y, data.id);
         TouchInfo.firstEnd = null;
+    } else if (TouchInfo.firstPan) {
+        var data = TouchInfo.firstPan;
+        rootUI.checkTouch("onPan", data.x, data.y,data.dx,data.dy,data.sx,data.sy, data.id);
+        TouchInfo.firstPan = null;
+    } else if (TouchInfo.firstSwipe) {
+        var data = TouchInfo.firstSwipe;
+        rootUI.checkTouch("onSwipe", data.x, data.y,data.vx,data.vy,data.sx,data.sy, data.id);
+        TouchInfo.firstSwipe = null;
     }
-    rootUI.update();
+    rootUI.update(timeStep,now);
     // uiX+=1;
     // topUI.setPosition(uiX,topUI.top);
-    topUI.moveBy(0.25,0);
+    // topUI.moveBy(0.25,0);
 }
 
 function render(context, timeStep, now) {
@@ -70,6 +82,8 @@ function init() {
     game.offsetY = rect.top;
     initTouchController();
     initTapListener();
+    initPanListener();
+    initSwipeListener();
 
 }
 
