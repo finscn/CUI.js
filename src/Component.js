@@ -249,11 +249,7 @@ var CUI = CUI || {};
         /////////////////////////////////////////////////////////////////////////////
         /////////////////////////////////////////////////////////////////////////////
 
-        setSize: function(width, height) {
-            this.width = width;
-            this.height = height;
-            this.needToCompute = this.width !== width || this.height !== height;
-        },
+
         setLeft: function(left) {
             if (this.left !== left) {
                 this.left = left;

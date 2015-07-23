@@ -137,34 +137,55 @@ var CUI = CUI || {};
             if (this.scrollX < this.minScrollX || this.scrollX > this.maxScrollX || this.scrollY < this.minScrollY || this.scrollY > this.maxScrollY) {
                 var Me = this;
                 this.stopTween();
-                var tX = Math.min(this.maxScrollX, Math.max(this.minScrollX, this.scrollX));
-                var tY = Math.min(this.maxScrollY, Math.max(this.minScrollY, this.scrollY));
-                this._cx = this.scrollX;
-                this._cy = this.scrollY;
-                this.tween = new TWEEN.Tween(this).to({
-                        _cx: tX,
-                        _cy: tY
-                    }, 300).easing(TWEEN.Easing.Linear.None)
-                    .onUpdate(function() {
-                        var dx = Me.scrollX - Me._cx;
-                        var dy = Me.scrollY - Me._cy;
+                var _tx = Math.min(this.maxScrollX, Math.max(this.minScrollX, this.scrollX));
+                var _ty = Math.min(this.maxScrollY, Math.max(this.minScrollY, this.scrollY));
+                var _cx = this.scrollX;
+                var _cy = this.scrollY;
+                var _dx = _tx - _cx;
+                var _dy = _ty - _cy;
+
+                this.tween = {
+                    duration: 300,
+                    played: 0,
+                    onUpdate: function(k) {
+                        var dx = Me.scrollX - _cx-_dx*k;
+                        var dy = Me.scrollY - _cy-_dy*k;
                         if (dx || dy) {
                             Me.scrollBy(dx, dy);
                         }
-                    })
-                    .onComplete(function() {
+                    },
+                    onComplete: function() {
                         Me.thumbX = Me.scrollX * Me.rateWidth >> 0;
                         Me.thumbY = Me.scrollY * Me.rateHeight >> 0;
                         Me.scorllOver = true;
-                    });
-                this.tween.start();
+                    },
+                };
             }
         },
 
         stopTween: function() {
-            if (this.tween) {
-                this.tween.stop();
+            this.tween = null;
+        },
+
+        updateTween: function(timeStep) {
+            var tween = this.tween;
+            if (!tween) {
+                return false;
             }
+            tween.played += timeStep;
+            if (tween.played < 0) {
+                return false;
+            }
+            var k = tween.played / tween.duration;
+            if (k >= 1) {
+                k = 1;
+                tween.onComplete();
+                this.stopTween();
+            } else {
+                tween.onUpdate(k);
+            }
+            return true;
+
         },
 
         onTouchStart: function(x, y, id) {
@@ -192,6 +213,7 @@ var CUI = CUI || {};
         },
 
         updateSelf: function(timeStep, now) {
+            this.updateTween(timeStep);
             if (this.scorllOver) {
                 return;
             }
@@ -242,7 +264,7 @@ var CUI = CUI || {};
             var scrollChanged = !!(this.scrollDX || this.scrollDY);
             this.children.forEach(function(c) {
                 if (scrollChanged) {
-                    c.moveBy(-Me.scrollDX,-Me.scrollDY);
+                    c.moveBy(-Me.scrollDX, -Me.scrollDY);
                 }
                 if (Me.checkCollideAABB(c.aabb)) {
                     c.render(context, timeStep, now);
