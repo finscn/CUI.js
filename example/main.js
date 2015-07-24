@@ -33,7 +33,6 @@ function beforeStart(timeStep, now) {
 }
 
 function update(timeStep, now) {
-    TWEEN.update();
 
     if (TouchInfo.firstTap) {
         var data = TouchInfo.firstTap;
