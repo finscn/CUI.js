@@ -127,15 +127,13 @@ var CUI = CUI || {};
 
             if (this.composite) {
                 Composite.apply(this);
-            }
-
-            this.setParent(this.parent || this.root, true);
-            this.setMargin(this.margin || 0);
-            this.setPadding(this.padding || 0);
-
-            if (this.composite) {
                 this.setLayout(this.layout || Layout.commonLayout);
             }
+
+            this.setMargin(this.margin || 0);
+            this.setPadding(this.padding || 0);
+            this.setParent(this.parent || this.root, true);
+
         },
 
         setLayout: function(layout) {

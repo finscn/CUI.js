@@ -19,6 +19,20 @@ function initUI() {
     });
     topUI.init();
 
+    var ui1 = new Picture({
+        id: "ui-1-"+0,
+        left: 0,
+        top: 0,
+        backgroundColor: "rgba(100,240,230,1)",
+        img: Images["btn-bg"],
+        // width: 100,
+        height: 90,
+        margin: 10,
+        parent: topUI,
+        // layout: new CUI.HBoxLayout(),
+    });
+    ui1.init();
+
     for (var i = 0; i < 3; i++) {
         var ui1 = new Component({
             id: "ui-1-"+i,

@@ -25,11 +25,11 @@ var CUI = CUI || {};
                 this.bgRenderer.setParent(this);
                 this.bgRenderer.init();
 
-                if (this.width === null) {
+                if (this.width === null || this.width === "auto") {
                     this.width = this.bgRenderer.sw;
                 }
 
-                if (this.height === null) {
+                if (this.height === null || this.height === "auto") {
                     this.height = this.bgRenderer.sh;
                 }
             }
@@ -48,18 +48,18 @@ var CUI = CUI || {};
             }
         },
 
-        compositeSizeWithText: function() {
+        computeSizeWithText: function() {
             var measure = this.textRenderer.measure;
             if (!measure) {
                 return;
             }
             var needToCompute = false;
-            if (this.width === null) {
+            if (this.width === null || this.width === "auto") {
                 this.pixel.width = measure.width;
                 this.w = measure.width;
                 needToCompute = true;
             }
-            if (this.height === null) {
+            if (this.height === null || this.height === "auto") {
                 this.pixel.height = measure.height;
                 this.h = measure.height;
                 needToCompute = true;
@@ -86,9 +86,10 @@ var CUI = CUI || {};
                 this.iconRenderer.updatePosition();
             }
             this.textRenderer && this.textRenderer.updatePosition();
-            this.needToCompute = false;
 
             this.updateAnchor();
+
+            this.needToCompute = false;
         },
 
         syncPosition: function() {

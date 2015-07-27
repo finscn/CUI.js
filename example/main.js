@@ -11,6 +11,7 @@ var loopId;
 var Component = CUI.Component;
 var Label = CUI.Label;
 var Button = CUI.Button;
+var Picture = CUI.Picture;
 var ScrollArea = CUI.ScrollArea;
 var Utils = CUI.Utils;
 
