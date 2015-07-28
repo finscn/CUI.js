@@ -25,7 +25,9 @@ var CUI = CUI || {};
                 } else {
                     child.computeMargin(parent);
                     child.computeRealMargin(parent);
-                    child.computeSize();
+                    child.computeWidth();
+                    child.computeHeight();
+
                     child.computePositionX(parent);
 
                     margin = Math.max(margin, child.pixel.marginTop);

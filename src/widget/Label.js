@@ -17,25 +17,19 @@ var CUI = CUI || {};
         // 不指定宽高, 大小由 bgRenderer 的实际大小决定
         width: null,
         height: null,
+        scaleBg: false,
+
+        autoSizeWithText:true,
 
         init: function() {
+
+            Label.$super.init.call(this);
 
             if (this.bgInfo) {
                 this.bgRenderer = new ImageRenderer(this.bgInfo);
                 this.bgRenderer.setParent(this);
                 this.bgRenderer.init();
-
-                if (this.width === null || this.width === "auto") {
-                    this.width = this.bgRenderer.sw;
-                }
-
-                if (this.height === null || this.height === "auto") {
-                    this.height = this.bgRenderer.sh;
-                }
             }
-
-            Label.$super.init.call(this);
-
             if (this.iconInfo) {
                 this.iconRenderer = new ImageRenderer(this.iconInfo);
                 this.iconRenderer.setParent(this);
@@ -45,6 +39,36 @@ var CUI = CUI || {};
                 this.textRenderer = new TextRenderer(this.textInfo);
                 this.textRenderer.setParent(this);
                 this.textRenderer.init();
+            }
+
+
+        },
+
+        computeWidth: function() {
+            var pixel = this.pixel;
+            if (this.bgRenderer && (this.width === null || this.width === "auto")) {
+                pixel.width = this.bgRenderer.sw;
+            } else {
+                pixel.width = Utils.parseValue(this.width, pixel.realOuterWidth);
+            }
+            pixel.anchorX = Utils.parseValue(this.anchorX, pixel.width) || 0;
+            this.w = pixel.width;
+            if (this.scaleBg) {
+                this.bgRenderer.pixel.width = this.w;
+            }
+        },
+        computeHeight: function() {
+            var pixel = this.pixel;
+            if (this.bgRenderer && (this.width === null || this.width === "auto")) {
+                pixel.height = this.bgRenderer.sh;
+            } else {
+                pixel.height = Utils.parseValue(this.height, pixel.realOuterHeight);
+            }
+            pixel.anchorY = Utils.parseValue(this.anchorY, pixel.height) || 0;
+            this.h = pixel.height;
+
+            if (this.scaleBg) {
+                this.bgRenderer.pixel.height = this.h;
             }
         },
 
@@ -106,7 +130,9 @@ var CUI = CUI || {};
             if (this.textRenderer) {
                 if (this.textRenderer.needToCompute) {
                     this.textRenderer.computeSize(context);
-                    this.compositeSizeWithText();
+                    if (this.autoSizeWithText){
+                        this.computeSizeWithText();
+                    }
                 }
             }
             if (this.backgroundColor) {

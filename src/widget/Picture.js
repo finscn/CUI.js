@@ -22,7 +22,14 @@ var CUI = CUI || {};
 
             Picture.$super.init.call(this);
 
-            if (!this.imgInfo) {
+            this.imageRenderer = new ImageRenderer({
+                parent: this
+            });
+            this.imageRenderer.init();
+
+            if (this.src) {
+                this.setSrc(this.src);
+            } else if (!this.imgInfo) {
                 this.imgInfo = {
                     img: this.img,
                     sx: this.sx,
@@ -31,11 +38,19 @@ var CUI = CUI || {};
                     sh: this.sh,
                     width: this.width,
                     height: this.height,
-                }
+                };
+                this.imageRenderer.setImgInfo(this.imgInfo);
             }
-            this.imageRenderer = new ImageRenderer(this.imgInfo);
-            this.imageRenderer.setParent(this);
-            this.imageRenderer.init();
+        },
+
+        setSrc: function(src) {
+            this.src = src;
+            var Me = this;
+            this.imageRenderer.setSrc(src, function(img) {
+                if (img) {
+                    Me.setReflow(true);
+                }
+            });
         },
 
         computeWidth: function() {

@@ -132,7 +132,7 @@ var CUI = CUI || {};
 
             this.setMargin(this.margin || 0);
             this.setPadding(this.padding || 0);
-            this.setParent(this.parent || this.root, true);
+            this.setParent(this.parent, true);
 
         },
 
@@ -144,14 +144,13 @@ var CUI = CUI || {};
             if (parent && (parent != this.parent || forceCompute)) {
                 this.parent = parent;
                 this.parent.addChild(this);
-                this.needToCompute = true;
-                parent.needToCompute = true;
             }
         },
         addChild: function(child) {
             if (this.composite) {
                 Composite.prototype.addChild.call(this, child);
             }
+            child.root = this.root;
             this.needToCompute = true;
         },
 
@@ -178,6 +177,41 @@ var CUI = CUI || {};
         /////////////////////////////////////////////////////////////////////////
         /////////////////////////////////////////////////////////////////////////
 
+
+        setReflow: function(deep) {
+            if (!deep) {
+                this.needToCompute = false;
+                return false;
+            }
+            if (deep == "root") {
+                var root = this.root || this.parent;
+                if (root) {
+                    root.needToCompute;
+                }
+            } else if (deep == "parent") {
+                var parent = this.parent || this.root;
+                if (parent) {
+                    parent.needToCompute;
+                }
+            } else if (deep === true) {
+                var stop = false;
+                var ui = this;
+                while (ui) {
+                    ui.needToCompute = true;
+                    if (stop || ui.relative == "root") {
+                        break;
+                    } else if (ui.relative == "parent") {
+                        stop = true;
+                    }
+                    ui = ui.parent;
+                }
+            } else {
+                this.needToCompute = true;
+            }
+
+            return true;
+        },
+
         setPosition: function(left, top) {
             if (this.left != left) {
                 this.left = left;
@@ -188,7 +222,7 @@ var CUI = CUI || {};
                 this.computePositionY();
             }
             // this.syncPosition();
-            this.needToCompute = true;
+            this.setReflow("parent");
         },
 
         setSize: function(width, height) {
@@ -251,25 +285,25 @@ var CUI = CUI || {};
         setLeft: function(left) {
             if (this.left !== left) {
                 this.left = left;
-                this.needToCompute = true;
+                this.setReflow("parent");
             }
         },
         setRight: function(right) {
             if (this.right !== right) {
                 this.right = right;
-                this.needToCompute = true;
+                this.setReflow("parent");
             }
         },
         setTop: function(top) {
             if (this.top !== top) {
                 this.top = top;
-                this.needToCompute = true;
+                this.setReflow("parent");
             }
         },
         setBottom: function(bottom) {
             if (this.bottom !== bottom) {
                 this.bottom = bottom;
-                this.needToCompute = true;
+                this.setReflow("parent");
             }
         },
 
@@ -343,7 +377,7 @@ var CUI = CUI || {};
             context.translate(-this.x - this.pixel.anchorX, -this.y - this.pixel.anchorY);
         },
         render: function(context, timeStep, now) {
-            if (!this.visible){
+            if (!this.visible) {
                 return;
             }
             if (this.scale != 1) {

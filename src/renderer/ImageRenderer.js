@@ -16,6 +16,7 @@ var CUI = CUI || {};
         HALF_PI: Math.PI / 2,
         DOUBLE_PI: Math.PI * 2,
 
+        src: null,
         img: null,
         sx: null,
         sy: null,
@@ -41,10 +42,44 @@ var CUI = CUI || {};
 
         init: function() {
             this.pixel = {};
-            this.setImgInfo(this);
+            if (this.src) {
+                this.setSrc(this.src);
+            } else {
+                this.setImgInfo(this);
+            }
             this.setParent(this.parent);
         },
 
+        setSrc: function(src, callback) {
+            this.src = src;
+            var Me = this;
+            this.sx = 0;
+            this.sy = 0;
+            this.sw = 0;
+            this.sh = 0;
+            var img = new Image();
+            img.onload = function(event) {
+                var info = {
+                    img: img,
+                    sx: 0,
+                    sy: 0,
+                    sw: img.width,
+                    sh: img.height,
+                };
+                Me.setImgInfo(info);
+                if (callback) {
+                    callback(img);
+                }
+            };
+            img.onerror = function(event) {
+                Me.img = null;
+                if (callback) {
+                    callback(null);
+                }
+            };
+            img.src = src;
+            return img;
+        },
         setImgInfo: function(info) {
             this.img = info.img;
             var sx = info.sx;
@@ -58,12 +93,17 @@ var CUI = CUI || {};
             if (sy === null || sy === undefined) {
                 sy = 0;
             }
-            if (sw === null || sw === undefined) {
-                sw = this.img.width;
+            if (this.img) {
+                if (sw === null || sw === undefined) {
+                    sw = this.img.width;
+                }
+                if (sh === null || sh === undefined) {
+                    sh = this.img.height;
+                }
+            } else {
+                sw = sh = 0;
             }
-            if (sh === null || sh === undefined) {
-                sh = this.img.height;
-            }
+
             this.sx = sx;
             this.sy = sy;
             this.sw = sw;
@@ -96,6 +136,9 @@ var CUI = CUI || {};
         },
 
         quickRender: function(context, timeStep, now) {
+            if (!this.img) {
+                return;
+            }
             var x = this.x - this.anchorX + this.offsetX;
             var y = this.y - this.anchorY + this.offsetY;
             var w = this.pixel.width + this.offsetW;
@@ -104,7 +147,9 @@ var CUI = CUI || {};
         },
 
         render: function(context, timeStep, now) {
-
+            if (!this.img) {
+                return;
+            }
             var alpha = this.alpha + this.offsetAlpha;
             if (alpha <= 0) {
                 return false;
@@ -131,6 +176,7 @@ var CUI = CUI || {};
                 y += this.y + this.offsetY;
             }
             context.globalAlpha = alpha > 1 ? 1 : alpha;
+
             context.drawImage(this.img, this.sx, this.sy, this.sw, this.sh, x, y, width + this.offsetW, height + this.offsetH);
 
             if (scaleX != 1 || scaleY != 1 || rotation != 0) {

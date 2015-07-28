@@ -13,6 +13,8 @@ var CUI = CUI || {};
         //     Button.$super.init.call(this);
         // },
 
+        autoSizeWithText:false,
+
         onTouchStart: function(x, y, id) {
             if (this.disabled) {
                 return false;
