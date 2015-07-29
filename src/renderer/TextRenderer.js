@@ -15,19 +15,17 @@ var CUI = CUI || {};
         text: null,
         color: null,
 
+        textAlign: "left",
+        strokeWidth: 0,
 
         fontStyle: null,
         fontWeight: null,
         fontSize: null,
         fontName: null,
-        fontStyleText: null,
         lineHeight: null,
 
-        textAlign: "left",
-
+        fontStyleText: null,
         measure: null,
-
-        strokeWidth: 0,
 
         init: function() {
             this.setTextInfo(this);
@@ -37,8 +35,8 @@ var CUI = CUI || {};
         setTextInfo: function(info) {
             this.text = info.text || "";
             this.fontName = Font.getName(info.fontName || "Arial");
-            this.fontSize = info.fontSize || 12;
-            this.color = info.color;
+            this.fontSize = info.fontSize || 14;
+            this.color = info.color || "black";
             this.fontWeight = info.fontWeight;
             this.fontStyleText = Font.getStyle(this.fontSize, this.fontName, this.fontWeight);
             this.needToCompute = true;

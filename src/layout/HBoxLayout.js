@@ -5,6 +5,7 @@ var CUI = CUI || {};
 (function(exports) {
 
     var Class = exports.Class;
+    var Utils = exports.Utils;
     var BaseLayout = exports.BaseLayout;
 
     var HBoxLayout = Class.create({
@@ -14,8 +15,9 @@ var CUI = CUI || {};
             var children = parent.children;
 
             var idx = 0;
-            var margin = parent.pixel.paddingLeft;
             var currentX = 0;
+            var margin = parent.pixel.paddingLeft;
+            var totalHeight = 0;
             for (var i = 0, len = children.length; i < len; i++) {
                 var child = children[i];
                 if (child.relative == "parent") {
@@ -40,11 +42,13 @@ var CUI = CUI || {};
 
                     currentX = x + child.pixel.width;
                     margin = child.pixel.marginRight;
+                    totalHeight = Math.max(totalHeight, child.pixel.marginTop + child.pixel.height + child.pixel.marginBottom)
                     idx++;
                 }
                 child.computeLayout(true);
-
             }
+            var totalWidth = currentX + margin;
+            this.tryToResizeParent(parent,totalWidth,totalHeight);
             return idx;
         }
 

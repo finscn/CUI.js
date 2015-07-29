@@ -5,6 +5,7 @@ var CUI = CUI || {};
 (function(exports) {
 
     var Class = exports.Class;
+    var Utils = exports.Utils;
     var Component = exports.Component;
     var ImageRenderer = exports.ImageRenderer;
     var TextRenderer = exports.TextRenderer;

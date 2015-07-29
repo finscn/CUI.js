@@ -31,6 +31,28 @@ var CUI = CUI || {};
             child.computeSelf(parent);
         },
 
+        tryToResizeParent: function(parent, width, height) {
+            var resize = false;
+            if (parent.width == "auto" && !parent.w) {
+                parent.pixel.width = width;
+                parent.w = width;
+                resize = true;
+            }
+            if (parent.height == "auto" && !parent.h) {
+                parent.pixel.height = height;
+                parent.h = height;
+                resize = true;
+            }
+            if (resize) {
+                parent.updateAnchor();
+                parent.computePositionX(parent.parent);
+                parent.computePositionY(parent.parent);
+                parent.computePadding();
+                parent.updateAABB();
+                parent.needToCompute = true;
+            }
+        },
+
         ////////////////////////////////////////////////////////////////////
         ////////////////////////////////////////////////////////////////////
         ////////////////////////////////////////////////////////////////////

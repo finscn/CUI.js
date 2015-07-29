@@ -5,6 +5,7 @@ var CUI = CUI || {};
 (function(exports) {
 
     var Class = exports.Class;
+    var Utils = exports.Utils;
     var Label = exports.Label;
 
     var Button = Class.create({
@@ -16,17 +17,12 @@ var CUI = CUI || {};
         autoSizeWithText:false,
 
         onTouchStart: function(x, y, id) {
-            if (this.disabled) {
-                return false;
-            }
+
             this.state = this.downState;
 
         },
 
         onTouchMove: function(x, y, id) {
-            if (this.disabled) {
-                return false;
-            }
             if (!this.isInRegion(x, y)) {
                 this.state = this.normalState;
                 return false;
@@ -34,16 +30,10 @@ var CUI = CUI || {};
         },
 
         onTouchEnd: function(x, y, id) {
-            if (this.disabled) {
-                return false;
-            }
             this.state = this.normalState;
         },
 
         onTap: function(x, y, id) {
-            if (this.disabled) {
-                return false;
-            }
             this.state = this.normalState;
         },
 

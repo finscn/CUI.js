@@ -24,7 +24,7 @@ var CUI = CUI || {};
                 value = (parseFloat(value) / 100) * (relativeValue || 0);
                 return value;
             }
-            return parseFloat(value);
+            return parseFloat(value) || 0;
         },
 
         createCanvas: function(width, height) {

@@ -3,6 +3,7 @@ var CUI = CUI || {};
 (function(exports) {
 
     var Class = exports.Class;
+    var Utils = exports.Utils;
     var BaseLayout = exports.BaseLayout;
     var VBoxLayout = exports.VBoxLayout;
     var HBoxLayout = exports.HBoxLayout;

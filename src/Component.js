@@ -7,7 +7,6 @@ var CUI = CUI || {};
     var Class = exports.Class;
     var Utils = exports.Utils;
     var Composite = exports.Composite;
-    var DisplayObject = exports.DisplayObject;
     var EventDispatcher = exports.EventDispatcher;
     var TouchTarget = exports.TouchTarget;
     var Layout = exports.Layout;
@@ -15,7 +14,6 @@ var CUI = CUI || {};
     var noop = function() {};
 
     var Component = Class.create({
-        constructor: Component,
 
         id: null,
 
@@ -28,6 +26,7 @@ var CUI = CUI || {};
         top: null,
         right: null,
         bottom: null,
+        // 默写组件支持 "auto" , 根据布局和子元素来确定自己的宽高
         width: null,
         height: null,
 
@@ -112,6 +111,12 @@ var CUI = CUI || {};
 
 
         init: function() {
+
+            // if (this.beforeInit) {
+            //     this.beforeInit();
+            // }
+
+            this.inited = true;
             this.id = this.id || "cmp_" + Component._SN++;
             Component.addUI(this);
 
@@ -134,7 +139,12 @@ var CUI = CUI || {};
             this.setPadding(this.padding || 0);
             this.setParent(this.parent, true);
 
+            // if (this.afterInit) {
+            //     this.afterInit();
+            // }
         },
+        beforeInit: null,
+        afterInit: null,
 
         setLayout: function(layout) {
             this.layout = layout;
@@ -142,16 +152,22 @@ var CUI = CUI || {};
 
         setParent: function(parent, forceCompute) {
             if (parent && (parent != this.parent || forceCompute)) {
-                this.parent = parent;
                 this.parent.addChild(this);
             }
         },
         addChild: function(child) {
             if (this.composite) {
                 Composite.prototype.addChild.call(this, child);
+                // child.parent = this;
+                child.root = this.root;
+                if (this.width == "auto") {
+                    this.pixel.w = 0;
+                }
+                if (this.height == "auto") {
+                    this.pixel.h = 0;
+                }
+                this.needToCompute = true;
             }
-            child.root = this.root;
-            this.needToCompute = true;
         },
 
         setMargin: function(margin) {
@@ -320,8 +336,8 @@ var CUI = CUI || {};
 
         computeLayout: function(forceCompute) {
             if (this.composite && (this.needToCompute || forceCompute)) {
-                this.layout.compute(this);
                 this.needToCompute = false;
+                this.layout.compute(this);
             }
         },
 

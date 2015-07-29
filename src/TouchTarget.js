@@ -12,7 +12,7 @@ var CUI = CUI || {};
         modalFlag: -0x100000,
 
         checkTouch: function(type, args) {
-            if (!this.visible || this.alpha <= 0) {
+            if (this.disabled || !this.visible || this.alpha <= 0) {
                 return false;
             }
 
@@ -31,7 +31,7 @@ var CUI = CUI || {};
             if (this.composite) {
                 var rs = this.checkTouchChildren(type, arguments);
                 if (rs !== false) {
-                    return rs;
+                    return 1;
                 }
             }
             return this.checkTouchSelf(type, args);
@@ -41,7 +41,7 @@ var CUI = CUI || {};
             if (this[type]) {
                 var rs = this[type].apply(this, args);
                 if (rs !== false) {
-                    return rs;
+                    return 1;
                 }
             }
             return false;
@@ -52,13 +52,13 @@ var CUI = CUI || {};
             var rs = false;
             for (var i = last; i >= 0; i--) {
                 var ui = list[i];
-                if (!ui.visible || ui.alpha <= 0) {
+                if (ui.disabled || !ui.visible || ui.alpha <= 0) {
                     continue;
                 }
                 // rs = ui[type].apply(ui, args);
                 rs = ui.checkTouch.apply(ui, args);
                 if (rs !== false) {
-                    return rs;
+                    return 1;
                 }
             }
             return false;
