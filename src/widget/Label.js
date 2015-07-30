@@ -20,9 +20,12 @@ var CUI = CUI || {};
         height: null,
         scaleBg: false,
 
-        autoSizeWithText:true,
+        autoSizeWithText: true,
 
         init: function() {
+            if (this.beforeInit) {
+                this.beforeInit();
+            }
 
             Label.$super.init.call(this);
 
@@ -42,6 +45,9 @@ var CUI = CUI || {};
                 this.textRenderer.init();
             }
 
+            if (this.afterInit) {
+                this.afterInit();
+            }
 
         },
 
@@ -131,7 +137,7 @@ var CUI = CUI || {};
             if (this.textRenderer) {
                 if (this.textRenderer.needToCompute) {
                     this.textRenderer.computeSize(context);
-                    if (this.autoSizeWithText){
+                    if (this.autoSizeWithText) {
                         this.computeSizeWithText();
                     }
                 }

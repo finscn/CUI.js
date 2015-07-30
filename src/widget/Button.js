@@ -17,24 +17,25 @@ var CUI = CUI || {};
         autoSizeWithText:false,
 
         onTouchStart: function(x, y, id) {
-
-            this.state = this.downState;
-
+            this.scale = 0.92;
+            // this.state = this.downState;
         },
 
         onTouchMove: function(x, y, id) {
             if (!this.isInRegion(x, y)) {
-                this.state = this.normalState;
+                this.scale = 1;
+                // this.state = this.normalState;
                 return false;
             }
         },
 
         onTouchEnd: function(x, y, id) {
-            this.state = this.normalState;
+            this.scale = 1;
+            // this.state = this.normalState;
         },
 
         onTap: function(x, y, id) {
-            this.state = this.normalState;
+            // this.state = this.normalState;
         },
 
     }, Label);

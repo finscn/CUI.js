@@ -16,6 +16,16 @@ var CUI = CUI || {};
             return img;
         },
 
+        createImgInfo: function(img) {
+            return {
+                img: img,
+                sx: 0,
+                sy: 0,
+                sw: img.width,
+                sh: img.height,
+            }
+        },
+
         parseValue: function(value, relativeValue) {
             if (typeof value == "number" || value === true || value === false || value === null || value === undefined) {
                 return value;

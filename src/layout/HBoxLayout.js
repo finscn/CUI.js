@@ -48,7 +48,7 @@ var CUI = CUI || {};
                 child.computeLayout(true);
             }
             var totalWidth = currentX + margin;
-            this.tryToResizeParent(parent,totalWidth,totalHeight);
+            this.tryToResizeParent(parent, totalWidth, totalHeight);
             return idx;
         }
 

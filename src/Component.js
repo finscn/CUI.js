@@ -169,6 +169,20 @@ var CUI = CUI || {};
                 this.needToCompute = true;
             }
         },
+        removeChild: function(child) {
+            if (this.composite) {
+                var rs = Composite.prototype.removeChild.call(this, child);
+                if (rs) {
+                    if (this.width == "auto") {
+                        this.pixel.w = 0;
+                    }
+                    if (this.height == "auto") {
+                        this.pixel.h = 0;
+                    }
+                    this.needToCompute = true;
+                }
+            }
+        },
 
         setMargin: function(margin) {
             this.margin = margin;
@@ -293,6 +307,19 @@ var CUI = CUI || {};
             this.pixel.relativeY += dy;
             this.syncPosition();
         },
+
+        show: function() {
+            this.visible = true;
+            this.onShow();
+        },
+        onShow: noop,
+
+        hide: function() {
+            this.visible = false;
+            this.onHide();
+        },
+        onHide: noop,
+
         /////////////////////////////////////////////////////////////////////////////
         /////////////////////////////////////////////////////////////////////////////
         /////////////////////////////////////////////////////////////////////////////
@@ -393,9 +420,14 @@ var CUI = CUI || {};
             context.translate(-this.x - this.pixel.anchorX, -this.y - this.pixel.anchorY);
         },
         render: function(context, timeStep, now) {
-            if (!this.visible) {
+            if (!this.visible || this.alpha <= 0) {
                 return;
             }
+
+            if (this.beforeRender) {
+                this.beforeRender(context, timeStep, now);
+            }
+
             if (this.scale != 1) {
                 this.doRenderScale(context, timeStep, now);
             }
@@ -406,7 +438,14 @@ var CUI = CUI || {};
             if (this.scale != 1) {
                 context.restore();
             }
+
+            if (this.afterRender) {
+                this.afterRender(context, timeStep, now);
+            }
+
         },
+        beforeRender: null,
+        afterRender: null,
 
         ////////////////////////////////////////////////////////////////////////
         ////////////////////////////////////////////////////////////////////////
@@ -539,38 +578,43 @@ var CUI = CUI || {};
         },
     });
 
-    Component.createRoot = function(viewportWidth, viewportHeight) {
+    Component.createRoot = function(options) {
+        var width = options.width,
+            height = options.height;
         var root = new Component({
             id: "cmp_root",
             left: 0,
             top: 0,
-            width: viewportWidth,
-            height: viewportHeight,
+            width: width,
+            height: height,
 
             x: 0,
             y: 0,
-            w: viewportWidth,
-            h: viewportHeight,
+            w: width,
+            h: height,
 
             relative: "root",
             updateSelf: noop,
             renderSelf: noop,
             checkTouchSelf: noop,
-            viewportWidth: viewportWidth,
-            viewportHeight: viewportHeight,
+            viewportWidth: width,
+            viewportHeight: height,
+            beforeInit: options.beforeInit,
+            afterInit: options.afterInit,
         });
         root.init();
         root.pixel = {
-            width: viewportWidth,
-            height: viewportHeight,
+            width: width,
+            height: height,
             paddingLeft: 0,
             paddingTop: 0,
             paddingRight: 0,
             paddingBottom: 0,
         };
         root.aabb = [
-            0, 0, viewportWidth, viewportHeight
+            0, 0, width, height
         ];
+        root.root = root;
         return root;
     };
 

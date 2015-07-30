@@ -3,7 +3,10 @@ var uiT;
 var uiX = 0;
 
 function initUI() {
-    rootUI = Component.createRoot(game.width, game.height);
+    rootUI = Component.createRoot({
+        width: game.width,
+        height: game.height
+    });
     topUI = new ScrollArea({
         id: "topUI",
         left: 0,
@@ -12,7 +15,7 @@ function initUI() {
         width: "100%",
         // height: "100%",
         height: 300,
-        scrollHeight:400,
+        scrollHeight: 400,
         parent: rootUI,
         layout: new CUI.HBoxLayout(),
         padding: 20,
@@ -20,7 +23,7 @@ function initUI() {
     topUI.init();
 
     var ui1 = new Picture({
-        id: "ui-1-"+0,
+        id: "ui-1-" + 0,
         left: 0,
         top: 0,
         backgroundColor: "rgba(100,240,230,1)",
@@ -36,7 +39,7 @@ function initUI() {
 
     for (var i = 0; i < 3; i++) {
         var ui1 = new Component({
-            id: "ui-1-"+i,
+            id: "ui-1-" + i,
             left: 0,
             top: 0,
             backgroundColor: "rgba(255,240,230,1)",
@@ -78,28 +81,28 @@ function initUI() {
     }
 
 
-        var ui3 = new Label({
-            id: "ui-3",
-            left: 0,
-            top: 0,
-            backgroundColor: "rgba(255,240,230,1)",
-            // width: 100,
-            // height: "33%",
-            // height: 120,
-            margin: 10,
-            parent: topUI,
-            textInfo: {
-                // offsetX: -5,
-                text: "test text 123",
-                color: "black"
-            },
-            // layout: new CUI.HBoxLayout(),
-        });
-        ui3.init();
+    var ui3 = new Label({
+        id: "ui-3",
+        left: 0,
+        top: 0,
+        backgroundColor: "rgba(255,240,230,1)",
+        // width: 100,
+        // height: "33%",
+        // height: 120,
+        margin: 10,
+        parent: topUI,
+        textInfo: {
+            // offsetX: -5,
+            text: "test text 123",
+            color: "black"
+        },
+        // layout: new CUI.HBoxLayout(),
+    });
+    ui3.init();
 
-//////////////////////////////////////////////////////
-//////////////////////////////////////////////////////
-//////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////
 
 
     uiT = new Component({
@@ -165,7 +168,7 @@ function initUI() {
         row: 0,
         colspan: 3,
         rowspan: 1,
-        width:"auto",
+        width: "auto",
         // scaleBg: true,
         bgInfo: {
             img: Images["btn-bg"],
