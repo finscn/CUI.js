@@ -27,11 +27,30 @@ var CUI = CUI || {};
         },
 
         parseValue: function(value, relativeValue) {
-            if (typeof value == "number" || value === true || value === false || value === null || value === undefined) {
-                return value;
+            if (typeof value == "string") {
+                value = value.trim();
+                var plus, sub, percent, num;
+                if ((plus = value.lastIndexOf("+")) > 0) {
+                    var p1 = value.substring(0, plus);
+                    var p2 = value.substring(plus + 1);
+                    p1 = Utils.parseValue(p1, relativeValue);
+                    p2 = Utils.parseValue(p2, relativeValue)
+                    return p1 + p2;
+                } else if ((sub = value.lastIndexOf("-")) > 0) {
+                    var p1 = value.substring(0, sub);
+                    var p2 = value.substring(sub + 1);
+                    p1 = Utils.parseValue(p1, relativeValue);
+                    p2 = Utils.parseValue(p2, relativeValue)
+                    console.log(p1,p2)
+                    return p1 - p2;
+                } else if ((percent = value.lastIndexOf("%")) > 0) {
+                    value = (parseFloat(value) / 100) * (relativeValue || 0);
+                    return value;
+                } else {
+                    return parseFloat(value);
+                }
             }
-            if (typeof value == "string" && value.lastIndexOf("%") > 0) {
-                value = (parseFloat(value) / 100) * (relativeValue || 0);
+            if (typeof value == "number" || value === true || value === false || value === null || value === undefined) {
                 return value;
             }
             return parseFloat(value) || 0;

@@ -133,6 +133,7 @@ var CUI = CUI || {};
             if (this.composite) {
                 Composite.apply(this);
                 this.setLayout(this.layout || Layout.commonLayout);
+                this.childSN = 0;
             }
 
             this.setMargin(this.margin || 0);
@@ -160,6 +161,7 @@ var CUI = CUI || {};
                 Composite.prototype.addChild.call(this, child);
                 // child.parent = this;
                 child.root = this.root;
+                child.index = this.childSN++;
                 if (this.width == "auto") {
                     this.pixel.w = 0;
                 }
@@ -167,8 +169,10 @@ var CUI = CUI || {};
                     this.pixel.h = 0;
                 }
                 this.needToCompute = true;
+                this.sortChildren();
             }
         },
+
         removeChild: function(child) {
             if (this.composite) {
                 var rs = Composite.prototype.removeChild.call(this, child);
@@ -182,6 +186,18 @@ var CUI = CUI || {};
                     this.needToCompute = true;
                 }
             }
+        },
+
+        sortChildren: function() {
+            this.children.sort(function(a, b) {
+                return a.zIndex - b.zIndex || a.index - b.index;
+            });
+        },
+
+        setZIndex: function(zIndex) {
+            this.zIndex = zIndex;
+            var p = this.parent || this.root;
+            p.sortChildren();
         },
 
         setMargin: function(margin) {
