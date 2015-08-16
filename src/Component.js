@@ -594,45 +594,56 @@ var CUI = CUI || {};
         },
     });
 
-    Component.createRoot = function(options) {
-        var width = options.width,
-            height = options.height;
-        var root = new Component({
-            id: "cmp_root",
-            left: 0,
-            top: 0,
-            width: width,
-            height: height,
+    var Root = Class.create({
+        id: "cmp_root",
 
-            x: 0,
-            y: 0,
-            w: width,
-            h: height,
+        width: null,
+        height: null,
 
-            relative: "root",
-            updateSelf: noop,
-            renderSelf: noop,
-            checkTouchSelf: noop,
-            viewportWidth: width,
-            viewportHeight: height,
-            beforeInit: options.beforeInit,
-            afterInit: options.afterInit,
-        });
-        root.init();
-        root.pixel = {
-            width: width,
-            height: height,
-            paddingLeft: 0,
-            paddingTop: 0,
-            paddingRight: 0,
-            paddingBottom: 0,
-        };
-        root.aabb = [
-            0, 0, width, height
-        ];
-        root.root = root;
-        return root;
-    };
+        updateSelf: noop,
+        renderSelf: noop,
+        checkTouchSelf: noop,
+
+        init: function() {
+
+            if (this.beforeInit) {
+                this.beforeInit();
+            }
+
+            this.viewportWidth = this.width;
+            this.viewportHeight = this.height;
+            this.left = 0;
+            this.top = 0;
+            this.relative = "root";
+
+
+            Root.$super.init.call(this);
+
+            this.x = 0;
+            this.y = 0;
+            this.w = this.width;
+            this.h = this.height;
+
+            this.pixel = {
+                width: this.width,
+                height: this.height,
+                paddingLeft: 0,
+                paddingTop: 0,
+                paddingRight: 0,
+                paddingBottom: 0,
+            };
+            this.aabb = [
+                0, 0, this.width, this.height
+            ];
+            this.root = this;
+            if (this.afterInit) {
+                this.afterInit();
+            }
+
+        }
+    }, Component);
+
+
 
     Component._SN = 0;
     Component.all = {};
@@ -649,9 +660,7 @@ var CUI = CUI || {};
 
 
     exports.Component = Component;
+    exports.Root = Root;
 
-    if (typeof module != "undefined") {
-        module.exports = Component;
-    }
 
 }(CUI));

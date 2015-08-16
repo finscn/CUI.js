@@ -3,10 +3,12 @@ var uiT;
 var uiX = 0;
 
 function initUI() {
-    rootUI = Component.createRoot({
+    rootUI = new CUI.Root({
         width: game.width,
         height: game.height
     });
+    rootUI.init();
+
     topUI = new ScrollArea({
         id: "topUI",
         left: 0,
