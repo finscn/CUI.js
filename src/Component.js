@@ -639,8 +639,15 @@ var CUI = CUI || {};
             if (this.afterInit) {
                 this.afterInit();
             }
+        },
 
-        }
+        checkTouch: function(type, args) {
+            var rs = this.checkTouchChildren(type, arguments);
+            if (rs !== false) {
+                return 1;
+            }
+        },
+
     }, Component);
 
 
