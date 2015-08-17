@@ -271,12 +271,12 @@ var CUI = CUI || {};
             this.setReflow("parent");
         },
 
-        setSize: function(width, height) {
-            if (this.width != width) {
+        setSize: function(width, height, force) {
+            if (force || this.width != width) {
                 this.width = width;
                 this.computeWidth();
             }
-            if (this.height != height) {
+            if (force || this.height != height) {
                 this.height = height;
                 this.computeHeight();
             }
@@ -417,11 +417,15 @@ var CUI = CUI || {};
         onUpdate: noop,
 
         renderSelf: function(context, timeStep, now) {
-            context.fillStyle = this.backgroundColor;
-            context.fillRect(this.x, this.y, this.w, this.h);
-            context.lineWidth = this.borderWidth;
-            context.strokeStyle = this.borderColor;
-            context.strokeRect(this.x, this.y, this.w, this.h);
+            if (this.backgroundColor) {
+                context.fillStyle = this.backgroundColor;
+                context.fillRect(this.x, this.y, this.w, this.h);
+            }
+            if (this.borderWidth && this.borderColor) {
+                context.lineWidth = this.borderWidth;
+                context.strokeStyle = this.borderColor;
+                context.strokeRect(this.x, this.y, this.w, this.h);
+            }
         },
         renderChildren: function(context, timeStep, now) {
             this.children.forEach(function(child) {

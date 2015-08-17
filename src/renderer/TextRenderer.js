@@ -33,12 +33,16 @@ var CUI = CUI || {};
         },
 
         setTextInfo: function(info) {
-            this.text = info.text || "";
+            this.setText(info.text);
             this.fontName = Font.getName(info.fontName || "Arial");
             this.fontSize = info.fontSize || 14;
             this.color = info.color || "black";
             this.fontWeight = info.fontWeight;
             this.fontStyleText = Font.getStyle(this.fontSize, this.fontName, this.fontWeight);
+        },
+
+        setText: function(text) {
+            this.text = text === null || text === undefined ? "" : text;
             this.needToCompute = true;
         },
 

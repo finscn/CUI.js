@@ -26,8 +26,6 @@ var CUI = CUI || {};
                 this.beforeInit();
             }
 
-            this.viewportWidth = this.width;
-            this.viewportHeight = this.height;
             this.left = 0;
             this.top = 0;
             this.relative = "root";
@@ -37,23 +35,39 @@ var CUI = CUI || {};
 
             this.x = 0;
             this.y = 0;
-            this.w = this.width;
-            this.h = this.height;
-
             this.pixel = {
-                width: this.width,
-                height: this.height,
                 paddingLeft: 0,
                 paddingTop: 0,
                 paddingRight: 0,
                 paddingBottom: 0,
             };
             this.aabb = [
-                0, 0, this.width, this.height
+                0, 0
             ];
+
+            this.setSize(this.width, this.height, true);
+
             this.root = this;
+
             if (this.afterInit) {
                 this.afterInit();
+            }
+        },
+
+        setSize: function(width, height, force) {
+            if (force || this.width != width) {
+                this.viewportWidth = width;
+                this.width = width;
+                this.w = width;
+                this.pixel.width = width;
+                this.aabb[2] = width;
+            }
+            if (force || this.height != height) {
+                this.viewportHeight = height;
+                this.height = height;
+                this.h = height;
+                this.pixel.height = height;
+                this.aabb[3] = height;
             }
         },
 
