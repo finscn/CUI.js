@@ -21,7 +21,7 @@ var CUI = CUI || {};
                 var x = args[0],
                     y = args[1];
                 if (!this.isInRegion(x, y)) {
-                    if (this.modal && type == "onTap") {
+                    if (this.modal && (type == "onTap" || type == "onTouchStart")) {
                         this.onTapOut.apply(this, args);
                         return this.modalFlag;
                     }

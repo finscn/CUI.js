@@ -39,16 +39,38 @@ var CUI = CUI || {};
                 this.iconRenderer.setParent(this);
                 this.iconRenderer.init();
             }
-            if (this.textInfo) {
-                this.textRenderer = new TextRenderer(this.textInfo);
-                this.textRenderer.setParent(this);
-                this.textRenderer.init();
-            }
+            this.initTextInfo();
+            this.textRenderer = new TextRenderer(this.textInfo);
+            this.textRenderer.setParent(this);
+            this.textRenderer.init();
 
             if (this.afterInit) {
                 this.afterInit();
             }
 
+        },
+
+        initTextInfo: function() {
+            if (!this.textInfo) {
+                var Me = this;
+                Me.textInfo = {};
+                var property = [
+                    "text",
+                    "color",
+                    "textAlign",
+                    "strokeWidth",
+                    "fontSize",
+                    "fontWeight",
+                    "fontStyle",
+                    "fontName",
+                    "lineHeight",
+                ];
+                property.forEach(function(p) {
+                    if (p in Me) {
+                        Me.textInfo[p] = Me[p];
+                    }
+                });
+            }
         },
 
         computeWidth: function() {

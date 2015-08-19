@@ -52,6 +52,7 @@ var CUI = CUI || {};
         parent: null,
 
         modal: false,
+        maskColor: "rgba(0,0,0,0.3)",
 
         displayObject: null,
 
@@ -448,6 +449,12 @@ var CUI = CUI || {};
                 this.beforeRender(context, timeStep, now);
             }
 
+            if (this.modal) {
+                context.fillStyle = this.maskColor;
+                var root = this.root;
+                context.fillRect(root.x, root.y, root.w, root.h);
+            }
+
             if (this.scale != 1) {
                 this.doRenderScale(context, timeStep, now);
             }
@@ -542,7 +549,7 @@ var CUI = CUI || {};
 
             var x = 0;
             if (this.centerH === true) {
-                x = (relativeWidth - pixel.width) / 2;
+                x = (relativeWidth - pixel.width) / 2 + (pixel.left || 0);
             } else if (pixel.left === null && pixel.right !== null) {
                 x = relativeWidth - pixel.width - pixel.right;
             } else {
@@ -564,7 +571,7 @@ var CUI = CUI || {};
 
             var y = 0;
             if (this.centerV === true) {
-                y = (relativeHeight - pixel.height) / 2;
+                y = (relativeHeight - pixel.height) / 2 + (pixel.top || 0);
             } else if (pixel.top === null && pixel.bottom !== null) {
                 y = relativeHeight - pixel.height - pixel.bottom;
             } else {
