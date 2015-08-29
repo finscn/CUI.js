@@ -51,26 +51,26 @@ var CUI = CUI || {};
         },
 
         initTextInfo: function() {
-            if (!this.textInfo) {
-                var Me = this;
-                Me.textInfo = {};
-                var property = [
-                    "text",
-                    "color",
-                    "textAlign",
-                    "strokeWidth",
-                    "fontSize",
-                    "fontWeight",
-                    "fontStyle",
-                    "fontName",
-                    "lineHeight",
-                ];
-                property.forEach(function(p) {
-                    if (p in Me) {
-                        Me.textInfo[p] = Me[p];
-                    }
-                });
-            }
+            var Me = this;
+            Me.textInfo = Me.textInfo || {};
+
+            var property = [
+                "text",
+                "color",
+                "textAlign",
+                "verticalAlign",
+                "strokeWidth",
+                "fontSize",
+                "fontWeight",
+                "fontStyle",
+                "fontName",
+                "lineHeight",
+            ];
+            property.forEach(function(p) {
+                if ( !(p in Me.textInfo) && (p in Me)) {
+                    Me.textInfo[p] = Me[p];
+                }
+            });
         },
 
         computeWidth: function() {

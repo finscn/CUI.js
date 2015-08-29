@@ -21,6 +21,7 @@ var CUI = CUI || {};
         checkTouchSelf: noop,
 
         init: function() {
+            this.all = {};
 
             if (this.beforeInit) {
                 this.beforeInit();

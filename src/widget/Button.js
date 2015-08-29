@@ -14,7 +14,9 @@ var CUI = CUI || {};
         //     Button.$super.init.call(this);
         // },
 
-        autoSizeWithText:false,
+        autoSizeWithText: false,
+
+        textAlign: "center",
 
         onTouchStart: function(x, y, id) {
             this.scale = 0.92;
@@ -37,6 +39,14 @@ var CUI = CUI || {};
         onTap: function(x, y, id) {
             // this.state = this.normalState;
         },
+
+        beforeRender: function(context, timeStep, now) {
+            context.globalAlpha = (this.disabled ? 0.5 : 1) * this.alpha;
+        },
+        afterRender: function(context, timeStep, now) {
+            context.globalAlpha = this.alpha;
+        },
+
 
     }, Label);
 

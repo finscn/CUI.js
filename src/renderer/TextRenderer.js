@@ -16,6 +16,8 @@ var CUI = CUI || {};
         color: null,
 
         textAlign: "left",
+        verticalAlign: "middle",
+
         strokeWidth: 0,
 
         fontStyle: null,
@@ -33,12 +35,16 @@ var CUI = CUI || {};
         },
 
         setTextInfo: function(info) {
+            this.alignH = this.textAlign;
+            this.alignV = this.verticalAlign;
+
             this.setText(info.text);
             this.fontName = Font.getName(info.fontName || "Arial");
             this.fontSize = info.fontSize || 14;
             this.color = info.color || "black";
             this.fontWeight = info.fontWeight;
             this.fontStyleText = Font.getStyle(this.fontSize, this.fontName, this.fontWeight);
+
         },
 
         setText: function(text) {
@@ -57,6 +63,25 @@ var CUI = CUI || {};
             this.needToCompute = false;
         },
 
+        updatePosition: function() {
+            var parent = this.parent;
+            if (this.alignH == "center") {
+                this.x = parent.x + (parent.w >> 1);
+            } else if (this.alignH == "right") {
+                this.x = parent.x + parent.w - parent.pixel.paddingRight;
+            } else {
+                this.x = parent.x + parent.pixel.paddingLeft;
+            }
+
+            if (this.alignV == "middle" || this.alignV == "center") {
+                this.y = parent.y + ((parent.h - this.height) >> 1);
+            } else if (this.alignV == "bottom") {
+                this.y = parent.y + parent.h - parent.pixel.paddingBottom - this.height;
+            } else {
+                this.y = parent.y + parent.pixel.paddingTop;
+            }
+        },
+
         render: function(context, timeStep, now) {
             if (this.needToCompute) {
                 this.computeSize(context);
@@ -66,7 +91,7 @@ var CUI = CUI || {};
             if (alpha <= 0) {
                 return false;
             }
-            // debugger;
+
             var x = this.x - this.anchorX + this.offsetX;
             var y = this.y - this.anchorY + this.offsetY + this.fontSize;
 

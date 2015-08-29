@@ -52,7 +52,7 @@ var CUI = CUI || {};
         parent: null,
 
         modal: false,
-        maskColor: "rgba(0,0,0,0.3)",
+        maskColor: "rgba(0,0,0,0.35)",
 
         displayObject: null,
 
@@ -119,9 +119,13 @@ var CUI = CUI || {};
 
             this.inited = true;
             this.id = this.id || "cmp_" + Component._SN++;
-            Component.addUI(this);
+            // Component.addUI(this);
 
             this.root = this.root || (this.parent && this.parent.root);
+            if (this.root){
+                this.root.all[this.id] = this;
+            }
+
             this.aabb = [];
             this.pixel = {
                 relativeX: 0,
@@ -590,7 +594,10 @@ var CUI = CUI || {};
 
 
         destructor: function() {
-            this.root = null;
+            if (this.root){
+                delete this.root.all[this.id];
+                this.root = null;
+            }
             this.parent = null;
             this.layout = null;
 
