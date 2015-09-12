@@ -65,7 +65,7 @@ function initUI() {
             parent: ui1,
 
             textInfo: {
-                offsetX: -5,
+                offsetX: -i * 4,
                 text: "Button",
                 color: "black"
             },

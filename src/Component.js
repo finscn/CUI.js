@@ -110,6 +110,7 @@ var CUI = CUI || {};
         childrenMap: null,
         needToCompute: true,
 
+        useCache: false,
 
         init: function() {
 
@@ -122,7 +123,7 @@ var CUI = CUI || {};
             // Component.addUI(this);
 
             this.root = this.root || (this.parent && this.parent.root);
-            if (this.root){
+            if (this.root) {
                 this.root.all[this.id] = this;
             }
 
@@ -421,7 +422,30 @@ var CUI = CUI || {};
         },
         onUpdate: noop,
 
+        createCache: function() {
+            if (!this.cacheCanvas) {
+                var canvas = document.createElement("canvas");
+                canvas.width = this.w + 4;
+                canvas.height = this.h + 4;
+                this.cacheCanvas = canvas;
+            }
+            var context = this.cacheCanvas.getContext("2d");
+            this.useCache = false;
+            context.translate(-this.x + 2, -this.y + 2);
+            this.renderSelf(context, 0, Date.now());
+            context.translate(this.x - 2, this.y - 2);
+            this.useCache = true;
+        },
+
         renderSelf: function(context, timeStep, now) {
+            if (this.useCache) {
+                if (!this.cacheCanvas) {
+                    this.createCache();
+                }
+                context.drawImage(this.cacheCanvas, this.x - 2, this.y - 2);
+                return;
+            }
+
             if (this.backgroundColor) {
                 context.fillStyle = this.backgroundColor;
                 context.fillRect(this.x, this.y, this.w, this.h);
@@ -444,6 +468,7 @@ var CUI = CUI || {};
             context.scale(this.scale, this.scale);
             context.translate(-this.x - this.pixel.anchorX, -this.y - this.pixel.anchorY);
         },
+
         render: function(context, timeStep, now) {
             if (!this.visible || this.alpha <= 0) {
                 return;
@@ -594,7 +619,7 @@ var CUI = CUI || {};
 
 
         destructor: function() {
-            if (this.root){
+            if (this.root) {
                 delete this.root.all[this.id];
                 this.root = null;
             }
