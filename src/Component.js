@@ -111,6 +111,7 @@ var CUI = CUI || {};
         needToCompute: true,
 
         useCache: false,
+        cached: false,
 
         init: function() {
 
@@ -430,21 +431,19 @@ var CUI = CUI || {};
                 this.cacheCanvas = canvas;
             }
             var context = this.cacheCanvas.getContext("2d");
+            var useCache = this.useCache;
+            var visible = this.visible;
             this.useCache = false;
+            this.visible = true;
             context.translate(-this.x + 2, -this.y + 2);
-            this.renderSelf(context, 0, Date.now());
+            this.render(context, 0, Date.now());
             context.translate(this.x - 2, this.y - 2);
-            this.useCache = true;
+            this.useCache = useCache;
+            this.visible = visible;
+            this.cached = true;
         },
 
         renderSelf: function(context, timeStep, now) {
-            if (this.useCache) {
-                if (!this.cacheCanvas) {
-                    this.createCache();
-                }
-                context.drawImage(this.cacheCanvas, this.x - 2, this.y - 2);
-                return;
-            }
 
             if (this.backgroundColor) {
                 context.fillStyle = this.backgroundColor;
@@ -471,6 +470,14 @@ var CUI = CUI || {};
 
         render: function(context, timeStep, now) {
             if (!this.visible || this.alpha <= 0) {
+                return;
+            }
+
+            if (this.useCache) {
+                if (!this.cached) {
+                    this.createCache();
+                }
+                context.drawImage(this.cacheCanvas, this.x - 2, this.y - 2);
                 return;
             }
 
