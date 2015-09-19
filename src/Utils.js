@@ -41,7 +41,6 @@ var CUI = CUI || {};
                     var p2 = value.substring(sub + 1);
                     p1 = Utils.parseValue(p1, relativeValue);
                     p2 = Utils.parseValue(p2, relativeValue)
-                    console.log(p1,p2)
                     return p1 - p2;
                 } else if ((percent = value.lastIndexOf("%")) > 0) {
                     value = (parseFloat(value) / 100) * (relativeValue || 0);

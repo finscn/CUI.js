@@ -96,6 +96,7 @@ var CUI = CUI || {};
             var y = this.y - this.anchorY + this.offsetY + this.fontSize;
 
             context.font = this.fontStyleText;
+            var prevTextAlign = context.textAlign;
             context.textAlign = this.textAlign;
             if (this.strokeWidth) {
                 context.lineCap = "round";
@@ -107,6 +108,7 @@ var CUI = CUI || {};
                 context.fillStyle = this.color;
             }
             context.fillText(this.text, x, y);
+            context.textAlign = prevTextAlign;
         },
 
     }, BaseRenderer);
