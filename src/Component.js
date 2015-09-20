@@ -589,7 +589,7 @@ var CUI = CUI || {};
             } else if (pixel.left === null && pixel.right !== null) {
                 x = relativeWidth - pixel.width - pixel.right;
             } else {
-                x = pixel.left;
+                x = pixel.left || 0;
             }
             pixel.relativeX = x + pixel.realMarginLeft;
 
@@ -611,7 +611,7 @@ var CUI = CUI || {};
             } else if (pixel.top === null && pixel.bottom !== null) {
                 y = relativeHeight - pixel.height - pixel.bottom;
             } else {
-                y = pixel.top;
+                y = pixel.top || 0;
             }
             pixel.relativeY = y + pixel.realMarginTop;
 

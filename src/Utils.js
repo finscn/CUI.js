@@ -29,6 +29,9 @@ var CUI = CUI || {};
         parseValue: function(value, relativeValue) {
             if (typeof value == "string") {
                 value = value.trim();
+                if (value === "auto") {
+                    return 0;
+                }
                 var plus, sub, percent, num;
                 if ((plus = value.lastIndexOf("+")) > 0) {
                     var p1 = value.substring(0, plus);
@@ -46,7 +49,7 @@ var CUI = CUI || {};
                     value = (parseFloat(value) / 100) * (relativeValue || 0);
                     return value;
                 } else {
-                    return parseFloat(value);
+                    return parseFloat(value) || 0;
                 }
             }
             if (typeof value == "number" || value === true || value === false || value === null || value === undefined) {

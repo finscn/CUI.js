@@ -45,8 +45,12 @@ var CUI = CUI || {};
             }
             if (resize) {
                 parent.updateAnchor();
-                parent.computePositionX(parent.parent);
-                parent.computePositionY(parent.parent);
+                if (!parent.hasLayoutX) {
+                    parent.computePositionX(parent.parent);
+                }
+                if (!parent.hasLayoutY) {
+                    parent.computePositionY(parent.parent);
+                }
                 parent.computePadding();
                 parent.updateAABB();
                 parent.needToCompute = true;

@@ -20,11 +20,14 @@ var CUI = CUI || {};
             var totalWidth = 0;
             for (var i = 0, len = children.length; i < len; i++) {
                 var child = children[i];
+                child.hasLayoutY = false;
+
                 if (child.relative == "parent") {
                     this.computeChild(child, child.parent)
                 } else if (child.relative == "root") {
                     this.computeChild(child, child.root)
                 } else {
+
                     child.computeMargin(parent);
                     child.computeRealMargin(parent);
                     child.computeWidth();
@@ -37,6 +40,7 @@ var CUI = CUI || {};
                     child.pixel.top = Utils.parseValue(child.top, child.pixel.realOuterHeight);
                     child.pixel.relativeY = y + child.pixel.top;
                     child.y = child.pixel.relativeY + parent.y;
+                    child.hasLayoutY = true;
 
                     child.computePadding();
                     child.updateAABB();

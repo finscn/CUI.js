@@ -20,6 +20,7 @@ var CUI = CUI || {};
             var totalHeight = 0;
             for (var i = 0, len = children.length; i < len; i++) {
                 var child = children[i];
+                child.hasLayoutX = false;
                 if (child.relative == "parent") {
                     this.computeChild(child, child.parent)
                 } else if (child.relative == "root") {
@@ -35,6 +36,7 @@ var CUI = CUI || {};
                     child.pixel.left = Utils.parseValue(child.left, child.pixel.realOuterWidth);
                     child.pixel.relativeX = x + child.pixel.left;
                     child.x = child.pixel.relativeX + parent.x;
+                    child.hasLayoutX = true;
 
                     child.computePositionY(parent);
                     child.computePadding();
