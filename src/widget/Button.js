@@ -14,6 +14,8 @@ var CUI = CUI || {};
         //     Button.$super.init.call(this);
         // },
 
+        borderWidth: 2,
+
         autoSizeWithText: false,
 
         textAlign: "center",

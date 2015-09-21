@@ -20,6 +20,9 @@ var CUI = CUI || {};
         height: null,
         scaleBg: false,
 
+        backgroundColor: null,
+        borderWidth: 1,
+
         autoSizeWithText: true,
 
         init: function() {
@@ -67,7 +70,7 @@ var CUI = CUI || {};
                 "lineHeight",
             ];
             property.forEach(function(p) {
-                if ( !(p in Me.textInfo) && (p in Me)) {
+                if (!(p in Me.textInfo) && (p in Me)) {
                     Me.textInfo[p] = Me[p];
                 }
             });

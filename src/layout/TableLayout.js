@@ -38,13 +38,20 @@ var CUI = CUI || {};
                 }
                 child.computeLayout(true);
             }
-
+            this.tryToResizeParent(parent, parent.pixel.width, parent.pixel.height);
             return idx;
         },
 
         initTable: function(parent) {
             var pixel = this.pixel = {};
             var parentPixel = parent.pixel;
+
+            if (parent.width == "auto") {
+                parentPixel.width = (this.cellWidth + this.cellSpace) * this.cols + this.cellSpace;
+            }
+            if (parent.height == "auto") {
+                parentPixel.height = (this.cellHeight + this.cellSpace) * this.rows + this.cellSpace;
+            }
 
             pixel.cellSpace = Utils.parseValue(this.cellSpace, parentPixel.width) || 0;
             pixel.cellSpaceH = Utils.parseValue(this.cellSpaceH, parentPixel.width);
@@ -122,9 +129,8 @@ var CUI = CUI || {};
 
             child.computeRealMargin(this.parentCell);
 
-            child.pixel.realMarginLeft += col * w;
-            child.pixel.realMarginTop += row * h;
-
+            child.pixel.realMarginLeft += col * (w + this.pixel.cellSpaceH);
+            child.pixel.realMarginTop += row * (h + this.pixel.cellSpaceV);
             child.computeWidth();
             child.computeHeight();
             child.computePositionX(this.parentCell);

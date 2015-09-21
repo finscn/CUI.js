@@ -300,8 +300,9 @@ var CUI = CUI || {};
         },
 
         syncPosition: function() {
-            this.x = this.pixel.relativeX + this.parent.x;
-            this.y = this.pixel.relativeY + this.parent.y;
+            var relativeObj = this.parent || this.root;
+            this.x = this.pixel.relativeX + relativeObj.x;
+            this.y = this.pixel.relativeY + relativeObj.y;
             this.updateAABB();
 
             if (this.composite) {
@@ -320,6 +321,14 @@ var CUI = CUI || {};
 
         // 在移动UI时, 可以用以下两个方法 , 更快捷, 但是不严谨.
         // 严谨的方法是调用  setPosition .
+        moveToX: function(x) {
+            this.pixel.relativeX = x;
+            this.syncPosition();
+        },
+        moveToY: function(y) {
+            this.pixel.relativeY = y;
+            this.syncPosition();
+        },
         moveTo: function(x, y) {
             this.pixel.relativeX = x;
             this.pixel.relativeY = y;
@@ -637,7 +646,7 @@ var CUI = CUI || {};
             if (this.composite) {
                 this.children.forEach(function(child) {
                     child.setParent(child.root);
-                })
+                });
                 this.children = null;
                 this.childrenMap = null;
             }

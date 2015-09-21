@@ -11,6 +11,8 @@ var CUI = CUI || {};
     var VBoxLayout = Class.create({
         constructor: VBoxLayout,
 
+        align: "top",
+
         compute: function(parent) {
             var children = parent.children;
 
@@ -33,20 +35,20 @@ var CUI = CUI || {};
                     child.computeWidth();
                     child.computeHeight();
 
-                    child.computePositionX(parent);
-
                     margin = Math.max(margin, child.pixel.marginTop);
                     var y = currentY + margin;
                     child.pixel.top = Utils.parseValue(child.top, child.pixel.realOuterHeight);
                     child.pixel.relativeY = y + child.pixel.top;
                     child.y = child.pixel.relativeY + parent.y;
-                    child.hasLayoutY = true;
-
-                    child.computePadding();
-                    child.updateAABB();
 
                     currentY = y + child.pixel.height;
                     margin = child.pixel.marginBottom;
+
+                    child.hasLayoutY = true;
+                    child.computePositionX(parent);
+                    child.computePadding();
+                    child.updateAABB();
+
                     totalWidth = Math.max(totalWidth, child.pixel.marginLeft + child.pixel.width + child.pixel.marginRight)
                     idx++;
                 }
@@ -54,6 +56,21 @@ var CUI = CUI || {};
             }
             var totalHeight = currentY + margin;
             this.tryToResizeParent(parent, totalWidth, totalHeight);
+            if (this.align == "bottom") {
+                var deltaHeight = parent.pixel.height - totalHeight;
+                if (deltaHeight > 0) {
+                    for (var i = 0, len = children.length; i < len; i++) {
+                        var child = children[i];
+                        if (child.relative !== "parent" && child.relative != "root") {
+                            child.pixel.top += deltaHeight;
+                            child.pixel.relativeY += deltaHeight;
+                            child.y += deltaHeight;
+                            child.updateAABB();
+                            child.computeLayout(true);
+                        }
+                    }
+                }
+            }
             return idx;
         }
 

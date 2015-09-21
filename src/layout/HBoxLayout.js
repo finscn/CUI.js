@@ -11,6 +11,8 @@ var CUI = CUI || {};
     var HBoxLayout = Class.create({
         constructor: HBoxLayout,
 
+        align: "left",
+
         compute: function(parent) {
             var children = parent.children;
 
@@ -36,14 +38,15 @@ var CUI = CUI || {};
                     child.pixel.left = Utils.parseValue(child.left, child.pixel.realOuterWidth);
                     child.pixel.relativeX = x + child.pixel.left;
                     child.x = child.pixel.relativeX + parent.x;
-                    child.hasLayoutX = true;
 
+                    currentX = x + child.pixel.width;
+                    margin = child.pixel.marginRight;
+
+                    child.hasLayoutX = true;
                     child.computePositionY(parent);
                     child.computePadding();
                     child.updateAABB();
 
-                    currentX = x + child.pixel.width;
-                    margin = child.pixel.marginRight;
                     totalHeight = Math.max(totalHeight, child.pixel.marginTop + child.pixel.height + child.pixel.marginBottom)
                     idx++;
                 }
@@ -51,6 +54,21 @@ var CUI = CUI || {};
             }
             var totalWidth = currentX + margin;
             this.tryToResizeParent(parent, totalWidth, totalHeight);
+            if (this.align == "right") {
+                var deltaWidth = parent.pixel.width - totalWidth;
+                if (deltaWidth > 0) {
+                    for (var i = 0, len = children.length; i < len; i++) {
+                        var child = children[i];
+                        if (child.relative !== "parent" && child.relative != "root") {
+                            child.pixel.left += deltaWidth;
+                            child.pixel.relativeX += deltaWidth;
+                            child.x += deltaWidth;
+                            child.updateAABB();
+                            child.computeLayout(true);
+                        }
+                    }
+                }
+            }
             return idx;
         }
 
