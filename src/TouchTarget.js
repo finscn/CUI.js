@@ -15,21 +15,35 @@ var CUI = CUI || {};
             if (this.disabled || !this.visible || this.alpha <= 0) {
                 return false;
             }
-
             args = Array.prototype.slice.call(arguments, 1);
-            if (type != "onSwipe") {
-                var x = args[0],
-                    y = args[1];
-                if (!this.isInRegion(x, y)) {
-                    if (this.modal) {
-                        if (type == "onTap") {
-                            this.onTapOut.apply(this, args);
-                        }
-                        return this.modalFlag;
+
+            // if (type != "swipe") {
+            //     var x = args[0],
+            //         y = args[1];
+            //     if (!this.isInRegion(x, y)) {
+            //         if (this.modal) {
+            //             if (type == "tap") {
+            //                 this.onTapOut.apply(this, args);
+            //             }
+            //             return this.modalFlag;
+            //         }
+            //         return false;
+            //     }
+            // }
+            var x = args[0],
+                y = args[1];
+            if (!this.isInRegion(x, y)) {
+                if (this.modal || this.mask) {
+                    if (type == "tap") {
+                        this.onTapOut.apply(this, args);
                     }
+                    return this.modalFlag;
+                }
+                if (type == "tap" || type == "touchStart" || type == "touchEnd") {
                     return false;
                 }
             }
+
             if (this.composite) {
                 var rs = this.checkTouchChildren(type, arguments);
                 if (rs !== false) {
@@ -48,6 +62,7 @@ var CUI = CUI || {};
             }
             return false;
         },
+
         checkTouchChildren: function(type, args) {
             var list = this.children;
             var last = list.length - 1;
@@ -64,6 +79,31 @@ var CUI = CUI || {};
                 }
             }
             return false;
+        },
+
+        ///////////////////////////////////////////////////////
+
+
+        touchStart: function(x, y, id) {
+            return this.onTouchStart(x, y, id);
+        },
+        touchEnd: function(x, y, id) {
+            return this.onTouchEnd(x, y, id);
+        },
+        touchMove: function(x, y, id) {
+            return this.onTouchMove(x, y, id);
+        },
+        tap: function(x, y, id) {
+            return this.onTap(x, y, id);
+        },
+        pan: function(x, y, dx, dy, startX, startY, id) {
+            return this.onPan(x, y, dx, dy, startX, startY, id);
+        },
+        swipe: function(x, y, vx, vy, startX, startY, id) {
+            return this.onSwipe(x, y, vx, vy, startX, startY, id);
+        },
+        tapOut: function(x, y, id) {
+            return this.onTapOut(x, y, id);
         },
 
         ///////////////////////////////////////////////////////

@@ -20,26 +20,44 @@ var CUI = CUI || {};
 
         textAlign: "center",
 
-        onTouchStart: function(x, y, id) {
+        touchStart: function(x, y, id) {
+            this.touchId = id;
             this.scale = 0.92;
-            // this.state = this.downState;
         },
 
-        onTouchMove: function(x, y, id) {
-            if (!this.isInRegion(x, y)) {
+        pan: function(x, y, dx, dy, sx, sy, id) {
+            if (this.touchId === id && !this.isInRegion(x, y)) {
+                this.touchId = null;
                 this.scale = 1;
-                // this.state = this.normalState;
-                return false;
+                this.onMoveOut(x, y, dx, dy, sx, sy, id);
             }
+            return false;
+        },
+        onMoveOut: function(x, y, dx, dy, sx, sy, id) {
+
         },
 
-        onTouchEnd: function(x, y, id) {
-            this.scale = 1;
-            // this.state = this.normalState;
+        touchEnd: function(x, y, id) {
+            if (this.touchId === id) {
+                this.touchId = null;
+                this.scale = 1;
+                if (this.isInRegion(x, y)) {
+                    return this.onTouchEnd(x, y, id);
+                }
+            }
+            return false;
         },
 
-        onTap: function(x, y, id) {
-            // this.state = this.normalState;
+        swipe: function(x, y, id) {
+            if (this.touchId === id) {
+                this.touchId = null;
+                this.scale = 1;
+            }
+            return false;
+        },
+
+        tap: function(x, y, id) {
+            return this.onTap(x, y, id);
         },
 
         beforeRender: function(context, timeStep, now) {

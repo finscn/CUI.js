@@ -11,7 +11,6 @@ var CUI = CUI || {};
 
     var ScrollArea = Class.create({
 
-
         scrollH: false,
         scrollV: true,
 
@@ -35,6 +34,8 @@ var CUI = CUI || {};
             if (this.damping) {
                 this.slider.damping = this.damping;
             }
+            this.scrollWidthOrigin = this.scrollWidth;
+            this.scrollHeightOrigin = this.scrollHeight;
             this.resetScrollInfo();
         },
 
@@ -51,21 +52,22 @@ var CUI = CUI || {};
                 var innerTop = this.paddingTop;
                 var innerWdith = innerLeft + lastChild.x + lastChild.w + this.paddingRight;
                 var innerHeight = innerTop + lastChild.y + lastChild.h + this.paddingBottom;
-                this.scrollWidth = this.scrollWidth || innerWdith;
-                this.scrollHeight = this.scrollHeight || innerHeight;
+                this.scrollWidth = this.scrollWidthOrigin || innerWdith;
+                this.scrollHeight = this.scrollHeightOrigin || innerHeight;
             } else {
-                this.scrollWidth = this.scrollWidth || 0;
-                this.scrollHeight = this.scrollHeight || 0;
+                this.scrollWidth = this.scrollWidthOrigin || 0;
+                this.scrollHeight = this.scrollHeightOrigin || 0;
             }
+
             this.minScrollX = this.minScrollY = 0;
-            this.maxScrollX = Math.max(0, this.scrollWidth - this.width);
-            this.maxScrollY = Math.max(0, this.scrollHeight - this.height);
+            this.maxScrollX = Math.max(0, this.scrollWidth - this.w);
+            this.maxScrollY = Math.max(0, this.scrollHeight - this.h);
 
-            this.rateWidth = this.width / this.scrollWidth;
-            this.rateHeight = this.height / this.scrollHeight;
+            this.rateWidth = this.w / this.scrollWidth;
+            this.rateHeight = this.h / this.scrollHeight;
 
-            this.thumbHSize = this.width * this.rateWidth >> 0;
-            this.thumbVSize = this.height * this.rateHeight >> 0;
+            this.thumbHSize = this.w * this.rateWidth >> 0;
+            this.thumbVSize = this.h * this.rateHeight >> 0;
 
             this.thumbX = this.scrollX * this.rateWidth >> 0;
             this.thumbY = this.scrollY * this.rateHeight >> 0;
@@ -149,8 +151,8 @@ var CUI = CUI || {};
                     duration: 300,
                     played: 0,
                     onUpdate: function(k) {
-                        var dx = Me.scrollX - _cx-_dx*k;
-                        var dy = Me.scrollY - _cy-_dy*k;
+                        var dx = Me.scrollX - _cx - _dx * k;
+                        var dy = Me.scrollY - _cy - _dy * k;
                         if (dx || dy) {
                             Me.scrollBy(dx, dy);
                         }
@@ -204,12 +206,24 @@ var CUI = CUI || {};
         onPan: function(x, y, dx, dy, startX, startY, id) {
             if (this.isInRegion(startX, startY)) {
                 this.scrollBy(dx, dy);
+                return;
             }
+            return false;
         },
 
         onSwipe: function(x, y, vx, vy, startX, startY, id) {
             if (this.isInRegion(startX, startY)) {
                 this.startScroll(vx, vy);
+                return;
+            }
+            return false;
+        },
+
+        computeLayout: function(forceCompute) {
+            if (this.composite && (this.needToCompute || forceCompute)) {
+                this.needToCompute = false;
+                this.layout.compute(this);
+                this.reset();
             }
         },
 
@@ -233,17 +247,17 @@ var CUI = CUI || {};
                 return;
             }
             if (this.scrollH && this.rateWidth < 1) {
-                var y = this.ay + this.height - this.thumbWidth;
+                var y = this.y + this.h - this.thumbWidth;
                 context.fillStyle = this.thumbBgColor;
-                context.fillRect(this.ax + 0, y, this.width, this.thumbWidth);
+                context.fillRect(this.x + 0, y, this.w, this.thumbWidth);
                 context.fillStyle = this.thumbColor;
-                context.fillRect(this.ax + this.thumbX + 1, y + 1, this.thumbHSize - 2, this.thumbWidth - 2);
+                context.fillRect(this.x + this.thumbX + 1, y + 1, this.thumbHSize - 2, this.thumbWidth - 2);
             } else if (this.scrollV && this.rateHeight < 1) {
-                var x = this.ax + this.width - this.thumbWidth;
+                var x = this.x + this.w - this.thumbWidth;
                 context.fillStyle = this.thumbBgColor;
-                context.fillRect(x, this.ay + 0, this.thumbWidth, this.height);
+                context.fillRect(x, this.y + 0, this.thumbWidth, this.h);
                 context.fillStyle = this.thumbColor;
-                context.fillRect(x + 1, this.ay + this.thumbY + 1, this.thumbWidth - 2, this.thumbVSize - 2);
+                context.fillRect(x + 1, this.y + this.thumbY + 1, this.thumbWidth - 2, this.thumbVSize - 2);
             }
         },
 

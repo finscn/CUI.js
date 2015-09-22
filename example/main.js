@@ -37,23 +37,23 @@ function update(timeStep, now) {
 
     if (TouchInfo.firstTap) {
         var data = TouchInfo.firstTap;
-        rootUI.checkTouch("onTap", data.x, data.y, data.id);
+        rootUI.checkTouch("tap", data.x, data.y, data.id);
         TouchInfo.firstTap = null;
     } else if (TouchInfo.firstStart) {
         var data = TouchInfo.firstStart;
-        rootUI.checkTouch("onTouchStart", data.x, data.y, data.id);
+        rootUI.checkTouch("touchStart", data.x, data.y, data.id);
         TouchInfo.firstStart = null;
     } else if (TouchInfo.firstEnd) {
         var data = TouchInfo.firstEnd;
-        rootUI.checkTouch("onTouchEnd", data.x, data.y, data.id);
+        rootUI.checkTouch("touchEnd", data.x, data.y, data.id);
         TouchInfo.firstEnd = null;
     } else if (TouchInfo.firstPan) {
         var data = TouchInfo.firstPan;
-        rootUI.checkTouch("onPan", data.x, data.y,data.dx,data.dy,data.sx,data.sy, data.id);
+        rootUI.checkTouch("pan", data.x, data.y,data.dx,data.dy,data.sx,data.sy, data.id);
         TouchInfo.firstPan = null;
     } else if (TouchInfo.firstSwipe) {
         var data = TouchInfo.firstSwipe;
-        rootUI.checkTouch("onSwipe", data.x, data.y,data.vx,data.vy,data.sx,data.sy, data.id);
+        rootUI.checkTouch("swipe", data.x, data.y,data.vx,data.vy,data.sx,data.sy, data.id);
         TouchInfo.firstSwipe = null;
     }
     rootUI.update(timeStep,now);

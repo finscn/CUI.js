@@ -44,14 +44,6 @@ var CUI = CUI || {};
             }
         },
 
-
-        onTouchStart: function(x, y, id) {},
-
-        onTouchMove: function(x, y, id) {},
-
-        onTouchEnd: function(x, y, id) {},
-
-        onTap: function(x, y, id) {},
     });
 
     exports.Panel = Panel;

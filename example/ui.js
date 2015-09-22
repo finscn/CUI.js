@@ -69,12 +69,6 @@ function initUI() {
                 text: "Button",
                 color: "black"
             },
-            onTouchStart: function(x, y, id) {
-                this.scale = 0.9;
-            },
-            onTouchEnd: function(x, y, id) {
-                this.scale = 1;
-            },
             onTap: function(x, y, id) {
 
             },
@@ -126,12 +120,6 @@ function initUI() {
             rows: 3,
             cellSpace: 10,
         }),
-        onTouchStart: function(x, y, id) {
-            this.scale = 0.8;
-        },
-        onTouchEnd: function(x, y, id) {
-            this.scale = 1;
-        },
     });
     uiT.init();
 
@@ -150,6 +138,9 @@ function initUI() {
             this.backgroundColor = "red";
         },
         onTouchEnd: function(x, y, id) {
+            this.backgroundColor = this.normalBG;
+        },
+        onMoveOut: function() {
             this.backgroundColor = this.normalBG;
         },
         onTap: function(x, y, id) {
