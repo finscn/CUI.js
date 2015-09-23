@@ -119,8 +119,8 @@ var CUI = CUI || {};
 
             this.parentCell.x = parent.x;
             this.parentCell.y = parent.y;
-            this.parentCell.pixel.width = child.colspan * w;
-            this.parentCell.pixel.height = child.rowspan * h;
+            this.parentCell.pixel.width = child.colspan * (w + this.pixel.cellSpaceH);
+            this.parentCell.pixel.height = child.rowspan * (h + this.pixel.cellSpaceV);
 
             child.computeMargin(this.parentCell);
 

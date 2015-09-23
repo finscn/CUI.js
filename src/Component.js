@@ -27,6 +27,7 @@ var CUI = CUI || {};
         right: null,
         bottom: null,
         // 默写组件支持 "auto" , 根据布局和子元素来确定自己的宽高
+        // 支持 混合单位, 如 "100% - 25" , 意思为: 父容器的100%再减去25像素.
         width: null,
         height: null,
 
@@ -38,6 +39,7 @@ var CUI = CUI || {};
         // 缩放只适合用来做瞬间的、纯视觉上的动画效果, 它不会改变UI的响应区域和行为
         // 如果要真正改变UI的大小, 请通过修改UI(以及内部元素的)width/height来实现
         scale: 1,
+
         // 缩放时才需要
         anchorX: "50%",
         anchorY: "50%",
