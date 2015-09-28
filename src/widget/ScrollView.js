@@ -9,7 +9,7 @@ var CUI = CUI || {};
     var Component = exports.Component;
     var Slider = exports.Slider;
 
-    var ScrollArea = Class.create({
+    var ScrollView = Class.create({
 
         scrollH: false,
         scrollV: true,
@@ -28,7 +28,7 @@ var CUI = CUI || {};
 
         init: function() {
 
-            ScrollArea.$super.init.call(this);
+            ScrollView.$super.init.call(this);
 
             this.slider = new Slider({});
             if (this.damping) {
@@ -43,13 +43,14 @@ var CUI = CUI || {};
             this.slider.reset();
             this.scrollX = this.scrollDX = 0;
             this.scrollY = this.scrollDY = 0;
+            this.lastScrollX = this.lastScrollY = 0;
             this.visibleChildren = [];
 
             var firstChild = this.children[0];
             if (firstChild) {
                 var lastChild = this.children[this.children.length - 1];
-                var innerLeft = this.paddingLeft;
-                var innerTop = this.paddingTop;
+                var innerLeft = this.paddingLeft - this.x;
+                var innerTop = this.paddingTop - this.y;
                 var innerWdith = innerLeft + lastChild.x + lastChild.w + this.paddingRight;
                 var innerHeight = innerTop + lastChild.y + lastChild.h + this.paddingBottom;
                 this.scrollWidth = this.scrollWidthOrigin || innerWdith;
@@ -110,16 +111,12 @@ var CUI = CUI || {};
             }
         },
         setScrollX: function(scrollX) {
-            var lastScrollX = this.scrollX;
             this.scrollX = Math.max(this.minScrollX - this.outEdge, Math.min(this.maxScrollX + this.outEdge, scrollX));
             this.thumbX = this.scrollX * this.rateWidth >> 0;
-            this.scrollDX = this.scrollX - lastScrollX;
         },
         setScrollY: function(scrollY) {
-            var lastScrollY = this.scrollY;
             this.scrollY = Math.max(this.minScrollY - this.outEdge, Math.min(this.maxScrollY + this.outEdge, scrollY));
             this.thumbY = this.scrollY * this.rateHeight >> 0;
-            this.scrollDY = this.scrollY - lastScrollY;
         },
         canScroll: function() {
             var canX = this.scrollH;
@@ -161,6 +158,7 @@ var CUI = CUI || {};
                         Me.thumbX = Me.scrollX * Me.rateWidth >> 0;
                         Me.thumbY = Me.scrollY * Me.rateHeight >> 0;
                         Me.scorllOver = true;
+                        Me.stopScroll();
                     },
                 };
             }
@@ -228,7 +226,9 @@ var CUI = CUI || {};
         },
 
         updateSelf: function(timeStep, now) {
+
             this.updateTween(timeStep);
+
             if (this.scorllOver) {
                 return;
             }
@@ -240,6 +240,7 @@ var CUI = CUI || {};
                 this.scorllOver = true;
                 this.startTween();
             }
+
         },
 
         renderScrollbar: function(context, timeStep, now) {
@@ -262,6 +263,10 @@ var CUI = CUI || {};
         },
 
         renderChildren: function(context, timeStep, now) {
+
+            this.scrollDX = this.scrollX - this.lastScrollX;
+            this.scrollDY = this.scrollY - this.lastScrollY;
+
             context.save();
             context.beginPath();
             context.moveTo(this.x, this.y);
@@ -270,6 +275,12 @@ var CUI = CUI || {};
             context.lineTo(this.x, this.y + this.h);
             context.closePath();
             context.clip();
+            context.fillStyle = "green";
+            var y = this.y - this.scrollY + 20;
+            for (var i = 0; i < 30; i++) {
+                context.fillRect(0, y, this.w, 150);
+                y += 170;
+            }
             // this.renderScrollbar(context, timeStep, now);
             // context.translate(-this.scrollX, -this.scrollY);
             var Me = this;
@@ -289,17 +300,22 @@ var CUI = CUI || {};
 
             this.renderScrollbar(context, timeStep, now);
 
+            context.restore();
+
             this.scrollDX = 0;
             this.scrollDY = 0;
-            context.restore();
+            this.lastScrollX = this.scrollX,
+            this.lastScrollY = this.scrollY;
+
         },
+
     }, Component);
 
 
-    exports.ScrollArea = ScrollArea;
+    exports.ScrollView = ScrollView;
 
     if (typeof module != "undefined") {
-        module.exports = ScrollArea;
+        module.exports = ScrollView;
     }
 
 }(CUI));

@@ -26,7 +26,7 @@ var CUI = CUI || {};
             this.toStart = false;
 
             var entity = this.entity;
-            this.velX = this.velY = this.accX = this.accY = 0;
+            this.dx = this.dy = this.velX = this.velY = this.accX = this.accY = 0;
         },
 
         start: function(vx, vy, force) {
@@ -81,11 +81,8 @@ var CUI = CUI || {};
                 return true;
 
             } else {
-                this.dx = 0;
-                this.dy = 0;
 
-                this.toStart = false;
-                this.started = false;
+                this.stop();
 
                 return false;
             }
