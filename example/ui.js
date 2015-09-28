@@ -9,7 +9,7 @@ function initUI() {
     });
     rootUI.init();
 
-    topUI = new ScrollArea({
+    topUI = new ScrollView({
         id: "topUI",
         left: 0,
         top: 0,

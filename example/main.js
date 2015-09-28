@@ -12,7 +12,7 @@ var Component = CUI.Component;
 var Label = CUI.Label;
 var Button = CUI.Button;
 var Picture = CUI.Picture;
-var ScrollArea = CUI.ScrollArea;
+var ScrollView = CUI.ScrollView;
 var Utils = CUI.Utils;
 
 window.onload = function() {
