@@ -90,10 +90,10 @@ var CUI = CUI || {};
         relative: false, // 其他(默认值) :遵循parent容器的layout, left,top按偏移量处理( 类似dom的position:relative )
 
 
-        backgroundColor: "rgba(200,220,255,1)",
+        backgroundColor: null, //"rgba(200,220,255,1)",
         borderColor: "rgba(30,50,80,1)",
-        borderWidth: 2,
-        borderImage: null, // { img , ix, iy, iw, ih, top, right, bottom, left }
+        borderWidth: 0,
+        borderImageInfo: null, // { img , ix, iy, iw, ih, top, right, bottom, left }
 
         ////////////////////////////////////////
         // 以下属性为内部属性, 用户通常不需要关心
@@ -460,6 +460,15 @@ var CUI = CUI || {};
                 context.fillStyle = this.backgroundColor;
                 context.fillRect(this.x, this.y, this.w, this.h);
             }
+            if (this.borderImageInfo) {
+                if (!this.borderImage) {
+                    var bi = this.borderImageInfo;
+                    this.borderImage = CUI.Utils.createImageByBorder(this.w, this.h,
+                        bi.T, bi.R, bi.B, bi.L, bi.fill,
+                        bi.img, bi.sx, bi.sy, bi.sw, bi.sh);
+                }
+                context.drawImage(this.borderImage, this.x, this.y)
+            }
             if (this.borderWidth && this.borderColor) {
                 context.lineWidth = this.borderWidth;
                 context.strokeStyle = this.borderColor;
@@ -628,7 +637,6 @@ var CUI = CUI || {};
 
             this.y = pixel.relativeY + parent.y;
         },
-
 
 
         ////////////////////////////////////////////////////////////////////////

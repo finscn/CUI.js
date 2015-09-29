@@ -14,21 +14,28 @@ var CUI = CUI || {};
         //     Button.$super.init.call(this);
         // },
 
-        borderWidth: 2,
+        borderWidth: 0,
 
         autoSizeWithText: false,
 
         textAlign: "center",
 
+        onDown: function(){
+            this.scale = 0.92;
+        },
+        onUp: function(){
+            this.scale = 1;
+        },
+
         touchStart: function(x, y, id) {
             this.touchId = id;
-            this.scale = 0.92;
+            this.onDown();
         },
 
         pan: function(x, y, dx, dy, sx, sy, id) {
             if (this.touchId === id && !this.isInRegion(x, y)) {
                 this.touchId = null;
-                this.scale = 1;
+                this.onUp();
                 this.onMoveOut(x, y, dx, dy, sx, sy, id);
             }
             return false;
@@ -40,7 +47,7 @@ var CUI = CUI || {};
         touchEnd: function(x, y, id) {
             if (this.touchId === id) {
                 this.touchId = null;
-                this.scale = 1;
+                this.onUp();
                 if (this.isInRegion(x, y)) {
                     return this.onTouchEnd(x, y, id);
                 }
@@ -51,7 +58,7 @@ var CUI = CUI || {};
         swipe: function(x, y, id) {
             if (this.touchId === id) {
                 this.touchId = null;
-                this.scale = 1;
+                this.onUp();
             }
             return false;
         },

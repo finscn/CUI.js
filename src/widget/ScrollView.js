@@ -275,12 +275,7 @@ var CUI = CUI || {};
             context.lineTo(this.x, this.y + this.h);
             context.closePath();
             context.clip();
-            context.fillStyle = "green";
-            var y = this.y - this.scrollY + 20;
-            for (var i = 0; i < 30; i++) {
-                context.fillRect(0, y, this.w, 150);
-                y += 170;
-            }
+
             // this.renderScrollbar(context, timeStep, now);
             // context.translate(-this.scrollX, -this.scrollY);
             var Me = this;

@@ -21,7 +21,7 @@ var CUI = CUI || {};
         scaleBg: false,
 
         backgroundColor: null,
-        borderWidth: 1,
+        borderWidth: 0,
 
         autoSizeWithText: true,
 
@@ -33,24 +33,48 @@ var CUI = CUI || {};
             Label.$super.init.call(this);
 
             if (this.bgInfo) {
-                this.bgRenderer = new ImageRenderer(this.bgInfo);
-                this.bgRenderer.setParent(this);
-                this.bgRenderer.init();
+                this.setBgInfo(this.bgInfo);
             }
             if (this.iconInfo) {
-                this.iconRenderer = new ImageRenderer(this.iconInfo);
-                this.iconRenderer.setParent(this);
-                this.iconRenderer.init();
+                this.setIconInfo(this.iconInfo);
             }
             this.initTextInfo();
-            this.textRenderer = new TextRenderer(this.textInfo);
-            this.textRenderer.setParent(this);
-            this.textRenderer.init();
+            this.setTextInfo(this.textInfo);
+
 
             if (this.afterInit) {
                 this.afterInit();
             }
 
+        },
+
+        setBgInfo: function(bgInfo) {
+            if (!this.bgRenderer) {
+                this.bgRenderer = new ImageRenderer(bgInfo);
+                this.bgRenderer.setParent(this);
+                this.bgRenderer.init();
+            }else{
+                this.bgRenderer.setImgInfo(bgInfo);
+            }
+        },
+
+        setIconInfo: function(iconInfo) {
+            if (!this.iconRenderer) {
+                this.iconRenderer = new ImageRenderer(iconInfo);
+                this.iconRenderer.setParent(this);
+                this.iconRenderer.init();
+            }else{
+                this.iconRenderer.setImgInfo(iconInfo);
+            }
+        },
+        setTextInfo: function(textInfo) {
+            if (!this.textRenderer) {
+                this.textRenderer = new TextRenderer(textInfo);
+                this.textRenderer.setParent(this);
+                this.textRenderer.init();
+            }else{
+                this.textRenderer.setTextInfo(textInfo);
+            }
         },
 
         initTextInfo: function() {
@@ -75,6 +99,11 @@ var CUI = CUI || {};
                 }
             });
         },
+
+        setText: function(text) {
+            this.textRenderer.setText(text);
+        },
+
 
         computeWidth: function() {
             var pixel = this.pixel;
@@ -123,13 +152,6 @@ var CUI = CUI || {};
             if (needToCompute) {
                 this.computeLayout();
             }
-        },
-
-        setText: function(text) {
-            this.textRenderer.setText(text);
-        },
-        setTextInfo: function(textInfo) {
-            this.textRenderer.setTextInfo(textInfo);
         },
 
         computeLayout: function(forceCompute) {

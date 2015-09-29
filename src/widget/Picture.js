@@ -42,6 +42,11 @@ var CUI = CUI || {};
                 };
                 this.imageRenderer.setImgInfo(this.imgInfo);
             }
+
+            if (this.bgInfo) {
+                this.setBgInfo(this.bgInfo);
+            }
+
         },
 
         setSrc: function(src) {
@@ -52,6 +57,16 @@ var CUI = CUI || {};
                     Me.setReflow(true);
                 }
             });
+        },
+
+        setBgInfo: function(bgInfo) {
+            if (!this.bgRenderer) {
+                this.bgRenderer = new ImageRenderer(bgInfo);
+                this.bgRenderer.setParent(this);
+                this.bgRenderer.init();
+            } else {
+                this.bgRenderer.setImgInfo(bgInfo);
+            }
         },
 
         computeWidth: function() {
@@ -101,6 +116,8 @@ var CUI = CUI || {};
                 context.fillStyle = this.backgroundColor;
                 context.fillRect(this.x, this.y, this.w, this.h);
             }
+
+            this.bgRenderer && this.bgRenderer.render(context);
             this.imageRenderer && this.imageRenderer.render(context);
 
             if (this.borderColor && this.borderWidth) {
