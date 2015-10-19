@@ -34,7 +34,7 @@ var CUI = CUI || {};
         offsetY: 0,
         offsetW: 0,
         offsetH: 0,
-        offsetAlpha: 0,
+        // offsetAlpha: 0,
 
         // auto : 显示大小等于 图片实际大小.
         width: "auto",
@@ -150,10 +150,10 @@ var CUI = CUI || {};
             if (!this.img) {
                 return;
             }
-            var alpha = this.alpha + this.offsetAlpha;
-            if (alpha <= 0) {
-                return false;
-            }
+            // var alpha = this.alpha + this.offsetAlpha;
+            // if (alpha <= 0) {
+            //     return false;
+            // }
 
             var x = -this.anchorX;
             var y = -this.anchorY;
@@ -175,14 +175,14 @@ var CUI = CUI || {};
                 x += this.x + this.offsetX;
                 y += this.y + this.offsetY;
             }
-            context.globalAlpha = alpha > 1 ? 1 : alpha;
+            // context.globalAlpha = alpha > 1 ? 1 : alpha;
 
             context.drawImage(this.img, this.sx, this.sy, this.sw, this.sh, x, y, width + this.offsetW, height + this.offsetH);
 
             if (scaleX != 1 || scaleY != 1 || rotation != 0) {
                 context.restore();
             } else {
-                context.globalAlpha = 1;
+                // context.globalAlpha = 1;
             }
         },
 

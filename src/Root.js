@@ -62,6 +62,7 @@ var CUI = CUI || {};
                 this.w = width;
                 this.pixel.width = width;
                 this.aabb[2] = width;
+                this.needToCompute = true;
             }
             if (force || this.height != height) {
                 this.viewportHeight = height;
@@ -69,6 +70,7 @@ var CUI = CUI || {};
                 this.h = height;
                 this.pixel.height = height;
                 this.aabb[3] = height;
+                this.needToCompute = true;
             }
         },
 

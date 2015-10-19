@@ -25,6 +25,8 @@ var CUI = CUI || {};
 
         autoSizeWithText: true,
 
+        sizeHolder: 0.0001,
+
         init: function() {
             if (this.beforeInit) {
                 this.beforeInit();
@@ -53,7 +55,7 @@ var CUI = CUI || {};
                 this.bgRenderer = new ImageRenderer(bgInfo);
                 this.bgRenderer.setParent(this);
                 this.bgRenderer.init();
-            }else{
+            } else {
                 this.bgRenderer.setImgInfo(bgInfo);
             }
         },
@@ -63,7 +65,7 @@ var CUI = CUI || {};
                 this.iconRenderer = new ImageRenderer(iconInfo);
                 this.iconRenderer.setParent(this);
                 this.iconRenderer.init();
-            }else{
+            } else {
                 this.iconRenderer.setImgInfo(iconInfo);
             }
         },
@@ -72,7 +74,7 @@ var CUI = CUI || {};
                 this.textRenderer = new TextRenderer(textInfo);
                 this.textRenderer.setParent(this);
                 this.textRenderer.init();
-            }else{
+            } else {
                 this.textRenderer.setTextInfo(textInfo);
             }
         },
@@ -113,6 +115,8 @@ var CUI = CUI || {};
                 pixel.width = Utils.parseValue(this.width, pixel.realOuterWidth);
             }
             pixel.anchorX = Utils.parseValue(this.anchorX, pixel.width) || 0;
+            pixel.width = pixel.width || this.sizeHolder;
+
             this.w = pixel.width;
             if (this.scaleBg) {
                 this.bgRenderer.pixel.width = this.w;
@@ -126,6 +130,8 @@ var CUI = CUI || {};
                 pixel.height = Utils.parseValue(this.height, pixel.realOuterHeight);
             }
             pixel.anchorY = Utils.parseValue(this.anchorY, pixel.height) || 0;
+            pixel.height = pixel.height || this.sizeHolder;
+
             this.h = pixel.height;
 
             if (this.scaleBg) {
@@ -150,7 +156,8 @@ var CUI = CUI || {};
                 needToCompute = true;
             }
             if (needToCompute) {
-                this.computeLayout();
+                this.setReflow("parent");
+                // this.computeLayout();
             }
         },
 

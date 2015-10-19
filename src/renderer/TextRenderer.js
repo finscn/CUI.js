@@ -87,11 +87,6 @@ var CUI = CUI || {};
                 this.computeSize(context);
             }
 
-            var alpha = this.alpha + this.offsetAlpha;
-            if (alpha <= 0) {
-                return false;
-            }
-
             var x = this.x - this.anchorX + this.offsetX;
             var y = this.y - this.anchorY + this.offsetY + this.fontSize;
 

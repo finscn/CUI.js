@@ -2,6 +2,9 @@ var CUI = CUI || {};
 
 (function(exports) {
 
+    CUI.ImagePool = CUI.ImagePool || {};
+    CUI.ImageMapping = CUI.ImageMapping || {};
+
     var Utils = {
 
         loadImage: function(src, callback) {
@@ -124,6 +127,44 @@ var CUI = CUI || {};
             context.fillStyle = color;
             context.fillRect(aabb[0], aabb[1], aabb[2] - aabb[0], aabb[3] - aabb[1]);
             context.fillStyle = bak;
+        },
+
+        getImageInfo: function(idOrImg) {
+            var img, id = idOrImg;
+            if (typeof id != "string") {
+                if (id.tagName) {
+                    img = id;
+                } else {
+                    return null;
+                }
+            } else {
+                img = CUI.ImagePool[id];
+            }
+            if (img) {
+                return {
+                    "img": img,
+                    "sx": 0,
+                    "sy": 0,
+                    "sw": img.width,
+                    "sh": img.height,
+                }
+            }
+            var mapping = CUI.ImageMapping[id];
+            if (mapping) {
+                var imgId = mapping["img"];
+                var img = CUI.ImagePool[imgId];
+                var info = {
+                    "sx": mapping["x"],
+                    "sy": mapping["y"],
+                    "sw": mapping["w"],
+                    "sh": mapping["h"],
+                }
+                info.img = img;
+                return info;
+            } else {
+                console.log("Utils.getUIImgInfo err : ", id)
+            }
+            return null;
         },
 
     };

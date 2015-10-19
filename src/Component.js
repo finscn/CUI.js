@@ -32,9 +32,11 @@ var CUI = CUI || {};
         height: null,
 
         visible: true,
-        alpha: 1,
         zIndex: 0,
         index: 0,
+
+        // alpha不影响子元素
+        alpha: 1,
 
         // 缩放只适合用来做瞬间的、纯视觉上的动画效果, 它不会改变UI的响应区域和行为
         // 如果要真正改变UI的大小, 请通过修改UI(以及内部元素的)width/height来实现
@@ -241,12 +243,12 @@ var CUI = CUI || {};
             if (deep == "root") {
                 var root = this.root || this.parent;
                 if (root) {
-                    root.needToCompute;
+                    root.needToCompute = true;
                 }
             } else if (deep == "parent") {
                 var parent = this.parent || this.root;
                 if (parent) {
-                    parent.needToCompute;
+                    parent.needToCompute = true;
                 }
             } else if (deep === true) {
                 var stop = false;
@@ -493,11 +495,16 @@ var CUI = CUI || {};
                 return;
             }
 
+            if (this.alpha != 1) {
+                context.globalAlpha = this.alpha;
+            }
+
             if (this.useCache) {
                 if (!this.cached) {
                     this.createCache();
                 }
                 context.drawImage(this.cacheCanvas, this.x - 2, this.y - 2);
+                context.globalAlpha = 1;
                 return;
             }
 
@@ -505,7 +512,7 @@ var CUI = CUI || {};
                 this.beforeRender(context, timeStep, now);
             }
 
-            if (this.modal) {
+            if (this.modal && this.maskColor) {
                 context.fillStyle = this.maskColor;
                 var root = this.root;
                 context.fillRect(root.x, root.y, root.w, root.h);
@@ -515,6 +522,7 @@ var CUI = CUI || {};
                 this.doRenderScale(context, timeStep, now);
             }
             this.renderSelf(context, timeStep, now);
+
             if (this.composite) {
                 this.renderChildren(context, timeStep, now);
             }
@@ -525,6 +533,8 @@ var CUI = CUI || {};
             if (this.afterRender) {
                 this.afterRender(context, timeStep, now);
             }
+
+            context.globalAlpha = 1;
 
         },
         beforeRender: null,
