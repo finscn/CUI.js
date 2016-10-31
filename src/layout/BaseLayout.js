@@ -8,7 +8,10 @@ var CUI = CUI || {};
     var Utils = exports.Utils;
 
     var BaseLayout = Class.create({
-        constructor: BaseLayout,
+
+        init: function() {
+
+        },
 
         compute: function(parent) {
             var children = parent.children;
@@ -31,7 +34,7 @@ var CUI = CUI || {};
             child.computeSelf(parent);
         },
 
-        tryToResizeParent: function(parent, width, height) {
+        tryToResizeParent: function(parent, width, height, immediately) {
             var resize = false;
             if (parent.width == "auto" && !parent.w) {
                 parent.pixel.width = width;
@@ -54,13 +57,15 @@ var CUI = CUI || {};
                 parent.computePadding();
                 parent.updateAABB();
                 parent.needToCompute = true;
+                if (immediately) {
+                    parent.computeLayout();
+                }
             }
         },
 
         ////////////////////////////////////////////////////////////////////
         ////////////////////////////////////////////////////////////////////
         ////////////////////////////////////////////////////////////////////
-
 
     });
 

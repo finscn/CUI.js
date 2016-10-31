@@ -9,6 +9,7 @@ var CUI = CUI || {};
     var Label = exports.Label;
 
     var Button = Class.create({
+        superclass: Label,
 
         // init: function() {
         //     Button.$super.init.call(this);
@@ -20,22 +21,37 @@ var CUI = CUI || {};
 
         textAlign: "center",
 
-        onDown: function(){
+        doUp: function() {
+            this.touchId = null;
+            this.pressed = false;
+            this.onUp();
+        },
+        doDown: function() {
+            this.pressed = true;
+            this.onDown();
+        },
+
+        onDown: function() {
             this.scale = 0.92;
         },
-        onUp: function(){
+        onUp: function() {
             this.scale = 1;
         },
 
         touchStart: function(x, y, id) {
+            if (this.disabled) {
+                return false;
+            }
             this.touchId = id;
-            this.onDown();
+            this.doDown();
         },
 
         pan: function(x, y, dx, dy, sx, sy, id) {
+            if (this.disabled) {
+                return false;
+            }
             if (this.touchId === id && !this.isInRegion(x, y)) {
-                this.touchId = null;
-                this.onUp();
+                this.doUp();
                 this.onMoveOut(x, y, dx, dy, sx, sy, id);
             }
             return false;
@@ -45,9 +61,11 @@ var CUI = CUI || {};
         },
 
         touchEnd: function(x, y, id) {
+            if (this.disabled) {
+                return false;
+            }
             if (this.touchId === id) {
-                this.touchId = null;
-                this.onUp();
+                this.doUp();
                 if (this.isInRegion(x, y)) {
                     return this.onTouchEnd(x, y, id);
                 }
@@ -56,26 +74,40 @@ var CUI = CUI || {};
         },
 
         swipe: function(x, y, id) {
+            if (this.disabled) {
+                return false;
+            }
             if (this.touchId === id) {
-                this.touchId = null;
-                this.onUp();
+                this.doUp();
             }
             return false;
         },
 
         tap: function(x, y, id) {
-            return this.onTap(x, y, id);
+            if (this.disabled) {
+                return;
+            }
+            var rs = this.onTap(x, y, id);
+            this.afterTap(x, y, id);
+            return rs;
+        },
+        afterTap: function(x, y, id) {
+
         },
 
         beforeRender: function(context, timeStep, now) {
-            context.globalAlpha = (this.disabled ? 0.5 : 1) * this.alpha;
+            if (this.disabled) {
+                this._prevAlpha = context.globalAlpha;
+                context.globalAlpha = 0.6;
+            }
         },
         afterRender: function(context, timeStep, now) {
-            context.globalAlpha = this.alpha;
+            if (this.disabled) {
+                context.globalAlpha = this._prevAlpha;
+            }
         },
 
-
-    }, Label);
+    });
 
 
     exports.Button = Button;

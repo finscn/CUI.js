@@ -93,7 +93,7 @@ var CUI = CUI || {};
                 (override || !object[p]) && (object[p] = v);
             }
         }
-        (override || !object["_listeners"]) && (object._listeners = {});
+        (override || !object._listeners) && (object._listeners = {});
         return object;
     };
 

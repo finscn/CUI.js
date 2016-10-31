@@ -20,12 +20,21 @@ var CUI = CUI || {};
         getChildAt: function(index) {
             return this.children[index];
         },
+
+        _removeChild: function(child) {
+            delete this.childrenMap[child.id];
+            child.parent = null;
+            if (child.root) {
+                delete child.root.all[child.id];
+                child.root = null;
+            }
+        },
+
         removeChild: function(child) {
             var index = this.indexOf(child);
             if (index >= 0) {
-                delete this.childrenMap[child.id];
                 this.children.splice(index, 1);
-                child.parent = null;
+                this._removeChild(child);
                 return child;
             }
             return false;
@@ -40,9 +49,8 @@ var CUI = CUI || {};
         removeChildAt: function(index) {
             var child = this.children[index];
             if (child) {
-                delete this.childrenMap[child.id];
                 this.children.splice(index, 1);
-                child.parent = null;
+                this._removeChild(child);
                 return child;
             }
             return false;
@@ -92,8 +100,8 @@ var CUI = CUI || {};
                 (override || !object[p]) && (object[p] = v);
             }
         }
-        (override || !object["children"]) && (object.children = []);
-        (override || !object["childrenMap"]) && (object.childrenMap = {});
+        (override || !object.children) && (object.children = []);
+        (override || !object.childrenMap) && (object.childrenMap = {});
         return object;
     };
 

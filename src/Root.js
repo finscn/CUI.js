@@ -27,26 +27,39 @@ var CUI = CUI || {};
                 this.beforeInit();
             }
 
-            this.left = 0;
-            this.top = 0;
+            this.left = this.left || 0;
+            this.top = this.top || 0;
             this.relative = "root";
-
 
             Root.$super.init.call(this);
 
-            this.x = 0;
-            this.y = 0;
             this.pixel = {
                 paddingLeft: 0,
                 paddingTop: 0,
                 paddingRight: 0,
                 paddingBottom: 0,
+
+                marginLeft: 0,
+                marginTop: 0,
+                marginRight: 0,
+                marginBottom: 0,
+
+                realMarginLeft: 0,
+                realMarginTop: 0,
+                realMarginRight: 0,
+                realMarginBottom: 0,
+
+                realOuterWidth: this.width,
+                realOuterHeight: this.height,
             };
+
             this.aabb = [
                 0, 0
             ];
-
             this.setSize(this.width, this.height, true);
+            this.computePositionX();
+            this.computePositionY();
+
 
             this.root = this;
 
@@ -75,9 +88,12 @@ var CUI = CUI || {};
         },
 
         checkTouch: function(type, args) {
+            if (this.disabled || !this.visible || this.alpha <= 0) {
+                return false;
+            }
             var rs = this.checkTouchChildren(type, arguments);
             if (rs !== false) {
-                return 1;
+                return rs;
             }
         },
 

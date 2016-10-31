@@ -22,7 +22,9 @@ var CUI = CUI || {};
             if (this.afterInit) {
                 this.afterInit();
             }
-        }
+
+        },
+
     });
 
     exports.Page = Page;

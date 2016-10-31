@@ -8,6 +8,7 @@ var CUI = CUI || {};
     var Utils = exports.Utils;
     var Component = exports.Component;
     var Label = exports.Label;
+    var Button = exports.Button;
 
 
     var Panel = Class.create({
@@ -20,6 +21,16 @@ var CUI = CUI || {};
 
             Panel.$super.init.call(this);
 
+            this.initBgInfo();
+
+            this.initHead();
+
+            if (this.afterInit) {
+                this.afterInit();
+            }
+        },
+
+        initHead: function() {
             if (this.titleInfo) {
                 if (!("left" in this.titleInfo)) {
                     this.titleInfo.left = 8;
@@ -28,19 +39,13 @@ var CUI = CUI || {};
                     this.titleInfo.top = 8;
                 }
                 this.titleInfo.fontSize = this.titleInfo.fontSize || 20;
-
+                this.titleInfo.parent = this;
                 this.titleLabel = new Label(this.titleInfo);
-                this.titleLabel.parent = this;
-                this.titleLabel.init();
-            }
-            if (this.closeBtnInfo) {
-                this.closeButton = new Button(this.closeBtnInfo);
-                this.closeButton.parent = this;
-                this.closeButton.init();
             }
 
-            if (this.afterInit) {
-                this.afterInit();
+            if (this.closeBtnInfo) {
+                this.closeBtnInfo.parent = this;
+                this.closeButton = new Button(this.closeBtnInfo);
             }
         },
 

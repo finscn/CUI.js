@@ -35,11 +35,8 @@ var CUI = CUI || {};
 
             ProgressBar.$super.init.call(this);
 
-            if (this.bgInfo) {
-                this.bgRenderer = new ImageRenderer(this.bgInfo);
-                this.bgRenderer.setParent(this);
-                this.bgRenderer.init();
-            }
+            this.initBgInfo();
+
             if (this.valueInfo) {
                 this.valueRenderer = new ImageRenderer(this.valueInfo);
                 this.valueRenderer.setParent(this);
@@ -56,7 +53,9 @@ var CUI = CUI || {};
         computeHeight: Label.prototype.computeHeight,
 
         computeLayout: function(forceCompute) {
-
+            if (!this.needToCompute && !forceCompute) {
+                return;
+            }
             if (this.bgRenderer) {
                 this.bgRenderer.updateSize();
                 this.bgRenderer.updatePosition();

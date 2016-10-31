@@ -12,17 +12,27 @@ var CUI = CUI || {};
 
         composite: false,
         disabled: false,
-
+        backgroundColor: null,
         computeLayout: function(forceCompute) {
             this.needToCompute = false;
         },
         render: function(context, timeStep, now) {
-
+            if (this.backgroundColor) {
+                context.fillStyle = this.backgroundColor;
+                context.fillRect(this.x, this.y, this.w, this.h);
+            }
         },
-
 
     }, Component);
 
+    Blank.create = function(width, height, parent) {
+        var comp = new CUI.Blank({
+            parent: parent,
+            width: width,
+            height: height,
+        });
+        return comp;
+    };
 
     exports.Blank = Blank;
 

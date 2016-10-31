@@ -9,6 +9,11 @@ var CUI = CUI || {};
     var Component = exports.Component;
     var Slider = exports.Slider;
 
+    var clipBufferCanvas = document.createElement("canvas");
+    clipBufferCanvas.width = 1;
+    clipBufferCanvas.height = 1;
+    var clipBufferContext = clipBufferCanvas.getContext("2d");
+
     var ScrollView = Class.create({
 
         scrollH: false,
@@ -19,16 +24,29 @@ var CUI = CUI || {};
         scrollDX: 0,
         scrollDY: 0,
 
-        damping: null,
-        outEdge: 60,
+        clip: true,
 
+        outEdge: 90,
+        damping: 0.0025,
+        swipeScale: 1.2,
+        minScrollVel: 0.12,
+        bounceDuration: 160,
+        scrollingDuration: 700,
+
+        scrollThumb: true,
         thumbWidth: 10,
         thumbColor: "rgba(255,255,255,0.6)",
         thumbBgColor: "rgba(0,0,0,0.4)",
 
+        // TODO
+        snapWidth: null,
+        snapHeight: null,
+
         init: function() {
 
             ScrollView.$super.init.call(this);
+
+            this.visibleChildren = [];
 
             this.slider = new Slider({});
             if (this.damping) {
@@ -41,18 +59,21 @@ var CUI = CUI || {};
 
         resetScrollInfo: function() {
             this.slider.reset();
+            this.scrolling = 0;
             this.scrollX = this.scrollDX = 0;
             this.scrollY = this.scrollDY = 0;
             this.lastScrollX = this.lastScrollY = 0;
-            this.visibleChildren = [];
+            this.visibleChildren.length = 0;
 
             var firstChild = this.children[0];
             if (firstChild) {
                 var lastChild = this.children[this.children.length - 1];
-                var innerLeft = this.paddingLeft - this.x;
-                var innerTop = this.paddingTop - this.y;
-                var innerWdith = innerLeft + lastChild.x + lastChild.w + this.paddingRight;
-                var innerHeight = innerTop + lastChild.y + lastChild.h + this.paddingBottom;
+
+                var innerWdith = lastChild.x + lastChild.w - firstChild.x;
+                innerWdith += this.paddingLeft + this.paddingRight;
+                var innerHeight = lastChild.y + lastChild.h - firstChild.y;
+                innerHeight += this.paddingTop + this.paddingBottom;
+
                 this.scrollWidth = this.scrollWidthOrigin || innerWdith;
                 this.scrollHeight = this.scrollHeightOrigin || innerHeight;
             } else {
@@ -67,8 +88,8 @@ var CUI = CUI || {};
             this.rateWidth = this.w / this.scrollWidth;
             this.rateHeight = this.h / this.scrollHeight;
 
-            this.thumbHSize = this.w * this.rateWidth >> 0;
-            this.thumbVSize = this.h * this.rateHeight >> 0;
+            this.thumbHSize = (this.w - this.paddingLeft - this.paddingRight) * this.rateWidth >> 0;
+            this.thumbVSize = (this.h - this.paddingTop - this.paddingBottom) * this.rateHeight >> 0;
 
             this.thumbX = this.scrollX * this.rateWidth >> 0;
             this.thumbY = this.scrollY * this.rateHeight >> 0;
@@ -90,8 +111,10 @@ var CUI = CUI || {};
             if (!this.scrollV) {
                 vy = 0;
             }
+            if (Math.abs(vx) < this.minScrollVel && Math.abs(vy) < this.minScrollVel) {
+                return;
+            }
             this.scorllOver = false;
-
             this.slider.toStart = true;
             this.slider.start(vx, vy);
 
@@ -102,12 +125,60 @@ var CUI = CUI || {};
             this.stopTween();
         },
 
-        scrollBy: function(dx, dy) {
+        focusOnChild: function(child, paddingX, paddingY) {
+            paddingX = paddingX || this.paddingLeft;
+            paddingY = paddingY || this.paddingTop;
+
+            var aabb = child.aabb
+            var aabb2 = this.aabb;
+            var outLeft = (aabb[0] - paddingX) - aabb2[0];
+            var outRight = (aabb[2] + paddingX) - aabb2[2];
+            var outTop = (aabb[1] - paddingY) - aabb2[1];
+            var outBottom = (aabb[3] + paddingY) - aabb2[3];
+
+            var dx = 0,
+                dy = 0;
+            if (outLeft < 0) {
+                dx = outLeft;
+            } else if (outRight > 0) {
+                dx = outRight;
+            }
+
+            if (outTop < 0) {
+                dy = outTop;
+            } else if (outBottom > 0) {
+                dy = outBottom;
+            }
+
+            if (dx || dy) {
+                this.scrollBy(dx, dy);
+                return [dx, dy];
+            }
+            return false;
+        },
+
+
+        scrollTo: function(x, y) {
             if (this.scrollH) {
-                this.setScrollX(this.scrollX - dx);
+                this.setScrollX(x);
             }
             if (this.scrollV) {
-                this.setScrollY(this.scrollY - dy);
+                this.setScrollY(y);
+            }
+        },
+        scrollBy: function(dx, dy) {
+            this.scrolling = this.scrollingDuration;
+            if (this.scrollH) {
+                if (this.scrollX < this.minScrollX && dx < 0 || this.scrollX > this.maxScrollX && dx > 0) {
+                    dx = dx * 0.3;
+                }
+                this.setScrollX(this.scrollX + dx);
+            }
+            if (this.scrollV) {
+                if (this.scrollY < this.minScrollY && dy < 0 || this.scrollY > this.maxScrollY && dy > 0) {
+                    dy = dy * 0.3;
+                }
+                this.setScrollY(this.scrollY + dy);
             }
         },
         setScrollX: function(scrollX) {
@@ -145,11 +216,11 @@ var CUI = CUI || {};
                 var _dy = _ty - _cy;
 
                 this.tween = {
-                    duration: 300,
+                    duration: this.bounceDuration,
                     played: 0,
                     onUpdate: function(k) {
-                        var dx = Me.scrollX - _cx - _dx * k;
-                        var dy = Me.scrollY - _cy - _dy * k;
+                        var dx = _cx + _dx * k - Me.scrollX;
+                        var dy = _cy + _dy * k - Me.scrollY;
                         if (dx || dy) {
                             Me.scrollBy(dx, dy);
                         }
@@ -203,7 +274,7 @@ var CUI = CUI || {};
 
         onPan: function(x, y, dx, dy, startX, startY, id) {
             if (this.isInRegion(startX, startY)) {
-                this.scrollBy(dx, dy);
+                this.scrollBy(-dx, -dy);
                 return;
             }
             return false;
@@ -211,7 +282,9 @@ var CUI = CUI || {};
 
         onSwipe: function(x, y, vx, vy, startX, startY, id) {
             if (this.isInRegion(startX, startY)) {
-                this.startScroll(vx, vy);
+                vx = vx * this.swipeScale;
+                vy = vy * this.swipeScale;
+                this.startScroll(-vx, -vy);
                 return;
             }
             return false;
@@ -243,31 +316,62 @@ var CUI = CUI || {};
 
         },
 
+        updateChildren: function(timeStep, now) {
+            // this.children.forEach(function(child) {
+            //     child.update(timeStep, now);
+            // });
+
+            var Me = this;
+            this.scrollDX = this.scrollX - this.lastScrollX;
+            this.scrollDY = this.scrollY - this.lastScrollY;
+            var vc = this.visibleChildren;
+            var scrollChanged = this.scrollDX || this.scrollDY || vc.length === 0;
+            if (scrollChanged) {
+                // console.log("scrolling : ", this.id, this.scrollDX, this.scrollDY, vc.length);
+                vc.length = 0;
+            }
+            this.children.forEach(function(child, idx) {
+                if (scrollChanged) {
+                    child.moveBy(-Me.scrollDX, -Me.scrollDY);
+                    if (Me.checkCollideAABB(child.aabb)) {
+                        vc.push(child);
+                    }
+                }
+                child.update(timeStep, now);
+            });
+
+            this.scrollDX = 0;
+            this.scrollDY = 0;
+            this.lastScrollX = this.scrollX;
+            this.lastScrollY = this.scrollY;
+        },
+
         renderScrollbar: function(context, timeStep, now) {
             if (!this.thumbWidth) {
                 return;
             }
+            if (this.scrollThumb && this.scrolling <= 0) {
+                return;
+            }
+            this.scrolling -= timeStep;
+
             if (this.scrollH && this.rateWidth < 1) {
                 var y = this.y + this.h - this.thumbWidth;
                 context.fillStyle = this.thumbBgColor;
-                context.fillRect(this.x + 0, y, this.w, this.thumbWidth);
+                context.fillRect(this.x + this.paddingLeft + 0, y, this.w, this.thumbWidth);
                 context.fillStyle = this.thumbColor;
-                context.fillRect(this.x + this.thumbX + 1, y + 1, this.thumbHSize - 2, this.thumbWidth - 2);
-            } else if (this.scrollV && this.rateHeight < 1) {
+                context.fillRect(this.x + this.paddingLeft + this.thumbX + 1, y + 1, this.thumbHSize - 2, this.thumbWidth - 2);
+            }
+            if (this.scrollV && this.rateHeight < 1) {
                 var x = this.x + this.w - this.thumbWidth;
                 context.fillStyle = this.thumbBgColor;
-                context.fillRect(x, this.y + 0, this.thumbWidth, this.h);
+                context.fillRect(x, this.y + this.paddingTop + 0, this.thumbWidth, this.h);
                 context.fillStyle = this.thumbColor;
-                context.fillRect(x + 1, this.y + this.thumbY + 1, this.thumbWidth - 2, this.thumbVSize - 2);
+                context.fillRect(x + 1, this.y + this.paddingTop + this.thumbY + 1, this.thumbWidth - 2, this.thumbVSize - 2);
             }
         },
 
-        renderChildren: function(context, timeStep, now) {
-
-            this.scrollDX = this.scrollX - this.lastScrollX;
-            this.scrollDY = this.scrollY - this.lastScrollY;
-
-            context.save();
+        startClip: function(context) {
             context.beginPath();
             context.moveTo(this.x, this.y);
             context.lineTo(this.x + this.w, this.y);
@@ -275,33 +379,53 @@ var CUI = CUI || {};
             context.lineTo(this.x, this.y + this.h);
             context.closePath();
             context.clip();
+            return context;
+        },
+        endClip: function(context) {
+
+        },
+
+        startClipBuffer: function() {
+            clipBufferCanvas.width = this.w;
+            clipBufferCanvas.height = this.h;
+            clipBufferContext.save();
+            clipBufferContext.translate(-this.x, -this.y);
+            return clipBufferContext;
+        },
+
+        endClipBuffer: function(context) {
+            context.drawImage(clipBufferCanvas, this.x, this.y);
+            clipBufferContext.restore();
+        },
+
+        renderChildren: function(context, timeStep, now) {
+
+            context.save();
+
+            var clipContext = this.clip ? this.startClip(context) : context;
 
             // this.renderScrollbar(context, timeStep, now);
             // context.translate(-this.scrollX, -this.scrollY);
-            var Me = this;
             // var aabb = this.aabb;
-            this.visibleChildren.length = 0;
-            var vc = this.visibleChildren;
-            var scrollChanged = !!(this.scrollDX || this.scrollDY);
-            this.children.forEach(function(c) {
-                if (scrollChanged) {
-                    c.moveBy(-Me.scrollDX, -Me.scrollDY);
-                }
-                if (Me.checkCollideAABB(c.aabb)) {
-                    c.render(context, timeStep, now);
-                    vc.push(c);
-                }
+
+            this.visibleChildren.forEach(function(c) {
+                c.render(clipContext, timeStep, now);
             });
 
-            this.renderScrollbar(context, timeStep, now);
+            this.renderScrollbar(clipContext, timeStep, now);
+
+            if (this.clip) {
+                this.endClip(context);
+            }
 
             context.restore();
 
-            this.scrollDX = 0;
-            this.scrollDY = 0;
-            this.lastScrollX = this.scrollX,
-            this.lastScrollY = this.scrollY;
 
+        },
+
+        getTouchableChildren: function() {
+            // return this.children;
+            return this.visibleChildren;
         },
 
     }, Component);

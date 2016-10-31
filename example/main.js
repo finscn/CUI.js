@@ -8,13 +8,6 @@ var game = {};
 var canvas, context;
 var loopId;
 
-var Component = CUI.Component;
-var Label = CUI.Label;
-var Button = CUI.Button;
-var Picture = CUI.Picture;
-var ScrollView = CUI.ScrollView;
-var Utils = CUI.Utils;
-
 window.onload = function() {
     init();
 
@@ -49,14 +42,14 @@ function update(timeStep, now) {
         TouchInfo.firstEnd = null;
     } else if (TouchInfo.firstPan) {
         var data = TouchInfo.firstPan;
-        rootUI.checkTouch("pan", data.x, data.y,data.dx,data.dy,data.sx,data.sy, data.id);
+        rootUI.checkTouch("pan", data.x, data.y, data.dx, data.dy, data.sx, data.sy, data.id);
         TouchInfo.firstPan = null;
     } else if (TouchInfo.firstSwipe) {
         var data = TouchInfo.firstSwipe;
-        rootUI.checkTouch("swipe", data.x, data.y,data.vx,data.vy,data.sx,data.sy, data.id);
+        rootUI.checkTouch("swipe", data.x, data.y, data.vx, data.vy, data.sx, data.sy, data.id);
         TouchInfo.firstSwipe = null;
     }
-    rootUI.update(timeStep,now);
+    rootUI.update(timeStep, now);
     // uiX+=1;
     // topUI.setPosition(uiX,topUI.top);
     // topUI.moveBy(0.25,0);

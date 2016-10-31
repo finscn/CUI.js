@@ -10,7 +10,6 @@ var CUI = CUI || {};
     var TableLayout = exports.TableLayout;
 
     var Layout = Class.create({
-        constructor: Layout,
 
         init: function() {
 
@@ -19,8 +18,8 @@ var CUI = CUI || {};
     });
 
     Layout.commonLayout = new BaseLayout();
-    Layout.vBox = new VBoxLayout();
-    Layout.hBox = new HBoxLayout();
+    // Layout.vBox = new VBoxLayout();
+    // Layout.hBox = new HBoxLayout();
     // Layout.tableBox = new TableLayout({
     //
     // });

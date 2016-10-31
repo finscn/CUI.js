@@ -15,6 +15,9 @@ var CUI = CUI || {};
                 for (var key in options) {
                     this[key] = options[key];
                 }
+                if (this.lazyInit === false) {
+                    this.init();
+                }
             };
         }
 

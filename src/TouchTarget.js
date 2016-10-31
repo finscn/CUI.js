@@ -12,34 +12,35 @@ var CUI = CUI || {};
         modalFlag: -0x100000,
 
         checkTouch: function(type, args) {
-            if (this.disabled || !this.visible || this.alpha <= 0) {
+            if (!this.visible || this.alpha <= 0) {
                 return false;
             }
-            args = Array.prototype.slice.call(arguments, 1);
-
+            var argsList = Array.prototype.slice.call(arguments, 1);
             // if (type != "swipe") {
-            //     var x = args[0],
-            //         y = args[1];
+            //     var x = argsList[0],
+            //         y = argsList[1];
             //     if (!this.isInRegion(x, y)) {
             //         if (this.modal) {
             //             if (type == "tap") {
-            //                 this.onTapOut.apply(this, args);
+            //                 this.onTapOut.apply(this, argsList);
             //             }
             //             return this.modalFlag;
             //         }
             //         return false;
             //     }
             // }
-            var x = args[0],
-                y = args[1];
+
+            var x = argsList[0],
+                y = argsList[1];
             if (!this.isInRegion(x, y)) {
                 if (this.modal || this.mask) {
                     if (type == "tap") {
-                        this.onTapOut.apply(this, args);
+                        this.onTapOut.apply(this, argsList);
                     }
                     return this.modalFlag;
                 }
-                if (type == "tap" || type == "touchStart" || type == "touchEnd") {
+                // if (type == "tap" || type == "touchStart" || type == "touchEnd") {
+                if (type == "tap" || type == "touchStart") {
                     return false;
                 }
             }
@@ -47,35 +48,45 @@ var CUI = CUI || {};
             if (this.composite) {
                 var rs = this.checkTouchChildren(type, arguments);
                 if (rs !== false) {
-                    return 1;
+                    return rs;
                 }
             }
-            return this.checkTouchSelf(type, args);
+
+            var rs = this.checkTouchSelf(type, argsList);
+            if (rs === false && (this.modal || this.mask)) {
+                return this.modalFlag;
+            }
+            return rs;
+
         },
 
         checkTouchSelf: function(type, args) {
-            if (this[type]) {
+            if (this.visible && this[type]) {
                 var rs = this[type].apply(this, args);
                 if (rs !== false) {
-                    return 1;
+                    return this;
                 }
             }
             return false;
         },
 
+        getTouchableChildren: function() {
+            return this.children;
+        },
         checkTouchChildren: function(type, args) {
-            var list = this.children;
-            var last = list.length - 1;
-            var rs = false;
-            for (var i = last; i >= 0; i--) {
-                var ui = list[i];
-                if (ui.disabled || !ui.visible || ui.alpha <= 0) {
-                    continue;
-                }
-                // rs = ui[type].apply(ui, args);
-                rs = ui.checkTouch.apply(ui, args);
-                if (rs !== false) {
-                    return 1;
+            var list = this.getTouchableChildren();
+            if (list) {
+                for (var i = list.length - 1; i >= 0; i--) {
+                    var ui = list[i];
+                    if (!ui.visible || ui.alpha <= 0) {
+                        continue;
+                    }
+                    // rs = ui[type].apply(ui, args);
+                    var rs = ui.checkTouch.apply(ui, args);
+                    if (rs !== false) {
+                        // return ui;
+                        return rs;
+                    }
                 }
             }
             return false;
@@ -93,6 +104,8 @@ var CUI = CUI || {};
         touchMove: function(x, y, id) {
             return this.onTouchMove(x, y, id);
         },
+
+
         tap: function(x, y, id) {
             return this.onTap(x, y, id);
         },
@@ -142,7 +155,7 @@ var CUI = CUI || {};
         var proto = TouchTarget.prototype;
         for (var p in proto) {
             var v = proto[p];
-            if (typeof v == "function") {
+            if (typeof v == "function" || p === "modalFlag") {
                 (override || !object[p]) && (object[p] = v);
             }
         }

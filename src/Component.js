@@ -16,6 +16,7 @@ var CUI = CUI || {};
     var Component = Class.create({
 
         id: null,
+        lazyInit: false,
 
         /////////////////////////////////////////////
         // 对象创建后, 以下属性可更改
@@ -41,6 +42,9 @@ var CUI = CUI || {};
         // 缩放只适合用来做瞬间的、纯视觉上的动画效果, 它不会改变UI的响应区域和行为
         // 如果要真正改变UI的大小, 请通过修改UI(以及内部元素的)width/height来实现
         scale: 1,
+
+        offsetX: 0,
+        offsetY: 0,
 
         // 缩放时才需要
         anchorX: "50%",
@@ -93,9 +97,10 @@ var CUI = CUI || {};
 
 
         backgroundColor: null, //"rgba(200,220,255,1)",
+        backgroundImageInfo: null,
         borderColor: "rgba(30,50,80,1)",
         borderWidth: 0,
-        borderImageInfo: null, // { img , ix, iy, iw, ih, top, right, bottom, left }
+        borderImageInfo: null, // { img , sx, sy, sw, sh, top, right, bottom, left }
 
         ////////////////////////////////////////
         // 以下属性为内部属性, 用户通常不需要关心
@@ -115,6 +120,7 @@ var CUI = CUI || {};
         needToCompute: true,
 
         useCache: false,
+        readyForCache: false,
         cached: false,
 
         init: function() {
@@ -123,12 +129,18 @@ var CUI = CUI || {};
             //     this.beforeInit();
             // }
 
+            // TODO
+            this._beforeInit();
+
             this.inited = true;
             this.id = this.id || "cmp_" + Component._SN++;
             // Component.addUI(this);
 
             this.root = this.root || (this.parent && this.parent.root);
             if (this.root) {
+                if (this.root.all[this.id]) {
+                    console.log("Duplicate id : " + this.id);
+                }
                 this.root.all[this.id] = this;
             }
 
@@ -136,6 +148,10 @@ var CUI = CUI || {};
             this.pixel = {
                 relativeX: 0,
                 relativeY: 0,
+                paddingTop: 0,
+                paddingRight: 0,
+                paddingBottom: 0,
+                paddingLeft: 0,
             };
 
             EventDispatcher.apply(this);
@@ -143,22 +159,94 @@ var CUI = CUI || {};
 
             if (this.composite) {
                 Composite.apply(this);
-                this.setLayout(this.layout || Layout.commonLayout);
+                this.setLayout(this.layout);
                 this.childSN = 0;
             }
 
             this.setMargin(this.margin || 0);
             this.setPadding(this.padding || 0);
             this.setParent(this.parent, true);
+            this.setBackgroundImageInfo(this.backgroundImageInfo);
+
+
+            // TODO
+            this._afterInit();
 
             // if (this.afterInit) {
             //     this.afterInit();
             // }
         },
+
+        setBackgroundImageInfo: function(info) {
+            if (info) {
+                info.x = info.x || 0;
+                info.y = info.y || 0;
+                info.ox = info.ox || 0;
+                info.oy = info.oy || 0;
+                info.w = info.w || info.sw;
+                info.h = info.h || info.sh;
+                this.backgroundImageInfo = info;
+            }
+        },
+
+        initBgInfo: function() {
+            if (this.bgImg && !this.bgInfo) {
+                this.bgInfo = {
+                    img: this.bgImg
+                };
+            }
+            if (this.bgInfo) {
+                this.setBgInfo(this.bgInfo);
+            }
+        },
+
+        setBgInfo: function(bgInfo) {
+            if (!bgInfo) {
+                this.bgRenderer = null;
+            } else {
+                if (!this.bgRenderer) {
+                    this.bgRenderer = new CUI.ImageRenderer(bgInfo);
+                    this.bgRenderer.setParent(this);
+                    this.bgRenderer.init();
+                } else {
+                    this.bgRenderer.setImgInfo(bgInfo);
+                }
+            }
+            this.needToCompute = true;
+        },
+
         beforeInit: null,
+        _beforeInit: function() {},
+        _afterInit: function() {},
         afterInit: null,
 
         setLayout: function(layout) {
+            var name, options;
+            if (typeof layout == "string") {
+                name = layout;
+            } else if (layout && layout.constructor == Object) {
+                var name = layout.name;
+                options = layout;
+            }
+            if (name) {
+                switch (name) {
+                    case "vbox":
+                        layout = new CUI.VBoxLayout(options);
+                        break;
+                    case "hbox":
+                        layout = new CUI.HBoxLayout(options);
+                        break;
+                    case "table":
+                        layout = new CUI.TableLayout(options);
+                        break;
+                    default:
+                        layout = new CUI.BaseLayout(options);
+                        break;
+                }
+            }
+            if (!layout) {
+                layout = Layout.commonLayout;
+            }
             this.layout = layout;
         },
 
@@ -235,7 +323,7 @@ var CUI = CUI || {};
         /////////////////////////////////////////////////////////////////////////
 
 
-        setReflow: function(deep) {
+        setReflow: function(deep, immediately) {
             if (!deep) {
                 this.needToCompute = false;
                 return false;
@@ -244,16 +332,24 @@ var CUI = CUI || {};
                 var root = this.root || this.parent;
                 if (root) {
                     root.needToCompute = true;
+                    if (immediately) {
+                        root.computeLayout();
+                    }
                 }
             } else if (deep == "parent") {
                 var parent = this.parent || this.root;
                 if (parent) {
                     parent.needToCompute = true;
+                    if (immediately) {
+                        parent.computeLayout();
+                    }
                 }
             } else if (deep === true) {
                 var stop = false;
                 var ui = this;
+                var top;
                 while (ui) {
+                    top = ui;
                     ui.needToCompute = true;
                     if (stop || ui.relative == "root") {
                         break;
@@ -262,8 +358,14 @@ var CUI = CUI || {};
                     }
                     ui = ui.parent;
                 }
+                if (immediately) {
+                    top.computeLayout();
+                }
             } else {
                 this.needToCompute = true;
+                if (immediately) {
+                    this.computeLayout();
+                }
             }
 
             return true;
@@ -325,6 +427,7 @@ var CUI = CUI || {};
 
         // 在移动UI时, 可以用以下两个方法 , 更快捷, 但是不严谨.
         // 严谨的方法是调用  setPosition .
+        // TODO
         moveToX: function(x) {
             this.pixel.relativeX = x;
             this.syncPosition();
@@ -345,14 +448,22 @@ var CUI = CUI || {};
         },
 
         show: function() {
+            if (this.visible) {
+                return false;
+            }
             this.visible = true;
             this.onShow();
+            return true;
         },
         onShow: noop,
 
         hide: function() {
+            if (!this.visible) {
+                return false;
+            }
             this.visible = false;
             this.onHide();
+            return true;
         },
         onHide: noop,
 
@@ -402,6 +513,10 @@ var CUI = CUI || {};
                 this.needToCompute = false;
                 this.layout.compute(this);
             }
+            if (this.bgRenderer) {
+                this.bgRenderer.updateSize();
+                this.bgRenderer.updatePosition();
+            }
         },
 
         getChildrenCount: function() {
@@ -449,27 +564,60 @@ var CUI = CUI || {};
             this.useCache = false;
             this.visible = true;
             context.translate(-this.x + 2, -this.y + 2);
-            this.render(context, 0, Date.now());
+
+            var timeStep = 0;
+            var now = Date.now();
+            // this.render(context, 0, now);
+            this.renderSelf(context, timeStep, now);
+            if (this.composite) {
+                this.renderChildren(context, timeStep, now);
+            }
+
             context.translate(this.x - 2, this.y - 2);
             this.useCache = useCache;
             this.visible = visible;
             this.cached = true;
         },
 
-        renderSelf: function(context, timeStep, now) {
-
-            if (this.backgroundColor) {
-                context.fillStyle = this.backgroundColor;
-                context.fillRect(this.x, this.y, this.w, this.h);
-            }
-            if (this.borderImageInfo) {
+        renderBorderImage: function(context) {
+            var bi = this.borderImageInfo;
+            if (this.cacheBorderImage) {
                 if (!this.borderImage) {
-                    var bi = this.borderImageInfo;
-                    this.borderImage = CUI.Utils.createImageByBorder(this.w, this.h,
+                    this.borderImage = CUI.Utils.createImageByBorderImage(this.w, this.h,
                         bi.T, bi.R, bi.B, bi.L, bi.fill,
                         bi.img, bi.sx, bi.sy, bi.sw, bi.sh);
                 }
                 context.drawImage(this.borderImage, this.x, this.y)
+            } else {
+                CUI.Utils.renderBorderImage(context,
+                    this.x, this.y, this.w, this.h,
+                    bi.T, bi.R, bi.B, bi.L, bi.fill,
+                    bi.img, bi.sx, bi.sy, bi.sw, bi.sh)
+            }
+        },
+
+        renderBackgroundImageInfo: function(context) {
+            var info = this.backgroundImageInfo;
+            var x = this.x + info.x + info.ox;
+            var y = this.y + info.y + info.oy;
+            context.drawImage(info.img,
+                info.sx, info.sy, info.sw, info.sh,
+                x, y, info.w, info.h);
+        },
+
+        renderSelf: function(context, timeStep, now) {
+            if (this.backgroundColor) {
+                context.fillStyle = this.backgroundColor;
+                context.fillRect(this.x, this.y, this.w, this.h);
+            }
+            if (this.backgroundImageInfo) {
+                this.renderBackgroundImageInfo(context);
+            }
+            if (this.bgRenderer) {
+                this.bgRenderer.render(context, timeStep, now);
+            }
+            if (this.borderImageInfo) {
+                this.renderBorderImage(context);
             }
             if (this.borderWidth && this.borderColor) {
                 context.lineWidth = this.borderWidth;
@@ -483,11 +631,24 @@ var CUI = CUI || {};
             });
         },
 
-        doRenderScale: function(context, timeStep, now) {
-            context.save();
-            context.translate(this.x + this.pixel.anchorX, this.y + this.pixel.anchorY);
-            context.scale(this.scale, this.scale);
-            context.translate(-this.x - this.pixel.anchorX, -this.y - this.pixel.anchorY);
+        renderModalMask: function(context, timeStep, now) {
+            if (!this.maskColor) {
+                return;
+            }
+            context.fillStyle = this.maskColor;
+            var root = this.root;
+            var x = root.x,
+                y = root.y;
+            var w = root.w,
+                h = root.h;
+            var offset = root.maskOffset;
+            if (offset) {
+                x += offset.x || 0;
+                y += offset.y || 0;
+                w += offset.w || 0;
+                h += offset.h || 0;
+            }
+            context.fillRect(x, y, w, h);
         },
 
         render: function(context, timeStep, now) {
@@ -495,50 +656,64 @@ var CUI = CUI || {};
                 return;
             }
 
-            if (this.alpha != 1) {
-                context.globalAlpha = this.alpha;
-            }
-
-            if (this.useCache) {
-                if (!this.cached) {
-                    this.createCache();
-                }
-                context.drawImage(this.cacheCanvas, this.x - 2, this.y - 2);
-                context.globalAlpha = 1;
-                return;
+            if (this.modal) {
+                this.renderModalMask(context, timeStep, now);
             }
 
             if (this.beforeRender) {
                 this.beforeRender(context, timeStep, now);
             }
 
-            if (this.modal && this.maskColor) {
-                context.fillStyle = this.maskColor;
-                var root = this.root;
-                context.fillRect(root.x, root.y, root.w, root.h);
+            var prevAlpha = context.globalAlpha;
+            if (this.alpha != 1) {
+                context.globalAlpha = this.alpha;
+            }
+            this.beforeTransform(context, timeStep, now);
+
+            if (this.useCache && this.readyForCache) {
+                if (!this.cached) {
+                    this.createCache();
+                }
+                context.drawImage(this.cacheCanvas, this.x - 2, this.y - 2);
+            } else {
+                this.readyForCache = true;
+
+                this.renderSelf(context, timeStep, now);
+                if (this.composite) {
+                    this.renderChildren(context, timeStep, now);
+                }
             }
 
-            if (this.scale != 1) {
-                this.doRenderScale(context, timeStep, now);
-            }
-            this.renderSelf(context, timeStep, now);
-
-            if (this.composite) {
-                this.renderChildren(context, timeStep, now);
-            }
-            if (this.scale != 1) {
-                context.restore();
-            }
+            this.afterTransform(context, timeStep, now);
+            context.globalAlpha = prevAlpha;
 
             if (this.afterRender) {
                 this.afterRender(context, timeStep, now);
             }
 
-            context.globalAlpha = 1;
-
         },
+
         beforeRender: null,
         afterRender: null,
+
+        beforeTransform: function(context, timeStep, now) {
+            if (this.scale != 1) {
+                context.save();
+                var x = this.x + this.pixel.anchorX,
+                    y = this.y + this.pixel.anchorY;
+                context.translate(x, y);
+                context.scale(this.scale, this.scale);
+                context.translate(-x + this.offsetX, -y + this.offsetY);
+            } else if (this.offsetX || this.offsetY) {
+                context.save();
+                context.translate(this.offsetX, this.offsetY);
+            }
+        },
+        afterTransform: function(context, timeStep, now) {
+            if (this.scale != 1 || this.offsetX || this.offsetY) {
+                context.restore();
+            }
+        },
 
         ////////////////////////////////////////////////////////////////////////
         ////////////////////////////////////////////////////////////////////////
@@ -579,6 +754,7 @@ var CUI = CUI || {};
             var relativeWidth = pixel.realOuterWidth;
             pixel.width = Utils.parseValue(this.width, relativeWidth);
             pixel.anchorX = Utils.parseValue(this.anchorX, pixel.width) || 0;
+            pixel.innerWidth = pixel.width - pixel.paddingLeft - pixel.paddingRight;
             this.w = pixel.width;
         },
         computeHeight: function() {
@@ -586,6 +762,7 @@ var CUI = CUI || {};
             var relativeHeight = pixel.realOuterHeight;
             pixel.height = Utils.parseValue(this.height, relativeHeight);
             pixel.anchorY = Utils.parseValue(this.anchorY, pixel.height) || 0;
+            pixel.innerHeight = pixel.height - pixel.paddingTop - pixel.paddingBottom;
             this.h = pixel.height;
         },
 
@@ -601,6 +778,10 @@ var CUI = CUI || {};
             pixel.paddingRight = Utils.parseValue(this.paddingRight, pixel.width) || 0;
             pixel.paddingTop = Utils.parseValue(this.paddingTop, pixel.height) || 0;
             pixel.paddingBottom = Utils.parseValue(this.paddingBottom, pixel.height) || 0;
+
+            pixel.innerWidth = pixel.width - pixel.paddingLeft - pixel.paddingRight;
+            pixel.innerHeight = pixel.height - pixel.paddingTop - pixel.paddingBottom;
+
         },
 
         computePositionX: function(parent) {
@@ -623,7 +804,7 @@ var CUI = CUI || {};
             }
             pixel.relativeX = x + pixel.realMarginLeft;
 
-            this.x = pixel.relativeX + parent.x;
+            this.x = pixel.relativeX + (parent ? parent.x : 0);
         },
 
         computePositionY: function(parent) {
@@ -645,7 +826,7 @@ var CUI = CUI || {};
             }
             pixel.relativeY = y + pixel.realMarginTop;
 
-            this.y = pixel.relativeY + parent.y;
+            this.y = pixel.relativeY + +(parent ? parent.y : 0);
         },
 
 

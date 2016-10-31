@@ -29,11 +29,11 @@ var CUI = CUI || {};
             }
         },
 
-        parseValue: function(value, relativeValue) {
+        parseValue: function(value, relativeValue, autoValue) {
             if (typeof value == "string") {
                 value = value.trim();
                 if (value === "auto") {
-                    return 0;
+                    return autoValue === undefined ? 0 : autoValue;
                 }
                 var plus, sub, percent, num;
                 if ((plus = value.lastIndexOf("+")) > 0) {
@@ -63,13 +63,27 @@ var CUI = CUI || {};
 
         createCanvas: function(width, height) {
             var canvas = document.createElement("canvas");
-            canvas.retinaResolutionEnabled = false;
             canvas.width = width;
             canvas.height = height;
             return canvas;
         },
 
-        createImageByBorder: function(w, h, T, R, B, L, fill, img, sx, sy, sw, sh) {
+        getTextWidth: function(context, text, size, fontName) {
+            var font = context.font;
+            context.font = size + "px" + (fontName ? (" " + fontName) : "");
+            var measure = context.measureText(text);
+            context.font = font;
+            return measure.width;
+        },
+
+        // createButtonImgByBorderImage: function(w, headWidth, img, sx, sy, sw, sh) {
+        //     var h = sh || img.height;
+        //     var canvas = Utils.createCanvas(w, h);
+        //     var context = canvas.getContext("2d");
+        //     Utils.renderBorderImage(context, 0, 0, w, h, 0, headWidth, 0, headWidth, true, img, sx, sy, sw, sh);
+        //     return canvas;
+        // },
+        createImageByBorderImage: function(w, h, T, R, B, L, fill, img, sx, sy, sw, sh) {
             var canvas = Utils.createCanvas(w, h);
             var context = canvas.getContext("2d");
             Utils.renderBorderImage(context, 0, 0, w, h, T, R, B, L, fill, img, sx, sy, sw, sh);
@@ -89,7 +103,7 @@ var CUI = CUI || {};
             var CW = w - L - R,
                 CH = h - T - B;
 
-            if (CH != 0) {
+            if (CH > 0) {
                 if (fill === true) {
                     context.drawImage(img, sx + L, sy + T, bw, bh, x + L, y + T, CW, CH);
                 } else if (fill) {
@@ -100,22 +114,25 @@ var CUI = CUI || {};
                 context.drawImage(img, sx + sw - R, sy + T, R, bh, x + w - R, y + T, R, CH);
             }
 
-            if (T != 0) {
-                L != 0 && context.drawImage(img, sx, sy, L, T, x, y, L, T);
-                CW != 0 && context.drawImage(img, sx + L, sy, bw, T, x + L, y, CW, T);
-                R != 0 && context.drawImage(img, sx + sw - R, sy, R, T, x + w - R, y, R, T);
+            if (T > 0) {
+                L > 0 && context.drawImage(img, sx, sy, L, T, x, y, L, T);
+                CW > 0 && context.drawImage(img, sx + L, sy, bw, T, x + L, y, CW, T);
+                R > 0 && context.drawImage(img, sx + sw - R, sy, R, T, x + w - R, y, R, T);
             }
 
-            if (B != 0) {
-                L != 0 && context.drawImage(img, sx, sy + sh - B, L, B, x, y + h - B, L, B);
-                CW != 0 && context.drawImage(img, sx + L, sy + sh - B, bw, B, x + L, y + h - B, CW, B);
-                R != 0 && context.drawImage(img, sx + sw - R, sy + sh - B, R, B, x + w - R, y + h - B, R, B);
+            if (B > 0) {
+                L > 0 && context.drawImage(img, sx, sy + sh - B, L, B, x, y + h - B, L, B);
+                CW > 0 && context.drawImage(img, sx + L, sy + sh - B, bw, B, x + L, y + h - B, CW, B);
+                R > 0 && context.drawImage(img, sx + sw - R, sy + sh - B, R, B, x + w - R, y + h - B, R, B);
             }
         },
 
-        strokeAABB: function(context, aabb, color) {
+        strokeAABB: function(context, aabb, color, lineWidth) {
             color = color || "red";
             var bak = context.strokeStyle;
+            if (lineWidth) {
+                context.lineWidth = lineWidth;
+            }
             context.strokeStyle = color;
             context.strokeRect(aabb[0], aabb[1], aabb[2] - aabb[0], aabb[3] - aabb[1]);
             context.strokeStyle = bak;
@@ -147,6 +164,11 @@ var CUI = CUI || {};
                     "sy": 0,
                     "sw": img.width,
                     "sh": img.height,
+
+                    "ox": 0,
+                    "oy": 0,
+                    "w": img.width,
+                    "h": img.height,
                 }
             }
             var mapping = CUI.ImageMapping[id];
@@ -158,6 +180,10 @@ var CUI = CUI || {};
                     "sy": mapping["y"],
                     "sw": mapping["w"],
                     "sh": mapping["h"],
+                    "ox": mapping["ox"],
+                    "oy": mapping["oy"],
+                    "w": mapping["sw"],
+                    "h": mapping["sh"],
                 }
                 info.img = img;
                 return info;
@@ -167,6 +193,19 @@ var CUI = CUI || {};
             return null;
         },
 
+        renderImageInfo: function(context, imgInfo, x, y, w, h) {
+            x = x || 0;
+            y = y || 0;
+            context.drawImage(imgInfo.img,
+                imgInfo.sx, imgInfo.sy, imgInfo.sw, imgInfo.sh,
+                x + imgInfo.ox >> 0, y + imgInfo.oy >> 0, w || imgInfo.sw, h || imgInfo.sh);
+        },
+        renderInfoImg: function(context, imgInfo, x, y, w, h) {
+            x = x || 0;
+            y = y || 0;
+            context.drawImage(imgInfo.img, imgInfo.sx, imgInfo.sy, imgInfo.sw, imgInfo.sh,
+                x, y, w || imgInfo.sw, h || imgInfo.sh);
+        },
     };
 
     exports.Utils = Utils;

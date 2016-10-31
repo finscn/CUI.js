@@ -9,18 +9,23 @@ var CUI = CUI || {};
     var BaseLayout = exports.BaseLayout;
 
     var VBoxLayout = Class.create({
-        constructor: VBoxLayout,
 
         align: "top",
+        size: null,
+        equalSize: false,
 
         compute: function(parent) {
             var children = parent.children;
+            var childCount = children.length;
 
             var idx = 0;
-            var currentY = 0;
-            var margin = parent.pixel.paddingTop;
+            var currentY = parent.pixel.paddingTop;
+            var margin = -Infinity;
             var totalWidth = 0;
-            for (var i = 0, len = children.length; i < len; i++) {
+            var size = this.equalSize ? parent.pixel.innerHeight / childCount : this.size;
+
+            var y;
+            for (var i = 0; i < childCount; i++) {
                 var child = children[i];
                 child.hasLayoutY = false;
 
@@ -35,31 +40,38 @@ var CUI = CUI || {};
                     child.computeWidth();
                     child.computeHeight();
 
-                    margin = Math.max(margin, child.pixel.marginTop);
-                    var y = currentY + margin;
+                    if (!child.follow) {
+                        y = currentY;
+                        if (size) {
+                            y += child.pixel.marginTop;
+                            currentY += size;
+                        } else {
+                            y += Math.max(margin, child.pixel.marginTop);
+                            currentY = y + child.pixel.height;
+                        }
+                    }
+
                     child.pixel.top = Utils.parseValue(child.top, child.pixel.realOuterHeight);
                     child.pixel.relativeY = y + child.pixel.top;
                     child.y = child.pixel.relativeY + parent.y;
-
-                    currentY = y + child.pixel.height;
-                    margin = child.pixel.marginBottom;
 
                     child.hasLayoutY = true;
                     child.computePositionX(parent);
                     child.computePadding();
                     child.updateAABB();
 
+                    margin = child.pixel.marginBottom;
                     totalWidth = Math.max(totalWidth, child.pixel.marginLeft + child.pixel.width + child.pixel.marginRight)
                     idx++;
                 }
                 child.computeLayout(true);
             }
-            var totalHeight = currentY + margin;
-            this.tryToResizeParent(parent, totalWidth, totalHeight);
-            if (this.align == "bottom") {
+            var totalHeight = size ? parent.pixel.height : currentY + margin;
+            this.tryToResizeParent(parent, totalWidth, totalHeight, true);
+            if (!size && this.align == "bottom") {
                 var deltaHeight = parent.pixel.height - totalHeight;
                 if (deltaHeight > 0) {
-                    for (var i = 0, len = children.length; i < len; i++) {
+                    for (var i = 0; i < childCount; i++) {
                         var child = children[i];
                         if (child.relative !== "parent" && child.relative != "root") {
                             child.pixel.top += deltaHeight;

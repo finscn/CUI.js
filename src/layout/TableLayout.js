@@ -9,7 +9,6 @@ var CUI = CUI || {};
     var BaseLayout = exports.BaseLayout;
 
     var TableLayout = Class.create({
-        constructor: TableLayout,
 
         cellWidth: null,
         cellHeight: null,
@@ -48,9 +47,11 @@ var CUI = CUI || {};
 
             if (parent.width == "auto") {
                 parentPixel.width = (this.cellWidth + this.cellSpace) * this.cols + this.cellSpace;
+                parentPixel.width += (parentPixel.paddingLeft || 0) + (parentPixel.paddingRight || 0);
             }
             if (parent.height == "auto") {
                 parentPixel.height = (this.cellHeight + this.cellSpace) * this.rows + this.cellSpace;
+                parentPixel.height += (parentPixel.paddingTop || 0) + (parentPixel.paddingBottom || 0);
             }
 
             pixel.cellSpace = Utils.parseValue(this.cellSpace, parentPixel.width) || 0;
@@ -67,25 +68,28 @@ var CUI = CUI || {};
             var innerWidth = parentPixel.width - parentPixel.paddingLeft - parentPixel.paddingRight;
             var innerHeight = parentPixel.height - parentPixel.paddingTop - parentPixel.paddingBottom;
 
-            innerWidth -= pixel.cellSpaceH;
-            innerHeight -= pixel.cellSpaceV;
+            // innerWidth += pixel.cellSpaceH;
+            // innerHeight += pixel.cellSpaceV;
+
+            var cellInnerWidth = (innerWidth + pixel.cellSpaceH) / (this.cols || 1) - pixel.cellSpaceH >> 0;
+            var cellInnerHeight = (innerHeight + pixel.cellSpaceV) / (this.rows || 1) - pixel.cellSpaceV >> 0;
 
             if (!this.cellWidth) {
-                pixel.cellWidth = innerWidth / (this.cols || 1);
+                pixel.cellWidth = cellInnerWidth;
             } else {
-                pixel.cellWidth = Utils.parseValue(this.cellWidth, innerWidth) || innerWidth;
+                pixel.cellWidth = Utils.parseValue(this.cellWidth, cellInnerWidth) || cellInnerWidth;
             }
             if (!this.cols) {
-                this.cols = innerWidth / pixel.cellWidth;
+                this.cols = (innerWidth + pixel.cellSpaceH) / pixel.cellWidth >> 0;
             }
 
             if (!this.cellHeight) {
-                pixel.cellHeight = innerHeight / (this.rows || 1);
+                pixel.cellHeight = cellInnerHeight;
             } else {
-                pixel.cellHeight = Utils.parseValue(this.cellHeight, innerHeight) || innerHeight;
+                pixel.cellHeight = Utils.parseValue(this.cellHeight, cellInnerHeight) || cellInnerHeight;
             }
             if (!this.rows) {
-                this.rows = innerHeight / pixel.cellHeight;
+                this.rows = (innerHeight + pixel.cellSpaceV) / pixel.cellHeight >> 0;
             }
 
             this.parentCell = {
@@ -111,33 +115,32 @@ var CUI = CUI || {};
             child.height = child.height === null ? "100%" : child.height;
 
             var pixel = child.pixel;
+
+            // no cellSpace
             var w = this.pixel.cellWidth,
                 h = this.pixel.cellHeight;
 
-            var x = col * w;
-            var y = row * h;
+            var cellSpaceH = this.pixel.cellSpaceH;
+            var cellSpaceV = this.pixel.cellSpaceV;
+
 
             this.parentCell.x = parent.x;
             this.parentCell.y = parent.y;
-            this.parentCell.pixel.width = child.colspan * (w + this.pixel.cellSpaceH);
-            this.parentCell.pixel.height = child.rowspan * (h + this.pixel.cellSpaceV);
+            this.parentCell.pixel.width = child.colspan * (w + cellSpaceH) - cellSpaceH;
+            this.parentCell.pixel.height = child.rowspan * (h + cellSpaceV) - cellSpaceV;
 
             child.computeMargin(this.parentCell);
-
-            this.parentCell.pixel.paddingLeft = this.pixel.cellSpaceH + pixel.marginLeft;
-            this.parentCell.pixel.paddingTop = this.pixel.cellSpaceV + pixel.marginTop;
-
             child.computeRealMargin(this.parentCell);
 
-            child.pixel.realMarginLeft += col * (w + this.pixel.cellSpaceH);
-            child.pixel.realMarginTop += row * (h + this.pixel.cellSpaceV);
+            child.pixel.realMarginLeft = Math.max(child.marginLeft, parent.paddingLeft) + col * (w + cellSpaceH);
+            child.pixel.realMarginTop = Math.max(child.marginTop, parent.paddingTop) + row * (h + cellSpaceV);
+
             child.computeWidth();
             child.computeHeight();
             child.computePositionX(this.parentCell);
             child.computePositionY(this.parentCell);
             child.computePadding();
             child.updateAABB();
-
         }
 
     }, BaseLayout);

@@ -23,9 +23,10 @@ var CUI = CUI || {};
         backgroundColor: null,
         borderWidth: 0,
 
-        autoSizeWithText: true,
+        autoSizeWithText: false,
 
         sizeHolder: 0.0001,
+        sizePadding: 2,
 
         init: function() {
             if (this.beforeInit) {
@@ -34,40 +35,67 @@ var CUI = CUI || {};
 
             Label.$super.init.call(this);
 
-            if (this.bgInfo) {
-                this.setBgInfo(this.bgInfo);
-            }
+            this.initBgInfo();
+
             if (this.iconInfo) {
                 this.setIconInfo(this.iconInfo);
             }
+            if (this.flagInfo) {
+                this.setFlagInfo(this.flagInfo);
+            }
             this.initTextInfo();
             this.setTextInfo(this.textInfo);
-
 
             if (this.afterInit) {
                 this.afterInit();
             }
 
+            this.needToCompute = true;
+
         },
 
-        setBgInfo: function(bgInfo) {
-            if (!this.bgRenderer) {
-                this.bgRenderer = new ImageRenderer(bgInfo);
-                this.bgRenderer.setParent(this);
-                this.bgRenderer.init();
+        setImageRenderer: function(name, info) {
+            if (!info) {
+                this[name] = null;
             } else {
-                this.bgRenderer.setImgInfo(bgInfo);
+                if (!this[name]) {
+                    this[name] = new ImageRenderer(info);
+                    this[name].setParent(this);
+                    this[name].init();
+                } else {
+                    this[name].setImgInfo(info);
+                }
             }
+            this.needToCompute = true;
         },
 
         setIconInfo: function(iconInfo) {
-            if (!this.iconRenderer) {
-                this.iconRenderer = new ImageRenderer(iconInfo);
-                this.iconRenderer.setParent(this);
-                this.iconRenderer.init();
+            if (!iconInfo) {
+                this.iconRenderer = null;
             } else {
-                this.iconRenderer.setImgInfo(iconInfo);
+                if (!this.iconRenderer) {
+                    this.iconRenderer = new ImageRenderer(iconInfo);
+                    this.iconRenderer.setParent(this);
+                    this.iconRenderer.init();
+                } else {
+                    this.iconRenderer.setImgInfo(iconInfo);
+                }
             }
+            this.needToCompute = true;
+        },
+        setFlagInfo: function(flagInfo) {
+            if (!flagInfo) {
+                this.flagRenderer = null;
+            } else {
+                if (!this.flagRenderer) {
+                    this.flagRenderer = new ImageRenderer(flagInfo);
+                    this.flagRenderer.setParent(this);
+                    this.flagRenderer.init();
+                } else {
+                    this.flagRenderer.setImgInfo(flagInfo);
+                }
+            }
+            this.needToCompute = true;
         },
         setTextInfo: function(textInfo) {
             if (!this.textRenderer) {
@@ -77,6 +105,7 @@ var CUI = CUI || {};
             } else {
                 this.textRenderer.setTextInfo(textInfo);
             }
+            this.needToCompute = true;
         },
 
         initTextInfo: function() {
@@ -106,11 +135,15 @@ var CUI = CUI || {};
             this.textRenderer.setText(text);
         },
 
-
         computeWidth: function() {
             var pixel = this.pixel;
-            if (this.bgRenderer && (this.width === null || this.width === "auto")) {
-                pixel.width = this.bgRenderer.sw;
+            var autoWidth = this.width === null || this.width === "auto";
+
+            if (autoWidth && (this.autoSizeWithText || !this.bgRenderer)) {
+                pixel.width = pixel.width || 0;
+                this._autoSizeWithText = true;
+            } else if (autoWidth && this.bgRenderer) {
+                pixel.width = this.bgRenderer.w;
             } else {
                 pixel.width = Utils.parseValue(this.width, pixel.realOuterWidth);
             }
@@ -119,13 +152,21 @@ var CUI = CUI || {};
 
             this.w = pixel.width;
             if (this.scaleBg) {
-                this.bgRenderer.pixel.width = this.w;
+                // this.bgRenderer.pixel.width = this.w;
+                // this.bgRenderer.pixel.sw = this.w;
+                this.bgRenderer.width = this.w;
             }
         },
+
         computeHeight: function() {
             var pixel = this.pixel;
-            if (this.bgRenderer && (this.width === null || this.width === "auto")) {
-                pixel.height = this.bgRenderer.sh;
+            var autoHeight = this.height === null || this.height === "auto";
+
+            if (autoHeight && (this.autoSizeWithText || !this.bgRenderer)) {
+                pixel.height = pixel.height || 0;
+                this._autoSizeWithText = true;
+            } else if (autoHeight && this.bgRenderer) {
+                pixel.height = this.bgRenderer.h;
             } else {
                 pixel.height = Utils.parseValue(this.height, pixel.realOuterHeight);
             }
@@ -135,7 +176,9 @@ var CUI = CUI || {};
             this.h = pixel.height;
 
             if (this.scaleBg) {
-                this.bgRenderer.pixel.height = this.h;
+                // this.bgRenderer.pixel.height = this.h;
+                // this.bgRenderer.pixel.sh = this.h;
+                this.bgRenderer.height = this.h;
             }
         },
 
@@ -145,23 +188,31 @@ var CUI = CUI || {};
                 return;
             }
             var needToCompute = false;
+            // var ext = this.sizePadding * 2 + this.borderWidth;
+            var extX = this.borderWidth + this.paddingLeft + this.paddingRight;
+            var extY = this.borderWidth + this.paddingTop + this.paddingBottom;
             if (this.width === null || this.width === "auto") {
-                this.pixel.width = measure.width;
-                this.w = measure.width;
+                var textWidth = measure.width + extX;
+                this.pixel.width = textWidth;
+                this.w = textWidth;
                 needToCompute = true;
             }
             if (this.height === null || this.height === "auto") {
-                this.pixel.height = measure.height;
-                this.h = measure.height;
+                var textHeight = measure.height * this.textRenderer.lineCount + extY;
+                this.pixel.height = textHeight;
+                this.h = textHeight;
                 needToCompute = true;
             }
             if (needToCompute) {
-                this.setReflow("parent");
-                // this.computeLayout();
+                this.setReflow("parent", true);
             }
         },
 
         computeLayout: function(forceCompute) {
+            if (!this.needToCompute && !forceCompute) {
+                return;
+            }
+            this.textRenderer && this.textRenderer.updatePosition();
             if (this.bgRenderer) {
                 this.bgRenderer.updateSize();
                 this.bgRenderer.updatePosition();
@@ -170,7 +221,10 @@ var CUI = CUI || {};
                 this.iconRenderer.updateSize();
                 this.iconRenderer.updatePosition();
             }
-            this.textRenderer && this.textRenderer.updatePosition();
+            if (this.flagRenderer) {
+                this.flagRenderer.updateSize();
+                this.flagRenderer.updatePosition();
+            }
 
             this.updateAnchor();
 
@@ -185,29 +239,36 @@ var CUI = CUI || {};
             this.bgRenderer && this.bgRenderer.updatePosition();
             this.iconRenderer && this.iconRenderer.updatePosition();
             this.textRenderer && this.textRenderer.updatePosition();
+            this.flagRenderer && this.flagRenderer.updatePosition();
         },
 
         renderSelf: function(context, timeStep, now) {
-            if (this.textRenderer) {
+            if (this._autoSizeWithText && this.textRenderer) {
                 if (this.textRenderer.needToCompute) {
                     this.textRenderer.computeSize(context);
-                    if (this.autoSizeWithText) {
-                        this.computeSizeWithText();
-                    }
+                    // if (this.autoSizeWithText) {
+                    this.computeSizeWithText();
+                    // }
                 }
             }
             if (this.backgroundColor) {
                 context.fillStyle = this.backgroundColor;
                 context.fillRect(this.x, this.y, this.w, this.h);
             }
+            if (this.borderImageInfo) {
+                this.renderBorderImage(context);
+            }
             this.bgRenderer && this.bgRenderer.render(context);
             this.iconRenderer && this.iconRenderer.render(context);
             this.textRenderer && this.textRenderer.render(context);
+            this.flagRenderer && this.flagRenderer.render(context);
 
-            if (this.borderColor && this.borderWidth) {
+            if (this.borderWidth && this.borderColor) {
                 context.lineWidth = this.borderWidth;
                 context.strokeStyle = this.borderColor;
-                context.strokeRect(this.x, this.y, this.w, this.h);
+                // context.strokeRect(this.x, this.y, this.w, this.h);
+                var aabb = this.aabb;
+                context.strokeRect(aabb[0], aabb[1], aabb[2] - aabb[0], aabb[3] - aabb[1]);
             }
         },
 
