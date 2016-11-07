@@ -76,52 +76,6 @@ var CUI = CUI || {};
             return measure.width;
         },
 
-        createImageByBorderImage: function(w, h, T, R, B, L, fill, img, sx, sy, sw, sh) {
-            var canvas = Utils.createCanvas(w, h);
-            var context = canvas.getContext("2d");
-            var renderer = new CUI.CanvasRenderer({
-                context: context
-            });
-            Utils.renderBorderImage(renderer, 0, 0, w, h, T, R, B, L, fill, img, sx, sy, sw, sh);
-            return canvas;
-        },
-
-        renderBorderImage: function(renderer, x, y, w, h, T, R, B, L, fill, img, sx, sy, sw, sh) {
-
-            sx = sx || 0;
-            sy = sy || 0;
-            sw = sw || img.width;
-            sh = sh || img.height;
-
-            var bw = sw - L - R;
-            var bh = sh - T - B;
-
-            var CW = w - L - R,
-                CH = h - T - B;
-
-            if (CH > 0) {
-                if (fill === true) {
-                    renderer.drawImage(img, sx + L, sy + T, bw, bh, x + L, y + T, CW, CH);
-                } else if (fill) {
-                    // context.fillStyle = fill;
-                    renderer.fillRect(x + L, y + T, CW, CH, fill);
-                }
-                renderer.drawImage(img, sx, sy + T, L, bh, x, y + T, L, CH);
-                renderer.drawImage(img, sx + sw - R, sy + T, R, bh, x + w - R, y + T, R, CH);
-            }
-
-            if (T > 0) {
-                L > 0 && renderer.drawImage(img, sx, sy, L, T, x, y, L, T);
-                CW > 0 && renderer.drawImage(img, sx + L, sy, bw, T, x + L, y, CW, T);
-                R > 0 && renderer.drawImage(img, sx + sw - R, sy, R, T, x + w - R, y, R, T);
-            }
-
-            if (B > 0) {
-                L > 0 && renderer.drawImage(img, sx, sy + sh - B, L, B, x, y + h - B, L, B);
-                CW > 0 && renderer.drawImage(img, sx + L, sy + sh - B, bw, B, x + L, y + h - B, CW, B);
-                R > 0 && renderer.drawImage(img, sx + sw - R, sy + sh - B, R, B, x + w - R, y + h - B, R, B);
-            }
-        },
 
         getImageInfo: function(idOrImg) {
             var img, id = idOrImg;

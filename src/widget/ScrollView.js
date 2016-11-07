@@ -376,19 +376,12 @@ var CUI = CUI || {};
         },
 
         startClip: function(renderer) {
-            // var x = this.x;
-            // var y = this.y;
-            // context.beginPath();
-            // context.moveTo(x, y);
-            // context.lineTo(x + this.w, y);
-            // context.lineTo(x + this.w, y + this.h);
-            // context.lineTo(x, y + this.h);
-            // context.closePath();
-            // context.clip();
-            renderer.clipRect(this.x, this.y, this.w, this.h);
+            // context.save();
+            renderer.doClipRect(this.x, this.y, this.w, this.h);
         },
         endClip: function(renderer) {
-
+            // context.restore();
+            renderer.undoClipRect();
         },
 
         startClipBuffer: function(renderer) {
@@ -406,13 +399,7 @@ var CUI = CUI || {};
 
         renderChildren: function(renderer, timeStep, now) {
 
-            renderer.save();
-
             var clipRenderer = this.clip ? (this.startClip(renderer) || renderer) : renderer;
-
-            // this.renderScrollbar(clipContext, timeStep, now);
-            // clipContext.translate(-this.scrollX, -this.scrollY);
-            // var aabb = this.aabb;
 
             this.visibleChildren.forEach(function(c) {
                 c.render(clipRenderer, timeStep, now);
@@ -423,8 +410,6 @@ var CUI = CUI || {};
             if (this.clip) {
                 this.endClip(renderer);
             }
-
-            renderer.restore();
 
         },
 
