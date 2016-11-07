@@ -9,7 +9,7 @@ var CUI = CUI || {};
     var Utils = exports.Utils;
     var Font = exports.Font;
 
-    var BaseRenderer = Class.create({
+    var BaseHolder = Class.create({
 
         DEG_TO_RAD: Math.PI / 180,
         RAD_TO_DEG: 180 / Math.PI,
@@ -79,7 +79,6 @@ var CUI = CUI || {};
             }
         },
 
-
         render: function(context, timeStep, now) {
             if (!this.visible) {
                 return false;
@@ -89,10 +88,10 @@ var CUI = CUI || {};
     });
 
 
-    exports.BaseRenderer = BaseRenderer;
+    exports.BaseHolder = BaseHolder;
 
     if (typeof module != "undefined") {
-        module.exports = BaseRenderer;
+        module.exports = BaseHolder;
     }
 
 }(CUI));

@@ -7,15 +7,15 @@ var CUI = CUI || {};
     var Class = exports.Class;
     var Utils = exports.Utils;
     var Component = exports.Component;
-    var ImageRenderer = exports.ImageRenderer;
-    var TextRenderer = exports.TextRenderer;
+    var ImageHolder = exports.ImageHolder;
+    var TextHolder = exports.TextHolder;
 
     var Label = Class.create({
 
         composite: false,
         disabled: false,
 
-        // 不指定宽高, 大小由 bgRenderer 的实际大小决定
+        // 不指定宽高, 大小由 backgroundHolder 的实际大小决定
         width: null,
         height: null,
         scaleBg: false,
@@ -35,7 +35,6 @@ var CUI = CUI || {};
 
             Label.$super.init.call(this);
 
-            this.initBgInfo();
 
             if (this.iconInfo) {
                 this.setIconInfo(this.iconInfo);
@@ -54,12 +53,12 @@ var CUI = CUI || {};
 
         },
 
-        setImageRenderer: function(name, info) {
+        setImageHolder: function(name, info) {
             if (!info) {
                 this[name] = null;
             } else {
                 if (!this[name]) {
-                    this[name] = new ImageRenderer(info);
+                    this[name] = new ImageHolder(info);
                     this[name].setParent(this);
                     this[name].init();
                 } else {
@@ -71,39 +70,39 @@ var CUI = CUI || {};
 
         setIconInfo: function(iconInfo) {
             if (!iconInfo) {
-                this.iconRenderer = null;
+                this.iconHolder = null;
             } else {
-                if (!this.iconRenderer) {
-                    this.iconRenderer = new ImageRenderer(iconInfo);
-                    this.iconRenderer.setParent(this);
-                    this.iconRenderer.init();
+                if (!this.iconHolder) {
+                    this.iconHolder = new ImageHolder(iconInfo);
+                    this.iconHolder.setParent(this);
+                    this.iconHolder.init();
                 } else {
-                    this.iconRenderer.setImgInfo(iconInfo);
+                    this.iconHolder.setImgInfo(iconInfo);
                 }
             }
             this.needToCompute = true;
         },
         setFlagInfo: function(flagInfo) {
             if (!flagInfo) {
-                this.flagRenderer = null;
+                this.flagHolder = null;
             } else {
-                if (!this.flagRenderer) {
-                    this.flagRenderer = new ImageRenderer(flagInfo);
-                    this.flagRenderer.setParent(this);
-                    this.flagRenderer.init();
+                if (!this.flagHolder) {
+                    this.flagHolder = new ImageHolder(flagInfo);
+                    this.flagHolder.setParent(this);
+                    this.flagHolder.init();
                 } else {
-                    this.flagRenderer.setImgInfo(flagInfo);
+                    this.flagHolder.setImgInfo(flagInfo);
                 }
             }
             this.needToCompute = true;
         },
         setTextInfo: function(textInfo) {
-            if (!this.textRenderer) {
-                this.textRenderer = new TextRenderer(textInfo);
-                this.textRenderer.setParent(this);
-                this.textRenderer.init();
+            if (!this.textHolder) {
+                this.textHolder = new TextHolder(textInfo);
+                this.textHolder.setParent(this);
+                this.textHolder.init();
             } else {
-                this.textRenderer.setTextInfo(textInfo);
+                this.textHolder.setTextInfo(textInfo);
             }
             this.needToCompute = true;
         },
@@ -132,18 +131,18 @@ var CUI = CUI || {};
         },
 
         setText: function(text) {
-            this.textRenderer.setText(text);
+            this.textHolder.setText(text);
         },
 
         computeWidth: function() {
             var pixel = this.pixel;
             var autoWidth = this.width === null || this.width === "auto";
 
-            if (autoWidth && (this.autoSizeWithText || !this.bgRenderer)) {
+            if (autoWidth && (this.autoSizeWithText || !this.backgroundHolder)) {
                 pixel.width = pixel.width || 0;
                 this._autoSizeWithText = true;
-            } else if (autoWidth && this.bgRenderer) {
-                pixel.width = this.bgRenderer.w;
+            } else if (autoWidth && this.backgroundHolder) {
+                pixel.width = this.backgroundHolder.w;
             } else {
                 pixel.width = Utils.parseValue(this.width, pixel.realOuterWidth);
             }
@@ -152,9 +151,9 @@ var CUI = CUI || {};
 
             this.w = pixel.width;
             if (this.scaleBg) {
-                // this.bgRenderer.pixel.width = this.w;
-                // this.bgRenderer.pixel.sw = this.w;
-                this.bgRenderer.width = this.w;
+                // this.backgroundHolder.pixel.width = this.w;
+                // this.backgroundHolder.pixel.sw = this.w;
+                this.backgroundHolder.width = this.w;
             }
         },
 
@@ -162,11 +161,11 @@ var CUI = CUI || {};
             var pixel = this.pixel;
             var autoHeight = this.height === null || this.height === "auto";
 
-            if (autoHeight && (this.autoSizeWithText || !this.bgRenderer)) {
+            if (autoHeight && (this.autoSizeWithText || !this.backgroundHolder)) {
                 pixel.height = pixel.height || 0;
                 this._autoSizeWithText = true;
-            } else if (autoHeight && this.bgRenderer) {
-                pixel.height = this.bgRenderer.h;
+            } else if (autoHeight && this.backgroundHolder) {
+                pixel.height = this.backgroundHolder.h;
             } else {
                 pixel.height = Utils.parseValue(this.height, pixel.realOuterHeight);
             }
@@ -176,14 +175,14 @@ var CUI = CUI || {};
             this.h = pixel.height;
 
             if (this.scaleBg) {
-                // this.bgRenderer.pixel.height = this.h;
-                // this.bgRenderer.pixel.sh = this.h;
-                this.bgRenderer.height = this.h;
+                // this.backgroundHolder.pixel.height = this.h;
+                // this.backgroundHolder.pixel.sh = this.h;
+                this.backgroundHolder.height = this.h;
             }
         },
 
         computeSizeWithText: function() {
-            var measure = this.textRenderer.measure;
+            var measure = this.textHolder.measure;
             if (!measure) {
                 return;
             }
@@ -198,7 +197,7 @@ var CUI = CUI || {};
                 needToCompute = true;
             }
             if (this.height === null || this.height === "auto") {
-                var textHeight = measure.height * this.textRenderer.lineCount + extY;
+                var textHeight = measure.height * this.textHolder.lineCount + extY;
                 this.pixel.height = textHeight;
                 this.h = textHeight;
                 needToCompute = true;
@@ -212,18 +211,18 @@ var CUI = CUI || {};
             if (!this.needToCompute && !forceCompute) {
                 return;
             }
-            this.textRenderer && this.textRenderer.updatePosition();
-            if (this.bgRenderer) {
-                this.bgRenderer.updateSize();
-                this.bgRenderer.updatePosition();
+            this.textHolder && this.textHolder.updatePosition();
+            if (this.backgroundHolder) {
+                this.backgroundHolder.updateSize();
+                this.backgroundHolder.updatePosition();
             }
-            if (this.iconRenderer) {
-                this.iconRenderer.updateSize();
-                this.iconRenderer.updatePosition();
+            if (this.iconHolder) {
+                this.iconHolder.updateSize();
+                this.iconHolder.updatePosition();
             }
-            if (this.flagRenderer) {
-                this.flagRenderer.updateSize();
-                this.flagRenderer.updatePosition();
+            if (this.flagHolder) {
+                this.flagHolder.updateSize();
+                this.flagHolder.updatePosition();
             }
 
             this.updateAnchor();
@@ -236,39 +235,40 @@ var CUI = CUI || {};
             this.y = this.pixel.relativeY + this.parent.y;
             this.updateAABB();
 
-            this.bgRenderer && this.bgRenderer.updatePosition();
-            this.iconRenderer && this.iconRenderer.updatePosition();
-            this.textRenderer && this.textRenderer.updatePosition();
-            this.flagRenderer && this.flagRenderer.updatePosition();
+            this.backgroundHolder && this.backgroundHolder.updatePosition();
+            this.iconHolder && this.iconHolder.updatePosition();
+            this.textHolder && this.textHolder.updatePosition();
+            this.flagHolder && this.flagHolder.updatePosition();
         },
 
         renderSelf: function(context, timeStep, now) {
-            if (this._autoSizeWithText && this.textRenderer) {
-                if (this.textRenderer.needToCompute) {
-                    this.textRenderer.computeSize(context);
+            if (this._autoSizeWithText && this.textHolder) {
+                if (this.textHolder.needToCompute) {
+                    this.textHolder.computeSize();
                     // if (this.autoSizeWithText) {
                     this.computeSizeWithText();
                     // }
                 }
             }
+
             if (this.backgroundColor) {
                 context.fillStyle = this.backgroundColor;
                 context.fillRect(this.x, this.y, this.w, this.h);
             }
-            if (this.borderImageInfo) {
-                this.renderBorderImage(context);
+            if (this.backgroundHolder) {
+                this.backgroundHolder.render(context, this.x, this.y, this.w, this.h);
             }
-            this.bgRenderer && this.bgRenderer.render(context);
-            this.iconRenderer && this.iconRenderer.render(context);
-            this.textRenderer && this.textRenderer.render(context);
-            this.flagRenderer && this.flagRenderer.render(context);
+
+            this.iconHolder && this.iconHolder.render(context);
+            this.textHolder && this.textHolder.render(context);
+            this.flagHolder && this.flagHolder.render(context);
 
             if (this.borderWidth && this.borderColor) {
-                context.lineWidth = this.borderWidth;
                 context.strokeStyle = this.borderColor;
-                // context.strokeRect(this.x, this.y, this.w, this.h);
+                context.lineWidth = this.borderWidth;
+                // context.strokeRect(this.x, this.y, this.w, this.h, this.borderColor, this.borderWidth);
                 var aabb = this.aabb;
-                context.strokeRect(aabb[0], aabb[1], aabb[2] - aabb[0], aabb[3] - aabb[1]);
+                context.strokeRect(aabb[0], aabb[1], aabb[2] - aabb[0], aabb[3] - aabb[1], this.borderColor, this.borderWidth);
             }
         },
 

@@ -97,10 +97,12 @@ var CUI = CUI || {};
 
 
         backgroundColor: null, //"rgba(200,220,255,1)",
-        backgroundImageInfo: null,
+        backgroundImg: null,
+        backgroundInfo: null,
         borderColor: "rgba(30,50,80,1)",
         borderWidth: 0,
         borderImageInfo: null, // { img , sx, sy, sw, sh, top, right, bottom, left }
+        cacheBorderImage: false,
 
         ////////////////////////////////////////
         // 以下属性为内部属性, 用户通常不需要关心
@@ -166,8 +168,8 @@ var CUI = CUI || {};
             this.setMargin(this.margin || 0);
             this.setPadding(this.padding || 0);
             this.setParent(this.parent, true);
-            this.setBackgroundImageInfo(this.backgroundImageInfo);
 
+            this.initBackground();
 
             // TODO
             this._afterInit();
@@ -177,40 +179,44 @@ var CUI = CUI || {};
             // }
         },
 
-        setBackgroundImageInfo: function(info) {
-            if (info) {
-                info.x = info.x || 0;
-                info.y = info.y || 0;
-                info.ox = info.ox || 0;
-                info.oy = info.oy || 0;
-                info.w = info.w || info.sw;
-                info.h = info.h || info.sh;
-                this.backgroundImageInfo = info;
-            }
-        },
-
-        initBgInfo: function() {
-            if (this.bgImg && !this.bgInfo) {
-                this.bgInfo = {
-                    img: this.bgImg
-                };
-            }
-            if (this.bgInfo) {
-                this.setBgInfo(this.bgInfo);
-            }
-        },
-
-        setBgInfo: function(bgInfo) {
-            if (!bgInfo) {
-                this.bgRenderer = null;
-            } else {
-                if (!this.bgRenderer) {
-                    this.bgRenderer = new CUI.ImageRenderer(bgInfo);
-                    this.bgRenderer.setParent(this);
-                    this.bgRenderer.init();
-                } else {
-                    this.bgRenderer.setImgInfo(bgInfo);
+        initBackground: function(reinit) {
+            if (!this.backgroundHolder || reinit) {
+                this.backgroundInfo = this.backgroundInfo || this.bgInfo;
+                if (this.borderImageInfo) {
+                    this.setBorderImageInfo(this.borderImageInfo);
+                } else if (this.backgroundInfo) {
+                    this.setBackgroundInfo(this.backgroundInfo);
+                } else if (this.backgroundImg) {
+                    this.setBackgroundImg(this.backgroundImg);
                 }
+            }
+        },
+
+        setBackgroundInfo: function(info) {
+            var holder = null;
+            if (info) {
+                info.color && (this.backgroundColor = info.color);
+                holder = new CUI.BackgroundImageHolder(info);
+            }
+            this.setBackgroundHolder(holder);
+        },
+
+        setBorderImageInfo: function(info) {
+            var holder = info ? new CUI.BorderImageHolder(info) : null;
+            this.setBackgroundHolder(holder);
+        },
+
+        setBackgroundImg: function(img) {
+            this.setBackgroundInfo({
+                img: img
+            });
+        },
+
+        setBackgroundHolder: function(holder) {
+            this.backgroundHolder = holder;
+            if (holder) {
+                this.backgroundHolder.setParent(this);
+                this.backgroundHolder.init();
             }
             this.needToCompute = true;
         },
@@ -513,9 +519,9 @@ var CUI = CUI || {};
                 this.needToCompute = false;
                 this.layout.compute(this);
             }
-            if (this.bgRenderer) {
-                this.bgRenderer.updateSize();
-                this.bgRenderer.updatePosition();
+            if (this.backgroundHolder) {
+                this.backgroundHolder.updateSize();
+                this.backgroundHolder.updatePosition();
             }
         },
 
@@ -551,58 +557,34 @@ var CUI = CUI || {};
         },
         onUpdate: noop,
 
-        createCache: function() {
+        createCacheCanvas: function() {
             if (!this.cacheCanvas) {
                 var canvas = document.createElement("canvas");
                 canvas.width = this.w + 4;
                 canvas.height = this.h + 4;
                 this.cacheCanvas = canvas;
             }
-            var context = this.cacheCanvas.getContext("2d");
+            var cacheContext = this.cacheCanvas.getContext("2d");
+            var cacheRenderer = new CUI.CanvasRenderer({
+                context: cacheContext
+            });
             var useCache = this.useCache;
             var visible = this.visible;
             this.useCache = false;
             this.visible = true;
-            context.translate(-this.x + 2, -this.y + 2);
+            cacheRenderer.translate(-this.x + 2, -this.y + 2);
 
             var timeStep = 0;
             var now = Date.now();
-            // this.render(context, 0, now);
-            this.renderSelf(context, timeStep, now);
+            this.renderSelf(cacheRenderer, timeStep, now);
             if (this.composite) {
-                this.renderChildren(context, timeStep, now);
+                this.renderChildren(cacheRenderer, timeStep, now);
             }
 
-            context.translate(this.x - 2, this.y - 2);
+            cacheRenderer.translate(this.x - 2, this.y - 2);
             this.useCache = useCache;
             this.visible = visible;
             this.cached = true;
-        },
-
-        renderBorderImage: function(context) {
-            var bi = this.borderImageInfo;
-            if (this.cacheBorderImage) {
-                if (!this.borderImage) {
-                    this.borderImage = CUI.Utils.createImageByBorderImage(this.w, this.h,
-                        bi.T, bi.R, bi.B, bi.L, bi.fill,
-                        bi.img, bi.sx, bi.sy, bi.sw, bi.sh);
-                }
-                context.drawImage(this.borderImage, this.x, this.y)
-            } else {
-                CUI.Utils.renderBorderImage(context,
-                    this.x, this.y, this.w, this.h,
-                    bi.T, bi.R, bi.B, bi.L, bi.fill,
-                    bi.img, bi.sx, bi.sy, bi.sw, bi.sh)
-            }
-        },
-
-        renderBackgroundImageInfo: function(context) {
-            var info = this.backgroundImageInfo;
-            var x = this.x + info.x + info.ox;
-            var y = this.y + info.y + info.oy;
-            context.drawImage(info.img,
-                info.sx, info.sy, info.sw, info.sh,
-                x, y, info.w, info.h);
         },
 
         renderSelf: function(context, timeStep, now) {
@@ -610,18 +592,13 @@ var CUI = CUI || {};
                 context.fillStyle = this.backgroundColor;
                 context.fillRect(this.x, this.y, this.w, this.h);
             }
-            if (this.backgroundImageInfo) {
-                this.renderBackgroundImageInfo(context);
+            if (this.backgroundHolder) {
+                this.backgroundHolder.render(context, this.x, this.y, this.w, this.h, timeStep, now);
             }
-            if (this.bgRenderer) {
-                this.bgRenderer.render(context, timeStep, now);
-            }
-            if (this.borderImageInfo) {
-                this.renderBorderImage(context);
-            }
-            if (this.borderWidth && this.borderColor) {
-                context.lineWidth = this.borderWidth;
+
+            if (this.borderColor && this.borderWidth) {
                 context.strokeStyle = this.borderColor;
+                context.lineWidth = this.borderWidth;
                 context.strokeRect(this.x, this.y, this.w, this.h);
             }
         },
@@ -635,7 +612,6 @@ var CUI = CUI || {};
             if (!this.maskColor) {
                 return;
             }
-            context.fillStyle = this.maskColor;
             var root = this.root;
             var x = root.x,
                 y = root.y;
@@ -648,6 +624,7 @@ var CUI = CUI || {};
                 w += offset.w || 0;
                 h += offset.h || 0;
             }
+            context.fillStyle = this.maskColor;
             context.fillRect(x, y, w, h);
         },
 
@@ -672,7 +649,7 @@ var CUI = CUI || {};
 
             if (this.useCache && this.readyForCache) {
                 if (!this.cached) {
-                    this.createCache();
+                    this.createCacheCanvas();
                 }
                 context.drawImage(this.cacheCanvas, this.x - 2, this.y - 2);
             } else {

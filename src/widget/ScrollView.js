@@ -14,6 +14,10 @@ var CUI = CUI || {};
     clipBufferCanvas.height = 1;
     var clipBufferContext = clipBufferCanvas.getContext("2d");
 
+    // var clipBufferRenderer = new CUI.CanvasRenderer({
+    //     context: clipBufferContext,
+    // });
+
     var ScrollView = Class.create({
 
         scrollH: false,
@@ -372,14 +376,15 @@ var CUI = CUI || {};
         },
 
         startClip: function(context) {
+            var x = this.x;
+            var y = this.y;
             context.beginPath();
-            context.moveTo(this.x, this.y);
-            context.lineTo(this.x + this.w, this.y);
-            context.lineTo(this.x + this.w, this.y + this.h);
-            context.lineTo(this.x, this.y + this.h);
+            context.moveTo(x, y);
+            context.lineTo(x + this.w, y);
+            context.lineTo(x + this.w, y + this.h);
+            context.lineTo(x, y + this.h);
             context.closePath();
             context.clip();
-            return context;
         },
         endClip: function(context) {
 
@@ -402,10 +407,10 @@ var CUI = CUI || {};
 
             context.save();
 
-            var clipContext = this.clip ? this.startClip(context) : context;
+            var clipContext = this.clip ? (this.startClip(context) || context) : context;
 
-            // this.renderScrollbar(context, timeStep, now);
-            // context.translate(-this.scrollX, -this.scrollY);
+            // this.renderScrollbar(clipContext, timeStep, now);
+            // clipContext.translate(-this.scrollX, -this.scrollY);
             // var aabb = this.aabb;
 
             this.visibleChildren.forEach(function(c) {
@@ -419,7 +424,6 @@ var CUI = CUI || {};
             }
 
             context.restore();
-
 
         },
 

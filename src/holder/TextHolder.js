@@ -7,10 +7,13 @@ var CUI = CUI || {};
 
     var Class = exports.Class;
     var Utils = exports.Utils;
-    var BaseRenderer = exports.BaseRenderer;
+    var BaseHolder = exports.BaseHolder;
     var Font = exports.Font;
 
-    var TextRenderer = Class.create({
+    var textCanvas = document.createElement("canvas");
+    var textContext = textCanvas.getContext("2d");
+
+    var TextHolder = Class.create({
 
         text: null,
         color: "black",
@@ -68,12 +71,15 @@ var CUI = CUI || {};
             this.setParent(this.parent);
             if (this.useBuffer) {
                 if (this.shareBuffer) {
-                    this.bufferCanvas = TextRenderer.bufferCanvas;
+                    this.bufferCanvas = TextHolder.bufferCanvas;
                 } else {
                     this.bufferCanvas = document.createElement('canvas');
                 }
                 this.bufferCanvas._dynamic = true;
                 this.bufferContext = this.bufferCanvas.getContext('2d');
+                this.bufferRenderer = new CUI.CanvasRenderer({
+                    context: this.bufferContext
+                });
             }
         },
 
@@ -117,13 +123,14 @@ var CUI = CUI || {};
             this.needToCompute = needToCompute !== false;
         },
 
-        computeSize: function(context) {
+        computeSize: function() {
             if (!this.lines) {
                 this.needToCompute = false;
                 return;
             }
-            context.font = this.fontStyle;
-            var measure = context.measureText(this.lines[0]);
+            var ctx = textContext;
+            ctx.font = this.fontStyle;
+            var measure = ctx.measureText(this.lines[0]);
             measure.height = Math.ceil(this.fontSize * 1.5);
             this.lineHeight = this.lineHeight || measure.height;
             this.measure = measure;
@@ -150,7 +157,7 @@ var CUI = CUI || {};
         updateBuffer: function() {
             this.bufferCanvas.width = this.width + (this.strokeWidth + this.bufferPadding) * 2;
             this.bufferCanvas.height = this.height + (this.strokeWidth + this.bufferPadding) * 2;
-            this.renderContent(this.bufferContext, -this.bufferOffsetX, -this.bufferOffsetY);
+            this.renderContent(this.bufferRenderer, -this.bufferOffsetX, -this.bufferOffsetY);
             // this.bufferContext.strokeRect(0, 0, this.bufferCanvas.width, this.bufferCanvas.height);
         },
 
@@ -178,7 +185,7 @@ var CUI = CUI || {};
                 return false;
             }
             if (this.needToCompute) {
-                this.computeSize(context);
+                this.computeSize();
             } else {
                 if (this.useBuffer && this.shareBuffer) {
                     this.updateBuffer();
@@ -250,16 +257,16 @@ var CUI = CUI || {};
             context.fillText(text, x, y);
         },
 
-    }, BaseRenderer);
+    }, BaseHolder);
 
-    TextRenderer.bufferCanvas = document.createElement('canvas');
-    TextRenderer.bufferCanvas.width = 1;
-    TextRenderer.bufferCanvas.height = 1;
+    TextHolder.bufferCanvas = document.createElement('canvas');
+    TextHolder.bufferCanvas.width = 1;
+    TextHolder.bufferCanvas.height = 1;
 
-    exports.TextRenderer = TextRenderer;
+    exports.TextHolder = TextHolder;
 
     if (typeof module != "undefined") {
-        module.exports = TextRenderer;
+        module.exports = TextHolder;
     }
 
 }(CUI));

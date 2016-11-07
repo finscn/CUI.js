@@ -21,7 +21,6 @@ var CUI = CUI || {};
 
             Panel.$super.init.call(this);
 
-            this.initBgInfo();
 
             this.initHead();
 

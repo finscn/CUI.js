@@ -7,14 +7,9 @@ var CUI = CUI || {};
 
     var Class = exports.Class;
     var Utils = exports.Utils;
-    var BaseRenderer = exports.BaseRenderer;
+    var BaseHolder = exports.BaseHolder;
 
-    var ImageRenderer = Class.create({
-
-        DEG_TO_RAD: Math.PI / 180,
-        RAD_TO_DEG: 180 / Math.PI,
-        HALF_PI: Math.PI / 2,
-        DOUBLE_PI: Math.PI * 2,
+    var ImageHolder = Class.create({
 
         src: null,
         img: null,
@@ -22,6 +17,7 @@ var CUI = CUI || {};
         sy: null,
         sw: null,
         sh: null,
+
         ox: null,
         oy: null,
         w: null,
@@ -35,6 +31,8 @@ var CUI = CUI || {};
         flipY: false,
         rotation: 0,
 
+        x: 0,
+        y: 0,
         offsetX: 0,
         offsetY: 0,
         offsetW: 0,
@@ -48,70 +46,57 @@ var CUI = CUI || {};
         init: function() {
             this.pixel = {};
             if (this.src) {
-                this.setSrc(this.src);
-            } else {
-                this.setImgInfo(this);
+                this.load(this.src);
+            } else if (this.img) {
+                this.setImg(this.img);
             }
             this.setParent(this.parent);
         },
-
+        load: function(callback) {
+            this.setSrc(this.src, callback);
+        },
         setSrc: function(src, callback) {
             this.src = src;
             var Me = this;
-            this.sx = 0;
-            this.sy = 0;
-            this.sw = 0;
-            this.sh = 0;
-            this.ox = 0;
-            this.oy = 0;
-            this.w = 0;
-            this.h = 0;
-
+            this.img = null;
             var img = new Image();
             img.onload = function(event) {
-                var info = Utils.getImageInfo(img);
-                Me.setImgInfo(info);
-                if (callback) {
-                    callback(img);
-                }
+                Me.setImg(img, callback);
             };
             img.onerror = function(event) {
-                Me.img = null;
-                if (callback) {
-                    callback(null);
-                }
+                Me.setImg(null, callback);
             };
             img.src = src;
             return img;
         },
-        removeImg: function() {
-            this.info = null;
-            this.img = null;
-            this.sx = 0;
-            this.sy = 0;
-            this.sw = 0;
-            this.sh = 0;
-            this.w = 0;
-            this.h = 0;
-            this.ox = 0;
-            this.oy = 0;
-        },
 
-        setImgInfo: function(info) {
-            if (!info) {
-                this.removeImg();
-                return;
+        setImg: function(img, callback) {
+            this.img = img;
+            this.updateImgInfo();
+            if (callback) {
+                callback(img);
             }
-            this.info = {};
-            this.img = this.info.img = info.img;
-            var sx = this.info.sx = info.sx;
-            var sy = this.info.sy = info.sy;
-            var sw = this.info.sw = info.sw;
-            var sh = this.info.sh = info.sh;
-            var w = this.info.w = info.w;
-            var h = this.info.h = info.h;
-            var ox = this.info.ox = info.ox;
-            var oy = this.info.oy = info.oy;
+        },
+        setImgInfo: function(info) {
+            for (var p in info) {
+                this[p] = info[p];
+            }
+            if (info.src) {
+                this.setSrc(info.src);
+            } else if (info.img) {
+                this.setImg(info.img);
+            }
+        },
+        updateImgInfo: function(info) {
+            info = info || this;
+            var sx = info.sx;
+            var sy = info.sy;
+            var sw = info.sw;
+            var sh = info.sh;
+            var w = info.w;
+            var h = info.h;
+            var ox = info.ox;
+            var oy = info.oy;
 
             if (sx === null || sx === undefined) {
                 sx = 0;
@@ -119,23 +104,19 @@ var CUI = CUI || {};
             if (sy === null || sy === undefined) {
                 sy = 0;
             }
+            if (sw === null || sw === undefined) {
+                sw = this.img ? this.img.width : 0;
+            }
+            if (sh === null || sh === undefined) {
+                sh = this.img ? this.img.height : 0;
+            }
+
             if (ox === null || ox === undefined) {
                 ox = 0;
             }
             if (oy === null || oy === undefined) {
                 oy = 0;
             }
-            if (this.img) {
-                if (sw === null || sw === undefined) {
-                    sw = this.img.width;
-                }
-                if (sh === null || sh === undefined) {
-                    sh = this.img.height;
-                }
-            } else {
-                sw = sh = 0;
-            }
-
             if (w === null || w === undefined) {
                 w = sw;
             }
@@ -151,14 +132,11 @@ var CUI = CUI || {};
             this.h = h;
             this.ox = ox;
             this.oy = oy;
+        },
 
-            // if (this.width === "auto") {
-            //     this.pixel.width = this.sw;
-            // }
-            // if (this.height === "auto") {
-            //     this.pixel.height = this.sh;
-            // }
-
+        removeImg: function() {
+            this.img = null;
+            // this.src = null;
         },
 
         updateSize: function() {
@@ -188,7 +166,7 @@ var CUI = CUI || {};
             this.scaleY = scale;
         },
 
-        quickRender: function(context, timeStep, now) {
+        simpleRender: function(context, timeStep, now) {
             if (!this.visible || !this.img) {
                 return false;
             }
@@ -234,7 +212,7 @@ var CUI = CUI || {};
             }
 
             // context.lineWidth = 2;
-            // context.strokeRect(this.x + this.offsetX, this.y + this.offsetY, this.pixel.width + this.offsetW, this.pixel.height + this.offsetH)
+            // context.strokeRect(this.x + this.offsetX, this.y + this.offsetY, this.pixel.width + this.offsetW, this.pixel.height + this.offsetH);
             // context.strokeRect(x, y, width + this.offsetW, height + this.offsetH);
 
             var prevAlpha;
@@ -255,13 +233,13 @@ var CUI = CUI || {};
             }
         },
 
-    }, BaseRenderer);
+    }, BaseHolder);
 
 
-    exports.ImageRenderer = ImageRenderer;
+    exports.ImageHolder = ImageHolder;
 
     if (typeof module != "undefined") {
-        module.exports = ImageRenderer;
+        module.exports = ImageHolder;
     }
 
 }(CUI));

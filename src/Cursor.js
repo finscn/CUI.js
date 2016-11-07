@@ -96,7 +96,7 @@ var CUI = CUI || {};
         },
         setHoverButton: function(id) {
             var btn = this.ui.all[id];
-            if (!btn){
+            if (!btn) {
                 return false;
             }
             this.lastHoverButton = this.hoverButton;
@@ -127,6 +127,5 @@ var CUI = CUI || {};
     });
 
     exports.Cursor = Cursor;
-
 
 }(CUI));

@@ -8,15 +8,15 @@ var CUI = CUI || {};
     var Utils = exports.Utils;
     var Component = exports.Component;
     var Label = exports.Label;
-    var ImageRenderer = exports.ImageRenderer;
-    var TextRenderer = exports.TextRenderer;
+    var ImageHolder = exports.ImageHolder;
+    var TextHolder = exports.TextHolder;
 
     var ProgressBar = Class.create({
 
         composite: false,
         disabled: false,
 
-        // 不指定宽高, 大小由 bgRenderer 的实际大小决定
+        // 不指定宽高, 大小由 backgroundHolder 的实际大小决定
         width: null,
         height: null,
         scaleBg: false,
@@ -35,12 +35,10 @@ var CUI = CUI || {};
 
             ProgressBar.$super.init.call(this);
 
-            this.initBgInfo();
-
             if (this.valueInfo) {
-                this.valueRenderer = new ImageRenderer(this.valueInfo);
-                this.valueRenderer.setParent(this);
-                this.valueRenderer.init();
+                this.valueHolder = new ImageHolder(this.valueInfo);
+                this.valueHolder.setParent(this);
+                this.valueHolder.init();
             }
 
             if (this.afterInit) {
@@ -56,18 +54,18 @@ var CUI = CUI || {};
             if (!this.needToCompute && !forceCompute) {
                 return;
             }
-            if (this.bgRenderer) {
-                this.bgRenderer.updateSize();
-                this.bgRenderer.updatePosition();
+            if (this.backgroundHolder) {
+                this.backgroundHolder.updateSize();
+                this.backgroundHolder.updatePosition();
             }
-            if (this.valueRenderer) {
-                this.valueRenderer.updateSize();
-                this.valueRenderer.updatePosition();
-                if (!this.valueRenderer.orignSW) {
-                    this.valueRenderer.orignSW = this.valueRenderer.sw;
-                    this.valueRenderer.orignSH = this.valueRenderer.sh;
-                    this.valueRenderer.orignWidth = this.valueRenderer.pixel.width;
-                    this.valueRenderer.orignHeight = this.valueRenderer.pixel.height;
+            if (this.valueHolder) {
+                this.valueHolder.updateSize();
+                this.valueHolder.updatePosition();
+                if (!this.valueHolder.orignSW) {
+                    this.valueHolder.orignSW = this.valueHolder.sw;
+                    this.valueHolder.orignSH = this.valueHolder.sh;
+                    this.valueHolder.orignWidth = this.valueHolder.pixel.width;
+                    this.valueHolder.orignHeight = this.valueHolder.pixel.height;
                 }
             }
 
@@ -81,27 +79,28 @@ var CUI = CUI || {};
             this.y = this.pixel.relativeY + this.parent.y;
             this.updateAABB();
 
-            this.bgRenderer && this.bgRenderer.updatePosition();
-            this.valueRenderer && this.valueRenderer.updatePosition();
+            this.backgroundHolder && this.backgroundHolder.updatePosition();
+            this.valueHolder && this.valueHolder.updatePosition();
         },
 
         renderSelf: function(context, timeStep, now) {
             var p = Math.min(1, this.progress);
-            if (this.bgRenderer) {
-                this.bgRenderer.quickRender(context);
+            if (this.backgroundHolder) {
+                this.backgroundHolder.simpleRender(context);
             } else {
                 context.fillStyle = this.backgroundColor;
                 context.fillRect(this.x, this.y, this.w, this.h);
             }
 
-            if (this.valueRenderer) {
-                this.valueRenderer.sw = this.valueRenderer.orignSW * (this.scaleValue ? 1 : p);
-                this.valueRenderer.pixel.width = this.valueRenderer.orignWidth * p;
-                this.valueRenderer.quickRender(context);
+            if (this.valueHolder) {
+                this.valueHolder.sw = this.valueHolder.orignSW * (this.scaleValue ? 1 : p);
+                this.valueHolder.pixel.width = this.valueHolder.orignWidth * p;
+                this.valueHolder.simpleRender(context, timeStep, now);
             } else {
                 context.fillStyle = this.valueColor;
                 context.fillRect(this.x, this.y, this.w * p, this.h);
                 context.strokeStyle = this.borderColor;
+                context.lineWidth = 2;
                 context.strokeRect(this.x, this.y, this.w, this.h);
             }
 

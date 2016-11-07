@@ -7,15 +7,15 @@ var CUI = CUI || {};
     var Class = exports.Class;
     var Utils = exports.Utils;
     var Component = exports.Component;
-    var ImageRenderer = exports.ImageRenderer;
-    var TextRenderer = exports.TextRenderer;
+    var ImageHolder = exports.ImageHolder;
+    var TextHolder = exports.TextHolder;
 
     var Picture = Class.create({
 
         composite: false,
         disabled: false,
 
-        // 不指定宽高, 大小由 bgRenderer 的实际大小决定
+        // 不指定宽高, 大小由 backgroundHolder 的实际大小决定
         width: null,
         height: null,
         scaleX: null,
@@ -26,45 +26,28 @@ var CUI = CUI || {};
 
             Picture.$super.init.call(this);
 
-            this.imageRenderer = new ImageRenderer({
+            this.imageHolder = new ImageHolder({
                 parent: this,
                 width: this.scaleImg ? "100%" : "auto",
                 height: this.scaleImg ? "100%" : "auto",
                 alignH: "center",
                 alignV: "center",
             });
-            this.imageRenderer.init();
+            this.imageHolder.init();
 
             if (this.src) {
                 this.setSrc(this.src);
-            } else if (!this.imgInfo) {
-                this.imgInfo = {
-                    img: this.img,
-                    sx: this.sx,
-                    sy: this.sy,
-                    sw: this.sw,
-                    sh: this.sh,
-                    width: this.width,
-                    height: this.height,
-                };
-            }
-
-            this.initBgInfo();
-
-            if (this.img && !this.imgInfo) {
-                this.imgInfo = {
-                    img: this.img
-                };
-            }
-            if (this.imgInfo) {
+            } else if (this.img) {
+                this.setImg(this.img);
+            } else if (this.imgInfo) {
                 this.setImgInfo(this.imgInfo);
             }
 
             if (this.scaleX !== null) {
-                this.width = this.imageRenderer.w * this.scaleX;
+                this.width = this.imageHolder.w * this.scaleX;
             }
             if (this.scaleY !== null) {
-                this.height = this.imageRenderer.h * this.scaleY;
+                this.height = this.imageHolder.h * this.scaleY;
             }
 
         },
@@ -72,31 +55,38 @@ var CUI = CUI || {};
         setSrc: function(src) {
             this.src = src;
             var Me = this;
-            this.imageRenderer.setSrc(src, function(img) {
+            this.imageHolder.setSrc(src, function(img) {
                 if (img) {
                     Me.setReflow(true);
                 }
-                Me.hasImg = !!Me.imageRenderer.img;
+                Me.hasImg = !!Me.imageHolder.img;
+                Me.needToCompute = true;
+            });
+        },
+
+        setImg: function(img) {
+            this.img = img;
+            var Me = this;
+            this.imageHolder.setImg(img, function(img) {
+                if (img) {
+                    Me.setReflow(true);
+                }
+                Me.hasImg = !!Me.imageHolder.img;
+                Me.needToCompute = true;
             });
         },
 
         setImgInfo: function(imgInfo) {
-            if (!this.imageRenderer) {
-                this.imageRenderer = new ImageRenderer(imgInfo);
-                this.imageRenderer.setParent(this);
-                this.imageRenderer.init();
-            } else {
-                this.imageRenderer.setImgInfo(imgInfo);
-            }
+            this.imageHolder.setImgInfo(imgInfo);
+            this.hasImg = !!this.imageHolder.img;
             this.needToCompute = true;
-            this.hasImg = !!this.imageRenderer.img;
         },
 
         computeWidth: function() {
             var pixel = this.pixel;
             var hasWidth = false;
             if (this.width === null || this.width === "auto") {
-                pixel.width = this.imageRenderer.w;
+                pixel.width = this.imageHolder.w;
             } else {
                 hasWidth = true;
                 pixel.width = Utils.parseValue(this.width, pixel.realOuterWidth);
@@ -104,7 +94,7 @@ var CUI = CUI || {};
             pixel.anchorX = Utils.parseValue(this.anchorX, pixel.width) || 0;
             this.w = pixel.width;
 
-            this.imageRenderer.pixel.width = this.w;
+            this.imageHolder.pixel.width = this.w;
 
             if (!this.hasImg && !hasWidth) {
                 this.w = 0.01;
@@ -115,7 +105,7 @@ var CUI = CUI || {};
             var pixel = this.pixel;
             var hasHeight = false;
             if (this.height === null || this.height === "auto") {
-                pixel.height = this.imageRenderer.h;
+                pixel.height = this.imageHolder.h;
             } else {
                 hasHeight = true;
                 pixel.height = Utils.parseValue(this.height, pixel.realOuterHeight);
@@ -123,7 +113,7 @@ var CUI = CUI || {};
             pixel.anchorY = Utils.parseValue(this.anchorY, pixel.height) || 0;
             this.h = pixel.height;
 
-            this.imageRenderer.pixel.height = this.h;
+            this.imageHolder.pixel.height = this.h;
 
             if (!this.hasImg && !hasHeight) {
                 this.h = 0.01;
@@ -133,12 +123,12 @@ var CUI = CUI || {};
 
         computeLayout: function(forceCompute) {
             if (this.needToCompute || forceCompute) {
-                this.imageRenderer.updateSize();
+                this.imageHolder.updateSize();
                 if (this.scaleImg) {
-                    this.imageRenderer.x = this.x;
-                    this.imageRenderer.y = this.y;
+                    this.imageHolder.x = this.x;
+                    this.imageHolder.y = this.y;
                 } else {
-                    this.imageRenderer.updatePosition();
+                    this.imageHolder.updatePosition();
                 }
                 this.needToCompute = false;
             }
@@ -149,26 +139,27 @@ var CUI = CUI || {};
             this.y = this.pixel.relativeY + this.parent.y;
             this.updateAABB();
             if (this.scaleImg) {
-                this.imageRenderer.x = this.x;
-                this.imageRenderer.y = this.y;
+                this.imageHolder.x = this.x;
+                this.imageHolder.y = this.y;
             } else {
-                this.imageRenderer.updatePosition();
+                this.imageHolder.updatePosition();
             }
         },
 
         renderSelf: function(context, timeStep, now) {
-
             if (this.backgroundColor) {
                 context.fillStyle = this.backgroundColor;
                 context.fillRect(this.x, this.y, this.w, this.h);
             }
+            if (this.backgroundHolder) {
+                this.backgroundHolder.render(context, this.x, this.y, this.w, this.h);
+            }
 
-            this.bgRenderer && this.bgRenderer.render(context);
-            this.imageRenderer && this.imageRenderer.render(context);
+            this.imageHolder && this.imageHolder.render(context);
 
             if (this.borderColor && this.borderWidth) {
-                context.lineWidth = this.borderWidth;
                 context.strokeStyle = this.borderColor;
+                context.lineWidth = this.borderWidth;
                 context.strokeRect(this.x, this.y, this.w, this.h);
             }
         },

@@ -76,13 +76,6 @@ var CUI = CUI || {};
             return measure.width;
         },
 
-        // createButtonImgByBorderImage: function(w, headWidth, img, sx, sy, sw, sh) {
-        //     var h = sh || img.height;
-        //     var canvas = Utils.createCanvas(w, h);
-        //     var context = canvas.getContext("2d");
-        //     Utils.renderBorderImage(context, 0, 0, w, h, 0, headWidth, 0, headWidth, true, img, sx, sy, sw, sh);
-        //     return canvas;
-        // },
         createImageByBorderImage: function(w, h, T, R, B, L, fill, img, sx, sy, sw, sh) {
             var canvas = Utils.createCanvas(w, h);
             var context = canvas.getContext("2d");
@@ -125,25 +118,6 @@ var CUI = CUI || {};
                 CW > 0 && context.drawImage(img, sx + L, sy + sh - B, bw, B, x + L, y + h - B, CW, B);
                 R > 0 && context.drawImage(img, sx + sw - R, sy + sh - B, R, B, x + w - R, y + h - B, R, B);
             }
-        },
-
-        strokeAABB: function(context, aabb, color, lineWidth) {
-            color = color || "red";
-            var bak = context.strokeStyle;
-            if (lineWidth) {
-                context.lineWidth = lineWidth;
-            }
-            context.strokeStyle = color;
-            context.strokeRect(aabb[0], aabb[1], aabb[2] - aabb[0], aabb[3] - aabb[1]);
-            context.strokeStyle = bak;
-        },
-
-        fillAABB: function(context, aabb, color) {
-            color = color || "red";
-            var bak = context.fillStyle;
-            context.fillStyle = color;
-            context.fillRect(aabb[0], aabb[1], aabb[2] - aabb[0], aabb[3] - aabb[1]);
-            context.fillStyle = bak;
         },
 
         getImageInfo: function(idOrImg) {
@@ -200,11 +174,31 @@ var CUI = CUI || {};
                 imgInfo.sx, imgInfo.sy, imgInfo.sw, imgInfo.sh,
                 x + imgInfo.ox >> 0, y + imgInfo.oy >> 0, w || imgInfo.sw, h || imgInfo.sh);
         },
+
         renderInfoImg: function(context, imgInfo, x, y, w, h) {
             x = x || 0;
             y = y || 0;
             context.drawImage(imgInfo.img, imgInfo.sx, imgInfo.sy, imgInfo.sw, imgInfo.sh,
                 x, y, w || imgInfo.sw, h || imgInfo.sh);
+        },
+
+        strokeAABB: function(context, aabb, color, lineWidth) {
+            color = color || "red";
+            var bak = context.strokeStyle;
+            if (lineWidth) {
+                context.lineWidth = lineWidth;
+            }
+            context.strokeStyle = color;
+            context.strokeRect(aabb[0], aabb[1], aabb[2] - aabb[0], aabb[3] - aabb[1]);
+            context.strokeStyle = bak;
+        },
+
+        fillAABB: function(context, aabb, color) {
+            color = color || "red";
+            var bak = context.fillStyle;
+            context.fillStyle = color;
+            context.fillRect(aabb[0], aabb[1], aabb[2] - aabb[0], aabb[3] - aabb[1]);
+            context.fillStyle = bak;
         },
     };
 
