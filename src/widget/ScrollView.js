@@ -391,7 +391,7 @@ var CUI = CUI || {};
 
         },
 
-        startClipBuffer: function() {
+        startClipBuffer: function(renderer) {
             clipBufferCanvas.width = this.w;
             clipBufferCanvas.height = this.h;
             clipBufferContext.save();
