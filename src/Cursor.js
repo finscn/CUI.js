@@ -114,14 +114,15 @@ var CUI = CUI || {};
         onUnhover: function(btn) {
 
         },
-        render: function(context, timeStep, now) {
+        render: function(renderer, timeStep, now) {
             var btn = this.hoverButton;
             if (!btn) {
                 return;
             }
-            context.strokeStyle = this.color;
-            context.lineWidth = 4;
-            context.strokeRect(btn.x - 4, btn.y - 4, btn.w + 8, btn.h + 8);
+            var lineWidth = 4;
+            // context.strokeStyle = this.color;
+            // context.lineWidth = lineWidth;
+            renderer.strokeRect(btn.x - 4, btn.y - 4, btn.w + 8, btn.h + 8, this.color, lineWidth);
         },
 
     });

@@ -587,28 +587,28 @@ var CUI = CUI || {};
             this.cached = true;
         },
 
-        renderSelf: function(context, timeStep, now) {
+        renderSelf: function(renderer, timeStep, now) {
             if (this.backgroundColor) {
-                context.fillStyle = this.backgroundColor;
-                context.fillRect(this.x, this.y, this.w, this.h);
+                // context.fillStyle = this.backgroundColor;
+                renderer.fillRect(this.x, this.y, this.w, this.h, this.backgroundColor);
             }
             if (this.backgroundHolder) {
-                this.backgroundHolder.render(context, this.x, this.y, this.w, this.h, timeStep, now);
+                this.backgroundHolder.render(renderer, this.x, this.y, this.w, this.h, timeStep, now);
             }
 
             if (this.borderColor && this.borderWidth) {
-                context.strokeStyle = this.borderColor;
-                context.lineWidth = this.borderWidth;
-                context.strokeRect(this.x, this.y, this.w, this.h);
+                // context.strokeStyle = this.borderColor;
+                // context.lineWidth = this.borderWidth;
+                renderer.strokeRect(this.x, this.y, this.w, this.h, this.borderColor, this.borderWidth);
             }
         },
-        renderChildren: function(context, timeStep, now) {
+        renderChildren: function(renderer, timeStep, now) {
             this.children.forEach(function(child) {
-                child.render(context, timeStep, now);
+                child.render(renderer, timeStep, now);
             });
         },
 
-        renderModalMask: function(context, timeStep, now) {
+        renderModalMask: function(renderer, timeStep, now) {
             if (!this.maskColor) {
                 return;
             }
@@ -624,48 +624,51 @@ var CUI = CUI || {};
                 w += offset.w || 0;
                 h += offset.h || 0;
             }
-            context.fillStyle = this.maskColor;
-            context.fillRect(x, y, w, h);
+            // context.fillStyle = this.maskColor;
+            renderer.fillRect(x, y, w, h, this.maskColor);
+
         },
 
-        render: function(context, timeStep, now) {
+        render: function(renderer, timeStep, now) {
             if (!this.visible || this.alpha <= 0) {
                 return;
             }
 
             if (this.modal) {
-                this.renderModalMask(context, timeStep, now);
+                this.renderModalMask(renderer, timeStep, now);
             }
 
             if (this.beforeRender) {
-                this.beforeRender(context, timeStep, now);
+                this.beforeRender(renderer, timeStep, now);
             }
 
-            var prevAlpha = context.globalAlpha;
+            var prevAlpha = renderer.globalAlpha;
             if (this.alpha != 1) {
-                context.globalAlpha = this.alpha;
+                // context.globalAlpha = this.alpha;
+                renderer.setAlpha(this.alpha);
             }
-            this.beforeTransform(context, timeStep, now);
+            this.beforeTransform(renderer, timeStep, now);
 
             if (this.useCache && this.readyForCache) {
                 if (!this.cached) {
                     this.createCacheCanvas();
                 }
-                context.drawImage(this.cacheCanvas, this.x - 2, this.y - 2);
+                renderer.drawImage(this.cacheCanvas, this.x - 2, this.y - 2);
             } else {
                 this.readyForCache = true;
 
-                this.renderSelf(context, timeStep, now);
+                this.renderSelf(renderer, timeStep, now);
                 if (this.composite) {
-                    this.renderChildren(context, timeStep, now);
+                    this.renderChildren(renderer, timeStep, now);
                 }
             }
 
-            this.afterTransform(context, timeStep, now);
-            context.globalAlpha = prevAlpha;
+            this.afterTransform(renderer, timeStep, now);
+            // context.globalAlpha = prevAlpha;
+            renderer.setAlpha(prevAlpha);
 
             if (this.afterRender) {
-                this.afterRender(context, timeStep, now);
+                this.afterRender(renderer, timeStep, now);
             }
 
         },
@@ -673,22 +676,22 @@ var CUI = CUI || {};
         beforeRender: null,
         afterRender: null,
 
-        beforeTransform: function(context, timeStep, now) {
+        beforeTransform: function(renderer, timeStep, now) {
             if (this.scale != 1) {
-                context.save();
+                renderer.save();
                 var x = this.x + this.pixel.anchorX,
                     y = this.y + this.pixel.anchorY;
-                context.translate(x, y);
-                context.scale(this.scale, this.scale);
-                context.translate(-x + this.offsetX, -y + this.offsetY);
+                renderer.translate(x, y);
+                renderer.scale(this.scale, this.scale);
+                renderer.translate(-x + this.offsetX, -y + this.offsetY);
             } else if (this.offsetX || this.offsetY) {
-                context.save();
-                context.translate(this.offsetX, this.offsetY);
+                renderer.save();
+                renderer.translate(this.offsetX, this.offsetY);
             }
         },
-        afterTransform: function(context, timeStep, now) {
+        afterTransform: function(renderer, timeStep, now) {
             if (this.scale != 1 || this.offsetX || this.offsetY) {
-                context.restore();
+                renderer.restore();
             }
         },
 

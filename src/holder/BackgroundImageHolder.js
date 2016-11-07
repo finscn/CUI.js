@@ -11,8 +11,8 @@ var CUI = CUI || {};
 
     var BackgroundImageHolder = Class.create({
 
-        render: function(context, x, y, width, height, timeStep, now) {
-            context.drawImage(this.img,
+        render: function(renderer, x, y, width, height, timeStep, now) {
+            renderer.drawImage(this.img,
                 this.sx, this.sy, this.sw, this.sh,
                 x + this.ox, y + this.oy, width, height);
         },

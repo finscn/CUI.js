@@ -180,7 +180,7 @@ var CUI = CUI || {};
             }
         },
 
-        render: function(context, timeStep, now) {
+        render: function(renderer, timeStep, now) {
             if (!this.visible || this.text === "" || !this.lines) {
                 return false;
             }
@@ -196,16 +196,17 @@ var CUI = CUI || {};
             var y = this.y - this.anchorY + this.offsetY + this.fontSize;
 
             if (this.useBuffer) {
-                context.drawImage(this.bufferCanvas, x + this.bufferOffsetX, y + this.bufferOffsetY);
+                renderer.drawImage(this.bufferCanvas, x + this.bufferOffsetX, y + this.bufferOffsetY);
                 return;
             }
-            this.renderContent(context, x, y);
+            this.renderContent(renderer, x, y);
 
         },
 
-        renderContent: function(context, x, y) {
-            // var prevTextAlign = context.textAlign;
-            // var prevAlpha = context.globalAlpha;
+        renderContent: function(renderer, x, y) {
+            var context = renderer.context;
+            // var prevTextAlign = renderer.textAlign;
+            // var prevAlpha = renderer.globalAlpha;
             context.font = this.fontStyle;
             context.textAlign = this.textAlign;
             context.textBaseline = this.textBaseline;
@@ -213,7 +214,7 @@ var CUI = CUI || {};
 
             if (this.shadowColor) {
                 context.fillStyle = this.shadowColor;
-                this.renderLines(context, x + this.shadowOffsetX, y + this.shadowOffsetY, true);
+                this.renderLines(renderer, x + this.shadowOffsetX, y + this.shadowOffsetY, true);
             }
 
             if (this.color) {
@@ -229,28 +230,29 @@ var CUI = CUI || {};
                 context.strokeStyle = this.strokeColor;
             }
 
-            this.renderLines(context, x, y);
+            this.renderLines(renderer, x, y);
             // context.textAlign = prevTextAlign;
             // context.globalAlpha = prevAlpha;
         },
 
-        renderLines: function(context, x, y, shadow) {
+        renderLines: function(renderer, x, y, shadow) {
             if (this.lineCount > 1) {
                 var Me = this;
                 var lineHeight = this.lineHeight;
                 this.lines.forEach(function(line) {
-                    Me.renderText(context, line, x, y, shadow);
+                    Me.renderText(renderer, line, x, y, shadow);
                     y += lineHeight;
                 });
             } else {
-                this.renderText(context, this.lines[0], x, y, shadow);
+                this.renderText(renderer, this.lines[0], x, y, shadow);
             }
         },
 
-        renderText: function(context, text, x, y, shadow) {
+        renderText: function(renderer, text, x, y, shadow) {
             if (!text) {
                 return;
             }
+            var context = renderer.context;
             if (this.strokeColor && !shadow) {
                 context.strokeText(text, x, y);
             }

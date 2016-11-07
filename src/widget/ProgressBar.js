@@ -83,25 +83,25 @@ var CUI = CUI || {};
             this.valueHolder && this.valueHolder.updatePosition();
         },
 
-        renderSelf: function(context, timeStep, now) {
+        renderSelf: function(renderer, timeStep, now) {
             var p = Math.min(1, this.progress);
             if (this.backgroundHolder) {
-                this.backgroundHolder.simpleRender(context);
+                this.backgroundHolder.simpleRender(renderer);
             } else {
-                context.fillStyle = this.backgroundColor;
-                context.fillRect(this.x, this.y, this.w, this.h);
+                // context.fillStyle = this.backgroundColor;
+                renderer.fillRect(this.x, this.y, this.w, this.h, this.backgroundColor);
             }
 
             if (this.valueHolder) {
                 this.valueHolder.sw = this.valueHolder.orignSW * (this.scaleValue ? 1 : p);
                 this.valueHolder.pixel.width = this.valueHolder.orignWidth * p;
-                this.valueHolder.simpleRender(context, timeStep, now);
+                this.valueHolder.simpleRender(renderer, timeStep, now);
             } else {
-                context.fillStyle = this.valueColor;
-                context.fillRect(this.x, this.y, this.w * p, this.h);
-                context.strokeStyle = this.borderColor;
-                context.lineWidth = 2;
-                context.strokeRect(this.x, this.y, this.w, this.h);
+                // context.fillStyle = this.valueColor;
+                renderer.fillRect(this.x, this.y, this.w * p, this.h, this.valueColor);
+                // context.strokeStyle = this.borderColor;
+                // context.lineWidth = 2;
+                renderer.strokeRect(this.x, this.y, this.w, this.h, this.borderColor, 2);
             }
 
         },

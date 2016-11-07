@@ -146,21 +146,21 @@ var CUI = CUI || {};
             }
         },
 
-        renderSelf: function(context, timeStep, now) {
+        renderSelf: function(renderer, timeStep, now) {
             if (this.backgroundColor) {
-                context.fillStyle = this.backgroundColor;
-                context.fillRect(this.x, this.y, this.w, this.h);
+                // context.fillStyle = this.backgroundColor;
+                renderer.fillRect(this.x, this.y, this.w, this.h, this.backgroundColor);
             }
             if (this.backgroundHolder) {
-                this.backgroundHolder.render(context, this.x, this.y, this.w, this.h);
+                this.backgroundHolder.render(renderer, this.x, this.y, this.w, this.h);
             }
 
-            this.imageHolder && this.imageHolder.render(context);
+            this.imageHolder && this.imageHolder.render(renderer);
 
             if (this.borderColor && this.borderWidth) {
-                context.strokeStyle = this.borderColor;
-                context.lineWidth = this.borderWidth;
-                context.strokeRect(this.x, this.y, this.w, this.h);
+                // context.strokeStyle = this.borderColor;
+                // context.lineWidth = this.borderWidth;
+                renderer.strokeRect(this.x, this.y, this.w, this.h, this.borderColor, this.borderWidth);
             }
         },
 

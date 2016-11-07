@@ -166,7 +166,7 @@ var CUI = CUI || {};
             this.scaleY = scale;
         },
 
-        simpleRender: function(context, timeStep, now) {
+        simpleRender: function(renderer, timeStep, now) {
             if (!this.visible || !this.img) {
                 return false;
             }
@@ -174,10 +174,10 @@ var CUI = CUI || {};
             var y = this.y - this.anchorY + this.offsetY + this.oy;
             var w = this.pixel.sw + this.offsetW;
             var h = this.pixel.sh + this.offsetH;
-            context.drawImage(this.img, this.sx, this.sy, this.sw, this.sh, x, y, w, h);
+            renderer.drawImage(this.img, this.sx, this.sy, this.sw, this.sh, x, y, w, h);
         },
 
-        render: function(context, timeStep, now) {
+        render: function(renderer, timeStep, now) {
             if (!this.visible || !this.img) {
                 return false;
             }
@@ -199,36 +199,38 @@ var CUI = CUI || {};
 
             if (flipX != 1 || flipY != 1 || rotation != 0) {
                 // if (scaleX != 1 || scaleY != 1 || rotation != 0) {
-                context.save();
-                context.translate(this.x + this.offsetX + this.pixel.ox, this.y + this.offsetY + this.pixel.oy);
+                renderer.save();
+                renderer.translate(this.x + this.offsetX + this.pixel.ox, this.y + this.offsetY + this.pixel.oy);
                 if (rotation) {
-                    context.rotate(rotation);
+                    renderer.rotate(rotation);
                 }
-                context.scale(flipX, flipY);
-                // context.scale(scaleX, scaleY);
+                renderer.scale(flipX, flipY);
+                // renderer.scale(scaleX, scaleY);
             } else {
                 x += this.x + this.offsetX + this.pixel.ox;
                 y += this.y + this.offsetY + this.pixel.oy;
             }
 
-            // context.lineWidth = 2;
-            // context.strokeRect(this.x + this.offsetX, this.y + this.offsetY, this.pixel.width + this.offsetW, this.pixel.height + this.offsetH);
-            // context.strokeRect(x, y, width + this.offsetW, height + this.offsetH);
+            // renderer.lineWidth = 2;
+            // renderer.strokeRect(this.x + this.offsetX, this.y + this.offsetY, this.pixel.width + this.offsetW, this.pixel.height + this.offsetH)
+            // renderer.strokeRect(x, y, width + this.offsetW, height + this.offsetH);
 
             var prevAlpha;
             if (this.alpha !== null) {
-                prevAlpha = context.globalAlpha;
-                context.globalAlpha = this.alpha;
+                prevAlpha = renderer.globalAlpha;
+                // context.globalAlpha = this.alpha;
+                renderer.setAlpha(this.alpha);
             }
 
-            context.drawImage(this.img, this.sx, this.sy, this.sw, this.sh, x, y, width + this.offsetW, height + this.offsetH);
+            renderer.drawImage(this.img, this.sx, this.sy, this.sw, this.sh, x, y, width + this.offsetW, height + this.offsetH);
 
             if (flipX != 1 || flipY != 1 || rotation != 0) {
                 // if (scaleX != 1 || scaleY != 1 || rotation != 0) {
-                context.restore();
+                renderer.restore();
             } else {
                 if (this.alpha !== null) {
-                    context.globalAlpha = prevAlpha;
+                    // context.globalAlpha = prevAlpha;
+                    renderer.setAlpha(prevAlpha);
                 }
             }
         },

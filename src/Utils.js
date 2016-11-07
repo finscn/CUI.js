@@ -79,11 +79,14 @@ var CUI = CUI || {};
         createImageByBorderImage: function(w, h, T, R, B, L, fill, img, sx, sy, sw, sh) {
             var canvas = Utils.createCanvas(w, h);
             var context = canvas.getContext("2d");
-            Utils.renderBorderImage(context, 0, 0, w, h, T, R, B, L, fill, img, sx, sy, sw, sh);
+            var renderer = new CUI.CanvasRenderer({
+                context: context
+            });
+            Utils.renderBorderImage(renderer, 0, 0, w, h, T, R, B, L, fill, img, sx, sy, sw, sh);
             return canvas;
         },
 
-        renderBorderImage: function(context, x, y, w, h, T, R, B, L, fill, img, sx, sy, sw, sh) {
+        renderBorderImage: function(renderer, x, y, w, h, T, R, B, L, fill, img, sx, sy, sw, sh) {
 
             sx = sx || 0;
             sy = sy || 0;
@@ -98,25 +101,25 @@ var CUI = CUI || {};
 
             if (CH > 0) {
                 if (fill === true) {
-                    context.drawImage(img, sx + L, sy + T, bw, bh, x + L, y + T, CW, CH);
+                    renderer.drawImage(img, sx + L, sy + T, bw, bh, x + L, y + T, CW, CH);
                 } else if (fill) {
-                    context.fillStyle = fill;
-                    context.fillRect(x + L, y + T, CW, CH);
+                    // context.fillStyle = fill;
+                    renderer.fillRect(x + L, y + T, CW, CH, fill);
                 }
-                context.drawImage(img, sx, sy + T, L, bh, x, y + T, L, CH);
-                context.drawImage(img, sx + sw - R, sy + T, R, bh, x + w - R, y + T, R, CH);
+                renderer.drawImage(img, sx, sy + T, L, bh, x, y + T, L, CH);
+                renderer.drawImage(img, sx + sw - R, sy + T, R, bh, x + w - R, y + T, R, CH);
             }
 
             if (T > 0) {
-                L > 0 && context.drawImage(img, sx, sy, L, T, x, y, L, T);
-                CW > 0 && context.drawImage(img, sx + L, sy, bw, T, x + L, y, CW, T);
-                R > 0 && context.drawImage(img, sx + sw - R, sy, R, T, x + w - R, y, R, T);
+                L > 0 && renderer.drawImage(img, sx, sy, L, T, x, y, L, T);
+                CW > 0 && renderer.drawImage(img, sx + L, sy, bw, T, x + L, y, CW, T);
+                R > 0 && renderer.drawImage(img, sx + sw - R, sy, R, T, x + w - R, y, R, T);
             }
 
             if (B > 0) {
-                L > 0 && context.drawImage(img, sx, sy + sh - B, L, B, x, y + h - B, L, B);
-                CW > 0 && context.drawImage(img, sx + L, sy + sh - B, bw, B, x + L, y + h - B, CW, B);
-                R > 0 && context.drawImage(img, sx + sw - R, sy + sh - B, R, B, x + w - R, y + h - B, R, B);
+                L > 0 && renderer.drawImage(img, sx, sy + sh - B, L, B, x, y + h - B, L, B);
+                CW > 0 && renderer.drawImage(img, sx + L, sy + sh - B, bw, B, x + L, y + h - B, CW, B);
+                R > 0 && renderer.drawImage(img, sx + sw - R, sy + sh - B, R, B, x + w - R, y + h - B, R, B);
             }
         },
 

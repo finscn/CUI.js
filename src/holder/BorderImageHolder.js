@@ -20,7 +20,7 @@ var CUI = CUI || {};
 
         useCache: false,
 
-        render: function(context, x, y, width, height, timeStep, now) {
+        render: function(renderer, x, y, width, height, timeStep, now) {
             var bi = this;
             if (this.useCache) {
                 if (!this.cacheCanvas) {
@@ -28,9 +28,9 @@ var CUI = CUI || {};
                         bi.T, bi.R, bi.B, bi.L, bi.fill,
                         bi.img, bi.sx, bi.sy, bi.sw, bi.sh);
                 }
-                context.drawImage(this.cacheCanvas, x, y, width, height);
+                renderer.drawImage(this.cacheCanvas, x, y, width, height);
             } else {
-                CUI.Utils.renderBorderImage(context,
+                CUI.Utils.renderBorderImage(renderer,
                     x, y, width, height,
                     bi.T, bi.R, bi.B, bi.L, bi.fill,
                     bi.img, bi.sx, bi.sy, bi.sw, bi.sh)

@@ -241,7 +241,7 @@ var CUI = CUI || {};
             this.flagHolder && this.flagHolder.updatePosition();
         },
 
-        renderSelf: function(context, timeStep, now) {
+        renderSelf: function(renderer, timeStep, now) {
             if (this._autoSizeWithText && this.textHolder) {
                 if (this.textHolder.needToCompute) {
                     this.textHolder.computeSize();
@@ -252,23 +252,23 @@ var CUI = CUI || {};
             }
 
             if (this.backgroundColor) {
-                context.fillStyle = this.backgroundColor;
-                context.fillRect(this.x, this.y, this.w, this.h);
+                // context.fillStyle = this.backgroundColor;
+                renderer.fillRect(this.x, this.y, this.w, this.h, this.backgroundColor);
             }
             if (this.backgroundHolder) {
-                this.backgroundHolder.render(context, this.x, this.y, this.w, this.h);
+                this.backgroundHolder.render(renderer, this.x, this.y, this.w, this.h);
             }
 
-            this.iconHolder && this.iconHolder.render(context);
-            this.textHolder && this.textHolder.render(context);
-            this.flagHolder && this.flagHolder.render(context);
+            this.iconHolder && this.iconHolder.render(renderer);
+            this.textHolder && this.textHolder.render(renderer);
+            this.flagHolder && this.flagHolder.render(renderer);
 
             if (this.borderWidth && this.borderColor) {
-                context.strokeStyle = this.borderColor;
-                context.lineWidth = this.borderWidth;
-                // context.strokeRect(this.x, this.y, this.w, this.h, this.borderColor, this.borderWidth);
+                // context.strokeStyle = this.borderColor;
+                // context.lineWidth = this.borderWidth;
+                // renderer.strokeRect(this.x, this.y, this.w, this.h, this.borderColor, this.borderWidth);
                 var aabb = this.aabb;
-                context.strokeRect(aabb[0], aabb[1], aabb[2] - aabb[0], aabb[3] - aabb[1], this.borderColor, this.borderWidth);
+                renderer.strokeRect(aabb[0], aabb[1], aabb[2] - aabb[0], aabb[3] - aabb[1], this.borderColor, this.borderWidth);
             }
         },
 

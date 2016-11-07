@@ -14,9 +14,9 @@ var CUI = CUI || {};
     clipBufferCanvas.height = 1;
     var clipBufferContext = clipBufferCanvas.getContext("2d");
 
-    // var clipBufferRenderer = new CUI.CanvasRenderer({
-    //     context: clipBufferContext,
-    // });
+    var clipBufferRenderer = new CUI.CanvasRenderer({
+        context: clipBufferContext,
+    });
 
     var ScrollView = Class.create({
 
@@ -350,7 +350,7 @@ var CUI = CUI || {};
             this.lastScrollY = this.scrollY;
         },
 
-        renderScrollbar: function(context, timeStep, now) {
+        renderScrollbar: function(renderer, timeStep, now) {
             if (!this.thumbWidth) {
                 return;
             }
@@ -361,32 +361,33 @@ var CUI = CUI || {};
 
             if (this.scrollH && this.rateWidth < 1) {
                 var y = this.y + this.h - this.thumbWidth;
-                context.fillStyle = this.thumbBgColor;
-                context.fillRect(this.x + this.paddingLeft + 0, y, this.w, this.thumbWidth);
-                context.fillStyle = this.thumbColor;
-                context.fillRect(this.x + this.paddingLeft + this.thumbX + 1, y + 1, this.thumbHSize - 2, this.thumbWidth - 2);
+                // context.fillStyle = this.thumbBgColor;
+                renderer.fillRect(this.x + this.paddingLeft + 0, y, this.w, this.thumbWidth, this.thumbBgColor);
+                // context.fillStyle = this.thumbColor;
+                renderer.fillRect(this.x + this.paddingLeft + this.thumbX + 1, y + 1, this.thumbHSize - 2, this.thumbWidth - 2, this.thumbColor);
             }
             if (this.scrollV && this.rateHeight < 1) {
                 var x = this.x + this.w - this.thumbWidth;
-                context.fillStyle = this.thumbBgColor;
-                context.fillRect(x, this.y + this.paddingTop + 0, this.thumbWidth, this.h);
-                context.fillStyle = this.thumbColor;
-                context.fillRect(x + 1, this.y + this.paddingTop + this.thumbY + 1, this.thumbWidth - 2, this.thumbVSize - 2);
+                // context.fillStyle = this.thumbBgColor;
+                renderer.fillRect(x, this.y + this.paddingTop + 0, this.thumbWidth, this.h, this.thumbBgColor);
+                // context.fillStyle = this.thumbColor;
+                renderer.fillRect(x + 1, this.y + this.paddingTop + this.thumbY + 1, this.thumbWidth - 2, this.thumbVSize - 2, this.thumbColor);
             }
         },
 
-        startClip: function(context) {
-            var x = this.x;
-            var y = this.y;
-            context.beginPath();
-            context.moveTo(x, y);
-            context.lineTo(x + this.w, y);
-            context.lineTo(x + this.w, y + this.h);
-            context.lineTo(x, y + this.h);
-            context.closePath();
-            context.clip();
+        startClip: function(renderer) {
+            // var x = this.x;
+            // var y = this.y;
+            // context.beginPath();
+            // context.moveTo(x, y);
+            // context.lineTo(x + this.w, y);
+            // context.lineTo(x + this.w, y + this.h);
+            // context.lineTo(x, y + this.h);
+            // context.closePath();
+            // context.clip();
+            renderer.clipRect(this.x, this.y, this.w, this.h);
         },
-        endClip: function(context) {
+        endClip: function(renderer) {
 
         },
 
@@ -395,35 +396,35 @@ var CUI = CUI || {};
             clipBufferCanvas.height = this.h;
             clipBufferContext.save();
             clipBufferContext.translate(-this.x, -this.y);
-            return clipBufferContext;
+            return clipBufferRenderer;
         },
 
-        endClipBuffer: function(context) {
-            context.drawImage(clipBufferCanvas, this.x, this.y);
+        endClipBuffer: function(renderer) {
+            renderer.drawImage(clipBufferCanvas, this.x, this.y);
             clipBufferContext.restore();
         },
 
-        renderChildren: function(context, timeStep, now) {
+        renderChildren: function(renderer, timeStep, now) {
 
-            context.save();
+            renderer.save();
 
-            var clipContext = this.clip ? (this.startClip(context) || context) : context;
+            var clipRenderer = this.clip ? (this.startClip(renderer) || renderer) : renderer;
 
             // this.renderScrollbar(clipContext, timeStep, now);
             // clipContext.translate(-this.scrollX, -this.scrollY);
             // var aabb = this.aabb;
 
             this.visibleChildren.forEach(function(c) {
-                c.render(clipContext, timeStep, now);
+                c.render(clipRenderer, timeStep, now);
             });
 
-            this.renderScrollbar(clipContext, timeStep, now);
+            this.renderScrollbar(clipRenderer, timeStep, now);
 
             if (this.clip) {
-                this.endClip(context);
+                this.endClip(renderer);
             }
 
-            context.restore();
+            renderer.restore();
 
         },
 

@@ -16,10 +16,10 @@ var CUI = CUI || {};
         computeLayout: function(forceCompute) {
             this.needToCompute = false;
         },
-        render: function(context, timeStep, now) {
+        render: function(renderer, timeStep, now) {
             if (this.backgroundColor) {
-                context.fillStyle = this.backgroundColor;
-                context.fillRect(this.x, this.y, this.w, this.h);
+                // context.fillStyle = this.backgroundColor;
+                renderer.fillRect(this.x, this.y, this.w, this.h, this.backgroundColor);
             }
         },
 

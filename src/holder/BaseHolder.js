@@ -79,7 +79,7 @@ var CUI = CUI || {};
             }
         },
 
-        render: function(context, timeStep, now) {
+        render: function(renderer, timeStep, now) {
             if (!this.visible) {
                 return false;
             }

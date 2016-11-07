@@ -95,13 +95,13 @@ var CUI = CUI || {};
 
         },
 
-        beforeRender: function(context, timeStep, now) {
+        beforeRender: function(renderer, timeStep, now) {
             if (this.disabled) {
                 this._prevAlpha = this.alpha;
                 this.alpha = 0.6;
             }
         },
-        afterRender: function(context, timeStep, now) {
+        afterRender: function(renderer, timeStep, now) {
             if (this.disabled) {
                 this.alpha = this._prevAlpha;
             }
