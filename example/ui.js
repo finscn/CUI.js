@@ -69,6 +69,7 @@ function initUI() {
             width: 100,
             height: 60,
             margin: 10,
+            disabled: i%2,
             textInfo: {
                 text: "Button-" + i,
             },

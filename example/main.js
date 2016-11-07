@@ -60,6 +60,7 @@ function render(context, timeStep, now) {
     context.fillRect(0, 0, Config.width, Config.height);
 
     rootUI.render(context);
+    // rootUI.render(renderer);
 
 }
 
@@ -73,6 +74,10 @@ function init() {
     var rect = canvas.getBoundingClientRect();
     game.offsetX = rect.left;
     game.offsetY = rect.top;
+
+    renderer = new CUI.CanvasRenderer({
+        context: context,
+    });
     initTouchController();
     initTapListener();
     initPanListener();
@@ -81,6 +86,8 @@ function init() {
 }
 
 var Images = {};
+
+var renderer;
 
 function start() {
     beforeStart();
