@@ -5,6 +5,9 @@ var CUI = CUI || {};
     CUI.ImagePool = CUI.ImagePool || {};
     CUI.ImageMapping = CUI.ImageMapping || {};
 
+    var tempCanvas = document.createElement("canvas");
+    var tempContext = tempCanvas.getContext("2d");
+
     var Utils = {
 
         loadImage: function(src, callback) {
@@ -68,57 +71,15 @@ var CUI = CUI || {};
             return canvas;
         },
 
-        getTextWidth: function(context, text, size, fontName) {
-            var font = context.font;
-            context.font = size + "px" + (fontName ? (" " + fontName) : "");
-            var measure = context.measureText(text);
-            context.font = font;
+        getTextWidth: function(text, size, fontName) {
+            var ctx = tempContext;
+            var font = ctx.font;
+            ctx.font = size + "px" + (fontName ? (" " + fontName) : "");
+            var measure = ctx.measureText(text);
+            ctx.font = font;
             return measure.width;
         },
 
-        createImageByBorderImage: function(w, h, T, R, B, L, fill, img, sx, sy, sw, sh) {
-            var canvas = Utils.createCanvas(w, h);
-            var context = canvas.getContext("2d");
-            Utils.renderBorderImage(context, 0, 0, w, h, T, R, B, L, fill, img, sx, sy, sw, sh);
-            return canvas;
-        },
-
-        renderBorderImage: function(context, x, y, w, h, T, R, B, L, fill, img, sx, sy, sw, sh) {
-
-            sx = sx || 0;
-            sy = sy || 0;
-            sw = sw || img.width;
-            sh = sh || img.height;
-
-            var bw = sw - L - R;
-            var bh = sh - T - B;
-
-            var CW = w - L - R,
-                CH = h - T - B;
-
-            if (CH > 0) {
-                if (fill === true) {
-                    context.drawImage(img, sx + L, sy + T, bw, bh, x + L, y + T, CW, CH);
-                } else if (fill) {
-                    context.fillStyle = fill;
-                    context.fillRect(x + L, y + T, CW, CH);
-                }
-                context.drawImage(img, sx, sy + T, L, bh, x, y + T, L, CH);
-                context.drawImage(img, sx + sw - R, sy + T, R, bh, x + w - R, y + T, R, CH);
-            }
-
-            if (T > 0) {
-                L > 0 && context.drawImage(img, sx, sy, L, T, x, y, L, T);
-                CW > 0 && context.drawImage(img, sx + L, sy, bw, T, x + L, y, CW, T);
-                R > 0 && context.drawImage(img, sx + sw - R, sy, R, T, x + w - R, y, R, T);
-            }
-
-            if (B > 0) {
-                L > 0 && context.drawImage(img, sx, sy + sh - B, L, B, x, y + h - B, L, B);
-                CW > 0 && context.drawImage(img, sx + L, sy + sh - B, bw, B, x + L, y + h - B, CW, B);
-                R > 0 && context.drawImage(img, sx + sw - R, sy + sh - B, R, B, x + w - R, y + h - B, R, B);
-            }
-        },
 
         getImageInfo: function(idOrImg) {
             var img, id = idOrImg;

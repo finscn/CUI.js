@@ -31,8 +31,14 @@ var CUI = CUI || {};
             this._lastBlend = this.blend;
         },
 
-        render: function(displayObject, timeStep, now) {
-            displayObject.render(this, timeStep, now);
+        createDisplayObject: function(img, sx, sy, sw, sh) {
+            return {
+                img: img,
+                sx: sx || 0,
+                sy: sy || 0,
+                sw: sw || img.width,
+                sh: sh || img.height,
+            };
         },
 
         drawImage: function(image, sx, sy, sw, sh, dx, dy, dw, dh) {

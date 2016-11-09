@@ -9,14 +9,6 @@ var CUI = CUI || {};
     var Component = exports.Component;
     var Slider = exports.Slider;
 
-    var clipBufferCanvas = document.createElement("canvas");
-    clipBufferCanvas.width = 1;
-    clipBufferCanvas.height = 1;
-    var clipBufferContext = clipBufferCanvas.getContext("2d");
-
-    // var clipBufferRenderer = new CUI.CanvasRenderer({
-    //     context: clipBufferContext,
-    // });
 
     var ScrollView = Class.create({
 
@@ -378,6 +370,7 @@ var CUI = CUI || {};
         startClip: function(context) {
             var x = this.x;
             var y = this.y;
+            context.save();
             context.beginPath();
             context.moveTo(x, y);
             context.lineTo(x + this.w, y);
@@ -387,43 +380,24 @@ var CUI = CUI || {};
             context.clip();
         },
         endClip: function(context) {
-
-        },
-
-        startClipBuffer: function() {
-            clipBufferCanvas.width = this.w;
-            clipBufferCanvas.height = this.h;
-            clipBufferContext.save();
-            clipBufferContext.translate(-this.x, -this.y);
-            return clipBufferContext;
-        },
-
-        endClipBuffer: function(context) {
-            context.drawImage(clipBufferCanvas, this.x, this.y);
-            clipBufferContext.restore();
+            context.restore();
         },
 
         renderChildren: function(context, timeStep, now) {
 
-            context.save();
-
-            var clipContext = this.clip ? (this.startClip(context) || context) : context;
-
-            // this.renderScrollbar(clipContext, timeStep, now);
-            // clipContext.translate(-this.scrollX, -this.scrollY);
-            // var aabb = this.aabb;
+            if (this.clip) {
+                this.startClip(context);
+            }
 
             this.visibleChildren.forEach(function(c) {
-                c.render(clipContext, timeStep, now);
+                c.render(context, timeStep, now);
             });
 
-            this.renderScrollbar(clipContext, timeStep, now);
+            this.renderScrollbar(context, timeStep, now);
 
             if (this.clip) {
                 this.endClip(context);
             }
-
-            context.restore();
 
         },
 
