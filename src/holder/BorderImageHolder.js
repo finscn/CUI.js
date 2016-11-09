@@ -24,7 +24,7 @@ var CUI = CUI || {};
             var bi = this;
             if (this.useCache) {
                 if (!this.cacheCanvas) {
-                    this.cacheCanvas = this.createImageByBorderImage(width, height);
+                    this.cacheCanvas = this.cacheBorderImage(width, height);
                     this.cacheDisplayObject = renderer.createDisplayObject(this.cacheCanvas);
                 }
                 renderer.drawImage(this.cacheDisplayObject, x, y, width, height);
@@ -120,7 +120,8 @@ var CUI = CUI || {};
             this.borderDisplayInited = true;
         },
 
-        renderBorderImage: function(renderer, x, y, w, h) {
+        renderBorderImage: function(renderer, x, y, width, height) {
+            var img = this.img;
             var sx = this.sx || 0;
             var sy = this.sy || 0;
             var sw = this.sw || img.width;
@@ -130,7 +131,10 @@ var CUI = CUI || {};
             var R = this.R;
             var B = this.B;
             var L = this.L;
-
+            var fill = this.fill;
+            
+	    var w = width;
+	    var h = height;
             var bw = sw - L - R;
             var bh = sh - T - B;
 

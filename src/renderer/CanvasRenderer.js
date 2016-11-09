@@ -42,7 +42,7 @@ var CUI = CUI || {};
         },
 
         drawImage: function(displayObject, dx, dy, dw, dh) {
-            var img = displayObject.img;
+            var image = displayObject.img;
             var sx = displayObject.sx;
             var sy = displayObject.sy;
             var sw = displayObject.sw;
@@ -50,10 +50,10 @@ var CUI = CUI || {};
             var count = arguments.length;
             if (count === 5) {
                 // dx, dy, dw, dh
-                this.context.drawImage(img, sx, sy, sw, sh, dx, dy, dw, dh);
+                this.context.drawImage(image, sx, sy, sw, sh, dx, dy, dw, dh);
             } else if (count === 3) {
                 // dx, dy
-                this.context.drawImage(img, sx, sy, sw, sh, dx, dy, sw, sh);
+                this.context.drawImage(image, sx, sy, sw, sh, dx, dy, sw, sh);
             }
         },
 

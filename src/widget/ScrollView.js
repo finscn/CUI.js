@@ -9,14 +9,6 @@ var CUI = CUI || {};
     var Component = exports.Component;
     var Slider = exports.Slider;
 
-    var clipBufferCanvas = document.createElement("canvas");
-    clipBufferCanvas.width = 1;
-    clipBufferCanvas.height = 1;
-    var clipBufferContext = clipBufferCanvas.getContext("2d");
-
-    var clipBufferRenderer = new CUI.CanvasRenderer({
-        context: clipBufferContext,
-    });
 
     var ScrollView = Class.create({
 
@@ -375,10 +367,18 @@ var CUI = CUI || {};
             }
         },
 
+        startClip: function(renderer) {
+            renderer.doClipRect(this.x, this.y, this.w, this.h);
+
+        },
+        endClip: function(renderer) {
+            renderer.undoClipRect();
+        },
+
         renderChildren: function(renderer, timeStep, now) {
 
-            if (this.clip){
-                renderer.doClipRect(this.x, this.y, this.w, this.h);
+            if (this.clip) {
+                this.startClip(renderer);
             }
 
             this.visibleChildren.forEach(function(c) {
@@ -388,7 +388,7 @@ var CUI = CUI || {};
             this.renderScrollbar(renderer, timeStep, now);
 
             if (this.clip) {
-                renderer.undoClipRect();
+                this.endClip(renderer);
             }
 
         },

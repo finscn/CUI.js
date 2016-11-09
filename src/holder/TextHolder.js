@@ -257,6 +257,7 @@ var CUI = CUI || {};
             if (!text) {
                 return;
             }
+	    // TODO
             var context = renderer.context;
             if (this.strokeColor && !shadow) {
                 context.strokeText(text, x, y);
