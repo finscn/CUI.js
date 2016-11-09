@@ -179,7 +179,7 @@ var CUI = CUI || {};
             var y = this.y - this.anchorY + this.offsetY + this.oy;
             var w = this.pixel.sw + this.offsetW;
             var h = this.pixel.sh + this.offsetH;
-            renderer.drawImage(this.displayObject, x, y, w, h);
+            renderer.drawDisplayObject(this.displayObject, x, y, w, h);
         },
 
         render: function(renderer, timeStep, now) {
@@ -232,7 +232,7 @@ var CUI = CUI || {};
                 renderer.setAlpha(this.alpha);
             }
 
-            renderer.drawImage(this.displayObject, x, y, width + this.offsetW, height + this.offsetH);
+            renderer.drawDisplayObject(this.displayObject, x, y, width + this.offsetW, height + this.offsetH);
 
             if (flipX != 1 || flipY != 1 || rotation != 0) {
                 // if (scaleX != 1 || scaleY != 1 || rotation != 0) {

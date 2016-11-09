@@ -201,7 +201,7 @@ var CUI = CUI || {};
                         this.bufferCanvas
                     );
                 }
-                renderer.drawImage(this.bufferDisplayObject, x + this.bufferOffsetX, y + this.bufferOffsetY);
+                renderer.drawDisplayObject(this.bufferDisplayObject, x + this.bufferOffsetX, y + this.bufferOffsetY);
                 return;
             }
             this.renderContent(renderer, x, y);
