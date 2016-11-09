@@ -31,20 +31,29 @@ var CUI = CUI || {};
             this._lastBlend = this.blend;
         },
 
-        render: function(displayObject, timeStep, now) {
-            displayObject.render(this, timeStep, now);
+        createDisplayObject: function(img, sx, sy, sw, sh) {
+            return {
+                img: img,
+                sx: sx || 0,
+                sy: sy || 0,
+                sw: sw || img.width,
+                sh: sh || img.height,
+            };
         },
 
-        drawImage: function(image, sx, sy, sw, sh, dx, dy, dw, dh) {
+        drawImage: function(displayObject, dx, dy, dw, dh) {
+            var img = displayObject.img;
+            var sx = displayObject.sx;
+            var sy = displayObject.sy;
+            var sw = displayObject.sw;
+            var sh = displayObject.sh;
             var count = arguments.length;
-            if (count === 9) {
-                this.context.drawImage(image, sx, sy, sw, sh, dx, dy, dw, dh);
+            if (count === 5) {
+                // dx, dy, dw, dh
+                this.context.drawImage(img, sx, sy, sw, sh, dx, dy, dw, dh);
             } else if (count === 3) {
                 // dx, dy
-                this.context.drawImage(image, sx, sy);
-            } else {
-                // dx, dy, dw, dh
-                this.context.drawImage(image, sx, sy, sw, sh);
+                this.context.drawImage(img, sx, sy, sw, sh, dx, dy, sw, sh);
             }
         },
 

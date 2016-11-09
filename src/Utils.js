@@ -5,6 +5,9 @@ var CUI = CUI || {};
     CUI.ImagePool = CUI.ImagePool || {};
     CUI.ImageMapping = CUI.ImageMapping || {};
 
+    var tempCanvas = document.createElement("canvas");
+    var tempContext = tempCanvas.getContext("2d");
+
     var Utils = {
 
         loadImage: function(src, callback) {
@@ -68,11 +71,12 @@ var CUI = CUI || {};
             return canvas;
         },
 
-        getTextWidth: function(context, text, size, fontName) {
-            var font = context.font;
-            context.font = size + "px" + (fontName ? (" " + fontName) : "");
-            var measure = context.measureText(text);
-            context.font = font;
+        getTextWidth: function(text, size, fontName) {
+            var ctx = tempContext;
+            var font = ctx.font;
+            ctx.font = size + "px" + (fontName ? (" " + fontName) : "");
+            var measure = ctx.measureText(text);
+            ctx.font = font;
             return measure.width;
         },
 

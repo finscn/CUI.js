@@ -196,7 +196,12 @@ var CUI = CUI || {};
             var y = this.y - this.anchorY + this.offsetY + this.fontSize;
 
             if (this.useBuffer) {
-                renderer.drawImage(this.bufferCanvas, x + this.bufferOffsetX, y + this.bufferOffsetY);
+                if (!this.bufferDisplayObject) {
+                    this.bufferDisplayObject = renderer.createDisplayObject(
+                        this.bufferCanvas
+                    );
+                }
+                renderer.drawImage(this.bufferDisplayObject, x + this.bufferOffsetX, y + this.bufferOffsetY);
                 return;
             }
             this.renderContent(renderer, x, y);

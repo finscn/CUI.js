@@ -12,8 +12,12 @@ var CUI = CUI || {};
     var BackgroundImageHolder = Class.create({
 
         render: function(renderer, x, y, width, height, timeStep, now) {
-            renderer.drawImage(this.img,
-                this.sx, this.sy, this.sw, this.sh,
+            if (!this.displayObject) {
+                this.displayObject = renderer.createDisplayObject(
+                    this.img, this.sx, this.sy, this.sw, this.sh
+                );
+            }
+            renderer.drawImage(this.displayObject,
                 x + this.ox, y + this.oy, width, height);
         },
 

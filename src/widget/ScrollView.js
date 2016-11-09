@@ -375,40 +375,20 @@ var CUI = CUI || {};
             }
         },
 
-        startClip: function(renderer) {
-            // context.save();
-            renderer.doClipRect(this.x, this.y, this.w, this.h);
-        },
-        endClip: function(renderer) {
-            // context.restore();
-            renderer.undoClipRect();
-        },
-
-        startClipBuffer: function(renderer) {
-            clipBufferCanvas.width = this.w;
-            clipBufferCanvas.height = this.h;
-            clipBufferContext.save();
-            clipBufferContext.translate(-this.x, -this.y);
-            return clipBufferRenderer;
-        },
-
-        endClipBuffer: function(renderer) {
-            renderer.drawImage(clipBufferCanvas, this.x, this.y);
-            clipBufferContext.restore();
-        },
-
         renderChildren: function(renderer, timeStep, now) {
 
-            var clipRenderer = this.clip ? (this.startClip(renderer) || renderer) : renderer;
+            if (this.clip){
+                renderer.doClipRect(this.x, this.y, this.w, this.h);
+            }
 
             this.visibleChildren.forEach(function(c) {
-                c.render(clipRenderer, timeStep, now);
+                c.render(renderer, timeStep, now);
             });
 
-            this.renderScrollbar(clipRenderer, timeStep, now);
+            this.renderScrollbar(renderer, timeStep, now);
 
             if (this.clip) {
-                this.endClip(renderer);
+                renderer.undoClipRect();
             }
 
         },
