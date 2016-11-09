@@ -654,7 +654,7 @@ var CUI = CUI || {};
                     this.createCacheCanvas();
                     this.cacheDisplayObject = renderer.createDisplayObject(this.cacheCanvas);
                 }
-                renderer.drawImage(this.cacheDisplayObject, this.x - 2, this.y - 2);
+                renderer.drawDisplayObject(this.cacheDisplayObject, this.x - 2, this.y - 2);
             } else {
                 this.readyForCache = true;
 

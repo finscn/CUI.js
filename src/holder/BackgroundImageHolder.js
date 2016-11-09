@@ -17,7 +17,7 @@ var CUI = CUI || {};
                     this.img, this.sx, this.sy, this.sw, this.sh
                 );
             }
-            renderer.drawImage(this.displayObject,
+            renderer.drawDisplayObject(this.displayObject,
                 x + this.ox, y + this.oy, width, height);
         },
 
