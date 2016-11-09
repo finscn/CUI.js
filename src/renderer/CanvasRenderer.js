@@ -41,6 +41,22 @@ var CUI = CUI || {};
             };
         },
 
+        drawDisplayObject: function(displayObject, dx, dy, dw, dh) {
+            var image = displayObject.img;
+            var sx = displayObject.sx;
+            var sy = displayObject.sy;
+            var sw = displayObject.sw;
+            var sh = displayObject.sh;
+            var count = arguments.length;
+            if (count === 5) {
+                // dx, dy, dw, dh
+                this.context.drawImage(image, sx, sy, sw, sh, dx, dy, dw, dh);
+            } else if (count === 3) {
+                // dx, dy
+                this.context.drawImage(image, sx, sy, sw, sh, dx, dy, sw, sh);
+            }
+        },
+
         drawImage: function(image, sx, sy, sw, sh, dx, dy, dw, dh) {
             var count = arguments.length;
             if (count === 9) {
