@@ -11,10 +11,14 @@ var CUI = CUI || {};
 
     var CanvasRenderer = Class.create({
 
+        lazyInit: false,
+
         canvas: null,
         context: null,
 
         init: function() {
+
+            this.drawSimpleDisplayObject = this.drawDisplayObject;
 
             this.context = this.context || this.canvas.getContext("2d");
 
@@ -67,6 +71,7 @@ var CUI = CUI || {};
                 this.context.drawImage(image, sx, sy, sw, sh, dx, dy, sw, sh);
             }
         },
+        drawSimpleDisplayObject: null,
 
         drawImage: function(image, sx, sy, sw, sh, dx, dy, dw, dh) {
             var count = arguments.length;

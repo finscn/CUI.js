@@ -627,7 +627,6 @@ var CUI = CUI || {};
             }
             // context.fillStyle = this.maskColor;
             renderer.fillRect(x, y, w, h, this.maskColor);
-
         },
 
         render: function(renderer, timeStep, now) {
@@ -655,7 +654,7 @@ var CUI = CUI || {};
                     this.createCacheCanvas();
                     this.cacheDisplayObject = renderer.createDisplayObject(this.cacheCanvas);
                 }
-                renderer.drawDisplayObject(this.cacheDisplayObject, this.x - 2, this.y - 2);
+                renderer.drawSimpleDisplayObject(this.cacheDisplayObject, this.x - 2, this.y - 2);
             } else {
                 this.readyForCache = true;
 

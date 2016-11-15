@@ -27,7 +27,7 @@ var CUI = CUI || {};
                     this.cacheCanvas = this.cacheBorderImage(width, height);
                     this.cacheDisplayObject = renderer.createDisplayObject(this.cacheCanvas);
                 }
-                renderer.drawDisplayObject(this.cacheDisplayObject, x, y, width, height);
+                renderer.drawSimpleDisplayObject(this.cacheDisplayObject, x, y, width, height);
             } else {
                 this.renderBorderImage(renderer, x, y, width, height);
             }
@@ -146,17 +146,17 @@ var CUI = CUI || {};
             }
 
             this.fillCenter && renderer.fillRect(x + L, y + T, CW, CH, this.fillCenter);
-            this.displayCL && renderer.drawDisplayObject(this.displayCL, x, y + T, L, CH);
-            this.displayCC && renderer.drawDisplayObject(this.displayCC, x + L, y + T, CW, CH);
-            this.displayCR && renderer.drawDisplayObject(this.displayCR, x + w - R, y + T, R, CH);
+            this.displayCL && renderer.drawSimpleDisplayObject(this.displayCL, x, y + T, L, CH);
+            this.displayCC && renderer.drawSimpleDisplayObject(this.displayCC, x + L, y + T, CW, CH);
+            this.displayCR && renderer.drawSimpleDisplayObject(this.displayCR, x + w - R, y + T, R, CH);
 
-            this.displayTL && renderer.drawDisplayObject(this.displayTL, x, y, L, T);
-            this.displayTC && renderer.drawDisplayObject(this.displayTC, x + L, y, CW, T);
-            this.displayTR && renderer.drawDisplayObject(this.displayTR, x + w - R, y, R, T);
+            this.displayTL && renderer.drawSimpleDisplayObject(this.displayTL, x, y, L, T);
+            this.displayTC && renderer.drawSimpleDisplayObject(this.displayTC, x + L, y, CW, T);
+            this.displayTR && renderer.drawSimpleDisplayObject(this.displayTR, x + w - R, y, R, T);
 
-            this.displayBL && renderer.drawDisplayObject(this.displayBL, x, y + h - B, L, B);
-            this.displayBC && renderer.drawDisplayObject(this.displayBC, x + L, y + h - B, CW, B);
-            this.displayBR && renderer.drawDisplayObject(this.displayBR, x + w - R, y + h - B, R, B);
+            this.displayBL && renderer.drawSimpleDisplayObject(this.displayBL, x, y + h - B, L, B);
+            this.displayBC && renderer.drawSimpleDisplayObject(this.displayBC, x + L, y + h - B, CW, B);
+            this.displayBR && renderer.drawSimpleDisplayObject(this.displayBR, x + w - R, y + h - B, R, B);
         },
 
         cacheBorderImage: function(w, h) {

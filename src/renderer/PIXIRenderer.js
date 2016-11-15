@@ -11,6 +11,8 @@ var CUI = CUI || {};
 
     var PIXIRenderer = Class.create({
 
+        lazyInit: false,
+
         canvas: null,
         context: null,
 
