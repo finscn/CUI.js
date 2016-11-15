@@ -676,9 +676,9 @@ var CUI = CUI || {};
                 var x = this.x + this.pixel.anchorX,
                     y = this.y + this.pixel.anchorY;
                 context.save();
-                context.translate(x, y);
+                context.translate(x + this.offsetY, y + this.offsetY);
                 context.scale(this.scale, this.scale);
-                context.translate(-x + this.offsetX, -y + this.offsetY);
+                context.translate(-x, -y);
             } else if (this.offsetX || this.offsetY) {
                 context.save();
                 context.translate(this.offsetX, this.offsetY);
