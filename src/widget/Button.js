@@ -32,12 +32,12 @@ var CUI = CUI || {};
         },
 
         onDown: function() {
-            this.scale = 0.92;
             this.offsetY = 2;
+            this.scale = 0.92;
         },
         onUp: function() {
-            this.scale = 1;
             this.offsetY = 0;
+            this.scale = 1;
         },
 
         touchStart: function(x, y, id) {
