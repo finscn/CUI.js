@@ -256,7 +256,7 @@ var CUI = CUI || {};
                 renderer.fillRect(this.x, this.y, this.w, this.h, this.backgroundColor);
             }
             if (this.backgroundHolder) {
-                this.backgroundHolder.render(renderer);
+                this.backgroundHolder.render(renderer, timeStep, now);
             }
 
             this.iconHolder && this.iconHolder.render(renderer, timeStep, now);

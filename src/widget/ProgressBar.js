@@ -86,7 +86,7 @@ var CUI = CUI || {};
         renderSelf: function(renderer, timeStep, now) {
             var p = Math.min(1, this.progress);
             if (this.backgroundHolder) {
-                this.backgroundHolder.simpleRender(renderer);
+                this.backgroundHolder.simpleRender(renderer, timeStep, now);
             } else {
                 // context.fillStyle = this.backgroundColor;
                 renderer.fillRect(this.x, this.y, this.w, this.h, this.backgroundColor);
