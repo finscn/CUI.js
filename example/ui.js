@@ -52,12 +52,45 @@ function initUI() {
         // scaleX: 2,
         // scaleY: 2,
         scaleImg: false,
-        width: 200,
-        height: 200,
+        width: 120,
+        height: 120,
 
         // backgroundColor: "rgba(100,240,230,1)",
         // margin: 10,
         // layout: new CUI.HBoxLayout(),
+    });
+
+    var panel = new CUI.Panel({
+        // centerH: true,
+        // centerV: true,
+        // left: 20,
+        top: 150,
+
+        parent: scorllView,
+        relative: "parent",
+        // src: "res/btn-bg.png",
+        backgroundColor: "#ffffff",
+        bgInfo: {
+            img:  Images["btn-bg"]
+        },
+        borderWidth: 2,
+        paddingLeft: 10,
+        paddingTop: 0,
+
+        width: 160,
+        height: 120,
+
+        // backgroundColor: "rgba(100,240,230,1)",
+        // margin: 10,
+        // layout: new CUI.HBoxLayout(),
+    });
+
+    var label = new CUI.Label({
+        parent: panel,
+        backgroundColor: "rgba(255,240,230,1)",
+        borderWidth: 2,
+        borderColor: "red",
+        text: "Text Test",
     });
 
     for (var i = 0; i < 2; i++) {

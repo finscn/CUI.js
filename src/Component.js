@@ -63,6 +63,7 @@ var CUI = CUI || {};
         maskColor: "rgba(0,0,0,0.35)",
 
         displayObject: null,
+        transform: null,
 
         /////////////////////////////////////////////
         // 对象创建后, 以下属性不可更改
@@ -593,7 +594,7 @@ var CUI = CUI || {};
                 renderer.fillRect(this.x, this.y, this.w, this.h, this.backgroundColor);
             }
             if (this.backgroundHolder) {
-                this.backgroundHolder.render(renderer, this.x, this.y, this.w, this.h, timeStep, now);
+                this.backgroundHolder.render(renderer, timeStep, now);
             }
 
             if (this.borderColor && this.borderWidth) {
@@ -679,9 +680,9 @@ var CUI = CUI || {};
 
         beforeTransform: function(renderer, timeStep, now) {
             if (this.scale != 1) {
-                renderer.save();
                 var x = this.x + this.pixel.anchorX,
                     y = this.y + this.pixel.anchorY;
+                renderer.save();
                 renderer.translate(x, y);
                 renderer.scale(this.scale, this.scale);
                 renderer.translate(-x + this.offsetX, -y + this.offsetY);
@@ -849,6 +850,7 @@ var CUI = CUI || {};
         return Component.all[id];
     };
 
+    Component.renderer = null;
 
     exports.Component = Component;
     exports.noop = noop;

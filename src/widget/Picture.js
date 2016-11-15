@@ -152,10 +152,10 @@ var CUI = CUI || {};
                 renderer.fillRect(this.x, this.y, this.w, this.h, this.backgroundColor);
             }
             if (this.backgroundHolder) {
-                this.backgroundHolder.render(renderer, this.x, this.y, this.w, this.h);
+                this.backgroundHolder.render(renderer, timeStep, now);
             }
 
-            this.imageHolder && this.imageHolder.render(renderer);
+            this.imageHolder && this.imageHolder.render(renderer, timeStep, now);
 
             if (this.borderColor && this.borderWidth) {
                 // context.strokeStyle = this.borderColor;

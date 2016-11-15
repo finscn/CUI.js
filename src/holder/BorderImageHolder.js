@@ -132,9 +132,9 @@ var CUI = CUI || {};
             var B = this.B;
             var L = this.L;
             var fill = this.fill;
-            
-	    var w = width;
-	    var h = height;
+
+            var w = width;
+            var h = height;
             var bw = sw - L - R;
             var bh = sh - T - B;
 

@@ -8,6 +8,7 @@ var CUI = CUI || {};
     var Class = exports.Class;
     var Utils = exports.Utils;
     var BaseHolder = exports.BaseHolder;
+    var Component = exports.Component;
 
     var ImageHolder = Class.create({
 
@@ -132,6 +133,8 @@ var CUI = CUI || {};
             this.h = h;
             this.ox = ox;
             this.oy = oy;
+
+            this.displayObject = Component.renderer.createDisplayObject(this.img, sx, sy, sw, sh);
         },
 
         removeImg: function() {
@@ -170,11 +173,6 @@ var CUI = CUI || {};
             if (!this.visible || !this.img) {
                 return false;
             }
-            if (!this.displayObject) {
-                this.displayObject = renderer.createDisplayObject(
-                    this.img, this.sx, this.sy, this.sw, this.sh
-                );
-            }
             var x = this.x - this.anchorX + this.offsetX + this.ox;
             var y = this.y - this.anchorY + this.offsetY + this.oy;
             var w = this.pixel.sw + this.offsetW;
@@ -185,11 +183,6 @@ var CUI = CUI || {};
         render: function(renderer, timeStep, now) {
             if (!this.visible || !this.img) {
                 return false;
-            }
-            if (!this.displayObject) {
-                this.displayObject = renderer.createDisplayObject(
-                    this.img, this.sx, this.sy, this.sw, this.sh
-                );
             }
             // var alpha = this.alpha + this.offsetAlpha;
             // if (alpha <= 0) {
