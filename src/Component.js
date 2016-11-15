@@ -673,9 +673,9 @@ var CUI = CUI || {};
 
         beforeTransform: function(context, timeStep, now) {
             if (this.scale != 1) {
-                context.save();
                 var x = this.x + this.pixel.anchorX,
                     y = this.y + this.pixel.anchorY;
+                context.save();
                 context.translate(x, y);
                 context.scale(this.scale, this.scale);
                 context.translate(-x + this.offsetX, -y + this.offsetY);
