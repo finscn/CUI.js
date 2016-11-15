@@ -59,7 +59,6 @@ function render(context, timeStep, now) {
     context.fillStyle = "rgba(0,0,0,1)";
     context.fillRect(0, 0, Config.width, Config.height);
 
-    // rootUI.render(context);
     rootUI.render(renderer);
 
 }
