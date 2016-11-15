@@ -32,11 +32,11 @@ var CUI = CUI || {};
             }
         },
 
-        initBorderDisplayObject: function(renderer, w, h) {
+        initBorderDisplayObject: function(context, w, h) {
             this.borderDisplayInited = true;
         },
 
-        renderBorderImage: function(renderer, x, y, width, height) {
+        renderBorderImage: function(context, x, y, width, height) {
             var img = this.img;
             var sx = this.sx || 0;
             var sy = this.sy || 0;
@@ -48,9 +48,9 @@ var CUI = CUI || {};
             var B = this.B;
             var L = this.L;
             var fill = this.fill;
-            
-	    var w = width;
-	    var h = height;
+
+            var w = width;
+            var h = height;
             var bw = sw - L - R;
             var bh = sh - T - B;
 
@@ -86,10 +86,7 @@ var CUI = CUI || {};
             canvas.width = w;
             canvas.height = h;
             var context = canvas.getContext("2d");
-            var renderer = new CUI.CanvasRenderer({
-                context: context
-            });
-            this.renderBorderImage(renderer, 0, 0, w, h);
+            this.renderBorderImage(context, 0, 0, w, h);
             return canvas;
         },
 

@@ -566,23 +566,20 @@ var CUI = CUI || {};
                 this.cacheCanvas = canvas;
             }
             var cacheContext = this.cacheCanvas.getContext("2d");
-            var cacheRenderer = new CUI.CanvasRenderer({
-                context: cacheContext
-            });
             var useCache = this.useCache;
             var visible = this.visible;
             this.useCache = false;
             this.visible = true;
-            cacheRenderer.translate(-this.x + 2, -this.y + 2);
+            cacheContext.translate(-this.x + 2, -this.y + 2);
 
             var timeStep = 0;
             var now = Date.now();
-            this.renderSelf(cacheRenderer, timeStep, now);
+            this.renderSelf(cacheContext, timeStep, now);
             if (this.composite) {
-                this.renderChildren(cacheRenderer, timeStep, now);
+                this.renderChildren(cacheContext, timeStep, now);
             }
 
-            cacheRenderer.translate(this.x - 2, this.y - 2);
+            cacheContext.translate(this.x - 2, this.y - 2);
             this.useCache = useCache;
             this.visible = visible;
             this.cached = true;

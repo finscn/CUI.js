@@ -77,9 +77,6 @@ var CUI = CUI || {};
                 }
                 this.bufferCanvas._dynamic = true;
                 this.bufferContext = this.bufferCanvas.getContext('2d');
-                this.bufferRenderer = new CUI.CanvasRenderer({
-                    context: this.bufferContext
-                });
             }
         },
 
@@ -157,7 +154,7 @@ var CUI = CUI || {};
         updateBuffer: function() {
             this.bufferCanvas.width = this.width + (this.strokeWidth + this.bufferPadding) * 2;
             this.bufferCanvas.height = this.height + (this.strokeWidth + this.bufferPadding) * 2;
-            this.renderContent(this.bufferRenderer, -this.bufferOffsetX, -this.bufferOffsetY);
+            this.renderContent(this.bufferContext, -this.bufferOffsetX, -this.bufferOffsetY);
             // this.bufferContext.strokeRect(0, 0, this.bufferCanvas.width, this.bufferCanvas.height);
         },
 

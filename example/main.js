@@ -74,7 +74,6 @@ function init() {
     game.offsetX = rect.left;
     game.offsetY = rect.top;
 
-
     CUI.Component.renderer = context;
 
     initTouchController();
