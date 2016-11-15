@@ -90,7 +90,11 @@ function initUI() {
         backgroundColor: "rgba(255,240,230,1)",
         borderWidth: 2,
         borderColor: "red",
-        text: "Text Test",
+        // text: "Text Test",
+        textInfo: {
+            useCache: true,
+            text: "Text Test",
+        }
     });
 
     for (var i = 0; i < 2; i++) {

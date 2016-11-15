@@ -119,8 +119,9 @@ var CUI = CUI || {};
             if (!btn) {
                 return;
             }
+            var lineWidth = 4;
             context.strokeStyle = this.color;
-            context.lineWidth = 4;
+            context.lineWidth = lineWidth;
             context.strokeRect(btn.x - 4, btn.y - 4, btn.w + 8, btn.h + 8);
         },
 

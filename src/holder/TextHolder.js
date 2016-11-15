@@ -55,11 +55,11 @@ var CUI = CUI || {};
 
         measure: null,
 
-        useBuffer: false,
-        bufferOffsetX: 0,
-        bufferOffsetY: 0,
-        bufferPadding: 10,
-        shareBuffer: true,
+        useCache: false,
+        cacheOffsetX: 0,
+        cacheOffsetY: 0,
+        cachePadding: 10,
+        shareCache: true,
 
 
         init: function() {
@@ -69,14 +69,14 @@ var CUI = CUI || {};
             };
             this.setTextInfo(this);
             this.setParent(this.parent);
-            if (this.useBuffer) {
-                if (this.shareBuffer) {
-                    this.bufferCanvas = TextHolder.bufferCanvas;
+            if (this.useCache) {
+                if (this.shareCache) {
+                    this.cacheCanvas = TextHolder.cacheCanvas;
                 } else {
-                    this.bufferCanvas = document.createElement('canvas');
+                    this.cacheCanvas = document.createElement('canvas');
                 }
-                this.bufferCanvas._dynamic = true;
-                this.bufferContext = this.bufferCanvas.getContext('2d');
+                this.cacheCanvas._dynamic = true;
+                this.cacheContext = this.cacheCanvas.getContext('2d');
             }
         },
 
@@ -138,24 +138,24 @@ var CUI = CUI || {};
             this.updatePosition();
             this.needToCompute = false;
 
-            if (this.useBuffer) {
+            if (this.useCache) {
                 if (this.textAlign == "center") {
-                    this.bufferOffsetX = -Math.ceil(this.width / 2 + this.strokeWidth + this.bufferPadding);
+                    this.cacheOffsetX = -Math.ceil(this.width / 2 + this.strokeWidth + this.cachePadding);
                 } else if (this.textAlign == "right" || this.textAlign == "end") {
-                    this.bufferOffsetX = -(this.width + this.strokeWidth + this.bufferPadding);
+                    this.cacheOffsetX = -(this.width + this.strokeWidth + this.cachePadding);
                 } else {
-                    this.bufferOffsetX = -(this.strokeWidth + this.bufferPadding);
+                    this.cacheOffsetX = -(this.strokeWidth + this.cachePadding);
                 }
-                this.bufferOffsetY = -(this.fontSize + this.strokeWidth + this.bufferPadding);
-                this.updateBuffer();
+                this.cacheOffsetY = -(this.fontSize + this.strokeWidth + this.cachePadding);
+                this.updateCache();
             }
         },
 
-        updateBuffer: function() {
-            this.bufferCanvas.width = this.width + (this.strokeWidth + this.bufferPadding) * 2;
-            this.bufferCanvas.height = this.height + (this.strokeWidth + this.bufferPadding) * 2;
-            this.renderContent(this.bufferContext, -this.bufferOffsetX, -this.bufferOffsetY);
-            // this.bufferContext.strokeRect(0, 0, this.bufferCanvas.width, this.bufferCanvas.height);
+        updateCache: function() {
+            this.cacheCanvas.width = this.width + (this.strokeWidth + this.cachePadding) * 2;
+            this.cacheCanvas.height = this.height + (this.strokeWidth + this.cachePadding) * 2;
+            this.renderContent(this.cacheContext, -this.cacheOffsetX, -this.cacheOffsetY);
+            // this.cacheContext.strokeRect(0, 0, this.cacheCanvas.width, this.cacheCanvas.height);
         },
 
         updatePosition: function() {
@@ -184,16 +184,16 @@ var CUI = CUI || {};
             if (this.needToCompute) {
                 this.computeSize();
             } else {
-                if (this.useBuffer && this.shareBuffer) {
-                    this.updateBuffer();
+                if (this.useCache && this.shareCache) {
+                    this.updateCache();
                 }
             }
 
             var x = this.x - this.anchorX + this.offsetX;
             var y = this.y - this.anchorY + this.offsetY + this.fontSize;
 
-            if (this.useBuffer) {
-                context.drawImage(this.bufferCanvas, x + this.bufferOffsetX, y + this.bufferOffsetY);
+            if (this.useCache) {
+                context.drawImage(this.cacheCanvas, x + this.cacheOffsetX, y + this.cacheOffsetY);
                 return;
             }
             this.renderContent(context, x, y);
@@ -256,9 +256,9 @@ var CUI = CUI || {};
 
     }, BaseHolder);
 
-    TextHolder.bufferCanvas = document.createElement('canvas');
-    TextHolder.bufferCanvas.width = 1;
-    TextHolder.bufferCanvas.height = 1;
+    TextHolder.cacheCanvas = document.createElement('canvas');
+    TextHolder.cacheCanvas.width = 1;
+    TextHolder.cacheCanvas.height = 1;
 
     exports.TextHolder = TextHolder;
 
