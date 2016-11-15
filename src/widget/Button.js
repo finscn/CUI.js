@@ -33,9 +33,11 @@ var CUI = CUI || {};
 
         onDown: function() {
             this.scale = 0.92;
+            this.offsetY = 2;
         },
         onUp: function() {
             this.scale = 1;
+            this.offsetY = 0;
         },
 
         touchStart: function(x, y, id) {
