@@ -256,12 +256,12 @@ var CUI = CUI || {};
                 context.fillRect(this.x, this.y, this.w, this.h);
             }
             if (this.backgroundHolder) {
-                this.backgroundHolder.render(context, this.x, this.y, this.w, this.h);
+                this.backgroundHolder.render(context, timeStep, now);
             }
 
-            this.iconHolder && this.iconHolder.render(context);
-            this.textHolder && this.textHolder.render(context);
-            this.flagHolder && this.flagHolder.render(context);
+            this.iconHolder && this.iconHolder.render(context, timeStep, now);
+            this.textHolder && this.textHolder.render(context, timeStep, now);
+            this.flagHolder && this.flagHolder.render(context, timeStep, now);
 
             if (this.borderWidth && this.borderColor) {
                 context.strokeStyle = this.borderColor;

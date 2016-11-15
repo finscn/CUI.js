@@ -78,6 +78,8 @@ function init() {
     renderer = new CUI.CanvasRenderer({
         context: context,
     });
+    CUI.Component.renderer = renderer;
+
     initTouchController();
     initTapListener();
     initPanListener();

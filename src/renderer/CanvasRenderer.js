@@ -11,9 +11,13 @@ var CUI = CUI || {};
 
     var CanvasRenderer = Class.create({
 
+        canvas: null,
         context: null,
 
         init: function() {
+
+            this.context = this.context || this.canvas.getContext("2d");
+
             this.globalTransform = {
                 a: 1,
                 b: 0,
@@ -38,6 +42,13 @@ var CUI = CUI || {};
                 sy: sy || 0,
                 sw: sw || img.width,
                 sh: sh || img.height,
+
+                alpha: 1,
+                scaleX: 1,
+                scaleY: 1,
+                rotation: 0,
+                tx: 0,
+                ty: 0,
             };
         },
 
@@ -68,6 +79,7 @@ var CUI = CUI || {};
                 // dx, dy, dw, dh
                 this.context.drawImage(image, sx, sy, sw, sh);
             }
+            return image;
         },
 
         strokeRect: function(x, y, width, height, color, lineWidth) {

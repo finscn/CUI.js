@@ -8,6 +8,7 @@ var CUI = CUI || {};
     var Class = exports.Class;
     var Utils = exports.Utils;
     var BaseHolder = exports.BaseHolder;
+    var Component = exports.Component;
 
     var ImageHolder = Class.create({
 
