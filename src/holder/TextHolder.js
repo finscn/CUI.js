@@ -211,6 +211,7 @@ var CUI = CUI || {};
         renderContent: function(renderer, x, y) {
             // var prevTextAlign = renderer.textAlign;
             // var prevAlpha = renderer.globalAlpha;
+            var context = renderer.context;
             context.font = this.fontStyle;
             context.textAlign = this.textAlign;
             context.textBaseline = this.textBaseline;

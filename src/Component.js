@@ -62,7 +62,6 @@ var CUI = CUI || {};
         modal: false,
         maskColor: "rgba(0,0,0,0.35)",
 
-        displayObject: null,
         transform: null,
 
         /////////////////////////////////////////////
@@ -627,6 +626,7 @@ var CUI = CUI || {};
             }
             // context.fillStyle = this.maskColor;
             renderer.fillRect(x, y, w, h, this.maskColor);
+
         },
 
         render: function(renderer, timeStep, now) {

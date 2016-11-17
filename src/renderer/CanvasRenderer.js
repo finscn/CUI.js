@@ -18,9 +18,18 @@ var CUI = CUI || {};
 
         init: function() {
 
-            this.drawSimpleDisplayObject = this.drawDisplayObject;
-
             this.context = this.context || this.canvas.getContext("2d");
+
+            // this.transform = {
+            //     scaleX: 1,
+            //     scaleY: 1,
+            //     rotation: 0,
+            //     tx: 0,
+            //     ty: 0,
+            //     anchorX:0,
+            //     anchorY:0,
+            //     alpha: 1,
+            // };
 
             this.globalTransform = {
                 a: 1,
@@ -47,16 +56,41 @@ var CUI = CUI || {};
                 sw: sw || img.width,
                 sh: sh || img.height,
 
+                anchorX: 0,
+                anchorY: 0,
+
+                tx: 0,
+                ty: 0,
                 alpha: 1,
                 scaleX: 1,
                 scaleY: 1,
                 rotation: 0,
-                tx: 0,
-                ty: 0,
             };
         },
 
-        drawDisplayObject: function(displayObject, dx, dy, dw, dh) {
+        drawDisplayObject: function(displayObject, dx, dy, dw, dh, transform) {
+            var image = displayObject.img;
+            var sx = displayObject.sx;
+            var sy = displayObject.sy;
+            var sw = displayObject.sw;
+            var sh = displayObject.sh;
+            var count = arguments.length;
+            if (count === 6) {
+                // dx, dy, dw, dh, transform
+                this.context.drawImage(image, sx, sy, sw, sh, dx, dy, dw, dh);
+            } else if (count === 4) {
+                // dx, dy, transform
+                this.context.drawImage(image, sx, sy, sw, sh, dx, dy, image.width, image.height);
+            }else if (count === 5) {
+                // dx, dy, dw, dh
+                this.context.drawImage(image, sx, sy, sw, sh, dx, dy, dw, dh);
+            } else if (count === 3) {
+                // dx, dy
+                this.context.drawImage(image, sx, sy, sw, sh, dx, dy, image.width, image.height);
+            }
+        },
+
+        drawSimpleDisplayObject: function(displayObject, dx, dy, dw, dh) {
             var image = displayObject.img;
             var sx = displayObject.sx;
             var sy = displayObject.sy;
@@ -68,10 +102,9 @@ var CUI = CUI || {};
                 this.context.drawImage(image, sx, sy, sw, sh, dx, dy, dw, dh);
             } else if (count === 3) {
                 // dx, dy
-                this.context.drawImage(image, sx, sy, sw, sh, dx, dy, sw, sh);
+                this.context.drawImage(image, sx, sy, sw, sh, dx, dy, image.width, image.height);
             }
         },
-        drawSimpleDisplayObject: null,
 
         drawImage: function(image, sx, sy, sw, sh, dx, dy, dw, dh) {
             var count = arguments.length;

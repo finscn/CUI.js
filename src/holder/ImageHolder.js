@@ -133,7 +133,6 @@ var CUI = CUI || {};
             this.h = h;
             this.ox = ox;
             this.oy = oy;
-
             this.displayObject = Component.renderer.createDisplayObject(this.img, sx, sy, sw, sh);
         },
 
@@ -202,6 +201,8 @@ var CUI = CUI || {};
 
             if (flipX != 1 || flipY != 1 || rotation != 0) {
                 // if (scaleX != 1 || scaleY != 1 || rotation != 0) {
+
+                // TODO
                 renderer.save();
                 renderer.translate(this.x + this.offsetX + this.pixel.ox, this.y + this.offsetY + this.pixel.oy);
                 if (rotation) {
