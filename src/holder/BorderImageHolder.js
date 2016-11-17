@@ -11,6 +11,9 @@ var CUI = CUI || {};
 
     var BorderImageHolder = Class.create({
 
+        width: "100%",
+        height: "100%",
+
         T: null,
         R: null,
         B: null,
@@ -20,15 +23,19 @@ var CUI = CUI || {};
 
         useCache: false,
 
-        render: function(context, x, y, width, height, timeStep, now) {
+        render: function(context, timeStep, now) {
             var bi = this;
+
+            var width = this.pixel.sw;
+            var height = this.pixel.sh;
+
             if (this.useCache) {
                 if (!this.cacheCanvas) {
                     this.cacheCanvas = this.cacheBorderImage(width, height);
                 }
-                context.drawImage(this.cacheCanvas, x, y, width, height);
+                context.drawImage(this.cacheCanvas, 0, 0, width, height);
             } else {
-                this.renderBorderImage(context, x, y, width, height);
+                this.renderBorderImage(context, this.x, this.y, width, height);
             }
         },
 

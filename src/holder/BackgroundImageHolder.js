@@ -10,8 +10,10 @@ var CUI = CUI || {};
     var ImageHolder = exports.ImageHolder;
 
     var BackgroundImageHolder = Class.create({
+
         width: "100%",
         height: "100%",
+
         render: function(context, timeStep, now) {
             context.drawImage(this.img,
                 this.sx, this.sy, this.sw, this.sh,
