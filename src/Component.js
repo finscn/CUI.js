@@ -844,8 +844,6 @@ var CUI = CUI || {};
         return Component.all[id];
     };
 
-    Component.renderer = null;
-
     exports.Component = Component;
     exports.noop = noop;
 

@@ -66,7 +66,7 @@ function render(context, timeStep, now) {
     context.fillStyle = "rgba(0,0,0,1)";
     context.fillRect(0, 0, Config.width, Config.height);
 
-    rootUI.render(CUI.Component.renderer, timeStep, now);
+    rootUI.render(context, timeStep, now);
 
 }
 
@@ -81,7 +81,6 @@ function init() {
     game.offsetX = rect.left;
     game.offsetY = rect.top;
 
-    CUI.Component.renderer = context;
 
     initTouchController();
     initTapListener();
