@@ -11,13 +11,20 @@ var loopId;
 window.onload = function() {
     init();
 
-    CUI.Utils.loadImage("./res/btn-bg.png", function(img) {
-        Images["btn-bg"] = img;
-        CUI.Utils.loadImage("./res/btn-icon.png", function(img) {
-            Images["btn-icon"] = img;
+
+    CUI.Utils.loadImages(
+        [
+            { id: "bg", src: "./res/bg.png" },
+            { id: "btn-bg", src: "./res/btn-bg.png" },
+            { id: "btn-icon", src: "./res/btn-icon.png" },
+        ],
+        function(imgPool) {
+            for (var id in imgPool) {
+                CUI.ImagePool[id] = imgPool[id];
+            }
             start();
-        });
-    });
+        }
+    );
 };
 
 

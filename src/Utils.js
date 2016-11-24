@@ -13,13 +13,46 @@ var CUI = CUI || {};
         loadImage: function(src, callback) {
             var img = new Image();
             img.onload = function(event) {
-                callback(img, event);
+                callback && callback(img, event);
             };
             img.onerror = function(event) {
-                callback(null, event);
+                callback && callback(null, event);
             };
             img.src = src;
             return img;
+        },
+
+        loadImages: function(cfgList, callback) {
+            // id  src  onLoad(img)  onError(img)
+            var count = cfgList.length;
+            var imgPool = {};
+            var idx = -1;
+            var $next = function() {
+                idx++;
+                if (idx >= count) {
+                    callback && callback(imgPool);
+                    return;
+                }
+                var cfg = cfgList[idx];
+                var img = new Image();
+                img.src = cfg.src;
+                img.id = cfg.id;
+                img.onload = function(event) {
+                    imgPool[img.id] = img;
+                    if (cfg.onLoad) {
+                        cfg.onLoad.call(img, img);
+                    }
+                    $next();
+                };
+                img.onerror = function(event) {
+                    if (cfg.onError) {
+                        cfg.onError.call(img, img);
+                    }
+                    $next();
+                };
+            }
+            $next();
+            return imgPool;
         },
 
         createImgInfo: function(img) {

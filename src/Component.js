@@ -98,7 +98,7 @@ var CUI = CUI || {};
 
 
         backgroundColor: null, //"rgba(200,220,255,1)",
-        backgroundImg: null,
+        backgroundImage: null,
         backgroundInfo: null,
         borderColor: "rgba(30,50,80,1)",
         borderWidth: 0,
@@ -183,12 +183,13 @@ var CUI = CUI || {};
         initBackground: function(reinit) {
             if (!this.backgroundHolder || reinit) {
                 this.backgroundInfo = this.backgroundInfo || this.bgInfo;
+                this.backgroundImage = this.backgroundImage || this.backgroundImg || this.bgImg;
                 if (this.borderImageInfo) {
                     this.setBorderImageInfo(this.borderImageInfo);
                 } else if (this.backgroundInfo) {
                     this.setBackgroundInfo(this.backgroundInfo);
-                } else if (this.backgroundImg) {
-                    this.setBackgroundImg(this.backgroundImg);
+                } else if (this.backgroundImage) {
+                    this.setBackgroundImage(this.backgroundImage);
                 }
             }
         },
@@ -207,7 +208,7 @@ var CUI = CUI || {};
             this.setBackgroundHolder(holder);
         },
 
-        setBackgroundImg: function(img) {
+        setBackgroundImage: function(img) {
             this.setBackgroundInfo({
                 img: img
             });

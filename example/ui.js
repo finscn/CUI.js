@@ -36,8 +36,6 @@ function initUI() {
         layout: "hbox",
     });
 
-    var bgImg = Images["btn-bg"];
-    var img = Images["btn-icon"];
 
     var comp = new CUI.Picture({
         // centerH: true,
@@ -47,7 +45,7 @@ function initUI() {
 
         parent: scorllView,
         // src: "res/btn-bg.png",
-        img: Images["btn-bg"],
+        img: CUI.ImagePool["bg"],
         borderWidth: 2,
         // scaleX: 2,
         // scaleY: 2,
@@ -71,13 +69,42 @@ function initUI() {
         // src: "res/btn-bg.png",
         backgroundColor: "#ffffff",
         bgInfo: {
-            img:  Images["btn-bg"]
+            img:  CUI.ImagePool["bg"]
         },
-        borderWidth: 2,
+        // borderWidth: 2,
         paddingLeft: 10,
         paddingTop: 0,
 
-        width: 160,
+        width: 200,
+        height: 120,
+
+        // backgroundColor: "rgba(100,240,230,1)",
+        // margin: 10,
+        // layout: new CUI.HBoxLayout(),
+    });
+
+    var panel = new CUI.Panel({
+        // centerH: true,
+        // centerV: true,
+        left: 250,
+        top: 150,
+
+        parent: scorllView,
+        relative: "parent",
+        // src: "res/btn-bg.png",
+        backgroundColor: "#ffffff",
+        borderImageInfo: {
+            img:  CUI.ImagePool["bg"],
+            T: 20,
+            R: 20,
+            B: 20,
+            L: 20,
+        },
+        // borderWidth: 2,
+        paddingLeft: 10,
+        paddingTop: 0,
+
+        width: 200,
         height: 120,
 
         // backgroundColor: "rgba(100,240,230,1)",
@@ -103,8 +130,9 @@ function initUI() {
             borderWidth: 2,
             borderColor: "red",
             parent: scorllView,
-            width: 100,
-            height: 60,
+            width: i===0?"auto":100,
+            height: i===0?"auto":60,
+            backgroundImg: i===0?CUI.ImagePool["btn-bg"]:null,
             margin: 10,
             disabled: i%2,
             textInfo: {
