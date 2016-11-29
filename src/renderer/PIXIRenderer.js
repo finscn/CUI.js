@@ -53,8 +53,6 @@ var CUI = CUI || {};
             this.maskShape = new PIXI.Graphics();
             this.maskContainer.addChild(this.maskShape);
 
-
-            this.stack = [];
             this.globalTransform = {
                 x: 0,
                 y: 0,
@@ -65,13 +63,7 @@ var CUI = CUI || {};
                 originalX: 0,
                 originalY: 0,
             };
-            // this._lastWorldTransform = this.globalTransform;
-            // this.globalAlpha = 1;
-            // this._lastGlobalAlpha = 1;
-
-            // // TODO;
-            // this.blend = this.context.globalCompositeOperation;
-            // this._lastBlend = this.blend;
+            this.stack = [];
         },
         clear: function() {
             if (this.core._activeRenderTarget) {
@@ -169,11 +161,15 @@ var CUI = CUI || {};
             this.shape.clear();
         },
 
+        clearRect: function(x, y, width, height, color) {
+            // TODO
+        },
+
         drawRectShape: function(x, y, width, height) {
             var t = this.globalTransform;
+            var dx = x - t.originalX;
+            var dy = y - t.originalY;
 
-            var px = x - t.originalX;
-            var py = y - t.originalY;
             this.save();
             this.globalContainer.position.set(t.x + t.originalX, t.y + t.originalY);
             this.globalContainer.scale.set(t.scaleX, t.scaleY);
@@ -183,7 +179,7 @@ var CUI = CUI || {};
 
             this.shape.mask = this.mask;
             this.shape.updateTransform();
-            this.shape.drawRect(px, py, width, height);
+            this.shape.drawRect(dx, dy, width, height);
 
             this.restore();
         },
@@ -220,12 +216,13 @@ var CUI = CUI || {};
         },
 
         doDraw: function(displayObject, x, y) {
-            var t = this.globalTransform;
-            if (displayObject.updateTexture){
+            if (displayObject.updateTexture) {
                 // debugger
             }
-            var px = x - t.originalX;
-            var py = y - t.originalY;
+            var t = this.globalTransform;
+            var dx = x - t.originalX;
+            var dy = y - t.originalY;
+
             this.save();
             this.globalContainer.position.set(t.x + t.originalX, t.y + t.originalY);
             this.globalContainer.scale.set(t.scaleX, t.scaleY);
@@ -234,7 +231,7 @@ var CUI = CUI || {};
             this.globalContainer.updateTransform();
 
             displayObject.mask = this.mask;
-            displayObject.position.set(px, py);
+            displayObject.position.set(dx, dy);
             displayObject.updateTransform();
 
             this.core.render(displayObject, null, false, null, true);
@@ -245,20 +242,6 @@ var CUI = CUI || {};
         drawImage: function(image, sx, sy, sw, sh, dx, dy, dw, dh) {
             var displayObject;
             var count = arguments.length;
-
-            // var texture = displayObject.texture;
-            // texture._frame.x = dx;
-            // texture._frame.y = dy;
-            // var count = arguments.length;
-            // if (count === 5) {
-            //     // dx, dy, dw, dh
-            //     texture._frame.width = dw;
-            //     texture._frame.height = dh;
-            //     // displayObject.scale.set(1, 1);
-            // } else if (count === 3) {
-
-            // }
-
             if (count === 9) {
                 displayObject = this.createDisplayObject(image, sx, sy, sw, sh);
                 this.drawDisplayObject(displayObject, dx, dy, dw, dh);
@@ -272,10 +255,6 @@ var CUI = CUI || {};
                 this.drawDisplayObject(displayObject, sx, sy, sw, sh);
             }
             return displayObject;
-        },
-
-        clearRect: function(x, y, width, height, color) {
-
         },
 
         save: function() {
@@ -325,14 +304,13 @@ var CUI = CUI || {};
             this.globalTransform.originalY = y;
         },
 
-
         clipRect: function(x, y, width, height) {
             var _core = this.core;
 
             var t = this.globalTransform;
+            var dx = x - t.originalX;
+            var dy = y - t.originalY;
 
-            var px = x - t.originalX;
-            var py = y - t.originalY;
             this.save();
             this.globalContainer.position.set(t.x + t.originalX, t.y + t.originalY);
             this.globalContainer.scale.set(t.scaleX, t.scaleY);
@@ -341,7 +319,7 @@ var CUI = CUI || {};
 
             this.maskShape.updateTransform();
             this.maskShape.beginFill(0x000000);
-            this.maskShape.drawRect(px, py, width, height);
+            this.maskShape.drawRect(dx, dy, width, height);
             this.maskShape.endFill();
 
             this.restore();
@@ -360,23 +338,11 @@ var CUI = CUI || {};
             this.mask = null;
         },
 
-        restoreAlpha: function() {
-
-            // this.globalContainer.worldAlpha = alpha || 1;
-            // this.globalAlpha = this._lastGlobalAlpha;
-        },
-
         setBlend: function(blend) {
             this._lastBlend = this.blend;
 
             this.blend = blend;
-        },
-
-        restoreBlend: function() {
-            var blend = this._lastBlend;
-
-            this.blend = blend;
-
+            // TODO;
         },
 
     });

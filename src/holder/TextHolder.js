@@ -80,9 +80,14 @@ var CUI = CUI || {};
         },
 
         initTextObject: function() {
+            if (!CUI.renderer) {
+                // TODO
+            } else {
+                // TODO
+            }
+            this.useCache = true;
+            this.shareCache = false;
             if (CUI.renderer.webgl) {
-                this.useCache = true;
-                this.shareCache = false;
                 if (!this.cacheCanvas) {
                     this.createCache();
                 }
@@ -94,6 +99,7 @@ var CUI = CUI || {};
                 } else {
                     this.createCache();
                 }
+                this.textObject = CUI.renderer.createTextObject(this.cacheCanvas, this.cacheContext);
             }
         },
 
@@ -135,7 +141,6 @@ var CUI = CUI || {};
             }
             this.lineCount = this.lines.length;
             this.needToCompute = needToCompute !== false;
-            this.cacheChanged = true;
         },
 
         computeSize: function() {
@@ -174,7 +179,6 @@ var CUI = CUI || {};
         updateCache: function() {
             this.cacheCanvas.width = this.width + (this.strokeWidth + this.cachePadding) * 2;
             this.cacheCanvas.height = this.height + (this.strokeWidth + this.cachePadding) * 2;
-            this.cacheChanged = true;
             this.renderContent(this.cacheContext, -this.cacheOffsetX, -this.cacheOffsetY);
             // this.cacheContext.strokeRect(0, 0, this.cacheCanvas.width, this.cacheCanvas.height);
         },
@@ -217,8 +221,8 @@ var CUI = CUI || {};
                 x += this.cacheOffsetX;
                 y += this.cacheOffsetY;
             }
-            renderer.drawDisplayObject(this.textObject, x, y);
 
+            renderer.drawDisplayObject(this.textObject, x, y);
         },
 
         renderContent: function(context, x, y) {
