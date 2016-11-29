@@ -22,13 +22,13 @@ var CUI = CUI || {};
         textAlign: "start",
         verticalAlign: "middle",
 
-        // alphabetic  默认。文本基线是普通的字母基线。
-        // top 文本基线是 em 方框的顶端。。
+        // top 默认。文本基线是 em 方框的顶端。。
+        // alphabetic  文本基线是普通的字母基线。
         // hanging 文本基线是悬挂基线。
         // middle  文本基线是 em 方框的正中。
         // ideographic 文本基线是表意基线。
         // bottom  文本基线是 em 方框的底端。
-        textBaseline: "alphabetic",
+        textBaseline: "top",
 
         // "butt", "round", "square"
         lineCap: "butt",
@@ -58,17 +58,18 @@ var CUI = CUI || {};
         useCache: false,
         cacheOffsetX: 0,
         cacheOffsetY: 0,
-        cachePadding: 10,
-        shareCache: true,
-
+        cachePadding: 4,
+        shareCache: false,
 
         init: function() {
             this.pixel = {
                 width: this.width,
                 height: this.height,
             };
+
             this.setTextInfo(this);
             this.setParent(this.parent);
+
             if (this.useCache) {
                 if (this.shareCache) {
                     this.cacheCanvas = TextHolder.cacheCanvas;
@@ -146,7 +147,7 @@ var CUI = CUI || {};
                 } else {
                     this.cacheOffsetX = -(this.strokeWidth + this.cachePadding);
                 }
-                this.cacheOffsetY = -(this.fontSize + this.strokeWidth + this.cachePadding);
+                this.cacheOffsetY = -(this.strokeWidth + this.cachePadding);
                 this.updateCache();
             }
         },
@@ -190,7 +191,7 @@ var CUI = CUI || {};
             }
 
             var x = this.x - this.anchorX + this.offsetX;
-            var y = this.y - this.anchorY + this.offsetY + this.fontSize;
+            var y = this.y - this.anchorY + this.offsetY;
 
             if (this.useCache) {
                 context.drawImage(this.cacheCanvas, x + this.cacheOffsetX, y + this.cacheOffsetY);
@@ -257,8 +258,10 @@ var CUI = CUI || {};
     }, BaseHolder);
 
     TextHolder.cacheCanvas = document.createElement('canvas');
-    TextHolder.cacheCanvas.width = 1;
-    TextHolder.cacheCanvas.height = 1;
+    TextHolder.cacheCanvas.width = 3;
+    TextHolder.cacheCanvas.height = 3;
+    TextHolder.cacheContext = TextHolder.cacheCanvas.getContext("2d");
+    TextHolder.cacheContext.textBaseline = "top";
 
     exports.TextHolder = TextHolder;
 

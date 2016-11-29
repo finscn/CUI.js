@@ -34,6 +34,10 @@ function initUI() {
         // height: 300,
         // scrollHeight: 400,
         layout: "hbox",
+
+        borderWidth: 2,
+        borderColor: "green",
+
     });
 
 
@@ -116,10 +120,12 @@ function initUI() {
         parent: panel,
         backgroundColor: "rgba(255,240,230,1)",
         borderWidth: 2,
-        borderColor: "red",
+        borderColor: "#ff0000",
         // text: "Text Test",
         textInfo: {
-            useCache: true,
+            color: "#ff0000",
+            alpha: 1,
+            useCache: false,
             text: "Text Test",
         }
     });
@@ -140,5 +146,27 @@ function initUI() {
             },
         });
     }
+
+    var comp = new CUI.Button({
+        backgroundColor: "rgb(255, 240, 230)",
+        borderWidth: 2,
+        // borderColor: CUI.renderer.colorHex("#ff0000"),
+        parent: scorllView,
+        width: 100,
+        height: 90,
+        borderImageInfo: {
+            img: CUI.ImagePool["bg"],
+            T: 20,
+            R: 20,
+            B: 20,
+            L: 20,
+        },
+        // backgroundImg: i === 0 ? CUI.ImagePool["btn-bg"] : null,
+        margin: 10,
+        disabled: i % 2,
+        textInfo: {
+            text: "Big-Button-0",
+        },
+    });
 
 }

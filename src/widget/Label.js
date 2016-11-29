@@ -130,8 +130,8 @@ var CUI = CUI || {};
             });
         },
 
-        setText: function(text) {
-            this.textHolder.setText(text);
+        setText: function(text, needToCompute) {
+            this.textHolder.setText(text, needToCompute);
         },
 
         computeWidth: function() {
