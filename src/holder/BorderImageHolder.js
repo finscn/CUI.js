@@ -32,15 +32,17 @@ var CUI = CUI || {};
             if (this.useCache) {
                 if (!this.cacheCanvas) {
                     this.cacheCanvas = this.cacheBorderImage(width, height);
-                    this.cacheDisplayObject = renderer.createDisplayObject(this.cacheCanvas);
+                    this.cacheDisplayObject = renderer.createDisplayObject(this.cacheCanvas, true);
                 }
                 renderer.drawSimpleDisplayObject(this.cacheDisplayObject, 0, 0, width, height);
             } else {
                 this.renderBorderImage(renderer, this.x, this.y, width, height);
             }
         },
-
-        initBorderDisplayObject: function(renderer, w, h) {
+        initDisplayObject: function() {
+            // this.displayObject = CUI.renderer.createDisplayObject(this.img, this.sx, this.sy, this.sw, this.sh);
+        },
+        initBorderDisplayObject: function(renderer, w, h, cached) {
             // T, R, B, L, fill, img, sx, sy, sw, sh
             var img = this.img;
             var sx = this.sx || 0;
@@ -63,13 +65,13 @@ var CUI = CUI || {};
             if (CH > 0) {
                 // center-left;
                 this.displayCL = renderer.createDisplayObject(
-                    img, sx, sy + T, L, bh
+                    img, sx, sy + T, L, bh, cached
                 );
                 if (CW > 0) {
                     // center-center;
                     if (fill === true) {
                         this.displayCC = renderer.createDisplayObject(
-                            img, sx + L, sy + T, bw, bh
+                            img, sx + L, sy + T, bw, bh, cached
                         );
                         this.fillCenter = null;
                     } else if (fill !== true) {
@@ -79,7 +81,7 @@ var CUI = CUI || {};
                 }
                 // center-right;
                 this.displayCR = renderer.createDisplayObject(
-                    img, sx + sw - R, sy + T, R, bh
+                    img, sx + sw - R, sy + T, R, bh, cached
                 );
             }
 
@@ -87,19 +89,19 @@ var CUI = CUI || {};
                 if (L > 0) {
                     // top-left
                     this.displayTL = renderer.createDisplayObject(
-                        img, sx, sy, L, T
+                        img, sx, sy, L, T, cached
                     );
                 }
                 if (CW > 0) {
                     // top-center
                     this.displayTC = renderer.createDisplayObject(
-                        img, sx + L, sy, bw, T
+                        img, sx + L, sy, bw, T, cached
                     );
                 }
                 if (R > 0) {
                     // top-left
                     this.displayTR = renderer.createDisplayObject(
-                        img, sx + sw - R, sy, R, T
+                        img, sx + sw - R, sy, R, T, cached
                     );
                 }
             }
@@ -108,26 +110,26 @@ var CUI = CUI || {};
                 if (L > 0) {
                     // bottom-left
                     this.displayBL = renderer.createDisplayObject(
-                        img, sx, sy + sh - B, L, B
+                        img, sx, sy + sh - B, L, B, cached
                     );
                 }
                 if (CW > 0) {
                     // bottom-center
                     this.displayBC = renderer.createDisplayObject(
-                        img, sx + L, sy + sh - B, bw, B
+                        img, sx + L, sy + sh - B, bw, B, cached
                     );
                 }
                 if (R > 0) {
                     // bottom-left
                     this.displayBR = renderer.createDisplayObject(
-                        img, sx + sw - R, sy + sh - B, R, B
+                        img, sx + sw - R, sy + sh - B, R, B, cached
                     );
                 }
             }
             this.borderDisplayInited = true;
         },
 
-        renderBorderImage: function(renderer, x, y, width, height) {
+        renderBorderImage: function(renderer, x, y, width, height, cached) {
             var img = this.img;
             var sx = this.sx || 0;
             var sy = this.sy || 0;
@@ -149,7 +151,7 @@ var CUI = CUI || {};
                 CH = h - T - B;
 
             if (!this.borderDisplayInited) {
-                this.initBorderDisplayObject(renderer, w, h);
+                this.initBorderDisplayObject(renderer, w, h, cached);
             }
 
             this.fillCenter && renderer.fillRect(x + L, y + T, CW, CH, this.fillCenter);
@@ -174,7 +176,7 @@ var CUI = CUI || {};
             var renderer = new CUI.CanvasRenderer({
                 context: context
             });
-            this.renderBorderImage(renderer, 0, 0, w, h);
+            this.renderBorderImage(renderer, 0, 0, w, h, true);
             return canvas;
         },
 

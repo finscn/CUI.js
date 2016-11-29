@@ -133,7 +133,12 @@ var CUI = CUI || {};
             this.h = h;
             this.ox = ox;
             this.oy = oy;
-            this.displayObject = Component.renderer.createDisplayObject(this.img, sx, sy, sw, sh);
+
+            this.initDisplayObject();
+        },
+
+        initDisplayObject: function() {
+            this.displayObject = CUI.renderer.createDisplayObject(this.img, this.sx, this.sy, this.sw, this.sh);
         },
 
         removeImg: function() {

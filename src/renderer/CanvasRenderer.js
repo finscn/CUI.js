@@ -15,10 +15,12 @@ var CUI = CUI || {};
 
         canvas: null,
         context: null,
+        clearColor: null,
 
         init: function() {
 
             this.context = this.context || this.canvas.getContext("2d");
+            this.canvas = this.canvas || this.context.canvas;
 
             // this.transform = {
             //     scaleX: 1,
@@ -30,6 +32,7 @@ var CUI = CUI || {};
             //     anchorY:0,
             //     alpha: 1,
             // };
+            this.textOptions = {};
 
             this.globalTransform = {
                 a: 1,
@@ -47,8 +50,15 @@ var CUI = CUI || {};
             this.blend = this.context.globalCompositeOperation;
             this._lastBlend = this.blend;
         },
-
-        createDisplayObject: function(img, sx, sy, sw, sh) {
+        render: function(){
+            // noop;
+        },
+        createDisplayObject: function(img, sx, sy, sw, sh, cached) {
+            var count = arguments.length;
+            if (count === 2) {
+                cached = sx;
+                sx = 0;
+            }
             return {
                 img: img,
                 sx: sx || 0,
@@ -68,6 +78,16 @@ var CUI = CUI || {};
             };
         },
 
+        colorRgb: function(r, g, b) {
+            return "rgba(" + r + ", " + g + ", " + b + ", 1)";
+        },
+        colorHex: function(value) {
+            return value;
+        },
+        colroName: function(value) {
+            return value;
+        },
+
         drawDisplayObject: function(displayObject, dx, dy, dw, dh, transform) {
             var image = displayObject.img;
             var sx = displayObject.sx;
@@ -81,7 +101,7 @@ var CUI = CUI || {};
             } else if (count === 4) {
                 // dx, dy, transform
                 this.context.drawImage(image, sx, sy, sw, sh, dx, dy, image.width, image.height);
-            }else if (count === 5) {
+            } else if (count === 5) {
                 // dx, dy, dw, dh
                 this.context.drawImage(image, sx, sy, sw, sh, dx, dy, dw, dh);
             } else if (count === 3) {
@@ -129,6 +149,18 @@ var CUI = CUI || {};
         fillRect: function(x, y, width, height, color) {
             color && (this.context.fillStyle = color);
             this.context.fillRect(x, y, width, height);
+        },
+
+        clearRect: function(x, y, width, height, color) {
+            if (this.clearColor) {
+                this.context.fillStyle = this.clearColor;
+                this.context.fillRect(x, y, width, height);
+            } else {
+                this.context.clearRect(x, y, width, height);
+            }
+        },
+        clear: function() {
+            this.clearRect(0, 0, this.canvas.width, this.canvas.height);
         },
 
         save: function() {

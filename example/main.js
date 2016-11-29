@@ -1,7 +1,7 @@
 var Config = {
     width: 560,
     height: 400,
-    FPS: 30,
+    FPS: 60,
 };
 
 var game = {};
@@ -11,13 +11,20 @@ var loopId;
 window.onload = function() {
     init();
 
-    CUI.Utils.loadImage("./res/btn-bg.png", function(img) {
-        Images["btn-bg"] = img;
-        CUI.Utils.loadImage("./res/btn-icon.png", function(img) {
-            Images["btn-icon"] = img;
+
+    CUI.Utils.loadImages(
+        [
+            { id: "bg", src: "./res/bg.png" },
+            { id: "btn-bg", src: "./res/btn-bg.png" },
+            { id: "btn-icon", src: "./res/btn-icon.png" },
+        ],
+        function(imgPool) {
+            for (var id in imgPool) {
+                CUI.ImagePool[id] = imgPool[id];
+            }
             start();
-        });
-    });
+        }
+    );
 };
 
 
@@ -56,28 +63,40 @@ function update(timeStep, now) {
 }
 
 function render(context, timeStep, now) {
-    context.fillStyle = "rgba(0,0,0,1)";
-    context.fillRect(0, 0, Config.width, Config.height);
+    CUI.renderer.clear();
 
-    rootUI.render(CUI.Component.renderer, timeStep, now);
+    rootUI.render(CUI.renderer, timeStep, now);
+
+    CUI.renderer.render();
+    // debugger;
 
 }
 
 function init() {
+
+stats.domElement.style.position = 'absolute';
+stats.domElement.style.left = '0px';
+stats.domElement.style.top = '0px';
+document.body.appendChild(stats.domElement);
+
     canvas = $id("canvas");
     canvas.width = Config.width;
     canvas.height = Config.height;
-    context = canvas.getContext("2d");
+    // context = canvas.getContext("2d");
     game.width = Config.width;
     game.height = Config.height;
     var rect = canvas.getBoundingClientRect();
     game.offsetX = rect.left;
     game.offsetY = rect.top;
 
-    renderer = new CUI.CanvasRenderer({
-        context: context,
+    // renderer = new CUI.CanvasRenderer({
+    //     canvas: canvas,
+    // });
+    renderer = new CUI.PIXIRenderer({
+        canvas: canvas,
     });
-    CUI.Component.renderer = renderer;
+
+    CUI.renderer = renderer;
 
     initTouchController();
     initTapListener();
@@ -90,15 +109,25 @@ var Images = {};
 
 var renderer;
 
+var staticTimeStep;
+
 function start() {
     beforeStart();
-    var staticTimeStep = 1000 / Config.FPS >> 0;
-    loopId = setInterval(function() {
-        var now = Date.now();
-        var timeStep = staticTimeStep;
-        update(timeStep, now);
-        render(context, timeStep, now);
-    }, staticTimeStep);
+    staticTimeStep = 1000 / Config.FPS >> 0;
+    // loopId = setInterval(gameLoop, staticTimeStep);
+    gameLoop();
+}
+
+var stats = new Stats();
+
+function gameLoop() {
+    requestAnimationFrame(gameLoop);
+    stats.begin();
+    var now = Date.now();
+    var timeStep = staticTimeStep;
+    update(timeStep, now);
+    render(context, timeStep, now);
+    stats.end();
 }
 
 

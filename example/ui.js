@@ -15,7 +15,7 @@ function initUI() {
         parent: rootUI,
         width: "100%",
         height: "100%",
-        backgroundColor: "rgba(150,150,150,1)",
+        backgroundColor: CUI.renderer.colorRgb(150, 150, 150),
         padding: 10,
     });
 
@@ -25,7 +25,7 @@ function initUI() {
         scrollV: !true,
 
         parent: page,
-        backgroundColor: "rgba(255,240,230,1)",
+        backgroundColor: CUI.renderer.colorRgb(255, 240, 230),
         left: 0,
         top: 0,
         padding: 20,
@@ -34,10 +34,12 @@ function initUI() {
         // height: 300,
         // scrollHeight: 400,
         layout: "hbox",
+
+        borderWidth: 2,
+        borderColor: CUI.renderer.colorRgb(90, 200, 60),
+
     });
 
-    var bgImg = Images["btn-bg"];
-    var img = Images["btn-icon"];
 
     var comp = new CUI.Picture({
         // centerH: true,
@@ -47,7 +49,7 @@ function initUI() {
 
         parent: scorllView,
         // src: "res/btn-bg.png",
-        img: Images["btn-bg"],
+        img: CUI.ImagePool["bg"],
         borderWidth: 2,
         // scaleX: 2,
         // scaleY: 2,
@@ -55,7 +57,7 @@ function initUI() {
         width: 120,
         height: 120,
 
-        // backgroundColor: "rgba(100,240,230,1)",
+        // backgroundColor: CUI.renderer.colorRgb(100,240,23),
         // margin: 10,
         // layout: new CUI.HBoxLayout(),
     });
@@ -69,48 +71,103 @@ function initUI() {
         parent: scorllView,
         relative: "parent",
         // src: "res/btn-bg.png",
-        backgroundColor: "#ffffff",
+        backgroundColor: CUI.renderer.colorHex("#ffffff"),
         bgInfo: {
-            img:  Images["btn-bg"]
+            img: CUI.ImagePool["bg"]
         },
-        borderWidth: 2,
+        // borderWidth: 2,
         paddingLeft: 10,
         paddingTop: 0,
 
-        width: 160,
+        width: 200,
         height: 120,
 
-        // backgroundColor: "rgba(100,240,230,1)",
+        // backgroundColor: CUI.renderer.colorRgb(100,240,23),
+        // margin: 10,
+        // layout: new CUI.HBoxLayout(),
+    });
+
+    var panel = new CUI.Panel({
+        // centerH: true,
+        // centerV: true,
+        left: 250,
+        top: 150,
+
+        parent: scorllView,
+        relative: "parent",
+        // src: "res/btn-bg.png",
+        backgroundColor: CUI.renderer.colorHex("#ffffff"),
+        borderImageInfo: {
+            img: CUI.ImagePool["bg"],
+            T: 20,
+            R: 20,
+            B: 20,
+            L: 20,
+        },
+        // borderWidth: 2,
+        paddingLeft: 10,
+        paddingTop: 0,
+
+        width: 200,
+        height: 120,
+
+        // backgroundColor: CUI.renderer.colorRgb(100,240,23),
         // margin: 10,
         // layout: new CUI.HBoxLayout(),
     });
 
     var label = new CUI.Label({
         parent: panel,
-        backgroundColor: "rgba(255,240,230,1)",
+        backgroundColor: CUI.renderer.colorRgb(255, 240, 230),
         borderWidth: 2,
-        borderColor: "red",
+        borderColor: CUI.renderer.colorHex("#ff0000"),
         // text: "Text Test",
         textInfo: {
-            useCache: true,
+            // useCache: true,
+            // color: CUI.renderer.colorRgb(255, 0, 0),
+            color: "#ff0000",
+            alpha: 1,
             text: "Text Test",
         }
     });
 
     for (var i = 0; i < 2; i++) {
         var comp = new CUI.Button({
-            backgroundColor: "rgba(255,240,230,1)",
+            backgroundColor: CUI.renderer.colorRgb(255, 240, 230),
             borderWidth: 2,
-            borderColor: "red",
+            borderColor: CUI.renderer.colorHex("#ff0000"),
             parent: scorllView,
-            width: 100,
-            height: 60,
+            width: i === 0 ? "auto" : 100,
+            height: i === 0 ? "auto" : 60,
+            backgroundImg: i === 0 ? CUI.ImagePool["btn-bg"] : null,
             margin: 10,
-            disabled: i%2,
+            disabled: i % 2,
             textInfo: {
                 text: "Button-" + i,
             },
         });
     }
+
+    var comp = new CUI.Button({
+        backgroundColor: CUI.renderer.colorRgb(255, 240, 230),
+        borderWidth: 2,
+        // borderColor: CUI.renderer.colorHex("#ff0000"),
+        parent: scorllView,
+        width: 100,
+        height: 90,
+        borderImageInfo: {
+            img: CUI.ImagePool["bg"],
+            T: 20,
+            R: 20,
+            B: 20,
+            L: 20,
+        },
+        // backgroundImg: i === 0 ? CUI.ImagePool["btn-bg"] : null,
+        margin: 10,
+        disabled: i % 2,
+        textInfo: {
+            text: "Big-Button-0",
+        },
+    });
 
 }

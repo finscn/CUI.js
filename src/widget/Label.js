@@ -130,8 +130,8 @@ var CUI = CUI || {};
             });
         },
 
-        setText: function(text) {
-            this.textHolder.setText(text);
+        setText: function(text, needToCompute) {
+            this.textHolder.setText(text, needToCompute);
         },
 
         computeWidth: function() {
@@ -253,7 +253,7 @@ var CUI = CUI || {};
 
             if (this.backgroundColor) {
                 // context.fillStyle = this.backgroundColor;
-                renderer.fillRect(this.x, this.y, this.w, this.h, this.backgroundColor);
+                renderer.fillRect(this.x, this.y, this.w, this.h, this.backgroundColor, this.pixel);
             }
             if (this.backgroundHolder) {
                 this.backgroundHolder.render(renderer, timeStep, now);
@@ -268,7 +268,7 @@ var CUI = CUI || {};
                 // context.lineWidth = this.borderWidth;
                 // renderer.strokeRect(this.x, this.y, this.w, this.h, this.borderColor, this.borderWidth);
                 var aabb = this.aabb;
-                renderer.strokeRect(aabb[0], aabb[1], aabb[2] - aabb[0], aabb[3] - aabb[1], this.borderColor, this.borderWidth);
+                renderer.strokeRect(aabb[0], aabb[1], aabb[2] - aabb[0], aabb[3] - aabb[1], this.borderColor, this.borderWidth, this.pixel);
             }
         },
 

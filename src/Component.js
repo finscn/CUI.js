@@ -97,7 +97,7 @@ var CUI = CUI || {};
 
 
         backgroundColor: null, //"rgba(200,220,255,1)",
-        backgroundImg: null,
+        backgroundImage: null,
         backgroundInfo: null,
         borderColor: "rgba(30,50,80,1)",
         borderWidth: 0,
@@ -182,12 +182,13 @@ var CUI = CUI || {};
         initBackground: function(reinit) {
             if (!this.backgroundHolder || reinit) {
                 this.backgroundInfo = this.backgroundInfo || this.bgInfo;
+                this.backgroundImage = this.backgroundImage || this.backgroundImg || this.bgImg;
                 if (this.borderImageInfo) {
                     this.setBorderImageInfo(this.borderImageInfo);
                 } else if (this.backgroundInfo) {
                     this.setBackgroundInfo(this.backgroundInfo);
-                } else if (this.backgroundImg) {
-                    this.setBackgroundImg(this.backgroundImg);
+                } else if (this.backgroundImage) {
+                    this.setBackgroundImage(this.backgroundImage);
                 }
             }
         },
@@ -206,7 +207,7 @@ var CUI = CUI || {};
             this.setBackgroundHolder(holder);
         },
 
-        setBackgroundImg: function(img) {
+        setBackgroundImage: function(img) {
             this.setBackgroundInfo({
                 img: img
             });
@@ -590,7 +591,7 @@ var CUI = CUI || {};
         renderSelf: function(renderer, timeStep, now) {
             if (this.backgroundColor) {
                 // context.fillStyle = this.backgroundColor;
-                renderer.fillRect(this.x, this.y, this.w, this.h, this.backgroundColor);
+                renderer.fillRect(this.x, this.y, this.w, this.h, this.backgroundColor, this.pixel);
             }
             if (this.backgroundHolder) {
                 this.backgroundHolder.render(renderer, timeStep, now);
@@ -599,7 +600,7 @@ var CUI = CUI || {};
             if (this.borderColor && this.borderWidth) {
                 // context.strokeStyle = this.borderColor;
                 // context.lineWidth = this.borderWidth;
-                renderer.strokeRect(this.x, this.y, this.w, this.h, this.borderColor, this.borderWidth);
+                renderer.strokeRect(this.x, this.y, this.w, this.h, this.borderColor, this.borderWidth, this.pixel);
             }
         },
         renderChildren: function(renderer, timeStep, now) {
@@ -652,7 +653,7 @@ var CUI = CUI || {};
             if (this.useCache && this.readyForCache) {
                 if (!this.cached) {
                     this.createCacheCanvas();
-                    this.cacheDisplayObject = renderer.createDisplayObject(this.cacheCanvas);
+                    this.cacheDisplayObject = renderer.createDisplayObject(this.cacheCanvas, true);
                 }
                 renderer.drawSimpleDisplayObject(this.cacheDisplayObject, this.x - 2, this.y - 2);
             } else {
@@ -682,9 +683,12 @@ var CUI = CUI || {};
                 var x = this.x + this.pixel.anchorX,
                     y = this.y + this.pixel.anchorY;
                 renderer.save();
-                renderer.translate(x + this.offsetX, y + this.offsetY);
+                renderer.setOriginal(x, y);
+                renderer.translate(this.offsetX, this.offsetY);
                 renderer.scale(this.scale, this.scale);
-                renderer.translate(-x, -y);
+                // renderer.translate(-x, -y);
+                // renderer.translate(this.offsetX, this.offsetY);
+                // renderer.scale(this.scale, this.scale);
             } else if (this.offsetX || this.offsetY) {
                 renderer.save();
                 renderer.translate(this.offsetX, this.offsetY);
@@ -848,8 +852,6 @@ var CUI = CUI || {};
     Component.getUI = function(id) {
         return Component.all[id];
     };
-
-    Component.renderer = null;
 
     exports.Component = Component;
     exports.noop = noop;
