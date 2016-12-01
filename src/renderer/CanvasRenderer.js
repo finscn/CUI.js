@@ -97,6 +97,102 @@ var CUI = CUI || {};
             return textObject;
         },
 
+        // TODO
+        createNineSliceObject: function(img, sx, sy, sw, sh, T, R, B, L, cached) {
+            // TODO
+            var bw = sw - L - R;
+            var bh = sh - T - B;
+            var nineSliceObject = {};
+            var o = nineSliceObject;
+            o["T"] = T;
+            o["R"] = R;
+            o["B"] = B;
+            o["L"] = L;
+
+            // center-left;
+            o["CL"] = renderer.createDisplayObject(
+                img, sx, sy + T, L, bh, cached
+            );
+
+            o["CC"] = renderer.createDisplayObject(
+                img, sx + L, sy + T, bw, bh, cached
+            );
+
+            // center-right;
+            o["CR"] = renderer.createDisplayObject(
+                img, sx + sw - R, sy + T, R, bh, cached
+            );
+
+
+            if (T > 0) {
+                if (L > 0) {
+                    // top-left
+                    o["TL"] = renderer.createDisplayObject(
+                        img, sx, sy, L, T, cached
+                    );
+                }
+                // top-center
+                o["TC"] = renderer.createDisplayObject(
+                    img, sx + L, sy, bw, T, cached
+                );
+
+                if (R > 0) {
+                    // top-left
+                    o["TR"] = renderer.createDisplayObject(
+                        img, sx + sw - R, sy, R, T, cached
+                    );
+                }
+            }
+
+            if (B > 0) {
+                if (L > 0) {
+                    // bottom-left
+                    o["BL"] = renderer.createDisplayObject(
+                        img, sx, sy + sh - B, L, B, cached
+                    );
+                }
+                // bottom-center
+                o["BC"] = renderer.createDisplayObject(
+                    img, sx + L, sy + sh - B, bw, B, cached
+                );
+                if (R > 0) {
+                    // bottom-left
+                    o["BR"] = renderer.createDisplayObject(
+                        img, sx + sw - R, sy + sh - B, R, B, cached
+                    );
+                }
+            }
+            return nineSliceObject;
+        },
+        renderNineSliceObject: function(displayObject, dx, dy, dw, dh) {
+            var o = displayObject;
+
+            var x = dx;
+            var y = dy;
+            var w = dw;
+            var h = dh;
+
+            var T = o["T"];
+            var R = o["R"];
+            var B = o["B"];
+            var L = o["L"];
+
+            var CW = w - L - R,
+                CH = h - T - B;
+
+            o["CL"] && renderer.drawSimpleDisplayObject(o["CL"], x, y + T, L, CH);
+            o["CC"] && renderer.drawSimpleDisplayObject(o["CC"], x + L, y + T, CW, CH);
+            o["CR"] && renderer.drawSimpleDisplayObject(o["CR"], x + w - R, y + T, R, CH);
+
+            o["TL"] && renderer.drawSimpleDisplayObject(o["TL"], x, y, L, T);
+            o["TC"] && renderer.drawSimpleDisplayObject(o["TC"], x + L, y, CW, T);
+            o["TR"] && renderer.drawSimpleDisplayObject(o["TR"], x + w - R, y, R, T);
+
+            o["BL"] && renderer.drawSimpleDisplayObject(o["BL"], x, y + h - B, L, B);
+            o["BC"] && renderer.drawSimpleDisplayObject(o["BC"], x + L, y + h - B, CW, B);
+            o["BR"] && renderer.drawSimpleDisplayObject(o["BR"], x + w - R, y + h - B, R, B);
+        },
+
         strokeRect: function(x, y, width, height, color, lineWidth) {
             var t = this.globalTransform;
             var dx = x - t.originalX;
@@ -239,6 +335,9 @@ var CUI = CUI || {};
         },
         setAlpha: function(alpha) {
             this.context.globalAlpha = alpha;
+        },
+        getAlpha: function(){
+            return this.context.globalAlpha;
         },
         setOriginal: function(x, y) {
             this.context.translate(x, y);

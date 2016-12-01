@@ -146,6 +146,37 @@ var CUI = CUI || {};
             return sprite;
         },
 
+        // TODO
+        createNineSliceObject: function(img, sx, sy, sw, sh, T, R, B, L, cached) {
+            var count = arguments.length;
+            var baseTexture = new PIXI.BaseTexture(img);
+            var texture;
+            if (count >= 9) {
+                texture = new PIXI.Texture(baseTexture, new PIXI.Rectangle(sx, sy, sw, sh))
+            } else {
+                texture = new PIXI.Texture(baseTexture);
+                if (count === 6) {
+                    cached = T;
+                }
+                T = sx;
+                R = sy;
+                B = sw;
+                L = sh;
+            }
+            var sprite = new PIXI.mesh.NineSlicePlane(texture, L, T, R, B);
+            if (!cached) {
+                this.globalContainer.addChild(sprite);
+            } else {
+
+            }
+            return sprite;
+        },
+        renderNineSliceObject: function(displayObject, dx, dy, dw, dh) {
+            displayObject.width = dw;
+            displayObject.height = dh;
+            this.doDraw(displayObject, dx, dy);
+        },
+
         strokeRect: function(x, y, width, height, color, lineWidth) {
             this.shape.lineStyle(lineWidth, color);
             this.drawRectShape(x, y, width, height);
@@ -298,6 +329,9 @@ var CUI = CUI || {};
         },
         setAlpha: function(alpha) {
             this.globalTransform.alpha = alpha === undefined ? 1 : alpha;
+        },
+        getAlpha: function(){
+            return this.globalTransform.alpha;
         },
         setOriginal: function(x, y) {
             this.globalTransform.originalX = x;

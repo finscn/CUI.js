@@ -2,6 +2,7 @@ var Config = {
     width: 560,
     height: 400,
     FPS: 60,
+    webgl: true,
 };
 
 var game = {};
@@ -74,10 +75,10 @@ function render(context, timeStep, now) {
 
 function init() {
 
-stats.domElement.style.position = 'absolute';
-stats.domElement.style.left = '0px';
-stats.domElement.style.top = '0px';
-document.body.appendChild(stats.domElement);
+    stats.domElement.style.position = 'absolute';
+    stats.domElement.style.left = '0px';
+    stats.domElement.style.top = '0px';
+    document.body.appendChild(stats.domElement);
 
     canvas = $id("canvas");
     canvas.width = Config.width;
@@ -89,12 +90,15 @@ document.body.appendChild(stats.domElement);
     game.offsetX = rect.left;
     game.offsetY = rect.top;
 
-    // renderer = new CUI.CanvasRenderer({
-    //     canvas: canvas,
-    // });
-    renderer = new CUI.PIXIRenderer({
-        canvas: canvas,
-    });
+    if (Config.webgl) {
+        renderer = new CUI.PIXIRenderer({
+            canvas: canvas,
+        });
+    } else {
+        renderer = new CUI.CanvasRenderer({
+            canvas: canvas,
+        });
+    }
 
     CUI.renderer = renderer;
 

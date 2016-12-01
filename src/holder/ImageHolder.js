@@ -226,7 +226,7 @@ var CUI = CUI || {};
 
             var prevAlpha;
             if (this.alpha !== null) {
-                prevAlpha = renderer.globalAlpha;
+                prevAlpha = renderer.getAlpha();
                 // context.globalAlpha = this.alpha;
                 renderer.setAlpha(this.alpha);
             }

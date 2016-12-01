@@ -643,7 +643,7 @@ var CUI = CUI || {};
                 this.beforeRender(renderer, timeStep, now);
             }
 
-            var prevAlpha = renderer.globalAlpha;
+            var prevAlpha = renderer.getAlpha();
             if (this.alpha != 1) {
                 // context.globalAlpha = this.alpha;
                 renderer.setAlpha(this.alpha);
