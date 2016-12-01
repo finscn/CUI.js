@@ -13,6 +13,7 @@ var CUI = CUI || {};
 
         lazyInit: false,
 
+        core: null,
         canvas: null,
         context: null,
         clearColor: null,
@@ -21,29 +22,33 @@ var CUI = CUI || {};
 
         init: function() {
 
-            var canvas = this.canvas;
+            if (!this.core) {
+                // this.core = new PIXI.CanvasRenderer(canvas.width, canvas.height, {
+                //     view: canvas,
+                // });
+                // this.core = PIXI.autoDetectRenderer(canvas.width, canvas.height, {
+                //     view: canvas,
+                // });
+                var canvas = this.canvas;
+                this.core = new PIXI.WebGLRenderer(canvas.width, canvas.height, {
+                    view: canvas,
+                });
+                this.webgl = this.core.type === PIXI.RENDERER_TYPE.WEBGL;
+                this.core.resize(canvas.width, canvas.height);
+                this.core.backgroundColor = this.clearColor || 0;
+            } else {
+                this.canvas = this.core.view;
+            }
 
-            // this.core = new PIXI.CanvasRenderer(canvas.width, canvas.height, {
-            //     view: canvas,
-            // });
-            // this.core = PIXI.autoDetectRenderer(canvas.width, canvas.height, {
-            //     view: canvas,
-            // });
-            this.core = new PIXI.WebGLRenderer(canvas.width, canvas.height, {
-                view: canvas,
-            });
-            this.webgl = this.core.type === PIXI.RENDERER_TYPE.WEBGL;
+            this.rootContainer = this.rootContainer || new PIXI.Container();
 
-            this.core.resize(canvas.width, canvas.height);
-
-            this.core.backgroundColor = this.clearColor || 0;
-
-            this.topContainer = new PIXI.Container();
             this.globalContainer = new PIXI.Container();
-            this.topContainer.addChild(this.globalContainer);
+            this.globalContainer.visible = false;
+            this.rootContainer.addChild(this.globalContainer);
 
             this.maskContainer = new PIXI.Container();
-            this.topContainer.addChild(this.maskContainer);
+            this.maskContainer.visible = false;
+            this.rootContainer.addChild(this.maskContainer);
 
             // this.globalContainer.transform.worldTransform = this.globalContainer.transform.localTransform;
 
@@ -330,7 +335,7 @@ var CUI = CUI || {};
         setAlpha: function(alpha) {
             this.globalTransform.alpha = alpha === undefined ? 1 : alpha;
         },
-        getAlpha: function(){
+        getAlpha: function() {
             return this.globalTransform.alpha;
         },
         setOriginal: function(x, y) {
