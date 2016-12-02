@@ -183,18 +183,18 @@ var CUI = CUI || {};
         },
 
         strokeRect: function(x, y, width, height, color, lineWidth) {
+            this.shape.clear();
             this.shape.lineStyle(lineWidth, color);
             this.drawRectShape(x, y, width, height);
             this.core.render(this.shape, null, false, null, true);
-            this.shape.clear();
         },
 
         fillRect: function(x, y, width, height, color) {
+            this.shape.clear();
             this.shape.beginFill(color);
             this.drawRectShape(x, y, width, height);
             this.shape.endFill();
             this.core.render(this.shape, null, false, null, true);
-            this.shape.clear();
         },
 
         clearRect: function(x, y, width, height, color) {
@@ -206,28 +206,23 @@ var CUI = CUI || {};
             var dx = x - t.originalX;
             var dy = y - t.originalY;
 
-            this.save();
             this.globalContainer.position.set(t.x + t.originalX, t.y + t.originalY);
             this.globalContainer.scale.set(t.scaleX, t.scaleY);
             this.globalContainer.rotation = t.rotation;
             this.globalContainer.alpha = t.alpha;
-            this.globalContainer.updateTransform();
+            this.globalContainer.updateWorldTransform();
 
             this.shape.mask = this.mask;
             this.shape.updateTransform();
             this.shape.drawRect(dx, dy, width, height);
-
-            this.restore();
         },
 
         drawDisplayObject: function(displayObject, dx, dy, dw, dh) {
             var count = arguments.length;
             if (count === 5) {
                 // dx, dy, dw, dh
-                var texture = displayObject._texture;
-                var width = texture.width;
-                var height = texture.height;
-                displayObject.scale.set(dw / width, dh / height);
+                displayObject.width = dw;
+                displayObject.height = dh;
             } else if (count === 3) {
                 // dx, dy
             }
@@ -241,10 +236,8 @@ var CUI = CUI || {};
             var count = arguments.length;
             if (count === 5) {
                 // dx, dy, dw, dh
-                var texture = displayObject._texture;
-                var width = texture.width;
-                var height = texture.height;
-                displayObject.scale.set(dw / width, dh / height);
+                displayObject.width = dw;
+                displayObject.height = dh;
             } else if (count === 3) {
                 // dx, dy
             }
@@ -252,27 +245,21 @@ var CUI = CUI || {};
         },
 
         doDraw: function(displayObject, x, y) {
-            if (displayObject.updateTexture) {
-                // debugger
-            }
             var t = this.globalTransform;
             var dx = x - t.originalX;
             var dy = y - t.originalY;
 
-            this.save();
             this.globalContainer.position.set(t.x + t.originalX, t.y + t.originalY);
             this.globalContainer.scale.set(t.scaleX, t.scaleY);
             this.globalContainer.rotation = t.rotation;
             this.globalContainer.alpha = t.alpha;
-            this.globalContainer.updateTransform();
+            this.globalContainer.updateWorldTransform();
 
             displayObject.mask = this.mask;
             displayObject.position.set(dx, dy);
             displayObject.updateTransform();
 
             this.core.render(displayObject, null, false, null, true);
-
-            this.restore();
         },
 
         drawImage: function(image, sx, sy, sw, sh, dx, dy, dw, dh) {
@@ -350,18 +337,15 @@ var CUI = CUI || {};
             var dx = x - t.originalX;
             var dy = y - t.originalY;
 
-            this.save();
-            this.globalContainer.position.set(t.x + t.originalX, t.y + t.originalY);
-            this.globalContainer.scale.set(t.scaleX, t.scaleY);
-            this.globalContainer.rotation = t.rotation;
-            this.globalContainer.updateTransform();
+            // this.globalContainer.position.set(t.x + t.originalX, t.y + t.originalY);
+            // this.globalContainer.scale.set(t.scaleX, t.scaleY);
+            // this.globalContainer.rotation = t.rotation;
+            // this.globalContainer.updateWorldTransform();
 
             this.maskShape.updateTransform();
             this.maskShape.beginFill(0x000000);
             this.maskShape.drawRect(dx, dy, width, height);
             this.maskShape.endFill();
-
-            this.restore();
 
             this.mask = this.maskShape;
 
