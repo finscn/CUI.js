@@ -210,7 +210,7 @@ var CUI = CUI || {};
             this.globalContainer.scale.set(t.scaleX, t.scaleY);
             this.globalContainer.rotation = t.rotation;
             this.globalContainer.alpha = t.alpha;
-            this.globalContainer.updateWorldTransform();
+            this.globalContainer.updateWorldTransform(true, false);
 
             this.shape.mask = this.mask;
             this.shape.updateTransform();
@@ -253,7 +253,7 @@ var CUI = CUI || {};
             this.globalContainer.scale.set(t.scaleX, t.scaleY);
             this.globalContainer.rotation = t.rotation;
             this.globalContainer.alpha = t.alpha;
-            this.globalContainer.updateWorldTransform();
+            this.globalContainer.updateWorldTransform(true, false);
 
             displayObject.mask = this.mask;
             displayObject.position.set(dx, dy);
@@ -340,7 +340,7 @@ var CUI = CUI || {};
             // this.globalContainer.position.set(t.x + t.originalX, t.y + t.originalY);
             // this.globalContainer.scale.set(t.scaleX, t.scaleY);
             // this.globalContainer.rotation = t.rotation;
-            // this.globalContainer.updateWorldTransform();
+            // this.globalContainer.updateWorldTransform(true, false);
 
             this.maskShape.updateTransform();
             this.maskShape.beginFill(0x000000);
