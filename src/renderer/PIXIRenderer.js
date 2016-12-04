@@ -151,7 +151,6 @@ var CUI = CUI || {};
             return sprite;
         },
 
-        // TODO
         createNineSliceObject: function(img, sx, sy, sw, sh, T, R, B, L, cached) {
             var count = arguments.length;
             var baseTexture = new PIXI.BaseTexture(img);
@@ -186,7 +185,7 @@ var CUI = CUI || {};
             this.shape.clear();
             this.shape.lineStyle(lineWidth, color);
             this.drawRectShape(x, y, width, height);
-            this.core.render(this.shape, null, false, null, true);
+            this.core.renderLite(this.shape, null, false, null, true);
         },
 
         fillRect: function(x, y, width, height, color) {
@@ -194,7 +193,7 @@ var CUI = CUI || {};
             this.shape.beginFill(color);
             this.drawRectShape(x, y, width, height);
             this.shape.endFill();
-            this.core.render(this.shape, null, false, null, true);
+            this.core.renderLite(this.shape, null, false, null, true);
         },
 
         clearRect: function(x, y, width, height, color) {
@@ -210,10 +209,9 @@ var CUI = CUI || {};
             this.globalContainer.scale.set(t.scaleX, t.scaleY);
             this.globalContainer.rotation = t.rotation;
             this.globalContainer.alpha = t.alpha;
-            this.globalContainer.updateWorldTransform(true, false);
+            this.globalContainer.updateTransformLite();
 
             this.shape.mask = this.mask;
-            this.shape.updateTransform();
             this.shape.drawRect(dx, dy, width, height);
         },
 
@@ -253,13 +251,12 @@ var CUI = CUI || {};
             this.globalContainer.scale.set(t.scaleX, t.scaleY);
             this.globalContainer.rotation = t.rotation;
             this.globalContainer.alpha = t.alpha;
-            this.globalContainer.updateWorldTransform(true, false);
+            this.globalContainer.updateTransformLite();
 
             displayObject.mask = this.mask;
             displayObject.position.set(dx, dy);
-            displayObject.updateTransform();
 
-            this.core.render(displayObject, null, false, null, true);
+            this.core.renderLite(displayObject);
         },
 
         drawImage: function(image, sx, sy, sw, sh, dx, dy, dw, dh) {
