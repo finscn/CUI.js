@@ -2,7 +2,6 @@
 
 var GT = GT || {};
 var controller;
-
 var TouchInfo = {
     multi: 2,
     touched: 0,

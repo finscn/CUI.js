@@ -337,7 +337,7 @@ var CUI = CUI || {};
             // this.globalContainer.position.set(t.x + t.originalX, t.y + t.originalY);
             // this.globalContainer.scale.set(t.scaleX, t.scaleY);
             // this.globalContainer.rotation = t.rotation;
-            // this.globalContainer.updateWorldTransform(true, false);
+            // this.globalContainer.updateTransformLite(true, false);
 
             this.maskShape.updateTransform();
             this.maskShape.beginFill(0x000000);

@@ -87,8 +87,8 @@ function init() {
     game.width = Config.width;
     game.height = Config.height;
     var rect = canvas.getBoundingClientRect();
-    game.offsetX = rect.left;
-    game.offsetY = rect.top;
+    game.offsetLeft = rect.left;
+    game.offsetTop = rect.top;
 
     if (Config.webgl) {
         renderer = new CUI.PIXIRenderer({
@@ -106,6 +106,9 @@ function init() {
     initTapListener();
     initPanListener();
     initSwipeListener();
+
+    controller.offsetLeft = game.offsetLeft;
+    controller.offsetTop = game.offsetTop;
 
 }
 
