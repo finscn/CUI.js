@@ -68,8 +68,7 @@ function render(context, timeStep, now) {
 
     rootUI.render(CUI.renderer, timeStep, now);
 
-    CUI.renderer.render();
-    // debugger;
+    // CUI.renderer.render();
 
 }
 
@@ -83,7 +82,7 @@ function init() {
     canvas = $id("canvas");
     canvas.width = Config.width;
     canvas.height = Config.height;
-    // context = canvas.getContext("2d");
+
     game.width = Config.width;
     game.height = Config.height;
     var rect = canvas.getBoundingClientRect();
