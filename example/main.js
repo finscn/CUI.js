@@ -78,14 +78,18 @@ function init() {
     game.width = Config.width;
     game.height = Config.height;
     var rect = canvas.getBoundingClientRect();
-    game.offsetX = rect.left;
-    game.offsetY = rect.top;
+    game.offsetLeft = rect.left;
+    game.offsetTop = rect.top;
 
+    CUI.renderer = context;
 
     initTouchController();
     initTapListener();
     initPanListener();
     initSwipeListener();
+
+    controller.offsetLeft = game.offsetLeft;
+    controller.offsetTop = game.offsetTop;
 
 }
 
@@ -93,15 +97,23 @@ var Images = {};
 
 var renderer;
 
+var staticTimeStep;
+
 function start() {
     beforeStart();
-    var staticTimeStep = 1000 / Config.FPS >> 0;
-    loopId = setInterval(function() {
-        var now = Date.now();
-        var timeStep = staticTimeStep;
-        update(timeStep, now);
-        render(context, timeStep, now);
-    }, staticTimeStep);
+    staticTimeStep = 1000 / Config.FPS >> 0;
+    // loopId = setInterval(gameLoop, staticTimeStep);
+    gameLoop();
+}
+
+
+function gameLoop() {
+    requestAnimationFrame(gameLoop);
+
+    var now = Date.now();
+    var timeStep = staticTimeStep;
+    update(timeStep, now);
+    render(context, timeStep, now);
 }
 
 
