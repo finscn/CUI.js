@@ -37,6 +37,9 @@ var CUI = CUI || {};
             };
 
             this.resetGlobalContainer();
+
+            this.render = this.drawDisplayObject;
+
         },
 
         /**
