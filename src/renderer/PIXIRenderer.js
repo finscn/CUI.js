@@ -89,8 +89,8 @@ var CUI = CUI || {};
         getAlpha: function() {
             return this.core.getAlpha();
         },
-        setOffset: function(x, y) {
-            this.core.setOffset(x, y);
+        setOriginal: function(x, y) {
+            this.core.setOriginal(x, y);
         },
         clipRect: function(x, y, width, height) {
             this.core.clipRect(x, y, width, height);
