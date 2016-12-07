@@ -40,6 +40,9 @@ var CUI = CUI || {};
                 this.canvas = this.core.view;
             }
 
+            this.baseTexturePool = this.baseTexturePool || {};
+            this.texturePool = this.texturePool || {};
+
             this.rootContainer = this.rootContainer || new PIXI.Container();
 
             this.globalContainer = new PIXI.Container();
@@ -95,7 +98,7 @@ var CUI = CUI || {};
             var baseTexture = new PIXI.BaseTexture(img);
             var texture;
             if (count >= 5) {
-                texture = new PIXI.Texture(baseTexture, new PIXI.Rectangle(sx, sy, sw, sh))
+                texture = new PIXI.Texture(baseTexture, new PIXI.Rectangle(sx, sy, sw, sh));
             } else {
                 texture = new PIXI.Texture(baseTexture);
                 if (count == 2) {
@@ -156,7 +159,7 @@ var CUI = CUI || {};
             var baseTexture = new PIXI.BaseTexture(img);
             var texture;
             if (count >= 9) {
-                texture = new PIXI.Texture(baseTexture, new PIXI.Rectangle(sx, sy, sw, sh))
+                texture = new PIXI.Texture(baseTexture, new PIXI.Rectangle(sx, sy, sw, sh));
             } else {
                 texture = new PIXI.Texture(baseTexture);
                 if (count === 6) {
@@ -185,7 +188,7 @@ var CUI = CUI || {};
             this.shape.clear();
             this.shape.lineStyle(lineWidth, color);
             this.drawRectShape(x, y, width, height);
-            this.core.renderLite(this.shape, null, false, null, true);
+            this.core.renderBasic(this.shape, null, false, null, true);
         },
 
         fillRect: function(x, y, width, height, color) {
@@ -193,7 +196,7 @@ var CUI = CUI || {};
             this.shape.beginFill(color);
             this.drawRectShape(x, y, width, height);
             this.shape.endFill();
-            this.core.renderLite(this.shape, null, false, null, true);
+            this.core.renderBasic(this.shape, null, false, null, true);
         },
 
         clearRect: function(x, y, width, height, color) {
@@ -209,7 +212,7 @@ var CUI = CUI || {};
             this.globalContainer.scale.set(t.scaleX, t.scaleY);
             this.globalContainer.rotation = t.rotation;
             this.globalContainer.alpha = t.alpha;
-            this.globalContainer.updateTransformLite();
+            this.globalContainer.updateTransformWithParent();
 
             this.shape.mask = this.mask;
             this.shape.drawRect(dx, dy, width, height);
@@ -251,12 +254,12 @@ var CUI = CUI || {};
             this.globalContainer.scale.set(t.scaleX, t.scaleY);
             this.globalContainer.rotation = t.rotation;
             this.globalContainer.alpha = t.alpha;
-            this.globalContainer.updateTransformLite();
+            this.globalContainer.updateTransformWithParent();
 
             displayObject.mask = this.mask;
             displayObject.position.set(dx, dy);
 
-            this.core.renderLite(displayObject);
+            this.core.renderBasic(displayObject);
         },
 
         drawImage: function(image, sx, sy, sw, sh, dx, dy, dw, dh) {
@@ -337,7 +340,7 @@ var CUI = CUI || {};
             // this.globalContainer.position.set(t.x + t.originalX, t.y + t.originalY);
             // this.globalContainer.scale.set(t.scaleX, t.scaleY);
             // this.globalContainer.rotation = t.rotation;
-            // this.globalContainer.updateTransformLite(true, false);
+            // this.globalContainer.updateTransformWithParent(true, false);
 
             this.maskShape.updateTransform();
             this.maskShape.beginFill(0x000000);
@@ -349,7 +352,6 @@ var CUI = CUI || {};
             return _core;
         },
         doClipRect: function(x, y, width, height) {
-
             this.mask = this.maskShape;
             return this.clipRect(x, y, width, height);
         },
@@ -363,6 +365,37 @@ var CUI = CUI || {};
 
             this.blend = blend;
             // TODO;
+        },
+
+        baseTexturePool: null,
+        texturePool: null,
+        createTexture: function(imgInfo, cached) {
+            var img = imgInfo.img;
+
+            var imgKey = img.id || img.src;
+            var baseTexture;
+            if (imgKey) {
+                baseTexture = this.baseTexturePool[imgKey];
+                if (!baseTexture) {
+                    baseTexture = new PIXI.BaseTexture(img);
+                    this.baseTexturePool[imgKey] = baseTexture;
+                }
+            } else {
+                baseTexture = new PIXI.BaseTexture(img);
+            }
+
+            var rect = new PIXI.Rectangle(imgInfo.sx, imgInfo.sy, imgInfo.sw, imgInfo.sh);
+            var texture;
+            if (cached === false) {
+                texture = new PIXI.Texture(baseTexture, rect);
+            } else {
+                texture = this.texturePool[id];
+                if (!texture) {
+                    texture = new PIXI.Texture(baseTexture, rect);
+                    this.texturePool[id] = texture;
+                }
+            }
+            return texture;
         },
 
     });
