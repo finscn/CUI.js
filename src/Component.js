@@ -60,7 +60,8 @@ var CUI = CUI || {};
         parent: null,
 
         modal: false,
-        maskColor: "rgba(0,0,0,0.35)",
+        maskColor: "#000000",
+        maskAlpha: 0.35,
 
         transform: null,
 
@@ -610,7 +611,7 @@ var CUI = CUI || {};
         },
 
         renderModalMask: function(renderer, timeStep, now) {
-            if (!this.maskColor) {
+            if (!this.maskColor && this.maskColor !== 0) {
                 return;
             }
             var root = this.root;
@@ -625,9 +626,11 @@ var CUI = CUI || {};
                 w += offset.w || 0;
                 h += offset.h || 0;
             }
-            // context.fillStyle = this.maskColor;
-            renderer.fillRect(x, y, w, h, this.maskColor);
 
+            var preAlpha = renderer.getAlpha();
+            renderer.setAlpha(this.maskAlpha);
+            renderer.fillRect(x, y, w, h, this.maskColor);
+            renderer.setAlpha(preAlpha);
         },
 
         render: function(renderer, timeStep, now) {
@@ -653,7 +656,7 @@ var CUI = CUI || {};
             if (this.useCache && this.readyForCache) {
                 if (!this.cached) {
                     this.createCacheCanvas();
-                    this.cacheDisplayObject = renderer.createDisplayObject(this.cacheCanvas, true);
+                    this.cacheDisplayObject = renderer.createDisplayObject(this.cacheCanvas);
                 }
                 renderer.drawSimpleDisplayObject(this.cacheDisplayObject, this.x - 2, this.y - 2);
             } else {

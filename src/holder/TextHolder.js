@@ -91,15 +91,16 @@ var CUI = CUI || {};
                 if (!this.cacheCanvas) {
                     this.createCache();
                 }
-                this.textObject = CUI.renderer.createTextObject(this.cacheCanvas, this.cacheContext);
+                this.textObject = CUI.renderer.createTextObject(this.cacheContext, true);
             } else if (this.useCache) {
+                // TODO
                 if (this.shareCache) {
                     this.cacheCanvas = TextHolder.cacheCanvas;
                     this.cacheContext = TextHolder.cacheContext;
                 } else {
                     this.createCache();
                 }
-                this.textObject = CUI.renderer.createTextObject(this.cacheCanvas, this.cacheContext);
+                this.textObject = CUI.renderer.createTextObject(this.cacheContext, true);
             }
         },
 
@@ -221,7 +222,6 @@ var CUI = CUI || {};
                 x += this.cacheOffsetX;
                 y += this.cacheOffsetY;
             }
-
             renderer.drawDisplayObject(this.textObject, x, y);
         },
 

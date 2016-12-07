@@ -32,7 +32,7 @@ var CUI = CUI || {};
             if (this.useCache) {
                 if (!this.cacheCanvas) {
                     this.cacheCanvas = this.cacheBorderImage(width, height);
-                    this.cacheDisplayObject = renderer.createDisplayObject(this.cacheCanvas, true);
+                    this.cacheDisplayObject = renderer.createDisplayObject(this.cacheCanvas);
                 }
                 renderer.drawSimpleDisplayObject(this.cacheDisplayObject, 0, 0, width, height);
             } else {
@@ -40,7 +40,7 @@ var CUI = CUI || {};
             }
         },
         initDisplayObject: function() {
-            // this.displayObject = CUI.renderer.createDisplayObject(this.img, this.sx, this.sy, this.sw, this.sh);
+            // this.displayObject = CUI.renderer.createDisplayObject(this.img, this.sx, this.sy, this.sw, this.sh, true);
         },
 
         initBorderDisplayObject: function(renderer, w, h, cached) {
@@ -55,7 +55,7 @@ var CUI = CUI || {};
             var B = this.B;
             var L = this.L;
 
-            this.borderObject = renderer.createNineSliceObject(img, sx, sy, sw, sh, T, R, B, L, cached);
+            this.borderObject = renderer.createNineSliceObject(img, sx, sy, sw, sh, T, R, B, L, true);
             this.borderObject.width = w;
             this.borderObject.height = h;
             this.borderDisplayInited = true;

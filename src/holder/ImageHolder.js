@@ -138,7 +138,7 @@ var CUI = CUI || {};
         },
 
         initDisplayObject: function() {
-            this.displayObject = CUI.renderer.createDisplayObject(this.img, this.sx, this.sy, this.sw, this.sh);
+            this.displayObject = CUI.renderer.createDisplayObject(this.img, this.sx, this.sy, this.sw, this.sh, true);
         },
 
         removeImg: function() {

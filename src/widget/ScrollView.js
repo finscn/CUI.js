@@ -368,11 +368,11 @@ var CUI = CUI || {};
         },
 
         startClip: function(renderer) {
-            renderer.doClipRect(this.x, this.y, this.w, this.h);
+            renderer.clipRect(this.x, this.y, this.w, this.h);
 
         },
         endClip: function(renderer) {
-            renderer.undoClipRect();
+            renderer.unclipRect();
         },
 
         renderChildren: function(renderer, timeStep, now) {
