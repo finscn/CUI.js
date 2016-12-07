@@ -43,6 +43,7 @@ var CUI = CUI || {};
             this.root = this.core.root;
             this.globalContainer = this.core.globalContainer;
 
+            this.render = this.drawDisplayObject;
             this.renderNineSliceObject = this.drawDisplayObject;
         },
 
