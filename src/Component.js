@@ -60,7 +60,8 @@ var CUI = CUI || {};
         parent: null,
 
         modal: false,
-        maskColor: "rgba(0,0,0,0.35)",
+        maskColor: "#000000",
+        maskAlpha: 0.35,
 
         displayObject: null,
         transform: null,
@@ -623,8 +624,12 @@ var CUI = CUI || {};
                 w += offset.w || 0;
                 h += offset.h || 0;
             }
+
+            var preAlpha = context.globalAlpha;
+            context.globalAlpha = this.maskAlpha;
             context.fillStyle = this.maskColor;
             context.fillRect(x, y, w, h);
+            context.globalAlpha = preAlpha;
         },
 
         render: function(context, timeStep, now) {
