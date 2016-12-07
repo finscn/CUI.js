@@ -686,7 +686,7 @@ var CUI = CUI || {};
                 var x = this.x + this.pixel.anchorX,
                     y = this.y + this.pixel.anchorY;
                 renderer.save();
-                renderer.setOriginal(x, y);
+                renderer.setOffset(x, y);
                 renderer.translate(this.offsetX, this.offsetY);
                 renderer.scale(this.scale, this.scale);
                 // renderer.translate(-x, -y);

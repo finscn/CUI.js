@@ -43,6 +43,8 @@ var CUI = CUI || {};
             this.root = this.core.root;
             this.globalContainer = this.core.globalContainer;
 
+            this.origX = 0;
+            this.origY = 0;
             this.render = this.drawDisplayObject;
             this.renderNineSliceObject = this.drawDisplayObject;
         },
@@ -87,8 +89,8 @@ var CUI = CUI || {};
         getAlpha: function() {
             return this.core.getAlpha();
         },
-        setOriginal: function(x, y) {
-            this.core.setOriginal(x, y);
+        setOffset: function(x, y) {
+            this.core.setOffset(x, y);
         },
         clipRect: function(x, y, width, height) {
             this.core.clipRect(x, y, width, height);

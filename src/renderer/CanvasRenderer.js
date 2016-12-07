@@ -31,8 +31,8 @@ var CUI = CUI || {};
                 scaleY: 1,
                 rotation: 0,
                 alpha: 1,
-                originalX: 0,
-                originalY: 0,
+                offsetX: 0,
+                offsetY: 0,
                 blend: "source-over",
             };
 
@@ -79,8 +79,8 @@ var CUI = CUI || {};
                 scaleY: t.scaleY,
                 rotation: t.rotation,
                 alpha: t.alpha,
-                originalX: t.originalX,
-                originalY: t.originalY,
+                offsetX: t.offsetX,
+                offsetY: t.offsetY,
             });
         },
         restore: function() {
@@ -96,8 +96,8 @@ var CUI = CUI || {};
             t.scaleY = lt.scaleY;
             t.rotation = lt.rotation;
             t.alpha = lt.alpha;
-            t.originalX = lt.originalX;
-            t.originalY = lt.originalY;
+            t.offsetX = lt.offsetX;
+            t.offsetY = lt.offsetY;
         },
         translate: function(x, y) {
             this.context.translate(x, y);
@@ -114,16 +114,16 @@ var CUI = CUI || {};
         getAlpha: function() {
             return this.context.globalAlpha;
         },
-        setOriginal: function(x, y) {
+        setOffset: function(x, y) {
             this.context.translate(x, y);
-            this.globalTransform.originalX = x;
-            this.globalTransform.originalY = y;
+            this.globalTransform.offsetX = x;
+            this.globalTransform.offsetY = y;
         },
         clipRect: function(x, y, width, height) {
             this.context.save();
             var t = this.globalTransform;
-            var dx = x - t.originalX;
-            var dy = y - t.originalY;
+            var dx = x - t.offsetX;
+            var dy = y - t.offsetY;
 
             var _context = this.context;
             _context.beginPath();
@@ -175,8 +175,8 @@ var CUI = CUI || {};
 
         strokeRect: function(x, y, width, height, color, lineWidth) {
             var t = this.globalTransform;
-            var dx = x - t.originalX;
-            var dy = y - t.originalY;
+            var dx = x - t.offsetX;
+            var dy = y - t.offsetY;
 
             color && (this.context.strokeStyle = color);
             lineWidth && (this.context.lineWidth = lineWidth);
@@ -185,8 +185,8 @@ var CUI = CUI || {};
 
         fillRect: function(x, y, width, height, color) {
             var t = this.globalTransform;
-            var dx = x - t.originalX;
-            var dy = y - t.originalY;
+            var dx = x - t.offsetX;
+            var dy = y - t.offsetY;
 
             color && (this.context.fillStyle = color);
             this.context.fillRect(dx, dy, width, height);
@@ -194,8 +194,8 @@ var CUI = CUI || {};
 
         clearRect: function(x, y, width, height) {
             var t = this.globalTransform;
-            var dx = x - t.originalX;
-            var dy = y - t.originalY;
+            var dx = x - t.offsetX;
+            var dy = y - t.offsetY;
 
             if (this.clearColor) {
                 this.context.fillStyle = this.clearColor;
@@ -215,8 +215,8 @@ var CUI = CUI || {};
             var sh = displayObject.sh;
 
             var t = this.globalTransform;
-            dx = dx - t.originalX;
-            dy = dy - t.originalY;
+            dx = dx - t.offsetX;
+            dy = dy - t.offsetY;
 
             if (count === 5) {
                 // dx, dy, dw, dh
@@ -236,18 +236,18 @@ var CUI = CUI || {};
 
             var t = this.globalTransform;
             if (count === 9) {
-                dx = dx - t.originalX;
-                dy = dy - t.originalY;
+                dx = dx - t.offsetX;
+                dy = dy - t.offsetY;
                 this.context.drawImage(image, sx, sy, sw, sh, dx, dy, dw, dh);
             } else if (count === 5) {
                 // dx, dy, dw, dh
-                dx = sx - t.originalX;
-                dy = sy - t.originalY;
+                dx = sx - t.offsetX;
+                dy = sy - t.offsetY;
                 this.context.drawImage(image, sx, sy, sw, sh);
             } else {
                 // dx, dy
-                dx = sx - t.originalX;
-                dy = sy - t.originalY;
+                dx = sx - t.offsetX;
+                dy = sy - t.offsetY;
                 this.context.drawImage(image, sx, sy);
             }
             return image;
