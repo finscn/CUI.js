@@ -401,6 +401,12 @@ var CUI = CUI || {};
             return texture;
         },
 
+        createSprite: function(imgInfo) {
+            var texture = this.createTexture(imgInfo, true);
+            var sprite = PIXI.Sprite.from(texture);
+            return sprite;
+        },
+
     });
 
     exports.PIXIRenderer = PIXIRenderer;
