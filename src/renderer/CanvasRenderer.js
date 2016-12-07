@@ -225,6 +225,10 @@ var CUI = CUI || {};
             }
         },
 
+        renderBasic: function(displayObject, renderTexture, skipUpdateTransform) {
+            this.drawDisplayObject(displayObject, 0, 0);
+        },
+
         drawImage: function(image, sx, sy, sw, sh, dx, dy, dw, dh) {
             var count = arguments.length;
 

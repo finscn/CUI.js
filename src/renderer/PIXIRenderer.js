@@ -136,6 +136,10 @@ var CUI = CUI || {};
             }
         },
 
+        renderBasic: function(displayObject, renderTexture, skipUpdateTransform) {
+            this.core.renderer.renderBasic(displayObject, renderTexture, skipUpdateTransform);
+        },
+
         drawImage: function(image, sx, sy, sw, sh, dx, dy, dw, dh) {
             var count = arguments.length;
             if (count === 3) {
