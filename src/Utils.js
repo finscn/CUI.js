@@ -55,16 +55,6 @@ var CUI = CUI || {};
             return imgPool;
         },
 
-        createImgInfo: function(img) {
-            return {
-                img: img,
-                sx: 0,
-                sy: 0,
-                sw: img.width,
-                sh: img.height,
-            }
-        },
-
         parseValue: function(value, relativeValue, autoValue) {
             if (typeof value == "string") {
                 value = value.trim();
@@ -113,12 +103,12 @@ var CUI = CUI || {};
             return measure.width;
         },
 
-
         getImageInfo: function(idOrImg) {
             var img, id = idOrImg;
             if (typeof id != "string") {
                 if (id.tagName) {
                     img = id;
+                    id = img.src;
                 } else {
                     return null;
                 }
@@ -126,7 +116,8 @@ var CUI = CUI || {};
                 img = CUI.ImagePool[id];
             }
             if (img) {
-                return {
+                var info = {
+                    "id": id,
                     "img": img,
                     "sx": 0,
                     "sy": 0,
@@ -137,13 +128,15 @@ var CUI = CUI || {};
                     "oy": 0,
                     "w": img.width,
                     "h": img.height,
-                }
+                };
+                return info;
             }
             var mapping = CUI.ImageMapping[id];
             if (mapping) {
                 var imgId = mapping["img"];
                 var img = CUI.ImagePool[imgId];
                 var info = {
+                    "id": id,
                     "sx": mapping["x"],
                     "sy": mapping["y"],
                     "sw": mapping["w"],
