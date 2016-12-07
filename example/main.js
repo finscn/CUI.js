@@ -4,6 +4,7 @@ var Config = {
     FPS: 60,
     webgl: true,
 };
+console.log("WebGL: " + Config.webgl);
 
 var game = {};
 var canvas, context;
