@@ -383,19 +383,20 @@ var CUI = CUI || {};
             return baseTexture;
         },
         texturePool: null,
-        createTexture: function(imgInfo, cached) {
+        createTexture: function(imgInfo, useCache) {
             var img = imgInfo.img;
             var baseTexture = this.createBaseTexture(img);
             var rect = new PIXI.Rectangle(imgInfo.sx, imgInfo.sy, imgInfo.sw, imgInfo.sh);
             var texture;
-            if (cached === false) {
-                texture = new PIXI.Texture(baseTexture, rect);
-            } else {
+            if (useCache) {
+                var id = imgInfo.id;
                 texture = this.texturePool[id];
                 if (!texture) {
                     texture = new PIXI.Texture(baseTexture, rect);
                     this.texturePool[id] = texture;
                 }
+            } else {
+                texture = new PIXI.Texture(baseTexture, rect);
             }
             return texture;
         },
