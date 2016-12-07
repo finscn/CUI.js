@@ -137,6 +137,7 @@ var CUI = CUI || {};
         },
 
         renderBasic: function(displayObject, renderTexture, skipUpdateTransform) {
+            displayObject.mask = this.core.mask;
             this.core.renderer.renderBasic(displayObject, renderTexture, skipUpdateTransform);
         },
 
