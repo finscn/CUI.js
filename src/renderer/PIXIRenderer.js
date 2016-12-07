@@ -95,7 +95,7 @@ var CUI = CUI || {};
 
         createDisplayObject: function(img, sx, sy, sw, sh, cached) {
             var count = arguments.length;
-            var baseTexture = new PIXI.BaseTexture(img);
+            var baseTexture = this.createBaseTexture(img);
             var texture;
             if (count >= 5) {
                 texture = new PIXI.Texture(baseTexture, new PIXI.Rectangle(sx, sy, sw, sh));
@@ -156,7 +156,7 @@ var CUI = CUI || {};
 
         createNineSliceObject: function(img, sx, sy, sw, sh, T, R, B, L, cached) {
             var count = arguments.length;
-            var baseTexture = new PIXI.BaseTexture(img);
+            var baseTexture = this.createBaseTexture(img);
             var texture;
             if (count >= 9) {
                 texture = new PIXI.Texture(baseTexture, new PIXI.Rectangle(sx, sy, sw, sh));
@@ -368,22 +368,24 @@ var CUI = CUI || {};
         },
 
         baseTexturePool: null,
-        texturePool: null,
-        createTexture: function(imgInfo, cached) {
-            var img = imgInfo.img;
-
-            var imgKey = img.id || img.src;
+        createBaseTexture: function(img) {
+            var id = img.id || img.src;
             var baseTexture;
-            if (imgKey) {
-                baseTexture = this.baseTexturePool[imgKey];
+            if (id) {
+                baseTexture = this.baseTexturePool[id];
                 if (!baseTexture) {
                     baseTexture = new PIXI.BaseTexture(img);
-                    this.baseTexturePool[imgKey] = baseTexture;
+                    this.baseTexturePool[id] = baseTexture;
                 }
             } else {
                 baseTexture = new PIXI.BaseTexture(img);
             }
-
+            return baseTexture;
+        },
+        texturePool: null,
+        createTexture: function(imgInfo, cached) {
+            var img = imgInfo.img;
+            var baseTexture = this.createBaseTexture(img);
             var rect = new PIXI.Rectangle(imgInfo.sx, imgInfo.sy, imgInfo.sw, imgInfo.sh);
             var texture;
             if (cached === false) {
