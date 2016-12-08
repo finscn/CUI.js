@@ -198,16 +198,15 @@ var CUI = CUI || {};
                 return;
             }
             this.renderContent(context, x, y);
-
         },
 
         renderContent: function(context, x, y) {
             // var prevTextAlign = context.textAlign;
             // var prevAlpha = context.globalAlpha;
+            // context.globalAlpha = this.alpha;
             context.font = this.fontStyle;
             context.textAlign = this.textAlign;
             context.textBaseline = this.textBaseline;
-            // context.globalAlpha = this.alpha;
 
             if (this.shadowColor) {
                 context.fillStyle = this.shadowColor;
