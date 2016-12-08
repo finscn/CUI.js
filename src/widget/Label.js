@@ -49,7 +49,8 @@ var CUI = CUI || {};
                 this.afterInit();
             }
 
-            this.needToCompute = true;
+            this.computeSelf(this.parent);
+            this.computeSizeWithText();
 
         },
 
@@ -105,6 +106,7 @@ var CUI = CUI || {};
                 this.textHolder.setTextInfo(textInfo);
             }
             this.needToCompute = true;
+            this.needToComputeSize = true;
         },
 
         initTextInfo: function() {
@@ -132,6 +134,8 @@ var CUI = CUI || {};
 
         setText: function(text, needToCompute) {
             this.textHolder.setText(text, needToCompute);
+            this.needToCompute = needToCompute !== false;
+            this.needToComputeSize = needToCompute !== false;
         },
 
         computeWidth: function() {
@@ -186,6 +190,7 @@ var CUI = CUI || {};
             if (!measure) {
                 return;
             }
+            this.needToComputeSize = false;
             var needToCompute = false;
             // var ext = this.sizePadding * 2 + this.borderWidth;
             var extX = this.borderWidth + this.paddingLeft + this.paddingRight;
@@ -242,13 +247,11 @@ var CUI = CUI || {};
         },
 
         renderSelf: function(renderer, timeStep, now) {
-            if (this._autoSizeWithText && this.textHolder) {
+            if (this._autoSizeWithText && this.needToComputeSize && this.textHolder) {
                 if (this.textHolder.needToCompute) {
                     this.textHolder.computeSize();
-                    // if (this.autoSizeWithText) {
-                    this.computeSizeWithText();
-                    // }
                 }
+                this.computeSizeWithText();
             }
 
             if (this.backgroundColor !== null) {

@@ -117,6 +117,7 @@ function initUI() {
     });
 
     var label = new CUI.Label({
+        id: "label-1",
         parent: panel,
         backgroundColor: CUI.renderer.colorRgb(255, 240, 230),
         borderWidth: 2,
@@ -127,7 +128,7 @@ function initUI() {
             // color: CUI.renderer.colorRgb(255, 0, 0),
             color: "#ff0000",
             alpha: 1,
-            text: "Text Test",
+            text: "Text Test - 1",
         }
     });
 
