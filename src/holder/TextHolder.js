@@ -70,6 +70,12 @@ var CUI = CUI || {};
             this.setTextInfo(this);
             this.setParent(this.parent);
 
+            this.initTextObject();
+
+            this.computeSize();
+        },
+
+        initTextObject: function() {
             if (this.useCache) {
                 if (this.shareCache) {
                     this.cacheCanvas = TextHolder.cacheCanvas;
@@ -85,7 +91,7 @@ var CUI = CUI || {};
             this.alignH = this.textAlign;
             this.alignV = this.verticalAlign;
 
-            this.setText(info.text);
+            this.setText(info.text, true);
             // this.fontName = Font.getName(info.fontName || this.fontName);
             this.color = info.color || this.color;
             this.fontName = info.fontName || this.fontName;
@@ -110,6 +116,7 @@ var CUI = CUI || {};
             if (this._text === text) {
                 return;
             }
+            this.textChanged = true;
             this._text = text;
             text = this.text = text === null || text === undefined ? "" : text;
             if (Array.isArray(text)) {
@@ -185,8 +192,11 @@ var CUI = CUI || {};
             if (this.needToCompute) {
                 this.computeSize();
             } else {
-                if (this.useCache && this.shareCache) {
-                    this.updateCache();
+                if (this.textChanged) {
+                    // if (this.useCache && this.shareCache) {
+                    if (this.useCache) {
+                        this.updateCache();
+                    }
                 }
             }
 
@@ -227,6 +237,7 @@ var CUI = CUI || {};
             }
 
             this.renderLines(context, x, y);
+            this.textChanged = false;
             // context.textAlign = prevTextAlign;
             // context.globalAlpha = prevAlpha;
         },

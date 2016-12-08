@@ -36,7 +36,7 @@ function initUI() {
         layout: "hbox",
 
         borderWidth: 2,
-        borderColor: "green",
+        borderColor: "rgb(90, 200, 60)",
 
     });
 
@@ -57,7 +57,7 @@ function initUI() {
         width: 120,
         height: 120,
 
-        // backgroundColor: "rgba(100,240,230,1)",
+        // backgroundColor: "rgba(100,240,23,1)",
         // margin: 10,
         // layout: new CUI.HBoxLayout(),
     });
@@ -73,7 +73,7 @@ function initUI() {
         // src: "res/btn-bg.png",
         backgroundColor: "#ffffff",
         bgInfo: {
-            img:  CUI.ImagePool["bg"]
+            img: CUI.ImagePool["bg"]
         },
         // borderWidth: 2,
         paddingLeft: 10,
@@ -82,7 +82,7 @@ function initUI() {
         width: 200,
         height: 120,
 
-        // backgroundColor: "rgba(100,240,230,1)",
+        // backgroundColor: "rgba(100,240,23,1)",
         // margin: 10,
         // layout: new CUI.HBoxLayout(),
     });
@@ -98,7 +98,7 @@ function initUI() {
         // src: "res/btn-bg.png",
         backgroundColor: "#ffffff",
         borderImageInfo: {
-            img:  CUI.ImagePool["bg"],
+            img: CUI.ImagePool["bg"],
             T: 20,
             R: 20,
             B: 20,
@@ -111,12 +111,13 @@ function initUI() {
         width: 200,
         height: 120,
 
-        // backgroundColor: "rgba(100,240,230,1)",
+        // backgroundColor: "rgba(100,240,23,1)",
         // margin: 10,
         // layout: new CUI.HBoxLayout(),
     });
 
     var label = new CUI.Label({
+        id: "label-1",
         parent: panel,
         backgroundColor: "rgba(255,240,230,1)",
         borderWidth: 2,
@@ -126,7 +127,7 @@ function initUI() {
             color: "#ff0000",
             alpha: 1,
             useCache: false,
-            text: "Text Test",
+            text: "Text Test - 1",
         }
     });
 
@@ -134,13 +135,13 @@ function initUI() {
         var comp = new CUI.Button({
             backgroundColor: "rgba(255,240,230,1)",
             borderWidth: 2,
-            borderColor: "red",
+            borderColor: "#ff0000",
             parent: scorllView,
-            width: i===0?"auto":100,
-            height: i===0?"auto":60,
-            backgroundImg: i===0?CUI.ImagePool["btn-bg"]:null,
+            width: i === 0 ? "auto" : 100,
+            height: i === 0 ? "auto" : 60,
+            backgroundImg: i === 0 ? CUI.ImagePool["btn-bg"] : null,
             margin: 10,
-            disabled: i%2,
+            disabled: i % 2,
             textInfo: {
                 text: "Button-" + i,
             },
