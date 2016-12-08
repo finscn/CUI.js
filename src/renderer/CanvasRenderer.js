@@ -41,14 +41,12 @@ var CUI = CUI || {};
             this.render = this.drawDisplayObject;
         },
 
-        /**
-         *
-         *
-         *
-         *
-         *
-         *
-         **/
+        begin: function(clear) {
+            clear && this.clear();
+        },
+        end: function() {
+            // nothing to do.
+        },
 
         colorRgb: function(r, g, b) {
             return "rgba(" + r + ", " + g + ", " + b + ", 1)";
@@ -227,7 +225,7 @@ var CUI = CUI || {};
             }
         },
 
-        renderBasic: function(displayObject, renderTexture, skipUpdateTransform) {
+        renderBasic: function(displayObject) {
             this.drawDisplayObject(displayObject, 0, 0);
         },
 

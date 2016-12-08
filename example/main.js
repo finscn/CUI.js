@@ -65,10 +65,11 @@ function update(timeStep, now) {
 }
 
 function render(context, timeStep, now) {
-    CUI.renderer.clear();
+    CUI.renderer.begin();
 
     rootUI.render(CUI.renderer, timeStep, now);
 
+    CUI.renderer.end();
     // CUI.renderer.render();
 
 }

@@ -49,6 +49,13 @@ var CUI = CUI || {};
             this.renderNineSliceObject = this.drawDisplayObject;
         },
 
+        begin: function(clear) {
+            this.core.begin(clear);
+        },
+        end: function() {
+            this.core.end();
+        },
+
         colorRgb: function(r, g, b) {
             return this.core.colorRgb(r, g, b);
         },
@@ -139,9 +146,9 @@ var CUI = CUI || {};
             }
         },
 
-        renderBasic: function(displayObject, renderTexture, skipUpdateTransform) {
+        renderBasic: function(displayObject) {
             displayObject.mask = this.core.mask;
-            this.core.renderer.renderBasic(displayObject, renderTexture, skipUpdateTransform);
+            this.core.renderBasic(displayObject, null, false);
         },
 
         drawImage: function(image, sx, sy, sw, sh, dx, dy, dw, dh) {
