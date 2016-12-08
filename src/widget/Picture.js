@@ -147,7 +147,7 @@ var CUI = CUI || {};
         },
 
         renderSelf: function(context, timeStep, now) {
-            if (this.backgroundColor) {
+            if (this.backgroundColor !== null) {
                 context.fillStyle = this.backgroundColor;
                 context.fillRect(this.x, this.y, this.w, this.h);
             }
@@ -157,7 +157,7 @@ var CUI = CUI || {};
 
             this.imageHolder && this.imageHolder.render(context, timeStep, now);
 
-            if (this.borderColor && this.borderWidth) {
+            if (this.borderWidth && this.borderColor !== null) {
                 context.strokeStyle = this.borderColor;
                 context.lineWidth = this.borderWidth;
                 context.strokeRect(this.x, this.y, this.w, this.h);

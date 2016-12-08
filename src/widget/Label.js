@@ -251,7 +251,7 @@ var CUI = CUI || {};
                 }
             }
 
-            if (this.backgroundColor) {
+            if (this.backgroundColor !== null) {
                 context.fillStyle = this.backgroundColor;
                 context.fillRect(this.x, this.y, this.w, this.h);
             }
@@ -263,7 +263,7 @@ var CUI = CUI || {};
             this.textHolder && this.textHolder.render(context, timeStep, now);
             this.flagHolder && this.flagHolder.render(context, timeStep, now);
 
-            if (this.borderWidth && this.borderColor) {
+            if (this.borderWidth && this.borderColor !== null) {
                 context.strokeStyle = this.borderColor;
                 context.lineWidth = this.borderWidth;
                 // context.strokeRect(this.x, this.y, this.w, this.h, this.borderColor, this.borderWidth);

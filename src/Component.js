@@ -99,9 +99,11 @@ var CUI = CUI || {};
 
 
         backgroundColor: null, //"rgba(200,220,255,1)",
+        backgroundAlpha: 1,
         backgroundImage: null,
         backgroundInfo: null,
-        borderColor: "rgba(30,50,80,1)",
+        // borderColor: "rgba(30,50,80,1)",
+        borderColor: null,
         borderWidth: 0,
         borderImageInfo: null, // { img , sx, sy, sw, sh, top, right, bottom, left }
         cacheBorderImage: false,
@@ -198,7 +200,7 @@ var CUI = CUI || {};
         setBackgroundInfo: function(info) {
             var holder = null;
             if (info) {
-                info.color && (this.backgroundColor = info.color);
+                ("color" in info) && (this.backgroundColor = info.color);
                 holder = new CUI.BackgroundImageHolder(info);
             }
             this.setBackgroundHolder(holder);
@@ -588,7 +590,7 @@ var CUI = CUI || {};
         },
 
         renderSelf: function(context, timeStep, now) {
-            if (this.backgroundColor) {
+            if (this.backgroundColor !== null) {
                 context.fillStyle = this.backgroundColor;
                 context.fillRect(this.x, this.y, this.w, this.h);
             }
@@ -596,7 +598,7 @@ var CUI = CUI || {};
                 this.backgroundHolder.render(context, timeStep, now);
             }
 
-            if (this.borderColor && this.borderWidth) {
+            if (this.borderWidth && this.borderColor !== null) {
                 context.strokeStyle = this.borderColor;
                 context.lineWidth = this.borderWidth;
                 context.strokeRect(this.x, this.y, this.w, this.h);
