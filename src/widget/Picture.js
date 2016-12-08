@@ -147,7 +147,7 @@ var CUI = CUI || {};
         },
 
         renderSelf: function(renderer, timeStep, now) {
-            if (this.backgroundColor) {
+            if (this.backgroundColor !== null) {
                 renderer.fillRect(this.x, this.y, this.w, this.h, this.backgroundColor, this.pixel);
             }
             if (this.backgroundHolder) {
@@ -156,7 +156,7 @@ var CUI = CUI || {};
 
             this.imageHolder && this.imageHolder.render(renderer, timeStep, now);
 
-            if (this.borderColor && this.borderWidth) {
+            if (this.borderWidth && this.borderColor !== null) {
                 renderer.strokeRect(this.x, this.y, this.w, this.h, this.borderColor, this.borderWidth, this.pixel);
             }
         },

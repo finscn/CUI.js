@@ -107,7 +107,11 @@ var CUI = CUI || {};
             this.context.rotate(rotation);
         },
         setAlpha: function(alpha) {
+            this._lastAlpha = this.context.globalAlpha;
             this.context.globalAlpha = alpha;
+        },
+        restoreAlpha: function(alpha) {
+            this.context.globalAlpha = this._lastAlpha;
         },
         getAlpha: function() {
             return this.context.globalAlpha;
@@ -151,6 +155,7 @@ var CUI = CUI || {};
             for (var p in this.defaultTransform) {
                 this.globalTransform[p] = this.defaultTransform[p];
             }
+            this._lastAlpha = this.globalTransform.alpha;
         },
 
         /**
@@ -163,7 +168,7 @@ var CUI = CUI || {};
          **/
 
         clear: function() {
-            if (this.clearColor) {
+            if (this.clearColor !== null) {
                 this.fillStyle = this.clearColor;
                 this.fillRect(0, 0, this.canvas.width, this.canvas.height);
                 return;
@@ -195,7 +200,7 @@ var CUI = CUI || {};
             var dx = x - t.originalX;
             var dy = y - t.originalY;
 
-            if (this.clearColor) {
+            if (this.clearColor !== null) {
                 this.context.fillStyle = this.clearColor;
                 this.context.fillRect(dx, dy, width, height);
             } else {

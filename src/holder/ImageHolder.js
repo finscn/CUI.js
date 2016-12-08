@@ -220,9 +220,7 @@ var CUI = CUI || {};
                 y += this.y + this.offsetY + this.pixel.oy;
             }
 
-            var prevAlpha;
             if (this.alpha !== null) {
-                prevAlpha = renderer.getAlpha();
                 renderer.setAlpha(this.alpha);
             }
 
@@ -233,7 +231,7 @@ var CUI = CUI || {};
                 renderer.restore();
             } else {
                 if (this.alpha !== null) {
-                    renderer.setAlpha(prevAlpha);
+                    renderer.restoreAlpha();
                 }
             }
         },

@@ -17,7 +17,7 @@ var CUI = CUI || {};
             this.needToCompute = false;
         },
         render: function(renderer, timeStep, now) {
-            if (this.backgroundColor) {
+            if (this.backgroundColor !== null) {
                 renderer.fillRect(this.x, this.y, this.w, this.h, this.backgroundColor, this.pixel);
             }
         },

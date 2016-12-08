@@ -251,8 +251,10 @@ var CUI = CUI || {};
                 }
             }
 
-            if (this.backgroundColor) {
+            if (this.backgroundColor !== null) {
+                renderer.setAlpha(this.backgroundAlpha);
                 renderer.fillRect(this.x, this.y, this.w, this.h, this.backgroundColor, this.pixel);
+                renderer.restoreAlpha();
             }
             if (this.backgroundHolder) {
                 this.backgroundHolder.render(renderer, timeStep, now);
@@ -262,7 +264,7 @@ var CUI = CUI || {};
             this.textHolder && this.textHolder.render(renderer, timeStep, now);
             this.flagHolder && this.flagHolder.render(renderer, timeStep, now);
 
-            if (this.borderWidth && this.borderColor) {
+            if (this.borderWidth && this.borderColor !== null) {
                 // renderer.strokeRect(this.x, this.y, this.w, this.h, this.borderColor, this.borderWidth);
                 var aabb = this.aabb;
                 renderer.strokeRect(aabb[0], aabb[1], aabb[2] - aabb[0], aabb[3] - aabb[1], this.borderColor, this.borderWidth, this.pixel);

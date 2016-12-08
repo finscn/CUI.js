@@ -93,6 +93,9 @@ var CUI = CUI || {};
         setAlpha: function(alpha) {
             this.core.setAlpha(alpha);
         },
+        restoreAlpha: function() {
+            this.core.restoreAlpha();
+        },
         getAlpha: function() {
             return this.core.getAlpha();
         },

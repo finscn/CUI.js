@@ -13,7 +13,7 @@ var CUI = CUI || {};
     var TextHolder = Class.create({
 
         text: null,
-        color: "black",
+        color: "#000000",
 
         // "start", "end", "left", "right", "center",
         textAlign: "start",
@@ -233,16 +233,16 @@ var CUI = CUI || {};
             context.textAlign = this.textAlign;
             context.textBaseline = this.textBaseline;
 
-            if (this.shadowColor) {
+            if (this.shadowColor !== null) {
                 context.fillStyle = this.shadowColor;
                 this.renderLines(context, x + this.shadowOffsetX, y + this.shadowOffsetY, true);
             }
 
-            if (this.color) {
+            if (this.color !== null) {
                 context.fillStyle = this.color;
             }
 
-            if (this.strokeColor) {
+            if (this.strokeColor !== null) {
 
                 context.lineCap = this.lineCap;
                 context.lineJoin = this.lineJoin;
