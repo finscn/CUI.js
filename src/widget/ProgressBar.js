@@ -88,7 +88,6 @@ var CUI = CUI || {};
             if (this.backgroundHolder) {
                 this.backgroundHolder.simpleRender(renderer, timeStep, now);
             } else {
-                // context.fillStyle = this.backgroundColor;
                 renderer.fillRect(this.x, this.y, this.w, this.h, this.backgroundColor, this.pixel);
             }
 
@@ -97,10 +96,7 @@ var CUI = CUI || {};
                 this.valueHolder.pixel.width = this.valueHolder.orignWidth * p;
                 this.valueHolder.simpleRender(renderer, timeStep, now);
             } else {
-                // context.fillStyle = this.valueColor;
                 renderer.fillRect(this.x, this.y, this.w * p, this.h, this.valueColor, this.pixel);
-                // context.strokeStyle = this.borderColor;
-                // context.lineWidth = 2;
                 renderer.strokeRect(this.x, this.y, this.w, this.h, this.borderColor, 2, this.pixel);
             }
 

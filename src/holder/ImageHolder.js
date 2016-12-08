@@ -220,14 +220,9 @@ var CUI = CUI || {};
                 y += this.y + this.offsetY + this.pixel.oy;
             }
 
-            // renderer.lineWidth = 2;
-            // renderer.strokeRect(this.x + this.offsetX, this.y + this.offsetY, this.pixel.width + this.offsetW, this.pixel.height + this.offsetH)
-            // renderer.strokeRect(x, y, width + this.offsetW, height + this.offsetH);
-
             var prevAlpha;
             if (this.alpha !== null) {
                 prevAlpha = renderer.getAlpha();
-                // context.globalAlpha = this.alpha;
                 renderer.setAlpha(this.alpha);
             }
 
@@ -238,7 +233,6 @@ var CUI = CUI || {};
                 renderer.restore();
             } else {
                 if (this.alpha !== null) {
-                    // context.globalAlpha = prevAlpha;
                     renderer.setAlpha(prevAlpha);
                 }
             }
