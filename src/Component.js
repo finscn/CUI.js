@@ -63,6 +63,7 @@ var CUI = CUI || {};
         maskColor: "#000000",
         maskAlpha: 0.35,
 
+        displayObject: null,
         transform: null,
 
         /////////////////////////////////////////////
@@ -103,6 +104,7 @@ var CUI = CUI || {};
         backgroundInfo: null,
         // borderColor: "rgba(30,50,80,1)",
         borderColor: null,
+        borderAlpha: 1,
         borderWidth: 0,
         borderImageInfo: null, // { img , sx, sy, sw, sh, top, right, bottom, left }
         cacheBorderImage: false,
@@ -602,7 +604,9 @@ var CUI = CUI || {};
             }
 
             if (this.borderWidth && this.borderColor !== null) {
+                renderer.setAlpha(this.borderAlpha);
                 renderer.strokeRect(this.x, this.y, this.w, this.h, this.borderColor, this.borderWidth, this.pixel);
+                renderer.restoreAlpha();
             }
         },
         renderChildren: function(renderer, timeStep, now) {

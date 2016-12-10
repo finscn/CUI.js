@@ -11,11 +11,15 @@ function initUI() {
         height: game.height,
     });
 
+
     var page = new CUI.Page({
         parent: rootUI,
         width: "100%",
         height: "100%",
-        backgroundColor: CUI.renderer.colorRgb(150, 150, 150),
+        backgroundColor: CUI.renderer.colorRgb(155, 155, 155),
+        borderWidth: 8,
+        borderColor: CUI.renderer.colorRgb(255, 50, 50),
+        borderAlpha: 0.6,
         padding: 10,
     });
 
@@ -39,6 +43,7 @@ function initUI() {
         borderColor: CUI.renderer.colorRgb(90, 200, 60),
 
     });
+
 
 
     var comp = new CUI.Picture({
@@ -128,6 +133,7 @@ function initUI() {
             // color: CUI.renderer.colorRgb(255, 0, 0),
             color: "#ff0000",
             alpha: 1,
+            // useCache: false,
             text: "Text Test - 1",
         }
     });
