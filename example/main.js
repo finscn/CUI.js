@@ -73,6 +73,12 @@ function render(context, timeStep, now) {
 }
 
 function init() {
+
+    stats.domElement.style.position = 'absolute';
+    stats.domElement.style.left = '0px';
+    stats.domElement.style.top = '0px';
+    document.body.appendChild(stats.domElement);
+
     canvas = $id("canvas");
     canvas.width = Config.width;
     canvas.height = Config.height;
@@ -108,14 +114,16 @@ function start() {
     gameLoop();
 }
 
+var stats = new Stats();
 
 function gameLoop() {
     requestAnimationFrame(gameLoop);
-
+    stats.begin();
     var now = Date.now();
     var timeStep = staticTimeStep;
     update(timeStep, now);
     render(context, timeStep, now);
+    stats.end();
 }
 
 

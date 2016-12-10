@@ -11,11 +11,14 @@ function initUI() {
         height: game.height,
     });
 
+
     var page = new CUI.Page({
         parent: rootUI,
         width: "100%",
         height: "100%",
-        backgroundColor: "rgba(150,150,150,1)",
+        backgroundColor: "rgba(155, 155, 155, 1)",
+        borderWidth: 8,
+        borderColor: "rgba(255, 50, 50, 0.6)",
         padding: 10,
     });
 
@@ -25,7 +28,7 @@ function initUI() {
         scrollV: !true,
 
         parent: page,
-        backgroundColor: "rgba(255,240,230,1)",
+        backgroundColor: "rgba(255, 240, 230, 1)",
         left: 0,
         top: 0,
         padding: 20,
@@ -36,7 +39,7 @@ function initUI() {
         layout: "hbox",
 
         borderWidth: 2,
-        borderColor: "rgb(90, 200, 60)",
+        borderColor: "rgba(90, 200, 60, 1)",
 
     });
 
@@ -57,7 +60,7 @@ function initUI() {
         width: 120,
         height: 120,
 
-        // backgroundColor: "rgba(100,240,23,1)",
+        // backgroundColor: "rgba(100, 240, 23, 1)",
         // margin: 10,
         // layout: new CUI.HBoxLayout(),
     });
@@ -82,7 +85,7 @@ function initUI() {
         width: 200,
         height: 120,
 
-        // backgroundColor: "rgba(100,240,23,1)",
+        // backgroundColor: "rgba(100, 240, 23, 1)",
         // margin: 10,
         // layout: new CUI.HBoxLayout(),
     });
@@ -111,7 +114,7 @@ function initUI() {
         width: 200,
         height: 120,
 
-        // backgroundColor: "rgba(100,240,23,1)",
+        // backgroundColor: "rgba(100, 240, 23, 1)",
         // margin: 10,
         // layout: new CUI.HBoxLayout(),
     });
@@ -119,7 +122,7 @@ function initUI() {
     var label = new CUI.Label({
         id: "label-1",
         parent: panel,
-        backgroundColor: "rgba(255,240,230,1)",
+        backgroundColor: "rgba(255, 240, 230, 1)",
         borderWidth: 2,
         borderColor: "#ff0000",
         // text: "Text Test",
@@ -133,7 +136,7 @@ function initUI() {
 
     for (var i = 0; i < 2; i++) {
         var comp = new CUI.Button({
-            backgroundColor: "rgba(255,240,230,1)",
+            backgroundColor: "rgba(255, 240, 230, 1)",
             borderWidth: 2,
             borderColor: "#ff0000",
             parent: scorllView,
@@ -149,7 +152,7 @@ function initUI() {
     }
 
     var comp = new CUI.Button({
-        backgroundColor: "rgb(255, 240, 230)",
+        backgroundColor: "rgba(255, 240, 230, 1)",
         borderWidth: 2,
         // borderColor: CUI.renderer.colorHex("#ff0000"),
         parent: scorllView,

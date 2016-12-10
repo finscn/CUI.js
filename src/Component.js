@@ -104,6 +104,7 @@ var CUI = CUI || {};
         backgroundInfo: null,
         // borderColor: "rgba(30,50,80,1)",
         borderColor: null,
+        borderAlpha: 1,
         borderWidth: 0,
         borderImageInfo: null, // { img , sx, sy, sw, sh, top, right, bottom, left }
         cacheBorderImage: false,
@@ -627,11 +628,8 @@ var CUI = CUI || {};
                 h += offset.h || 0;
             }
 
-            var preAlpha = context.globalAlpha;
-            context.globalAlpha = this.maskAlpha;
             context.fillStyle = this.maskColor;
             context.fillRect(x, y, w, h);
-            context.globalAlpha = preAlpha;
         },
 
         render: function(context, timeStep, now) {
