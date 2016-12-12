@@ -17,8 +17,8 @@ function initUI() {
         width: "100%",
         height: "100%",
         backgroundColor: "rgba(155, 155, 155, 1)",
-        borderWidth: 8,
-        borderColor: "rgba(255, 50, 50, 0.6)",
+        // borderWidth: 8,
+        // borderColor: "rgba(255, 50, 50, 0.6)",
         padding: 10,
     });
 

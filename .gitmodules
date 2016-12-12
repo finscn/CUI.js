@@ -1,0 +1,3 @@
+[submodule "example/GT-Toucher"]
+	path = example/GT-Toucher
+	url = git@github.com:finscn/GT-Toucher.git
