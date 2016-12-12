@@ -140,6 +140,12 @@ var CUI = CUI || {};
         unclipRect: function() {
             this.context.restore();
         },
+        setBlendByName: function(blendName) {
+            this.setBlend(blendName);
+        },
+        getBlend: function() {
+            return this.blend;
+        },
         setBlend: function(blend) {
             this._lastBlend = this.blend;
 
@@ -147,6 +153,9 @@ var CUI = CUI || {};
             // TODO;
             var composite = blend;
             this.context.globalCompositeOperation = composite;
+        },
+        restoreBlend() {
+            this.context.globalCompositeOperation = this._lastBlend;
         },
 
         resetGlobalContainer: function() {

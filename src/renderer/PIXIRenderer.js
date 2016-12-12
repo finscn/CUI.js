@@ -108,10 +108,18 @@ var CUI = CUI || {};
         unclipRect: function() {
             this.core.unclipRect();
         },
+        setBlendByName: function(name) {
+            this.core.setBlendByName(alpha);
+        },
+        getBlend: function() {
+            return this.core.getBlend();
+        },
         setBlend: function(blend) {
             this.core.setBlend(blend);
         },
-
+        restoreBlend: function() {
+            this.core.restoreBlend();
+        },
         resetGlobalContainer: function() {
             this.core.resetGlobalContainer();
         },

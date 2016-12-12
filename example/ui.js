@@ -18,8 +18,8 @@ function initUI() {
         height: "100%",
         backgroundColor: CUI.renderer.colorRgb(155, 155, 155),
         borderWidth: 8,
-        borderColor: CUI.renderer.colorRgb(255, 50, 50),
-        borderAlpha: 0.6,
+        // borderColor: CUI.renderer.colorRgb(255, 50, 50),
+        // borderAlpha: 0.6,
         padding: 10,
     });
 
