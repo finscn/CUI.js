@@ -140,8 +140,8 @@ var CUI = CUI || {};
         unclipRect: function() {
             this.context.restore();
         },
-        setBlendByName: function(blendName) {
-            this.setBlend(blendName);
+        setBlendByName: function(name) {
+            this.setBlend(name);
         },
         getBlend: function() {
             return this.blend;

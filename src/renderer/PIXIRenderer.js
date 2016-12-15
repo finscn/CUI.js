@@ -109,7 +109,7 @@ var CUI = CUI || {};
             this.core.unclipRect();
         },
         setBlendByName: function(name) {
-            this.core.setBlendByName(alpha);
+            this.core.setBlendByName(name);
         },
         getBlend: function() {
             return this.core.getBlend();
