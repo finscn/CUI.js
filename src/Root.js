@@ -20,8 +20,14 @@ var CUI = CUI || {};
         renderSelf: noop,
         checkTouchSelf: noop,
 
+        resetSN: 1,
+
         init: function() {
             this.all = {};
+
+            if (this.resetSN || this.resetSN === 0) {
+                Component._SN = Number(this.resetSN) || 1;
+            }
 
             if (this.beforeInit) {
                 this.beforeInit();

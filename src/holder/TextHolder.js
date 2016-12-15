@@ -7,6 +7,7 @@ var CUI = CUI || {};
 
     var Class = exports.Class;
     var Utils = exports.Utils;
+    var Component = exports.Component;
     var BaseHolder = exports.BaseHolder;
     var Font = exports.Font;
 
@@ -67,18 +68,21 @@ var CUI = CUI || {};
             this.setTextInfo(this);
             this.setParent(this.parent);
 
+            this.id = this.id || "text-holder-" + this.parent.id;
+
             this.initTextObject();
 
             this.computeSize();
         },
 
         createCache: function() {
-            var canvas = this.cacheCanvas = document.createElement('canvas');
-            canvas.width = 3;
-            canvas.height = 3;
-            this.cacheContext = canvas.getContext('2d');
+            if (this.shareCache) {
+                this.cacheCanvas = TextHolder.cacheCanvas;
+            } else {
+                this.cacheCanvas = Component.getCanvasFromPool(this.id);
+            }
+            this.cacheContext = this.cacheCanvas.getContext('2d');
             this.cacheContext.textBaseline = "top";
-            // document.body.appendChild(canvas);
         },
 
         initTextObject: function() {
@@ -87,21 +91,15 @@ var CUI = CUI || {};
             } else {
                 // TODO
             }
-            this.useCache = true;
-            this.shareCache = false;
+
             if (CUI.renderer.webgl) {
-                if (!this.cacheCanvas) {
-                    this.createCache();
-                }
-                this.textObject = CUI.renderer.createTextObject(this.cacheContext, true);
-            } else if (this.useCache) {
+                this.useCache = true;
+                this.shareCache = false;
+            }
+
+            if (this.useCache) {
                 // TODO
-                if (this.shareCache) {
-                    this.cacheCanvas = TextHolder.cacheCanvas;
-                    this.cacheContext = TextHolder.cacheContext;
-                } else {
-                    this.createCache();
-                }
+                this.createCache();
                 this.textObject = CUI.renderer.createTextObject(this.cacheContext, true);
             }
         },
@@ -152,7 +150,7 @@ var CUI = CUI || {};
                 this.needToCompute = false;
                 return;
             }
-            var ctx = this.cacheContext;
+            var ctx = textContext;
             ctx.font = this.fontStyle;
             var measure = ctx.measureText(this.lines[0]);
             measure.height = Math.ceil(this.fontSize * 1.5);
@@ -212,8 +210,7 @@ var CUI = CUI || {};
             if (this.needToCompute) {
                 this.computeSize();
             } else {
-                if (this.textChanged) {
-                    // if (this.useCache && this.shareCache) {
+                if (this.textChanged || this.shareCache) {
                     if (this.useCache) {
                         this.updateCache();
                         this.textObject.updateContent();
@@ -288,11 +285,12 @@ var CUI = CUI || {};
 
     }, BaseHolder);
 
+    var textCanvas = document.createElement("canvas");
+    var textContext = textCanvas.getContext("2d");
+
     TextHolder.cacheCanvas = document.createElement('canvas');
     TextHolder.cacheCanvas.width = 3;
     TextHolder.cacheCanvas.height = 3;
-    TextHolder.cacheContext = TextHolder.cacheCanvas.getContext("2d");
-    TextHolder.cacheContext.textBaseline = "top";
 
     exports.TextHolder = TextHolder;
 
