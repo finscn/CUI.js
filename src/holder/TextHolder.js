@@ -7,11 +7,9 @@ var CUI = CUI || {};
 
     var Class = exports.Class;
     var Utils = exports.Utils;
+    var Component = exports.Component;
     var BaseHolder = exports.BaseHolder;
     var Font = exports.Font;
-
-    var textCanvas = document.createElement("canvas");
-    var textContext = textCanvas.getContext("2d");
 
     var TextHolder = Class.create({
 
@@ -70,20 +68,26 @@ var CUI = CUI || {};
             this.setTextInfo(this);
             this.setParent(this.parent);
 
+            this.id = this.id || "text-holder-" + this.parent.id;
+
             this.initTextObject();
 
             this.computeSize();
         },
 
+        createCache: function() {
+            if (this.shareCache) {
+                this.cacheCanvas = TextHolder.cacheCanvas;
+            } else {
+                this.cacheCanvas = Component.getCanvasFromPool(this.id);
+            }
+            this.cacheContext = this.cacheCanvas.getContext('2d');
+            this.cacheContext.textBaseline = "top";
+        },
+
         initTextObject: function() {
             if (this.useCache) {
-                if (this.shareCache) {
-                    this.cacheCanvas = TextHolder.cacheCanvas;
-                } else {
-                    this.cacheCanvas = document.createElement('canvas');
-                }
-                this.cacheCanvas._dynamic = true;
-                this.cacheContext = this.cacheCanvas.getContext('2d');
+                this.createCache();
             }
         },
 
@@ -192,8 +196,7 @@ var CUI = CUI || {};
             if (this.needToCompute) {
                 this.computeSize();
             } else {
-                if (this.textChanged) {
-                    // if (this.useCache && this.shareCache) {
+                if (this.textChanged || this.shareCache) {
                     if (this.useCache) {
                         this.updateCache();
                     }
@@ -267,11 +270,12 @@ var CUI = CUI || {};
 
     }, BaseHolder);
 
+    var textCanvas = document.createElement("canvas");
+    var textContext = textCanvas.getContext("2d");
+
     TextHolder.cacheCanvas = document.createElement('canvas');
     TextHolder.cacheCanvas.width = 3;
     TextHolder.cacheCanvas.height = 3;
-    TextHolder.cacheContext = TextHolder.cacheCanvas.getContext("2d");
-    TextHolder.cacheContext.textBaseline = "top";
 
     exports.TextHolder = TextHolder;
 

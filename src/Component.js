@@ -565,7 +565,7 @@ var CUI = CUI || {};
 
         createCacheCanvas: function() {
             if (!this.cacheCanvas) {
-                var canvas = document.createElement("canvas");
+                var canvas = Component.getCanvasFromPool(this.id);
                 canvas.width = this.w + 4;
                 canvas.height = this.h + 4;
                 this.cacheCanvas = canvas;
@@ -847,6 +847,19 @@ var CUI = CUI || {};
     };
     Component.getUI = function(id) {
         return Component.all[id];
+    };
+
+    Component.canvasPool = {};
+    Component.getCanvasFromPool = function(id) {
+        var canvas = Component.canvasPool[id];
+        if (!canvas) {
+            canvas = document.createElement('canvas');
+            canvas.width = 3;
+            canvas.height = 3;
+            // canvas.holderId = id;
+            Component.canvasPool[id] = canvas;
+        }
+        return canvas;
     };
 
     exports.Component = Component;

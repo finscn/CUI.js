@@ -7,6 +7,7 @@ var CUI = CUI || {};
 
     var Class = exports.Class;
     var Utils = exports.Utils;
+    var Component = exports.Component;
     var ImageHolder = exports.ImageHolder;
 
     var BorderImageHolder = Class.create({
@@ -89,7 +90,7 @@ var CUI = CUI || {};
         },
 
         cacheBorderImage: function(w, h) {
-            var canvas = document.createElement("canvas");
+            var canvas = Component.getCanvasFromPool(this.id);
             canvas.width = w;
             canvas.height = h;
             var context = canvas.getContext("2d");

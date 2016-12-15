@@ -52,6 +52,9 @@ var CUI = CUI || {};
                 this.setImg(this.img);
             }
             this.setParent(this.parent);
+
+            this.id = this.id || "image-holder-" + this.parent.id;
+
         },
         load: function(callback) {
             this.setSrc(this.src, callback);
