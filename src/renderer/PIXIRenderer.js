@@ -99,8 +99,11 @@ var CUI = CUI || {};
         getAlpha: function() {
             return this.core.getAlpha();
         },
-        setOriginal: function(x, y) {
-            this.core.setOriginal(x, y);
+        setOrigin: function(x, y) {
+            this.core.setOrigin(x, y);
+        },
+        getOrigin: function() {
+            return this.core.getOrigin();
         },
         clipRect: function(x, y, width, height) {
             this.core.clipRect(x, y, width, height);

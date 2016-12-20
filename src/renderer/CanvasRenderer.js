@@ -116,10 +116,16 @@ var CUI = CUI || {};
         getAlpha: function() {
             return this.context.globalAlpha;
         },
-        setOriginal: function(x, y) {
+        setOrigin: function(x, y) {
             this.context.translate(x, y);
             this.globalTransform.originalX = x;
             this.globalTransform.originalY = y;
+        },
+        getOrigin: function() {
+            return {
+                x: this.globalTransform.originX,
+                y: this.globalTransform.originY,
+            };
         },
         clipRect: function(x, y, width, height) {
             this.context.save();
@@ -154,7 +160,7 @@ var CUI = CUI || {};
             var composite = blend;
             this.context.globalCompositeOperation = composite;
         },
-        restoreBlend() {
+        restoreBlend: function() {
             this.context.globalCompositeOperation = this._lastBlend;
         },
 
