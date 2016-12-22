@@ -58,6 +58,7 @@ var CUI = CUI || {};
         cacheOffsetY: 0,
         cachePadding: 4,
         shareCache: false,
+        useCachePool: true,
 
         init: function() {
             this.pixel = {
@@ -76,10 +77,14 @@ var CUI = CUI || {};
         },
 
         createCache: function() {
-            if (this.shareCache) {
-                this.cacheCanvas = TextHolder.cacheCanvas;
-            } else {
-                this.cacheCanvas = Component.getCanvasFromPool(this.id);
+            if (!this.cacheCanvas) {
+                if (this.shareCache) {
+                    this.cacheCanvas = TextHolder.cacheCanvas;
+                } else if (this.useCachePool) {
+                    this.cacheCanvas = Component.getCanvasFromPool(this.id);
+                } else {
+                    this.cacheCanvas = document.createElement("canvas");
+                }
             }
             this.cacheContext = this.cacheCanvas.getContext('2d');
             this.cacheContext.textBaseline = "top";
