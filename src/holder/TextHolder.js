@@ -77,12 +77,14 @@ var CUI = CUI || {};
         },
 
         createCache: function() {
-            if (this.shareCache) {
-                this.cacheCanvas = TextHolder.cacheCanvas;
-            } else if (this.useCachePool) {
-                this.cacheCanvas = Component.getCanvasFromPool(this.id);
-            } else {
-                this.cacheCanvas = document.createElement("canvas");
+            if (!this.cacheCanvas) {
+                if (this.shareCache) {
+                    this.cacheCanvas = TextHolder.cacheCanvas;
+                } else if (this.useCachePool) {
+                    this.cacheCanvas = Component.getCanvasFromPool(this.id);
+                } else {
+                    this.cacheCanvas = document.createElement("canvas");
+                }
             }
             this.cacheContext = this.cacheCanvas.getContext('2d');
             this.cacheContext.textBaseline = "top";
