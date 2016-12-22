@@ -152,6 +152,18 @@ var CUI = CUI || {};
             this.core.clearRect(x, y, width, height, this.clearColor, 1);
         },
 
+        strokeText: function(text, x, y, color, lineWidth, style) {
+            this.core.strokeText(text, x, y, color, lineWidth, style);
+        },
+
+        fillText: function(text, x, y, color, style) {
+            this.core.fillText(text, x, y, color, style);
+        },
+
+        drawText: function(text, x, y, style) {
+            this.core.drawText(text, x, y, style);
+        },
+
         drawDisplayObject: function(displayObject, dx, dy, dw, dh) {
             if (arguments.length === 5) {
                 this.core.render(displayObject, dx, dy, dw, dh);
