@@ -11,6 +11,8 @@ var CUI = CUI || {};
     var noop = exports.noop;
 
     var Root = Class.create({
+        superclass: Component,
+
         id: "cmp_root",
 
         width: null,
@@ -103,7 +105,7 @@ var CUI = CUI || {};
             }
         },
 
-    }, Component);
+    });
 
 
     exports.Root = Root;

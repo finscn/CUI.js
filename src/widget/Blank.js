@@ -9,6 +9,7 @@ var CUI = CUI || {};
     var Component = exports.Component;
 
     var Blank = Class.create({
+        superclass: Component,
 
         composite: false,
         disabled: false,
@@ -23,7 +24,7 @@ var CUI = CUI || {};
             }
         },
 
-    }, Component);
+    });
 
     Blank.create = function(width, height, parent) {
         var comp = new CUI.Blank({

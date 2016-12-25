@@ -11,6 +11,7 @@ var CUI = CUI || {};
     var ImageHolder = exports.ImageHolder;
 
     var BorderImageHolder = Class.create({
+        superclass: ImageHolder,
 
         width: "100%",
         height: "100%",
@@ -98,8 +99,7 @@ var CUI = CUI || {};
             return canvas;
         },
 
-
-    }, ImageHolder);
+    });
 
 
     exports.BorderImageHolder = BorderImageHolder;

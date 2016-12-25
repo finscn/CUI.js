@@ -12,6 +12,7 @@ var CUI = CUI || {};
     var Font = exports.Font;
 
     var TextHolder = Class.create({
+        superclass: BaseHolder,
 
         text: null,
         color: "#000000",
@@ -273,7 +274,7 @@ var CUI = CUI || {};
             context.fillText(text, x, y);
         },
 
-    }, BaseHolder);
+    });
 
     var textCanvas = document.createElement("canvas");
     var textContext = textCanvas.getContext("2d");

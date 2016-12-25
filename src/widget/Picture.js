@@ -11,6 +11,7 @@ var CUI = CUI || {};
     var TextHolder = exports.TextHolder;
 
     var Picture = Class.create({
+        superclass: Component,
 
         composite: false,
         disabled: false,
@@ -164,7 +165,7 @@ var CUI = CUI || {};
             }
         },
 
-    }, Component);
+    });
 
 
     exports.Picture = Picture;

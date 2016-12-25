@@ -9,6 +9,7 @@ var CUI = CUI || {};
     var BaseLayout = exports.BaseLayout;
 
     var TableLayout = Class.create({
+        superclass: BaseLayout,
 
         cellWidth: null,
         cellHeight: null,
@@ -143,7 +144,7 @@ var CUI = CUI || {};
             child.updateAABB();
         }
 
-    }, BaseLayout);
+    });
 
 
     exports.TableLayout = TableLayout;

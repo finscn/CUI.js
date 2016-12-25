@@ -12,6 +12,7 @@ var CUI = CUI || {};
     var TextHolder = exports.TextHolder;
 
     var ProgressBar = Class.create({
+        superclass: Component,
 
         composite: false,
         disabled: false,
@@ -106,7 +107,7 @@ var CUI = CUI || {};
 
         },
 
-    }, Component);
+    });
 
 
     exports.ProgressBar = ProgressBar;

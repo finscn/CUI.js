@@ -11,6 +11,7 @@ var CUI = CUI || {};
     var TextHolder = exports.TextHolder;
 
     var Label = Class.create({
+        superclass: Component,
 
         composite: false,
         disabled: false,
@@ -34,7 +35,6 @@ var CUI = CUI || {};
             }
 
             Label.$super.init.call(this);
-
 
             if (this.iconInfo) {
                 this.setIconInfo(this.iconInfo);
@@ -275,7 +275,7 @@ var CUI = CUI || {};
             }
         },
 
-    }, Component);
+    });
 
 
     exports.Label = Label;
