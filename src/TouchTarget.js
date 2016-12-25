@@ -7,7 +7,6 @@ var CUI = CUI || {};
     var Class = exports.Class;
 
     var TouchTarget = Class.create({
-        constructor: TouchTarget,
 
         modalFlag: -0x100000,
 

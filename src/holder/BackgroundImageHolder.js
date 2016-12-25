@@ -10,6 +10,7 @@ var CUI = CUI || {};
     var ImageHolder = exports.ImageHolder;
 
     var BackgroundImageHolder = Class.create({
+        superclass: ImageHolder,
 
         width: "100%",
         height: "100%",
@@ -19,7 +20,7 @@ var CUI = CUI || {};
                 this.x + this.ox, this.y + this.oy, this.pixel.sw, this.pixel.sh);
         },
 
-    }, ImageHolder);
+    });
 
 
     exports.BackgroundImageHolder = BackgroundImageHolder;

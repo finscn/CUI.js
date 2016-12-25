@@ -11,6 +11,7 @@ var CUI = CUI || {};
 
 
     var ScrollView = Class.create({
+        superclass: Component,
 
         scrollH: false,
         scrollV: true,
@@ -394,7 +395,7 @@ var CUI = CUI || {};
             return this.visibleChildren;
         },
 
-    }, Component);
+    });
 
 
     exports.ScrollView = ScrollView;

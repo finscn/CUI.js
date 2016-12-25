@@ -9,6 +9,7 @@ var CUI = CUI || {};
     var BaseLayout = exports.BaseLayout;
 
     var HBoxLayout = Class.create({
+        superclass: BaseLayout,
 
         align: "left",
         size: null,
@@ -83,7 +84,7 @@ var CUI = CUI || {};
             return idx;
         }
 
-    }, BaseLayout);
+    });
 
 
     exports.HBoxLayout = HBoxLayout;

@@ -9,6 +9,7 @@ var CUI = CUI || {};
     var BaseLayout = exports.BaseLayout;
 
     var VBoxLayout = Class.create({
+        superclass: BaseLayout,
 
         align: "top",
         size: null,
@@ -84,9 +85,9 @@ var CUI = CUI || {};
                 }
             }
             return idx;
-        }
+        },
 
-    }, BaseLayout);
+    });
 
 
     exports.VBoxLayout = VBoxLayout;

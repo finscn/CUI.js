@@ -11,6 +11,7 @@ var CUI = CUI || {};
     var Component = exports.Component;
 
     var ImageHolder = Class.create({
+        superclass: BaseHolder,
 
         src: null,
         img: null,
@@ -239,7 +240,7 @@ var CUI = CUI || {};
             }
         },
 
-    }, BaseHolder);
+    });
 
 
     exports.ImageHolder = ImageHolder;

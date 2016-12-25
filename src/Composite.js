@@ -68,7 +68,7 @@ var CUI = CUI || {};
         },
         sortChildrenBy: function(key) {
             Composite.insertSort(this.children, key);
-        }
+        },
     });
 
     Composite._ID_SEED = 0;
