@@ -223,6 +223,8 @@ var CUI = CUI || {};
             if (holder) {
                 this.backgroundHolder.setParent(this);
                 this.backgroundHolder.init();
+                this.backgroundHolder.updateSize();
+                this.backgroundHolder.updatePosition();
             }
             this.needToCompute = true;
         },
