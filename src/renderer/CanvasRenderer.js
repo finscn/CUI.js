@@ -38,7 +38,7 @@ var CUI = CUI || {};
 
             this.resetGlobalContainer();
 
-            this.render = this.drawDisplayObject;
+            this.drawDisplayObject = this.render;
         },
 
         begin: function(clear) {
@@ -223,7 +223,9 @@ var CUI = CUI || {};
             }
         },
 
-        drawDisplayObject: function(displayObject, dx, dy, dw, dh) {
+        drawDisplayObject: null,
+
+        render: function(displayObject, dx, dy, dw, dh) {
             var count = arguments.length;
 
             var image = displayObject.img;
@@ -241,12 +243,28 @@ var CUI = CUI || {};
                 this.context.drawImage(image, sx, sy, sw, sh, dx, dy, dw, dh);
             } else if (count === 3) {
                 // dx, dy
-                this.context.drawImage(image, sx, sy, sw, sh, dx, dy, image.width, image.height);
+                this.context.drawImage(image, sx, sy, sw, sh, dx, dy, sw, sh);
             }
         },
 
+        renderAt: function(displayObject, dx, dy) {
+            var count = arguments.length;
+
+            var image = displayObject.img;
+            var sx = displayObject.sx;
+            var sy = displayObject.sy;
+            var sw = displayObject.sw;
+            var sh = displayObject.sh;
+
+            var t = this.globalTransform;
+            dx = dx - t.originalX;
+            dy = dy - t.originalY;
+
+            this.context.drawImage(image, sx, sy, sw, sh, dx, dy, sw, sh);
+        },
+
         renderBasic: function(displayObject) {
-            this.drawDisplayObject(displayObject, 0, 0);
+            this.renderAt(displayObject, 0, 0);
         },
 
         drawImage: function(image, sx, sy, sw, sh, dx, dy, dw, dh) {
@@ -287,17 +305,17 @@ var CUI = CUI || {};
             var CW = w - L - R,
                 CH = h - T - B;
 
-            o["CL"] && this.drawDisplayObject(o["CL"], x, y + T, L, CH);
-            o["CC"] && this.drawDisplayObject(o["CC"], x + L, y + T, CW, CH);
-            o["CR"] && this.drawDisplayObject(o["CR"], x + w - R, y + T, R, CH);
+            o["CL"] && this.render(o["CL"], x, y + T, L, CH);
+            o["CC"] && this.render(o["CC"], x + L, y + T, CW, CH);
+            o["CR"] && this.render(o["CR"], x + w - R, y + T, R, CH);
 
-            o["TL"] && this.drawDisplayObject(o["TL"], x, y, L, T);
-            o["TC"] && this.drawDisplayObject(o["TC"], x + L, y, CW, T);
-            o["TR"] && this.drawDisplayObject(o["TR"], x + w - R, y, R, T);
+            o["TL"] && this.render(o["TL"], x, y, L, T);
+            o["TC"] && this.render(o["TC"], x + L, y, CW, T);
+            o["TR"] && this.render(o["TR"], x + w - R, y, R, T);
 
-            o["BL"] && this.drawDisplayObject(o["BL"], x, y + h - B, L, B);
-            o["BC"] && this.drawDisplayObject(o["BC"], x + L, y + h - B, CW, B);
-            o["BR"] && this.drawDisplayObject(o["BR"], x + w - R, y + h - B, R, B);
+            o["BL"] && this.render(o["BL"], x, y + h - B, L, B);
+            o["BC"] && this.render(o["BC"], x + L, y + h - B, CW, B);
+            o["BR"] && this.render(o["BR"], x + w - R, y + h - B, R, B);
         },
 
         /**

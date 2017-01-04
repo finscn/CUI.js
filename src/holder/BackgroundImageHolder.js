@@ -16,7 +16,7 @@ var CUI = CUI || {};
         height: "100%",
 
         render: function(renderer, timeStep, now) {
-            renderer.drawDisplayObject(this.displayObject,
+            renderer.render(this.displayObject,
                 this.x + this.ox, this.y + this.oy, this.pixel.sw, this.pixel.sh);
         },
 

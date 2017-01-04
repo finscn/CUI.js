@@ -223,6 +223,8 @@ var CUI = CUI || {};
             if (holder) {
                 this.backgroundHolder.setParent(this);
                 this.backgroundHolder.init();
+                this.backgroundHolder.updateSize();
+                this.backgroundHolder.updatePosition();
             }
             this.needToCompute = true;
         },
@@ -661,7 +663,7 @@ var CUI = CUI || {};
                     this.createCacheCanvas();
                     this.cacheDisplayObject = renderer.createDisplayObject(this.cacheCanvas);
                 }
-                renderer.drawDisplayObject(this.cacheDisplayObject, this.x - 2, this.y - 2);
+                renderer.renderAt(this.cacheDisplayObject, this.x - 2, this.y - 2);
             } else {
                 this.readyForCache = true;
 

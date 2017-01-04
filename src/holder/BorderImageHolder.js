@@ -36,7 +36,7 @@ var CUI = CUI || {};
                     this.cacheCanvas = this.cacheBorderImage(width, height);
                     this.cacheDisplayObject = renderer.createDisplayObject(this.cacheCanvas);
                 }
-                renderer.drawDisplayObject(this.cacheDisplayObject, 0, 0, width, height);
+                renderer.render(this.cacheDisplayObject, 0, 0, width, height);
             } else {
                 this.renderBorderImage(renderer, this.x, this.y, width, height);
             }

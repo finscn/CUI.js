@@ -231,7 +231,7 @@ var CUI = CUI || {};
                 x += this.cacheOffsetX;
                 y += this.cacheOffsetY;
             }
-            renderer.drawDisplayObject(this.textObject, x, y);
+            renderer.renderAt(this.textObject, x, y);
         },
 
         renderContent: function(context, x, y) {

@@ -51,7 +51,6 @@ var CUI = CUI || {};
 
             this.computeSelf(this.parent);
             this.computeSizeWithText();
-
         },
 
         setImageHolder: function(name, info) {
