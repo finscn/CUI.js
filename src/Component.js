@@ -856,6 +856,7 @@ var CUI = CUI || {};
         var canvas = Component.canvasPool[id];
         if (!canvas) {
             canvas = document.createElement('canvas');
+            canvas.id = id;
             canvas.width = 3;
             canvas.height = 3;
             // canvas.holderId = id;
