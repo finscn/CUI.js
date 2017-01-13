@@ -135,6 +135,23 @@ var CUI = CUI || {};
             this.fontStyle = Font.getStyle(this.fontSize, this.fontName, this.fontWeight);
         },
 
+        setColor: function(color) {
+            if (this.color === color) {
+                return;
+            }
+            this.color = color;
+            this.needToCompute = true;
+        },
+
+        setShadowOffset: function(x, y) {
+            if (this.shadowOffsetX === x && this.shadowOffsetY === y) {
+                return;
+            }
+            this.shadowOffsetX = x;
+            this.shadowOffsetY = y;
+            this.needToCompute = true;
+        },
+
         setText: function(text, needToCompute) {
             if (this._text === text) {
                 return;

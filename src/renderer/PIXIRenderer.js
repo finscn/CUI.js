@@ -222,54 +222,57 @@ var CUI = CUI || {};
         },
 
         createNineSliceObject: function(image, sx, sy, sw, sh, T, R, B, L, container) {
-            return this.core.createNineSliceObject.apply(this.core, arguments);
+            if (arguments.length > 9) {
+                return this.core.createNineSliceObject(image, sx, sy, sw, sh, L, T, R, B, container);
+            }
+            T = sx;
+            R = sy;
+            B = sw;
+            L = sh;
+            return this.core.createNineSliceObject(image, L, T, R, B, container);
         },
 
     });
 
     Object.defineProperty(PIXIRenderer.prototype, 'globalAlpha', {
-            get: function get() {
-                return this.core.globalAlpha;
-            },
+        get: function get() {
+            return this.core.globalAlpha;
+        },
 
-            set: function set(value) {
-                this.core.globalAlpha = value;
-            }
+        set: function set(value) {
+            this.core.globalAlpha = value;
         }
-    );
+    });
 
     Object.defineProperty(PIXIRenderer.prototype, 'lineWidth', {
-            get: function get() {
-                return this.core.lineWidth;
-            },
+        get: function get() {
+            return this.core.lineWidth;
+        },
 
-            set: function set(value) {
-                this.core.lineWidth = value;
-            }
+        set: function set(value) {
+            this.core.lineWidth = value;
         }
-    );
+    });
 
     Object.defineProperty(PIXIRenderer.prototype, 'strokeStyle', {
-            get: function get() {
-                return this.core.strokeStyle;
-            },
+        get: function get() {
+            return this.core.strokeStyle;
+        },
 
-            set: function set(value) {
-                this.core.strokeStyle = value;
-            }
+        set: function set(value) {
+            this.core.strokeStyle = value;
         }
-    );
+    });
 
     Object.defineProperty(PIXIRenderer.prototype, 'fillStyle', {
-            get: function get() {
-                return this.core.fillStyle;
-            },
+        get: function get() {
+            return this.core.fillStyle;
+        },
 
-            set: function set(value) {
-                this.core.fillStyle = value;
-            }
+        set: function set(value) {
+            this.core.fillStyle = value;
         }
-    );
+    });
 
     exports.PIXIRenderer = PIXIRenderer;
 
