@@ -46,7 +46,7 @@ var CUI = CUI || {};
             this.origX = 0;
             this.origY = 0;
 
-            this.renderNineSliceObject = this.render;
+            this.renderNineSliceObject = this.drawDisplayObject;
         },
 
         begin: function(clear) {
@@ -166,27 +166,20 @@ var CUI = CUI || {};
 
         drawDisplayObject: function(displayObject, dx, dy, dw, dh) {
             if (arguments.length === 5) {
-                this.core.render(displayObject, dx, dy, dw, dh);
+                displayObject.width = dw;
+                displayObject.height = dh;
+                this.core.renderAt(displayObject, dx, dy);
             } else {
                 this.core.renderAt(displayObject, dx, dy);
             }
         },
 
-        render: function(displayObject, dx, dy, dw, dh) {
-            if (arguments.length === 5) {
-                this.core.render(displayObject, dx, dy, dw, dh);
-            } else {
-                this.core.renderAt(displayObject, dx, dy);
-            }
+        render: function(displayObject) {
+            this.core.render(displayObject);
         },
 
         renderAt: function(displayObject, dx, dy) {
             this.core.renderAt(displayObject, dx, dy);
-        },
-
-        renderBasic: function(displayObject) {
-            displayObject.mask = this.core.mask;
-            this.core.renderBasic(displayObject, null, false);
         },
 
         drawImage: function(image, sx, sy, sw, sh, dx, dy, dw, dh) {

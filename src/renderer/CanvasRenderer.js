@@ -223,9 +223,7 @@ var CUI = CUI || {};
             }
         },
 
-        drawDisplayObject: null,
-
-        render: function(displayObject, dx, dy, dw, dh) {
+        drawDisplayObject: function(displayObject, dx, dy, dw, dh) {
             var count = arguments.length;
 
             var image = displayObject.img;
@@ -247,6 +245,10 @@ var CUI = CUI || {};
             }
         },
 
+        render: function(displayObject) {
+            // do nothing
+        },
+
         renderAt: function(displayObject, dx, dy) {
             var count = arguments.length;
 
@@ -261,10 +263,6 @@ var CUI = CUI || {};
             dy = dy - t.originalY;
 
             this.context.drawImage(image, sx, sy, sw, sh, dx, dy, sw, sh);
-        },
-
-        renderBasic: function(displayObject) {
-            this.renderAt(displayObject, 0, 0);
         },
 
         drawImage: function(image, sx, sy, sw, sh, dx, dy, dw, dh) {
