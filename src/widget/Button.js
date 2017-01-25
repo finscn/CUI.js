@@ -45,6 +45,7 @@ var CUI = CUI || {};
                 return false;
             }
             this.touchId = id;
+            this.onTouchStart(x, y, id);
             this.doDown();
         },
 
