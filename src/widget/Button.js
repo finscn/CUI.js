@@ -90,13 +90,13 @@ var CUI = CUI || {};
             if (this.disabled) {
                 return;
             }
+            this.beforeTap(x, y, id);
             var rs = this.onTap(x, y, id);
             this.afterTap(x, y, id);
             return rs;
         },
-        afterTap: function(x, y, id) {
-
-        },
+        beforeTap: function(x, y, id) {},
+        afterTap: function(x, y, id) {},
 
         beforeRender: function(renderer, timeStep, now) {
             if (this.disabled) {
