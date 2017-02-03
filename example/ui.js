@@ -170,6 +170,10 @@ function initUI() {
         disabled: i % 2,
         textInfo: {
             text: "Big-Button-0",
+            shadowColor: "#0000ff",
+            shadowBlur: 2,
+            shadowOffsetX: 4,
+            shadowOffsetY: 4,
         },
     });
 
