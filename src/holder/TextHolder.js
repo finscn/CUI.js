@@ -49,6 +49,7 @@ var CUI = CUI || {};
         lineCount: 1,
 
         shadowColor: null,
+        shadowBlur: 0,
         shadowOffsetX: 0,
         shadowOffsetY: 0,
 
@@ -259,9 +260,21 @@ var CUI = CUI || {};
             context.textAlign = this.textAlign;
             context.textBaseline = this.textBaseline;
 
+            var bakShadow;
             if (this.shadowColor !== null) {
-                context.fillStyle = this.shadowColor;
-                this.renderLines(context, x + this.shadowOffsetX, y + this.shadowOffsetY, true);
+                bakShadow = {
+                    blur: context.shadowBlur,
+                    color: context.shadowColor,
+                    offsetX: context.shadowOffsetX,
+                    offsetY: context.shadowOffsetY,
+                };
+                context.shadowBlur = this.shadowBlur;
+                context.shadowColor = this.shadowColor;
+                context.shadowOffsetX = this.shadowOffsetX;
+                context.shadowOffsetY = this.shadowOffsetY;
+
+                // context.fillStyle = this.shadowColor;
+                // this.renderLines(context, x + this.shadowOffsetX, y + this.shadowOffsetY, true);
             }
 
             if (this.color !== null) {
@@ -279,6 +292,13 @@ var CUI = CUI || {};
 
             this.renderLines(context, x, y);
             this.textChanged = false;
+
+            if (bakShadow){
+                context.shadowBlur = bakShadow.blur;
+                context.shadowColor = bakShadow.color;
+                context.shadowOffsetX = bakShadow.offsetX;
+                context.shadowOffsetY = bakShadow.offsetY;
+            }
             // context.textAlign = prevTextAlign;
             // context.globalAlpha = prevAlpha;
         },
