@@ -153,6 +153,8 @@ var CUI = CUI || {};
 
             this.aabb = [];
             this.pixel = {
+                // width: 0,
+                // height: 0,
                 relativeX: 0,
                 relativeY: 0,
                 paddingTop: 0,

@@ -64,19 +64,21 @@ var CUI = CUI || {};
                 child.computeLayout(true);
             }
 
-            var totalWidth = size ? parent.pixel.width : currentX + margin;
-            this.tryToResizeParent(parent, totalWidth, totalHeight, true);
-            if (!size && this.align == "right") {
-                var deltaWidth = parent.pixel.width - totalWidth;
-                if (deltaWidth > 0) {
-                    for (var i = 0; i < childCount; i++) {
-                        var child = children[i];
-                        if (child.relative !== "parent" && child.relative != "root") {
-                            child.pixel.left += deltaWidth;
-                            child.pixel.relativeX += deltaWidth;
-                            child.x += deltaWidth;
-                            child.updateAABB();
-                            child.computeLayout(true);
+            if (childCount > 0) {
+                var totalWidth = size ? parent.pixel.width : currentX + margin;
+                this.tryToResizeParent(parent, totalWidth, totalHeight, true);
+                if (!size && this.align == "right") {
+                    var deltaWidth = parent.pixel.width - totalWidth;
+                    if (deltaWidth > 0) {
+                        for (var i = 0; i < childCount; i++) {
+                            var child = children[i];
+                            if (child.relative !== "parent" && child.relative != "root") {
+                                child.pixel.left += deltaWidth;
+                                child.pixel.relativeX += deltaWidth;
+                                child.x += deltaWidth;
+                                child.updateAABB();
+                                child.computeLayout(true);
+                            }
                         }
                     }
                 }

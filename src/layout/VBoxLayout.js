@@ -67,19 +67,22 @@ var CUI = CUI || {};
                 }
                 child.computeLayout(true);
             }
-            var totalHeight = size ? parent.pixel.height : currentY + margin;
-            this.tryToResizeParent(parent, totalWidth, totalHeight, true);
-            if (!size && this.align == "bottom") {
-                var deltaHeight = parent.pixel.height - totalHeight;
-                if (deltaHeight > 0) {
-                    for (var i = 0; i < childCount; i++) {
-                        var child = children[i];
-                        if (child.relative !== "parent" && child.relative != "root") {
-                            child.pixel.top += deltaHeight;
-                            child.pixel.relativeY += deltaHeight;
-                            child.y += deltaHeight;
-                            child.updateAABB();
-                            child.computeLayout(true);
+
+            if (childCount > 0) {
+                var totalHeight = size ? parent.pixel.height : currentY + margin;
+                this.tryToResizeParent(parent, totalWidth, totalHeight, true);
+                if (!size && this.align == "bottom") {
+                    var deltaHeight = parent.pixel.height - totalHeight;
+                    if (deltaHeight > 0) {
+                        for (var i = 0; i < childCount; i++) {
+                            var child = children[i];
+                            if (child.relative !== "parent" && child.relative != "root") {
+                                child.pixel.top += deltaHeight;
+                                child.pixel.relativeY += deltaHeight;
+                                child.y += deltaHeight;
+                                child.updateAABB();
+                                child.computeLayout(true);
+                            }
                         }
                     }
                 }

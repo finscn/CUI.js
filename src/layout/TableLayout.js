@@ -22,11 +22,12 @@ var CUI = CUI || {};
 
         compute: function(parent) {
             var children = parent.children;
+            var childCount = children.length;
 
             var idx = 0;
             this.initTable(parent);
 
-            for (var i = 0, len = children.length; i < len; i++) {
+            for (var i = 0; i < childCount; i++) {
                 var child = children[i];
                 if (child.relative == "parent") {
                     this.computeChild(child, child.parent)
@@ -38,7 +39,10 @@ var CUI = CUI || {};
                 }
                 child.computeLayout(true);
             }
-            this.tryToResizeParent(parent, parent.pixel.width, parent.pixel.height);
+
+            if (childCount > 0) {
+                this.tryToResizeParent(parent, parent.pixel.width, parent.pixel.height);
+            }
             return idx;
         },
 
