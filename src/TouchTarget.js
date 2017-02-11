@@ -20,7 +20,7 @@ var CUI = CUI || {};
             //         y = argsList[1];
             //     if (!this.isInRegion(x, y)) {
             //         if (this.modal) {
-            //             if (type == "tap") {
+            //             if (type === "tap") {
             //                 this.onTapOut.apply(this, argsList);
             //             }
             //             return this.modalFlag;
@@ -33,13 +33,13 @@ var CUI = CUI || {};
                 y = argsList[1];
             if (!this.isInRegion(x, y)) {
                 if (this.modal || this.mask) {
-                    if (type == "tap") {
+                    if (type === "tap") {
                         this.onTapOut.apply(this, argsList);
                     }
                     return this.modalFlag;
                 }
-                // if (type == "tap" || type == "touchStart" || type == "touchEnd") {
-                if (type == "tap" || type == "touchStart") {
+                // if (type === "tap" || type === "touchStart" || type === "touchEnd") {
+                if (type === "tap" || type === "touchStart") {
                     return false;
                 }
             }
