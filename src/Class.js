@@ -17,6 +17,7 @@ var CUI = CUI || {};
             constructor = function(options) {
                 this._initializeSuper();
                 this.initialize();
+                this.afterInitialize();
 
                 for (var key in options) {
                     this[key] = options[key];
@@ -35,11 +36,15 @@ var CUI = CUI || {};
         if (!_proto.initialize) {
             _proto.initialize = function() {};
         }
+        if (!_proto.afterInitialize) {
+            _proto.afterInitialize = function() {};
+        }
         _proto._initializeSuper = function() {
             var $super = constructor.$super;
             if ($super) {
                 $super._initializeSuper.call(this);
                 $super.initialize.call(this);
+                $super.afterInitialize.call(this);
             }
         };
 
