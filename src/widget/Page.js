@@ -8,7 +8,6 @@ var CUI = CUI || {};
     var Utils = exports.Utils;
     var Component = exports.Component;
 
-
     var Page = Class.create({
         superclass: Component,
 
@@ -22,7 +21,6 @@ var CUI = CUI || {};
             if (this.afterInit) {
                 this.afterInit();
             }
-
         },
 
     });

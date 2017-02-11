@@ -59,8 +59,11 @@ function update(timeStep, now) {
         TouchInfo.firstSwipe = null;
     }
 
-    rootUI.all["label-1"].setText("test-" + (Math.random() * 1000 >> 0),false);
+    if (rootUI.all["label-1"]) {
+        rootUI.all["label-1"].setText("test-" + (Math.random() * 1000 >> 0), false);
+    }
     rootUI.update(timeStep, now);
+
     // uiX+=1;
     // topUI.setPosition(uiX,topUI.top);
     // topUI.moveBy(0.25,0);

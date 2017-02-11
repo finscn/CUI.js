@@ -13,21 +13,23 @@ var CUI = CUI || {};
     var Label = Class.create({
         superclass: Component,
 
-        composite: false,
-        disabled: false,
+        initialize: function() {
+            this.composite = false;
+            this.disabled = false;
 
-        // 不指定宽高, 大小由 backgroundHolder 的实际大小决定
-        width: null,
-        height: null,
-        scaleBg: false,
+            // 不指定宽高, 大小由 backgroundHolder 的实际大小决定
+            this.width = null;
+            this.height = null;
+            this.scaleBg = false;
 
-        backgroundColor: null,
-        borderWidth: 0,
+            this.backgroundColor = null;
+            this.borderWidth = 0;
 
-        autoSizeWithText: false,
+            this.autoSizeWithText = false;
 
-        sizeHolder: 0.0001,
-        sizePadding: 2,
+            this.sizeHolder = 0.0001;
+            this.sizePadding = 2;
+        },
 
         init: function() {
             if (this.beforeInit) {

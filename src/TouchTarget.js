@@ -8,7 +8,9 @@ var CUI = CUI || {};
 
     var TouchTarget = Class.create({
 
-        modalFlag: -0x100000,
+        initialize: function() {
+            this.modalFlag = -0x100000;
+        },
 
         checkTouch: function(type, args) {
             if (!this.visible || this.alpha <= 0) {

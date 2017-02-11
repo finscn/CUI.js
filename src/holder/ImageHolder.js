@@ -13,37 +13,39 @@ var CUI = CUI || {};
     var ImageHolder = Class.create({
         superclass: BaseHolder,
 
-        src: null,
-        img: null,
-        sx: null,
-        sy: null,
-        sw: null,
-        sh: null,
+        initialize: function() {
+            this.src = null;
+            this.img = null;
+            this.sx = null;
+            this.sy = null;
+            this.sw = null;
+            this.sh = null;
 
-        ox: null,
-        oy: null,
-        w: null,
-        h: null,
+            this.ox = null;
+            this.oy = null;
+            this.w = null;
+            this.h = null;
 
-        alpha: null,
-        scale: 1,
-        scaleX: 1,
-        scaleY: 1,
-        flipX: false,
-        flipY: false,
-        rotation: 0,
+            this.alpha = null;
+            this.scale = 1;
+            this.scaleX = 1;
+            this.scaleY = 1;
+            this.flipX = false;
+            this.flipY = false;
+            this.rotation = 0;
 
-        x: 0,
-        y: 0,
-        offsetX: 0,
-        offsetY: 0,
-        offsetW: 0,
-        offsetH: 0,
-        // offsetAlpha: 0,
+            this.x = 0;
+            this.y = 0;
+            this.offsetX = 0;
+            this.offsetY = 0;
+            this.offsetW = 0;
+            this.offsetH = 0;
+            // this.offsetAlpha = 0;
 
-        // auto : 显示大小等于 图片实际大小.
-        width: "auto",
-        height: "auto",
+            // auto: 显示大小等于 图片实际大小;
+            this.width = "auto";
+            this.height = "auto";
+        },
 
         init: function() {
             this.pixel = {};

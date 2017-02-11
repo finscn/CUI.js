@@ -11,31 +11,33 @@ var CUI = CUI || {};
 
     var BaseHolder = Class.create({
 
-        DEG_TO_RAD: Math.PI / 180,
-        RAD_TO_DEG: 180 / Math.PI,
-        HALF_PI: Math.PI / 2,
-        DOUBLE_PI: Math.PI * 2,
+        initialize: function() {
+            this.DEG_TO_RAD = Math.PI / 180;
+            this.RAD_TO_DEG = 180 / Math.PI;
+            this.HALF_PI = Math.PI / 2;
+            this.DOUBLE_PI = Math.PI * 2;
 
-        x: 0,
-        y: 0,
-        width: null,
-        height: null,
-        anchorX: 0,
-        anchorY: 0,
+            this.x = 0;
+            this.y = 0;
+            this.width = null;
+            this.height = null;
+            this.anchorX = 0;
+            this.anchorY = 0;
 
-        alpha: 1,
+            this.alpha = 1;
 
-        offsetX: 0,
-        offsetY: 0,
-        offsetAlpha: 0,
+            this.offsetX = 0;
+            this.offsetY = 0;
+            this.offsetAlpha = 0;
 
-        alignH: "center", // left center right
-        alignV: "middle", // top middle bottom
+            this.alignH = "center", // left center righ;
+            this.alignV = "middle", // top middle botto;
 
-        visible: true,
+            this.visible = true;
 
-        parent: null,
-        needToCompute: true,
+            this.parent = null;
+            this.needToCompute = true;
+        },
 
         init: function() {
             this.setParent(this.parent);

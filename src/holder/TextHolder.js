@@ -14,53 +14,54 @@ var CUI = CUI || {};
     var TextHolder = Class.create({
         superclass: BaseHolder,
 
-        text: null,
-        color: "#000000",
+        initialize: function() {
+            this.text = null;
+            this.color = "#000000";
 
-        // "start", "end", "left", "right", "center",
-        textAlign: "start",
-        verticalAlign: "middle",
+            // "start", "end", "left", "right", "center",
+            this.textAlign = "start";
+            this.verticalAlign = "middle";
 
-        // top 默认。文本基线是 em 方框的顶端。。
-        // alphabetic  文本基线是普通的字母基线。
-        // hanging 文本基线是悬挂基线。
-        // middle  文本基线是 em 方框的正中。
-        // ideographic 文本基线是表意基线。
-        // bottom  文本基线是 em 方框的底端。
-        textBaseline: "top",
+            // top 默认。文本基线是 em 方框的顶端。。
+            // alphabetic  文本基线是普通的字母基线。
+            // hanging 文本基线是悬挂基线。
+            // middle  文本基线是 em 方框的正中。
+            // ideographic 文本基线是表意基线。
+            // bottom  文本基线是 em 方框的底端。
+            this.textBaseline = "top";
 
-        // "butt", "round", "square"
-        lineCap: "butt",
-        // "miter", "round", "bevel"
-        lineJoin: "round",
-        // miterLimit = strokeWidth
+            // "butt", "round", "square"
+            this.lineCap = "butt";
+            // "miter", "round", "bevel"
+            this.lineJoin = "round";
+            // miterLimit = strokeWidth
 
+            this.strokeColor = null;
+            this.strokeWidth = 1;
 
-        strokeColor: null,
-        strokeWidth: 1,
+            this.fontStyle = null;
+            this.fontWeight = null;
+            this.fontSize = 14;
+            this.fontName = "Arial";
+            this.lineHeight = null;
 
-        fontStyle: null,
-        fontWeight: null,
-        fontSize: 14,
-        fontName: "Arial",
-        lineHeight: null,
+            this.lines = null;
+            this.lineCount = 1;
 
-        lines: null,
-        lineCount: 1,
+            this.shadowColor = null;
+            this.shadowBlur = 0;
+            this.shadowOffsetX = 0;
+            this.shadowOffsetY = 0;
 
-        shadowColor: null,
-        shadowBlur: 0,
-        shadowOffsetX: 0,
-        shadowOffsetY: 0,
+            this.measure = null;
 
-        measure: null,
-
-        useCache: false,
-        cacheOffsetX: 0,
-        cacheOffsetY: 0,
-        cachePadding: 4,
-        shareCache: false,
-        useCachePool: true,
+            this.useCache = false;
+            this.cacheOffsetX = 0;
+            this.cacheOffsetY = 0;
+            this.cachePadding = 4;
+            this.shareCache = false;
+            this.useCachePool = true;
+        },
 
         init: function() {
             this.pixel = {
@@ -293,7 +294,7 @@ var CUI = CUI || {};
             this.renderLines(context, x, y);
             this.textChanged = false;
 
-            if (bakShadow){
+            if (bakShadow) {
                 context.shadowBlur = bakShadow.blur;
                 context.shadowColor = bakShadow.color;
                 context.shadowOffsetX = bakShadow.offsetX;

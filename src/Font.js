@@ -6,7 +6,6 @@ var CUI = CUI || {};
 
     var FontMapping = {
 
-
     };
 
     var Font = {

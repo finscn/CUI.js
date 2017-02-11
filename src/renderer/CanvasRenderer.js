@@ -11,13 +11,13 @@ var CUI = CUI || {};
 
     var CanvasRenderer = Class.create({
 
-        lazyInit: false,
-
-        canvas: null,
-        context: null,
-        clearColor: null,
-
-        webgl: false,
+        initialize: function() {
+            this.lazyInit = false;
+            this.canvas = null;
+            this.context = null;
+            this.clearColor = null;
+            this.webgl = false;
+        },
 
         init: function() {
 

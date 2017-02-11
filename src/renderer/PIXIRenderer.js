@@ -9,15 +9,21 @@ var CUI = CUI || {};
 
     var PIXIRenderer = Class.create({
 
-        lazyInit: false,
+        initialize: function() {
+            this.lazyInit = false;
+            this.core = null;
+            this.renderer = null;
+            this.canvas = null;
+            this.context = null;
+            this.clearColor = null;
+            this.webgl = false;
 
-        core: null,
-        renderer: null,
-        canvas: null,
-        context: null,
-        clearColor: null,
+            this.origX = 0;
+            this.origY = 0;
+            this.root = null;
+            this.globalContainer = null;
 
-        webgl: false,
+        },
 
         init: function() {
 

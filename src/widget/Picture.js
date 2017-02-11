@@ -13,15 +13,17 @@ var CUI = CUI || {};
     var Picture = Class.create({
         superclass: Component,
 
-        composite: false,
-        disabled: false,
+        initialize: function() {
+            this.composite = false;
+            this.disabled = false;
 
-        // 不指定宽高, 大小由 backgroundHolder 的实际大小决定
-        width: null,
-        height: null,
-        scaleX: null,
-        scaleY: null,
-        scaleImg: true,
+            // 不指定宽高, 大小由 backgroundHolder 的实际大小决定
+            this.width = null;
+            this.height = null;
+            this.scaleX = null;
+            this.scaleY = null;
+            this.scaleImg = true;
+        },
 
         init: function() {
 

@@ -7,9 +7,10 @@ var CUI = CUI || {};
     var Class = exports.Class;
 
     var EventDispatcher = Class.create({
-        constructor: EventDispatcher,
 
-        _listeners: null,
+        initialize: function() {
+            this._listeners = {}
+        },
 
         removeAllEventListeners: function() {
             for (var type in this._listeners) {

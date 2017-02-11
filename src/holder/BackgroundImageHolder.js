@@ -12,8 +12,10 @@ var CUI = CUI || {};
     var BackgroundImageHolder = Class.create({
         superclass: ImageHolder,
 
-        width: "100%",
-        height: "100%",
+        initialize: function() {
+            this.width = "100%";
+            this.height = "100%";
+        },
 
         render: function(renderer, timeStep, now) {
             renderer.drawDisplayObject(this.displayObject,
