@@ -22,7 +22,6 @@ var CUI = CUI || {};
             this.origY = 0;
             this.root = null;
             this.globalContainer = null;
-
         },
 
         init: function() {

@@ -8,9 +8,7 @@ var CUI = CUI || {};
 
     var TouchTarget = Class.create({
 
-        initialize: function() {
-            this.modalFlag = -0x100000;
-        },
+        modalFlag: -0x100000,
 
         checkTouch: function(type, args) {
             if (!this.visible || this.alpha <= 0) {
@@ -156,7 +154,7 @@ var CUI = CUI || {};
         var proto = TouchTarget.prototype;
         for (var p in proto) {
             var v = proto[p];
-            if (typeof v == "function" || p === "modalFlag") {
+            if (typeof v === "function" || p === "modalFlag") {
                 (override || !object[p]) && (object[p] = v);
             }
         }

@@ -75,8 +75,8 @@ var CUI = CUI || {};
             this.centerV = false;
 
             // 子元素的默认对齐方式.  是否有必要? 子元素上定义自己的对齐方式真的很麻烦吗?
-            // contentAlignH="auto", //  "left" "center" "right;
-            // contentAlignV="auto", //  "top" "middle" "bottom;
+            // this.contentAlignH = "auto", //  "left" "center" "right;
+            // this.contentAlignV = "auto", //  "top" "middle" "bottom;
 
             // 以下 5 个属性支持数字(代表像素), 和百分比
             // 百分比时, 相对参照物为 自身 的实际宽高(像素)
@@ -103,7 +103,7 @@ var CUI = CUI || {};
             this.backgroundAlpha = 1;
             this.backgroundImage = null;
             this.backgroundInfo = null;
-            // borderColor="rgba(30,50,80,1)";
+            // this.borderColor = "rgba(30,50,80,1)";
             this.borderColor = null;
             this.borderAlpha = 1;
             this.borderWidth = 0;

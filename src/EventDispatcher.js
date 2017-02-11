@@ -8,9 +8,7 @@ var CUI = CUI || {};
 
     var EventDispatcher = Class.create({
 
-        initialize: function() {
-            this._listeners = {}
-        },
+        _listeners: null,
 
         removeAllEventListeners: function() {
             for (var type in this._listeners) {

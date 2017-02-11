@@ -31,7 +31,6 @@ var CUI = CUI || {};
             this.valueColor = "rgba(230,60,60,1)";
         },
 
-
         init: function() {
             if (this.beforeInit) {
                 this.beforeInit();
