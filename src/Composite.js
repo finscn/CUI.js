@@ -96,7 +96,7 @@ var CUI = CUI || {};
         // override = override !== false;
         for (var p in proto) {
             var v = proto[p];
-            if (typeof v == "function") {
+            if (typeof v === "function") {
                 (override || !object[p]) && (object[p] = v);
             }
         }

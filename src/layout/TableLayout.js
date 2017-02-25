@@ -11,14 +11,16 @@ var CUI = CUI || {};
     var TableLayout = Class.create({
         superclass: BaseLayout,
 
-        cellWidth: null,
-        cellHeight: null,
+        initialize: function() {
+            this.cellWidth = null;
+            this.cellHeight = null;
 
-        cellSpaceH: null,
-        cellSpaceV: null,
+            this.cellSpaceH = null;
+            this.cellSpaceV = null;
 
-        cols: 1,
-        rows: 1,
+            this.cols = 1;
+            this.rows = 1;
+        },
 
         compute: function(parent) {
             var children = parent.children;

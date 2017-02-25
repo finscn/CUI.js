@@ -8,14 +8,16 @@ var CUI = CUI || {};
 
     var Slider = Class.create({
 
-        velX: 0,
-        velY: 0,
-        accX: 0,
-        accY: 0,
-        damping: 0.003,
-        dx: 0,
-        dy: 0,
-        entity: null,
+        initialize: function() {
+            this.velX = 0;
+            this.velY = 0;
+            this.accX = 0;
+            this.accY = 0;
+            this.damping = 0.003;
+            this.dx = 0;
+            this.dy = 0;
+            this.entity = null;
+        },
 
         init: function(entity) {
             this.entity = entity || this.entity;

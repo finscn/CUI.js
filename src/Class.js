@@ -4,20 +4,20 @@ var CUI = CUI || {};
 
 (function(exports) {
 
-    var Class = {};
+    var Class = {
+        SN: 0,
+    };
 
     Class.create = function(constructor, proto, superclass) {
 
         if (typeof constructor === "object" && arguments.length < 3) {
             superclass = proto;
             proto = constructor;
+
             constructor = function(options) {
-                // if (constructor.$super && constructor.$super.initialize) {
-                //     constructor.$super.initialize.call(this);
-                // }
-                if (this.initialize) {
-                    this.initialize();
-                }
+                this._initializeSuper();
+                this.initialize();
+                this.afterInitialize();
 
                 for (var key in options) {
                     this[key] = options[key];
@@ -26,16 +26,27 @@ var CUI = CUI || {};
                     this.init();
                 }
             };
+            constructor.classSN = (++Class.SN);
         }
 
         var _proto = constructor.prototype;
         for (var p in proto) {
             _proto[p] = proto[p];
         }
-        console.log(_proto.constructor)
-        // if (!_proto.initialize) {
-        //     _proto.initialize = function() {};
-        // }
+        if (!_proto.initialize) {
+            _proto.initialize = function() {};
+        }
+        if (!_proto.afterInitialize) {
+            _proto.afterInitialize = function() {};
+        }
+        _proto._initializeSuper = function() {
+            var $super = constructor.$super;
+            if ($super) {
+                $super._initializeSuper.call(this);
+                $super.initialize.call(this);
+                $super.afterInitialize.call(this);
+            }
+        };
 
         Class.extend(constructor, superclass);
 

@@ -13,31 +13,33 @@ var CUI = CUI || {};
     var ScrollView = Class.create({
         superclass: Component,
 
-        scrollH: false,
-        scrollV: true,
+        initialize: function() {
+            this.scrollH = false;
+            this.scrollV = true;
 
-        scrollX: 0,
-        scrollY: 0,
-        scrollDX: 0,
-        scrollDY: 0,
+            this.scrollX = 0;
+            this.scrollY = 0;
+            this.scrollDX = 0;
+            this.scrollDY = 0;
 
-        clip: true,
+            this.clip = true;
 
-        outEdge: 90,
-        damping: 0.0025,
-        swipeScale: 1.2,
-        minScrollVel: 0.12,
-        bounceDuration: 160,
-        scrollingDuration: 700,
+            this.outEdge = 90;
+            this.damping = 0.0025;
+            this.swipeScale = 1.2;
+            this.minScrollVel = 0.12;
+            this.bounceDuration = 160;
+            this.scrollingDuration = 700;
 
-        scrollThumb: true,
-        thumbWidth: 10,
-        thumbColor: "rgba(255,255,255,0.6)",
-        thumbBgColor: "rgba(0,0,0,0.4)",
+            this.scrollThumb = true;
+            this.thumbWidth = 10;
+            this.thumbColor = "rgba(255,255,255,0.6)";
+            this.thumbBgColor = "rgba(0,0,0,0.4)";
 
-        // TODO
-        snapWidth: null,
-        snapHeight: null,
+            // TODO
+            this.snapWidth = null;
+            this.snapHeight = null;
+        },
 
         init: function() {
 

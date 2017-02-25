@@ -14,20 +14,22 @@ var CUI = CUI || {};
     var ProgressBar = Class.create({
         superclass: Component,
 
-        composite: false,
-        disabled: false,
+        initialize: function() {
+            this.composite = false;
+            this.disabled = false;
 
-        // 不指定宽高, 大小由 backgroundHolder 的实际大小决定
-        width: null,
-        height: null,
-        scaleBg: false,
+            // 不指定宽高, 大小由 backgroundHolder 的实际大小决定
+            this.width = null;
+            this.height = null;
+            this.scaleBg = false;
 
-        progress: 0,
-        scaleValue: false,
+            this.progress = 0;
+            this.scaleValue = false;
 
-        backgroundColor: "rgba(50,50,50,0.5)",
-        borderColor: "rgba(50,50,50,1)",
-        valueColor: "rgba(230,60,60,1)",
+            this.backgroundColor = "rgba(50,50,50,0.5)";
+            this.borderColor = "rgba(50,50,50,1)";
+            this.valueColor = "rgba(230,60,60,1)";
+        },
 
         init: function() {
             if (this.beforeInit) {
@@ -92,19 +94,19 @@ var CUI = CUI || {};
                 context.fillStyle = this.backgroundColor;
                 context.fillRect(this.x, this.y, this.w, this.h);
             }
-
-            if (this.valueHolder) {
-                this.valueHolder.sw = this.valueHolder.orignSW * (this.scaleValue ? 1 : p);
-                this.valueHolder.pixel.width = this.valueHolder.orignWidth * p;
-                this.valueHolder.simpleRender(context, timeStep, now);
-            } else {
-                context.fillStyle = this.valueColor;
-                context.fillRect(this.x, this.y, this.w * p, this.h);
-                context.strokeStyle = this.borderColor;
-                context.lineWidth = 2;
-                context.strokeRect(this.x, this.y, this.w, this.h);
+            if (p > 0) {
+                if (this.valueHolder) {
+                    this.valueHolder.sw = this.valueHolder.orignSW * (this.scaleValue ? 1 : p);
+                    this.valueHolder.pixel.width = this.valueHolder.orignWidth * p;
+                    this.valueHolder.simpleRender(context, timeStep, now);
+                } else {
+                    context.fillStyle = this.valueColor;
+                    context.fillRect(this.x, this.y, this.w * p, this.h);
+                    context.strokeStyle = this.borderColor;
+                    context.lineWidth = 2;
+                    context.strokeRect(this.x, this.y, this.w, this.h);
+                }
             }
-
         },
 
     });

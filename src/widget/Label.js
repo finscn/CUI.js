@@ -13,21 +13,23 @@ var CUI = CUI || {};
     var Label = Class.create({
         superclass: Component,
 
-        composite: false,
-        disabled: false,
+        initialize: function() {
+            this.composite = false;
+            this.disabled = false;
 
-        // 不指定宽高, 大小由 backgroundHolder 的实际大小决定
-        width: null,
-        height: null,
-        scaleBg: false,
+            // 不指定宽高, 大小由 backgroundHolder 的实际大小决定
+            this.width = null;
+            this.height = null;
+            this.scaleBg = false;
 
-        backgroundColor: null,
-        borderWidth: 0,
+            this.backgroundColor = null;
+            this.borderWidth = 0;
 
-        autoSizeWithText: false,
+            this.resizeWithText = true;
 
-        sizeHolder: 0.0001,
-        sizePadding: 2,
+            this.sizeHolder = 0.0001;
+            this.sizePadding = 2;
+        },
 
         init: function() {
             if (this.beforeInit) {
@@ -35,6 +37,8 @@ var CUI = CUI || {};
             }
 
             Label.$super.init.call(this);
+
+            this._sizeChanged = true;
 
             if (this.iconInfo) {
                 this.setIconInfo(this.iconInfo);
@@ -51,7 +55,6 @@ var CUI = CUI || {};
 
             this.computeSelf(this.parent);
             this.computeSizeWithText();
-
         },
 
         setImageHolder: function(name, info) {
@@ -133,18 +136,18 @@ var CUI = CUI || {};
         },
 
         setText: function(text, needToCompute) {
-            this.textHolder.setText(text, needToCompute);
+            this.textHolder.setText(text);
+            this.needToComputeSize = this.textHolder.textChanged;
             this.needToCompute = needToCompute !== false;
-            this.needToComputeSize = needToCompute !== false;
         },
 
         computeWidth: function() {
             var pixel = this.pixel;
             var autoWidth = this.width === null || this.width === "auto";
 
-            if (autoWidth && (this.autoSizeWithText || !this.backgroundHolder)) {
+            if (autoWidth && !this.backgroundHolder) {
                 pixel.width = pixel.width || 0;
-                this._autoSizeWithText = true;
+                this._sizeChanged = true;
             } else if (autoWidth && this.backgroundHolder) {
                 pixel.width = this.backgroundHolder.w;
             } else {
@@ -165,9 +168,9 @@ var CUI = CUI || {};
             var pixel = this.pixel;
             var autoHeight = this.height === null || this.height === "auto";
 
-            if (autoHeight && (this.autoSizeWithText || !this.backgroundHolder)) {
+            if (autoHeight && !this.backgroundHolder) {
                 pixel.height = pixel.height || 0;
-                this._autoSizeWithText = true;
+                this._sizeChanged = true;
             } else if (autoHeight && this.backgroundHolder) {
                 pixel.height = this.backgroundHolder.h;
             } else {
@@ -191,6 +194,7 @@ var CUI = CUI || {};
                 return;
             }
             this.needToComputeSize = false;
+            this._sizeChanged = false;
             var needToCompute = false;
             // var ext = this.sizePadding * 2 + this.borderWidth;
             var extX = this.borderWidth + this.paddingLeft + this.paddingRight;
@@ -247,10 +251,10 @@ var CUI = CUI || {};
         },
 
         renderSelf: function(context, timeStep, now) {
-            if (this._autoSizeWithText && this.textHolder) {
-                if (this.textHolder.needToCompute) {
-                    this.textHolder.computeSize();
-                }
+            if (this.textHolder && (this.resizeWithText || this._sizeChanged) && this.needToComputeSize) {
+                // if (this.textHolder.needToCompute) {
+                this.textHolder.computeSize();
+                // }
                 this.computeSizeWithText();
             }
 

@@ -20,7 +20,7 @@ var CUI = CUI || {};
             //         y = argsList[1];
             //     if (!this.isInRegion(x, y)) {
             //         if (this.modal) {
-            //             if (type == "tap") {
+            //             if (type === "tap") {
             //                 this.onTapOut.apply(this, argsList);
             //             }
             //             return this.modalFlag;
@@ -33,13 +33,13 @@ var CUI = CUI || {};
                 y = argsList[1];
             if (!this.isInRegion(x, y)) {
                 if (this.modal || this.mask) {
-                    if (type == "tap") {
+                    if (type === "tap") {
                         this.onTapOut.apply(this, argsList);
                     }
                     return this.modalFlag;
                 }
-                // if (type == "tap" || type == "touchStart" || type == "touchEnd") {
-                if (type == "tap" || type == "touchStart") {
+                // if (type === "tap" || type === "touchStart" || type === "touchEnd") {
+                if (type === "tap" || type === "touchStart") {
                     return false;
                 }
             }
@@ -154,7 +154,7 @@ var CUI = CUI || {};
         var proto = TouchTarget.prototype;
         for (var p in proto) {
             var v = proto[p];
-            if (typeof v == "function" || p === "modalFlag") {
+            if (typeof v === "function" || p === "modalFlag") {
                 (override || !object[p]) && (object[p] = v);
             }
         }

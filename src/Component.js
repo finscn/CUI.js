@@ -15,120 +15,122 @@ var CUI = CUI || {};
 
     var Component = Class.create({
 
-        id: null,
-        lazyInit: false,
+        initialize: function() {
 
-        /////////////////////////////////////////////
-        // 对象创建后, 以下属性可更改
+            this.id = null;
+            this.lazyInit = false;
 
-        // 以下 6 个属性支持数字(代表像素), 和百分比
-        // 百分比时, 相对参照物为 父元素 的实际宽高(像素)
-        left: null,
-        top: null,
-        right: null,
-        bottom: null,
-        // 默写组件支持 "auto" , 根据布局和子元素来确定自己的宽高
-        // 支持 混合单位, 如 "100% - 25" , 意思为: 父容器的100%再减去25像素.
-        width: null,
-        height: null,
+            /////////////////////////////////////////////
+            // 对象创建后, 以下属性可更改
 
-        visible: true,
-        zIndex: 0,
-        index: 0,
+            // 以下 6 个属性支持数字(代表像素), 和百分比
+            // 百分比时, 相对参照物为 父元素 的实际宽高(像素)
+            this.left = null;
+            this.top = null;
+            this.right = null;
+            this.bottom = null;
+            // 默写组件支持 "auto" , 根据布局和子元素来确定自己的宽高
+            // 支持 混合单位, 如 "100% - 25" , 意思为 父容器的100%再减去25像素.
+            this.width = null;
+            this.height = null;
 
-        // alpha不影响子元素
-        alpha: 1,
+            this.visible = true;
+            this.zIndex = 0;
+            this.index = 0;
 
-        // 缩放只适合用来做瞬间的、纯视觉上的动画效果, 它不会改变UI的响应区域和行为
-        // 如果要真正改变UI的大小, 请通过修改UI(以及内部元素的)width/height来实现
-        scale: 1,
+            // alpha不影响子元素
+            this.alpha = 1;
 
-        offsetX: 0,
-        offsetY: 0,
+            // 缩放只适合用来做瞬间的、纯视觉上的动画效果, 它不会改变UI的响应区域和行为
+            // 如果要真正改变UI的大小, 请通过修改UI(以及内部元素的)width/height来实现
+            this.scale = 1;
 
-        // 缩放时才需要
-        anchorX: "50%",
-        anchorY: "50%",
+            this.offsetX = 0;
+            this.offsetY = 0;
 
-        extLeft: 0,
-        extRight: 0,
-        extTop: 0,
-        extBottom: 0,
+            // 缩放时才需要
+            this.anchorX = "50%";
+            this.anchorY = "50%";
 
-        layout: null,
-        root: null,
-        parent: null,
+            this.extLeft = 0;
+            this.extRight = 0;
+            this.extTop = 0;
+            this.extBottom = 0;
 
-        modal: false,
-        maskColor: "#000000",
-        maskAlpha: 0.35,
+            this.layout = null;
+            this.root = null;
+            this.parent = null;
 
-        displayObject: null,
-        transform: null,
+            this.modal = false;
+            this.maskColor = "#000000";
+            this.maskAlpha = 0.35;
 
-        /////////////////////////////////////////////
-        // 对象创建后, 以下属性不可更改
+            this.displayObject = null;
+            this.transform = null;
 
-        centerH: false,
-        centerV: false,
+            /////////////////////////////////////////////
+            // 对象创建后, 以下属性不可更改
 
-        // 子元素的默认对齐方式.  是否有必要? 子元素上定义自己的对齐方式真的很麻烦吗?
-        // contentAlignH: "auto", //  "left" "center" "right"
-        // contentAlignV: "auto", //  "top" "middle" "bottom"
+            this.centerH = false;
+            this.centerV = false;
 
-        // 以下 5 个属性支持数字(代表像素), 和百分比
-        // 百分比时, 相对参照物为 自身 的实际宽高(像素)
-        padding: null,
-        paddingTop: null,
-        paddingRight: null,
-        paddingBottom: null,
-        paddingLeft: null,
+            // 子元素的默认对齐方式.  是否有必要? 子元素上定义自己的对齐方式真的很麻烦吗?
+            // this.contentAlignH = "auto", //  "left" "center" "right;
+            // this.contentAlignV = "auto", //  "top" "middle" "bottom;
 
-        // 以下 5 个属性支持数字(代表像素), 和百分比
-        // 百分比时, 相对参照物为 父元素 的实际宽高(像素)
-        margin: null,
-        marginTop: null,
-        marginRight: null,
-        marginBottom: null,
-        marginLeft: null,
+            // 以下 5 个属性支持数字(代表像素), 和百分比
+            // 百分比时, 相对参照物为 自身 的实际宽高(像素)
+            this.padding = null;
+            this.paddingTop = null;
+            this.paddingRight = null;
+            this.paddingBottom = null;
+            this.paddingLeft = null;
 
-
-        // relative: "root", // 相对于 root容器 定位, 类似dom的position:absolute
-        // relative: "parent", // 相对于 parent容器 定位
-        relative: false, // 其他(默认值) :遵循parent容器的layout, left,top按偏移量处理( 类似dom的position:relative )
+            // 以下 5 个属性支持数字(代表像素), 和百分比
+            // 百分比时, 相对参照物为 父元素 的实际宽高(像素)
+            this.margin = null;
+            this.marginTop = null;
+            this.marginRight = null;
+            this.marginBottom = null;
+            this.marginLeft = null;
 
 
-        backgroundColor: null, //"rgba(200,220,255,1)",
-        backgroundAlpha: 1,
-        backgroundImage: null,
-        backgroundInfo: null,
-        // borderColor: "rgba(30,50,80,1)",
-        borderColor: null,
-        borderAlpha: 1,
-        borderWidth: 0,
-        borderImageInfo: null, // { img , sx, sy, sw, sh, top, right, bottom, left }
-        cacheBorderImage: false,
+            // relative: "root", // 相对于 root容器 定位, 类似dom的position:absolute
+            // relative: "parent", // 相对于 parent容器 定位
+            this.relative = false; // 其他(默认值) :遵循parent容器的layout, left,top按偏移量处理( 类似dom的position:relative )
 
-        ////////////////////////////////////////
-        // 以下属性为内部属性, 用户通常不需要关心
+            this.backgroundColor = null; //"rgba(200,220,255,1)";
+            this.backgroundAlpha = 1;
+            this.backgroundImage = null;
+            this.backgroundInfo = null;
+            // this.borderColor = "rgba(30,50,80,1)";
+            this.borderColor = null;
+            this.borderAlpha = 1;
+            this.borderWidth = 0;
+            this.borderImageInfo = null; // { img , sx, sy, sw, sh, top, right, bottom, left }
+            this.cacheBorderImage = false;
 
-        // 绝对定位和大小, 单位:像素
-        x: 0,
-        y: 0,
-        w: 0,
-        h: 0,
+            ////////////////////////////////////////
+            // 以下属性为内部属性, 用户通常不需要关心
 
-        aabb: null,
-        pixel: null,
+            // 绝对定位和大小, 单位:像素
+            this.x = 0;
+            this.y = 0;
+            this.w = 0;
+            this.h = 0;
 
-        composite: true,
-        children: null,
-        childrenMap: null,
-        needToCompute: true,
+            this.aabb = null;
+            this.pixel = null;
 
-        useCache: false,
-        readyForCache: false,
-        cached: false,
+            this.composite = true;
+            this.children = null;
+            this.childrenMap = null;
+            this.needToCompute = true;
+
+            this.useCache = false;
+            this.readyForCache = false;
+            this.cached = false;
+        },
 
         init: function() {
 
@@ -232,9 +234,10 @@ var CUI = CUI || {};
         },
 
         beforeInit: null,
-        _beforeInit: function() {},
-        _afterInit: function() {},
         afterInit: null,
+
+        _beforeInit: noop,
+        _afterInit: noop,
 
         setLayout: function(layout) {
             var name, options;
@@ -511,6 +514,16 @@ var CUI = CUI || {};
                 this.bottom = bottom;
                 this.setReflow("parent");
             }
+        },
+
+        resize: function() {
+            this.computeWidth();
+            this.computeHeight();
+            this.computePositionX();
+            this.computePositionY();
+            this.computePadding();
+            this.updateAABB();
+            this.needToCompute = true;
         },
 
         computeSelf: function(parent) {

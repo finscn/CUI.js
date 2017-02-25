@@ -7,7 +7,6 @@ var CUI = CUI || {};
     var Class = exports.Class;
 
     var EventDispatcher = Class.create({
-        constructor: EventDispatcher,
 
         _listeners: null,
 

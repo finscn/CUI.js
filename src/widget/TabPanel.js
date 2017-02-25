@@ -15,10 +15,12 @@ var CUI = CUI || {};
     var TabPanel = Class.create({
         superclass: Panel,
 
-        buttons: null,
-        panels: null,
-        currentTab: 0,
-        defaultTab: 0,
+        initialize: function() {
+            this.buttons = null;
+            this.panels = null;
+            this.currentTab = 0;
+            this.defaultTab = 0;
+        },
 
         setTabs: function(buttons, panels, sync) {
             this.buttons = buttons || [];

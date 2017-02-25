@@ -11,9 +11,11 @@ var CUI = CUI || {};
     var HBoxLayout = Class.create({
         superclass: BaseLayout,
 
-        align: "left",
-        size: null,
-        equalSize: false,
+        initialize: function() {
+            this.align = "left";
+            this.size = null;
+            this.equalSize = false;
+        },
 
         compute: function(parent) {
             var children = parent.children;

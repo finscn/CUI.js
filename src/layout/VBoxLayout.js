@@ -11,9 +11,11 @@ var CUI = CUI || {};
     var VBoxLayout = Class.create({
         superclass: BaseLayout,
 
-        align: "top",
-        size: null,
-        equalSize: false,
+        initialize: function() {
+            this.align = "top";
+            this.size = null;
+            this.equalSize = false;
+        },
 
         compute: function(parent) {
             var children = parent.children;

@@ -9,18 +9,16 @@ var CUI = CUI || {};
     var Label = exports.Label;
 
     var Button = Class.create({
-
         superclass: Label,
+
+        initialize: function() {
+            this.borderWidth = 0;
+            this.textAlign = "center";
+        },
 
         // init: function() {
         //     Button.$super.init.call(this);
         // },
-
-        borderWidth: 0,
-
-        autoSizeWithText: false,
-
-        textAlign: "center",
 
         doUp: function() {
             this.touchId = null;

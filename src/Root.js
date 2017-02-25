@@ -13,16 +13,18 @@ var CUI = CUI || {};
     var Root = Class.create({
         superclass: Component,
 
-        id: "cmp_root",
+        initialize: function() {
+            this.id = "cmp_root";
 
-        width: null,
-        height: null,
+            this.width = null;
+            this.height = null;
 
-        updateSelf: noop,
-        renderSelf: noop,
-        checkTouchSelf: noop,
+            this.updateSelf = noop;
+            this.renderSelf = noop;
+            this.checkTouchSelf = noop;
 
-        resetSN: 1,
+            this.resetSN = 1;
+        },
 
         init: function() {
             this.all = {};

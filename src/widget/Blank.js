@@ -11,9 +11,12 @@ var CUI = CUI || {};
     var Blank = Class.create({
         superclass: Component,
 
-        composite: false,
-        disabled: false,
-        backgroundColor: null,
+        initialize: function() {
+            this.composite = false;
+            this.disabled = false;
+            this.backgroundColor = null;
+        },
+
         computeLayout: function(forceCompute) {
             this.needToCompute = false;
         },

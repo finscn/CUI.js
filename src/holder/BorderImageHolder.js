@@ -13,17 +13,19 @@ var CUI = CUI || {};
     var BorderImageHolder = Class.create({
         superclass: ImageHolder,
 
-        width: "100%",
-        height: "100%",
+        initialize: function() {
+            this.width = "100%";
+            this.height = "100%";
 
-        T: null,
-        R: null,
-        B: null,
-        L: null,
+            this.T = null;
+            this.R = null;
+            this.B = null;
+            this.L = null;
 
-        fill: true,
+            this.fill = true;
 
-        useCache: false,
+            this.useCache = false;
+        },
 
         render: function(context, timeStep, now) {
             var bi = this;

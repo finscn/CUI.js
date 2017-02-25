@@ -10,17 +10,19 @@ var CUI = CUI || {};
 
     var Cursor = Class.create({
 
-        lazyInit: false,
-        hoverButton: null,
-        hoverId: 0,
-        defaultHoverId: 0,
+        initialize: function() {
+            this.lazyInit = false;
+            this.hoverButton = null;
+            this.hoverId = 0;
+            this.defaultHoverId = 0;
 
-        cyclic: true,
-        disabled: true,
+            this.cyclic = true;
+            this.disabled = true;
 
-        color: "#FF7F00",
-        ui: null,
-        navTree: null,
+            this.color = "#FF7F00";
+            this.ui = null;
+            this.navTree = null;
+        },
 
         init: function() {
             if (this.defaultHoverId) {
