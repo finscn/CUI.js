@@ -26,6 +26,7 @@ var CUI = CUI || {};
             this.borderWidth = 0;
 
             this.autoSizeWithText = false;
+            this.resizeWithText = true;
 
             this.sizeHolder = 0.0001;
             this.sizePadding = 2;
@@ -134,9 +135,9 @@ var CUI = CUI || {};
         },
 
         setText: function(text, needToCompute) {
-            this.textHolder.setText(text, needToCompute);
+            this.textHolder.setText(text);
+            this.needToComputeSize = this.textHolder.textChanged;
             this.needToCompute = needToCompute !== false;
-            this.needToComputeSize = needToCompute !== false;
         },
 
         computeWidth: function() {
@@ -145,7 +146,7 @@ var CUI = CUI || {};
 
             if (autoWidth && (this.autoSizeWithText || !this.backgroundHolder)) {
                 pixel.width = pixel.width || 0;
-                this._autoSizeWithText = true;
+                this.resizeWithText = true;
             } else if (autoWidth && this.backgroundHolder) {
                 pixel.width = this.backgroundHolder.w;
             } else {
@@ -168,7 +169,7 @@ var CUI = CUI || {};
 
             if (autoHeight && (this.autoSizeWithText || !this.backgroundHolder)) {
                 pixel.height = pixel.height || 0;
-                this._autoSizeWithText = true;
+                this.resizeWithText = true;
             } else if (autoHeight && this.backgroundHolder) {
                 pixel.height = this.backgroundHolder.h;
             } else {
@@ -248,10 +249,10 @@ var CUI = CUI || {};
         },
 
         renderSelf: function(renderer, timeStep, now) {
-            if (this._autoSizeWithText && this.needToComputeSize && this.textHolder) {
-                if (this.textHolder.needToCompute) {
+            if (this.resizeWithText && this.needToComputeSize && this.textHolder) {
+                // if (this.textHolder.needToCompute) {
                     this.textHolder.computeSize();
-                }
+                // }
                 this.computeSizeWithText();
             }
 

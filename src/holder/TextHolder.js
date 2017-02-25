@@ -61,6 +61,11 @@ var CUI = CUI || {};
             this.cachePadding = 4;
             this.shareCache = false;
             this.useCachePool = true;
+
+            this.resizeWithText = true;
+            this.lineHeight = 0;
+            this.width = 8;
+            this.height = 8;
         },
 
         init: function() {
@@ -154,7 +159,7 @@ var CUI = CUI || {};
             this.needToCompute = true;
         },
 
-        setText: function(text, needToCompute) {
+        setText: function(text) {
             if (this._text === text) {
                 return;
             }
@@ -167,22 +172,33 @@ var CUI = CUI || {};
                 this.lines = String(text).split(/(?:\r\n|\r|\n)/);
             }
             this.lineCount = this.lines.length;
-            this.needToCompute = needToCompute !== false;
+            this.needToCompute = true;
         },
 
-        computeSize: function() {
+        computeSize: function(force) {
             if (!this.lines) {
                 this.needToCompute = false;
                 return;
             }
-            var ctx = textContext;
-            ctx.font = this.fontStyle;
-            var measure = ctx.measureText(this.lines[0]);
-            measure.height = Math.ceil(this.fontSize * 1.5);
-            this.lineHeight = this.lineHeight || measure.height;
-            this.measure = measure;
-            this.width = measure.width;
+
+            if (force || this.resizeWithText) {
+                var ctx = textContext;
+                ctx.font = this.fontStyle;
+                var measure = ctx.measureText(this.lines[0]);
+                measure.height = Math.ceil(this.fontSize * 1.5);
+                this.lineHeight = this.lineHeight || measure.height;
+                this.measure = measure;
+                this.width = measure.width;
+            } else {
+                this.lineHeight = this.lineHeight || this.height;
+                this.measure = {
+                    width: this.width,
+                    height: this.lineHeight,
+                }
+            }
+
             this.height = this.lineHeight * this.lineCount;
+
             this.pixel.width = this.width;
             this.pixel.height = this.height;
             this.updatePosition();
@@ -190,13 +206,13 @@ var CUI = CUI || {};
 
             if (this.useCache) {
                 if (this.textAlign == "center") {
-                    this.cacheOffsetX = -Math.ceil(this.width / 2 + this.strokeWidth + this.cachePadding);
+                    this.cacheOffsetX = Math.ceil(this.width / 2 + this.strokeWidth + this.cachePadding);
                 } else if (this.textAlign == "right" || this.textAlign == "end") {
-                    this.cacheOffsetX = -(this.width + this.strokeWidth + this.cachePadding);
+                    this.cacheOffsetX = this.width + this.strokeWidth + this.cachePadding;
                 } else {
-                    this.cacheOffsetX = -(this.strokeWidth + this.cachePadding);
+                    this.cacheOffsetX = this.strokeWidth + this.cachePadding;
                 }
-                this.cacheOffsetY = -(this.strokeWidth + this.cachePadding);
+                this.cacheOffsetY = this.strokeWidth + this.cachePadding;
                 this.updateCache();
                 this.textObject.updateSize();
             }
@@ -205,7 +221,7 @@ var CUI = CUI || {};
         updateCache: function() {
             this.cacheCanvas.width = this.width + (this.strokeWidth + this.cachePadding) * 2;
             this.cacheCanvas.height = this.height + (this.strokeWidth + this.cachePadding) * 2;
-            this.renderContent(this.cacheContext, -this.cacheOffsetX, -this.cacheOffsetY);
+            this.renderContent(this.cacheContext, this.cacheOffsetX, this.cacheOffsetY);
             // this.cacheContext.strokeRect(0, 0, this.cacheCanvas.width, this.cacheCanvas.height);
         },
 
@@ -232,23 +248,23 @@ var CUI = CUI || {};
             if (!this.visible || this.text === "" || !this.lines) {
                 return false;
             }
-            if (this.needToCompute) {
-                this.computeSize();
-            } else {
-                if (this.textChanged || this.shareCache) {
-                    if (this.useCache) {
-                        this.updateCache();
-                        this.textObject.updateContent();
-                    }
+            // if (this.needToCompute) {
+            //     this.computeSize();
+            // } else {
+            if (this.needToCompute || this.shareCache) {
+                if (this.useCache) {
+                    this.updateCache();
+                    this.textObject.updateContent();
                 }
             }
+            // }
 
             var x = this.x - this.anchorX + this.offsetX;
             var y = this.y - this.anchorY + this.offsetY;
 
             if (this.useCache) {
-                x += this.cacheOffsetX;
-                y += this.cacheOffsetY;
+                x -= this.cacheOffsetX;
+                y -= this.cacheOffsetY;
             }
             renderer.renderAt(this.textObject, x, y);
         },
@@ -293,6 +309,7 @@ var CUI = CUI || {};
 
             this.renderLines(context, x, y);
             this.textChanged = false;
+            this.needToCompute = false;
 
             if (bakShadow) {
                 context.shadowBlur = bakShadow.blur;

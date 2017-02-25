@@ -516,6 +516,16 @@ var CUI = CUI || {};
             }
         },
 
+        resize: function() {
+            this.computeWidth();
+            this.computeHeight();
+            this.computePositionX();
+            this.computePositionY();
+            this.computePadding();
+            this.updateAABB();
+            this.needToCompute = true;
+        },
+
         computeSelf: function(parent) {
             this.computeMargin(parent);
             this.computeRealMargin(parent);

@@ -21,7 +21,7 @@ var CUI = CUI || {};
 
         getStyle: function(size, name, weight) {
             size = size || 12;
-            if (weight == "normal") {
+            if (weight === "normal") {
                 weight = null;
             }
             if (window.App) {

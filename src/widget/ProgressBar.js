@@ -93,16 +93,16 @@ var CUI = CUI || {};
             } else {
                 renderer.fillRect(this.x, this.y, this.w, this.h, this.backgroundColor, this.pixel);
             }
-
-            if (this.valueHolder) {
-                this.valueHolder.sw = this.valueHolder.orignSW * (this.scaleValue ? 1 : p);
-                this.valueHolder.pixel.width = this.valueHolder.orignWidth * p;
-                this.valueHolder.simpleRender(renderer, timeStep, now);
-            } else {
-                renderer.fillRect(this.x, this.y, this.w * p, this.h, this.valueColor, this.pixel);
-                renderer.strokeRect(this.x, this.y, this.w, this.h, this.borderColor, 2, this.pixel);
+            if (p > 0) {
+                if (this.valueHolder) {
+                    this.valueHolder.sw = this.valueHolder.orignSW * (this.scaleValue ? 1 : p);
+                    this.valueHolder.pixel.width = this.valueHolder.orignWidth * p;
+                    this.valueHolder.simpleRender(renderer, timeStep, now);
+                } else {
+                    renderer.fillRect(this.x, this.y, this.w * p, this.h, this.valueColor, this.pixel);
+                    renderer.strokeRect(this.x, this.y, this.w, this.h, this.borderColor, 2, this.pixel);
+                }
             }
-
         },
 
     });
