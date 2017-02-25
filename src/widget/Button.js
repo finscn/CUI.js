@@ -9,6 +9,7 @@ var CUI = CUI || {};
     var Label = exports.Label;
 
     var Button = Class.create({
+
         superclass: Label,
 
         // init: function() {
