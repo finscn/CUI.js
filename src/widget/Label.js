@@ -25,7 +25,6 @@ var CUI = CUI || {};
             this.backgroundColor = null;
             this.borderWidth = 0;
 
-            this.autoSizeWithText = false;
             this.resizeWithText = true;
 
             this.sizeHolder = 0.0001;
@@ -38,6 +37,8 @@ var CUI = CUI || {};
             }
 
             Label.$super.init.call(this);
+
+            this._sizeChanged = true;
 
             if (this.iconInfo) {
                 this.setIconInfo(this.iconInfo);
@@ -144,9 +145,9 @@ var CUI = CUI || {};
             var pixel = this.pixel;
             var autoWidth = this.width === null || this.width === "auto";
 
-            if (autoWidth && (this.autoSizeWithText || !this.backgroundHolder)) {
+            if (autoWidth && !this.backgroundHolder) {
                 pixel.width = pixel.width || 0;
-                this.resizeWithText = true;
+                this._sizeChanged = true;
             } else if (autoWidth && this.backgroundHolder) {
                 pixel.width = this.backgroundHolder.w;
             } else {
@@ -167,9 +168,9 @@ var CUI = CUI || {};
             var pixel = this.pixel;
             var autoHeight = this.height === null || this.height === "auto";
 
-            if (autoHeight && (this.autoSizeWithText || !this.backgroundHolder)) {
+            if (autoHeight && !this.backgroundHolder) {
                 pixel.height = pixel.height || 0;
-                this.resizeWithText = true;
+                this._sizeChanged = true;
             } else if (autoHeight && this.backgroundHolder) {
                 pixel.height = this.backgroundHolder.h;
             } else {
@@ -193,6 +194,7 @@ var CUI = CUI || {};
                 return;
             }
             this.needToComputeSize = false;
+            this._sizeChanged = false;
             var needToCompute = false;
             // var ext = this.sizePadding * 2 + this.borderWidth;
             var extX = this.borderWidth + this.paddingLeft + this.paddingRight;
@@ -249,9 +251,9 @@ var CUI = CUI || {};
         },
 
         renderSelf: function(renderer, timeStep, now) {
-            if (this.resizeWithText && this.needToComputeSize && this.textHolder) {
+            if (this.textHolder && (this.resizeWithText || this._sizeChanged) && this.needToComputeSize) {
                 // if (this.textHolder.needToCompute) {
-                    this.textHolder.computeSize();
+                this.textHolder.computeSize();
                 // }
                 this.computeSizeWithText();
             }

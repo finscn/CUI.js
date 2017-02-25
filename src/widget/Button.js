@@ -13,7 +13,6 @@ var CUI = CUI || {};
 
         initialize: function() {
             this.borderWidth = 0;
-            this.autoSizeWithText = false;
             this.textAlign = "center";
         },
 
