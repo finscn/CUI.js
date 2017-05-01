@@ -9,6 +9,10 @@ var CUI = CUI || {};
 
     var PIXIRenderer = Class.create({
 
+        antialias: false,
+        transparent: true,
+        backgroundColor: 0x000000,
+
         initialize: function() {
             this.lazyInit = false;
             this.core = null;
@@ -30,13 +34,20 @@ var CUI = CUI || {};
                 var renderer = this.renderer;
                 if (!renderer) {
                     var canvas = this.canvas;
-                    // renderer = new PIXI.CanvasRenderer(canvas.width, canvas.height, {
+                    // renderer = new PIXI.CanvasRenderer({
+                    //     width: canvas.width,
+                    //     height: canvas.height,
                     //     view: canvas,
                     // });
-                    renderer = new PIXI.WebGLRenderer(canvas.width, canvas.height, {
+                    renderer = new PIXI.WebGLRenderer({
+                        width: canvas.width,
+                        height: canvas.height,
                         view: canvas,
+                        antialias: this.antialias,
+                        transparent: this.transparent,
+                        backgroundColor: this.backgroundColor,
+                        clearBeforeRender: false,
                     });
-                    this.webgl = renderer.type === PIXI.RENDERER_TYPE.WEBGL;
                     renderer.resize(canvas.width, canvas.height);
                     // renderer.backgroundColor = this.clearColor || 0;
                 }
@@ -44,7 +55,9 @@ var CUI = CUI || {};
             } else {
                 this.canvas = this.core.renderer.view;
             }
+            this.context = this.core.renderer.gl || this.core.renderer.rootContext;
             this.webgl = this.core.webgl;
+            this.canvas2d = !this.webgl;
             this.root = this.core.root;
             this.globalContainer = this.core.globalContainer;
 

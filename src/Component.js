@@ -63,7 +63,7 @@ var CUI = CUI || {};
 
             this.modal = false;
             this.maskColor = "#000000";
-            this.maskAlpha = 0.35;
+            this.maskAlpha = 0.50;
 
             this.displayObject = null;
             this.transform = null;
@@ -103,6 +103,9 @@ var CUI = CUI || {};
             this.backgroundAlpha = 1;
             this.backgroundImage = null;
             this.backgroundInfo = null;
+
+            this.scaleBg = true;
+
             // this.borderColor = "rgba(30,50,80,1)";
             this.borderColor = null;
             this.borderAlpha = 1;
@@ -213,6 +216,7 @@ var CUI = CUI || {};
 
         setBorderImageInfo: function(info) {
             var holder = info ? new CUI.BorderImageHolder(info) : null;
+            this.scaleBg = true;
             this.setBackgroundHolder(holder);
         },
 
@@ -226,6 +230,7 @@ var CUI = CUI || {};
             this.backgroundHolder = holder;
             if (holder) {
                 this.backgroundHolder.setParent(this);
+                this.backgroundHolder.fillParent = this.scaleBg;
                 this.backgroundHolder.init();
                 this.backgroundHolder.updateSize();
                 this.backgroundHolder.updatePosition();
@@ -430,6 +435,11 @@ var CUI = CUI || {};
             this.y = this.pixel.relativeY + relativeObj.y;
             this.updateAABB();
 
+            if (this.backgroundHolder) {
+                this.backgroundHolder.updateSize();
+                this.backgroundHolder.updatePosition();
+            }
+
             if (this.composite) {
                 this.children.forEach(function(child) {
                     child.syncPosition();
@@ -449,20 +459,26 @@ var CUI = CUI || {};
         // TODO
         moveToX: function(x) {
             this.pixel.relativeX = x;
+            // this.left = x;
             this.syncPosition();
         },
         moveToY: function(y) {
             this.pixel.relativeY = y;
+            // this.top = y;
             this.syncPosition();
         },
         moveTo: function(x, y) {
             this.pixel.relativeX = x;
             this.pixel.relativeY = y;
+            // this.left = x;
+            // this.top = y;
             this.syncPosition();
         },
         moveBy: function(dx, dy) {
             this.pixel.relativeX += dx;
             this.pixel.relativeY += dy;
+            // this.left = this.pixel.relativeX;
+            // this.top = this.pixel.relativeY;
             this.syncPosition();
         },
 
@@ -538,13 +554,15 @@ var CUI = CUI || {};
         },
 
         computeLayout: function(forceCompute) {
-            if (this.composite && (this.needToCompute || forceCompute)) {
+            if (this.needToCompute || forceCompute) {
                 this.needToCompute = false;
-                this.layout.compute(this);
-            }
-            if (this.backgroundHolder) {
-                this.backgroundHolder.updateSize();
-                this.backgroundHolder.updatePosition();
+                if (this.composite) {
+                    this.layout.compute(this);
+                }
+                if (this.backgroundHolder) {
+                    this.backgroundHolder.updateSize();
+                    this.backgroundHolder.updatePosition();
+                }
             }
         },
 
@@ -633,7 +651,7 @@ var CUI = CUI || {};
         },
 
         renderModalMask: function(renderer, timeStep, now) {
-            if (!this.maskColor && this.maskColor !== 0) {
+            if (!this.maskColor && this.maskColor !== 0 || this.maskColor === "none") {
                 return;
             }
             var root = this.root;
@@ -833,7 +851,7 @@ var CUI = CUI || {};
             }
             pixel.relativeY = y + pixel.realMarginTop;
 
-            this.y = pixel.relativeY + +(parent ? parent.y : 0);
+            this.y = pixel.relativeY + (parent ? parent.y : 0);
         },
 
 

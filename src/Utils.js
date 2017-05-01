@@ -56,7 +56,7 @@ var CUI = CUI || {};
         },
 
         parseValue: function(value, relativeValue, autoValue) {
-            if (typeof value == "string") {
+            if (typeof value === "string") {
                 value = value.trim();
                 if (value === "auto") {
                     return autoValue === undefined ? 0 : autoValue;
@@ -81,7 +81,7 @@ var CUI = CUI || {};
                     return parseFloat(value) || 0;
                 }
             }
-            if (typeof value == "number" || value === true || value === false || value === null || value === undefined) {
+            if (typeof value === "number" || value === true || value === false || value === null || value === undefined) {
                 return value;
             }
             return parseFloat(value) || 0;
@@ -105,12 +105,12 @@ var CUI = CUI || {};
 
         getImageInfo: function(idOrImg) {
             var img, id = idOrImg;
-            if (typeof id != "string") {
+            if (typeof id !== "string") {
                 if (id.tagName) {
                     img = id;
                     id = img.src;
                 } else {
-                    return null;
+                    return idOrImg;
                 }
             } else {
                 img = CUI.ImagePool[id];
@@ -148,10 +148,22 @@ var CUI = CUI || {};
                 }
                 info.img = img;
                 return info;
-            } else {
-                console.log("Utils.getUIImgInfo err : ", id)
             }
-            return null;
+            console.log("Utils.getUIImgInfo err : ", id);
+            var info = {
+                "id": id,
+                "sx": 0,
+                "sy": 0,
+                "sw": 2,
+                "sh": 2,
+                "ox": 0,
+                "oy": 0,
+                "w": 2,
+                "h": 2,
+                lazy: true,
+            }
+            info.img = Utils.blankCanvas;
+            return info;
         },
 
         renderImageInfo: function(context, imgInfo, x, y, w, h) {
@@ -189,9 +201,11 @@ var CUI = CUI || {};
         },
     };
 
+    Utils.blankCanvas = Utils.createCanvas(2, 2);
+
     exports.Utils = Utils;
 
-    if (typeof module != "undefined") {
+    if (typeof module !== "undefined") {
         module.exports = Utils;
     }
 

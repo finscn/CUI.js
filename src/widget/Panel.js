@@ -47,6 +47,50 @@ var CUI = CUI || {};
             }
         },
 
+        computeWidth: function() {
+            var pixel = this.pixel;
+            var autoWidth = this.width === null || this.width === "auto";
+            var bg = this.backgroundHolder;
+
+            if (autoWidth && !bg) {
+                pixel.width = pixel.width || 0;
+            } else if (autoWidth && bg) {
+                pixel.width = bg.w;
+            } else {
+                pixel.width = Utils.parseValue(this.width, pixel.realOuterWidth);
+            }
+            pixel.anchorX = Utils.parseValue(this.anchorX, pixel.width) || 0;
+            pixel.innerWidth = pixel.width - pixel.paddingLeft - pixel.paddingRight;
+            this.w = pixel.width;
+            if (bg && this.scaleBg) {
+                // bg.pixel.width = this.w;
+                // // bg.pixel.sw = this.w;
+                bg.width = this.w;
+            }
+        },
+
+        computeHeight: function() {
+            var pixel = this.pixel;
+            var autoHeight = this.height === null || this.height === "auto";
+            var bg = this.backgroundHolder;
+
+            if (autoHeight && !bg) {
+                pixel.height = pixel.height || 0;
+            } else if (autoHeight && bg) {
+                pixel.height = bg.h;
+            } else {
+                pixel.height = Utils.parseValue(this.height, pixel.realOuterHeight);
+            }
+            pixel.anchorY = Utils.parseValue(this.anchorY, pixel.height) || 0;
+            pixel.innerHeight = pixel.height - pixel.paddingTop - pixel.paddingBottom;
+            this.h = pixel.height;
+
+            if (bg && this.scaleBg) {
+                // bg.pixel.height = this.h;
+                // // bg.pixel.sh = this.h;
+                bg.height = this.h;
+            }
+        },
     });
 
     exports.Panel = Panel;

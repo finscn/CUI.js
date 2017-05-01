@@ -99,15 +99,16 @@ var CUI = CUI || {};
         },
 
         initTextObject: function() {
-            if (!CUI.renderer) {
+            if (CUI.renderer) {
                 // TODO
-            } else {
-                // TODO
-            }
-
-            if (CUI.renderer.webgl) {
-                this.useCache = true;
-                this.shareCache = false;
+                if (CUI.renderer.webgl) {
+                    this.useCache = true;
+                    this.shareCache = false;
+                } else if (CUI.renderer.canvas2d) {
+                    this.useCache = true;
+                    // this.shareCache = true;
+                    this.shareCache = false;
+                }
             }
 
             if (this.useCache) {
@@ -265,8 +266,10 @@ var CUI = CUI || {};
             if (this.useCache) {
                 x -= this.cacheOffsetX;
                 y -= this.cacheOffsetY;
+                renderer.renderAt(this.textObject, x, y);
+            } else {
+                this.renderContent(renderer.context, x, y);
             }
-            renderer.renderAt(this.textObject, x, y);
         },
 
         renderContent: function(context, x, y) {

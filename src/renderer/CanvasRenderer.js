@@ -17,7 +17,10 @@ var CUI = CUI || {};
             this.context = null;
             this.clearColor = null;
             this.webgl = false;
+            this.canvas2d = true;
         },
+
+        noop: function() {},
 
         init: function() {
 
@@ -38,7 +41,7 @@ var CUI = CUI || {};
 
             this.resetGlobalContainer();
 
-            this.drawDisplayObject = this.render;
+            this.render = this.drawDisplayObject;
         },
 
         begin: function(clear) {
@@ -358,11 +361,14 @@ var CUI = CUI || {};
             textObject.context = context;
             textObject.canvas = canvas;
             textObject.padding = 0;
-            textObject.updateSize = function() {
-                this.sw = this.canvas.width;
-                this.sh = this.canvas.height;
-            };
+            textObject.updateContent = this.noop;
+            textObject.updateSize = this._updateTextObjectSize;
             return textObject;
+        },
+
+        _updateTextObjectSize: function() {
+            this.sw = this.canvas.width;
+            this.sh = this.canvas.height;
         },
 
         createNineSliceObject: function(img, sx, sy, sw, sh, T, R, B, L, container) {

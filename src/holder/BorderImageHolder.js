@@ -14,6 +14,8 @@ var CUI = CUI || {};
         superclass: ImageHolder,
 
         initialize: function() {
+            this.borderImage = true;
+
             this.width = "100%";
             this.height = "100%";
 
@@ -30,8 +32,8 @@ var CUI = CUI || {};
         render: function(renderer, timeStep, now) {
             var bi = this;
 
-            var width = this.pixel.sw;
-            var height = this.pixel.sh;
+            var width = this.pixel.width;
+            var height = this.pixel.height;
 
             if (this.useCache) {
                 if (!this.cacheCanvas) {

@@ -54,7 +54,7 @@ var CUI = CUI || {};
             }
 
             this.computeSelf(this.parent);
-            this.computeSizeWithText();
+            this.computeSizeWithText(false);
         },
 
         setImageHolder: function(name, info) {
@@ -86,6 +86,7 @@ var CUI = CUI || {};
             }
             this.needToCompute = true;
         },
+
         setFlagInfo: function(flagInfo) {
             if (!flagInfo) {
                 this.flagHolder = null;
@@ -100,6 +101,7 @@ var CUI = CUI || {};
             }
             this.needToCompute = true;
         },
+
         setTextInfo: function(textInfo) {
             if (!this.textHolder) {
                 this.textHolder = new TextHolder(textInfo);
@@ -110,6 +112,10 @@ var CUI = CUI || {};
             }
             this.needToCompute = true;
             this.needToComputeSize = true;
+        },
+
+        setTextColor: function(color) {
+            this.textHolder.setColor(color);
         },
 
         initTextInfo: function() {
@@ -144,51 +150,57 @@ var CUI = CUI || {};
         computeWidth: function() {
             var pixel = this.pixel;
             var autoWidth = this.width === null || this.width === "auto";
+            var bg = this.backgroundHolder;
 
-            if (autoWidth && !this.backgroundHolder) {
-                pixel.width = pixel.width || 0;
-                this._sizeChanged = true;
-            } else if (autoWidth && this.backgroundHolder) {
-                pixel.width = this.backgroundHolder.w;
+            if (autoWidth) {
+                if (bg && !bg.borderImage) {
+                    pixel.width = bg.w;
+                } else {
+                    pixel.width = pixel.width || 0;
+                    this._sizeChanged = true;
+                }
             } else {
                 pixel.width = Utils.parseValue(this.width, pixel.realOuterWidth);
             }
             pixel.anchorX = Utils.parseValue(this.anchorX, pixel.width) || 0;
             pixel.width = pixel.width || this.sizeHolder;
-
+            pixel.innerWidth = pixel.width - pixel.paddingLeft - pixel.paddingRight;
             this.w = pixel.width;
-            if (this.scaleBg) {
-                // this.backgroundHolder.pixel.width = this.w;
-                // this.backgroundHolder.pixel.sw = this.w;
-                this.backgroundHolder.width = this.w;
+            if (bg && this.scaleBg) {
+                // bg.pixel.width = this.w;
+                // // bg.pixel.sw = this.w;
+                bg.width = this.w;
             }
         },
 
         computeHeight: function() {
             var pixel = this.pixel;
             var autoHeight = this.height === null || this.height === "auto";
+            var bg = this.backgroundHolder;
 
-            if (autoHeight && !this.backgroundHolder) {
-                pixel.height = pixel.height || 0;
-                this._sizeChanged = true;
-            } else if (autoHeight && this.backgroundHolder) {
-                pixel.height = this.backgroundHolder.h;
+            if (autoHeight) {
+                if (bg && !bg.borderImage) {
+                    pixel.height = bg.h;
+                } else {
+                    pixel.height = pixel.height || 0;
+                    this._sizeChanged = true;
+                }
             } else {
                 pixel.height = Utils.parseValue(this.height, pixel.realOuterHeight);
             }
             pixel.anchorY = Utils.parseValue(this.anchorY, pixel.height) || 0;
             pixel.height = pixel.height || this.sizeHolder;
-
+            pixel.innerHeight = pixel.height - pixel.paddingTop - pixel.paddingBottom;
             this.h = pixel.height;
 
-            if (this.scaleBg) {
-                // this.backgroundHolder.pixel.height = this.h;
-                // this.backgroundHolder.pixel.sh = this.h;
-                this.backgroundHolder.height = this.h;
+            if (bg && this.scaleBg) {
+                // bg.pixel.height = this.h;
+                // // bg.pixel.sh = this.h;
+                bg.height = this.h;
             }
         },
 
-        computeSizeWithText: function() {
+        computeSizeWithText: function(immediately) {
             var measure = this.textHolder.measure;
             if (!measure) {
                 return;
@@ -197,8 +209,8 @@ var CUI = CUI || {};
             this._sizeChanged = false;
             var needToCompute = false;
             // var ext = this.sizePadding * 2 + this.borderWidth;
-            var extX = this.borderWidth + this.paddingLeft + this.paddingRight;
-            var extY = this.borderWidth + this.paddingTop + this.paddingBottom;
+            var extX = this.borderWidth + this.paddingLeft + this.paddingRight + this.textHolder.offsetX;
+            var extY = this.borderWidth + this.paddingTop + this.paddingBottom + this.textHolder.offsetY;
             if (this.width === null || this.width === "auto") {
                 var textWidth = measure.width + extX;
                 this.pixel.width = textWidth;
@@ -211,8 +223,18 @@ var CUI = CUI || {};
                 this.h = textHeight;
                 needToCompute = true;
             }
+
             if (needToCompute) {
-                this.setReflow("parent", true);
+                var bg = this.backgroundHolder;
+                if (bg && bg.borderImage) {
+                    bg.width = this.w;
+                    bg.height = this.h;
+                    bg.w = this.w;
+                    bg.h = this.h;
+                    bg.cacheCanvas = null;
+                }
+
+                this.setReflow("parent", immediately);
             }
         },
 
@@ -255,7 +277,7 @@ var CUI = CUI || {};
                 // if (this.textHolder.needToCompute) {
                 this.textHolder.computeSize();
                 // }
-                this.computeSizeWithText();
+                this.computeSizeWithText(true);
             }
 
             if (this.backgroundColor !== null) {

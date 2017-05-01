@@ -19,7 +19,7 @@ var CUI = CUI || {};
 
         render: function(renderer, timeStep, now) {
             renderer.drawDisplayObject(this.displayObject,
-                this.x + this.ox, this.y + this.oy, this.pixel.sw, this.pixel.sh);
+                this.x + this.ox, this.y + this.oy, this.pixel.width, this.pixel.height);
         },
 
     });

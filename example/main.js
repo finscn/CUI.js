@@ -13,7 +13,6 @@ var loopId;
 window.onload = function() {
     init();
 
-
     CUI.Utils.loadImages(
         [
             { id: "bg", src: "./res/bg.png" },
