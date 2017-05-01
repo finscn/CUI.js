@@ -130,7 +130,6 @@ var CUI = CUI || {};
             var cellSpaceH = this.pixel.cellSpaceH;
             var cellSpaceV = this.pixel.cellSpaceV;
 
-
             this.parentCell.x = parent.x;
             this.parentCell.y = parent.y;
             this.parentCell.pixel.width = child.colspan * (w + cellSpaceH) - cellSpaceH;

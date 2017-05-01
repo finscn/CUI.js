@@ -19,6 +19,11 @@ var CUI = CUI || {};
             this.width = null;
             this.height = null;
 
+            this.left = null;
+            this.top = null;
+            this.originalX = 0;
+            this.originalY = 0;
+
             this.updateSelf = noop;
             this.renderSelf = noop;
             this.checkTouchSelf = noop;
@@ -31,6 +36,13 @@ var CUI = CUI || {};
 
             if (this.resetSN || this.resetSN === 0) {
                 Component._SN = Number(this.resetSN) || 1;
+            }
+
+            if (this.left === null) {
+                this.left = this.originalX;
+            }
+            if (this.top === null) {
+                this.top = this.originalY;
             }
 
             if (this.beforeInit) {

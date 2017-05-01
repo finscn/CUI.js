@@ -7,6 +7,7 @@ var CUI = CUI || {};
     var Class = exports.Class;
     var Utils = exports.Utils;
     var Component = exports.Component;
+    // var Panel = exports.Panel;
     var Slider = exports.Slider;
 
 
@@ -14,6 +15,9 @@ var CUI = CUI || {};
         superclass: Component,
 
         initialize: function() {
+            // this.computeWidth = Panel.prototype.computeWidth;
+            // this.computeHeight = Panel.prototype.computeHeight;
+
             this.scrollH = false;
             this.scrollV = true;
 
@@ -156,7 +160,6 @@ var CUI = CUI || {};
             return false;
         },
 
-
         scrollTo: function(x, y) {
             if (this.scrollH) {
                 this.setScrollX(x);
@@ -217,6 +220,10 @@ var CUI = CUI || {};
                 this.tween = {
                     duration: this.bounceDuration,
                     played: 0,
+                    target: {
+                        x: _tx,
+                        y: _ty,
+                    },
                     onUpdate: function(k) {
                         var dx = _cx + _dx * k - Me.scrollX;
                         var dy = _cy + _dy * k - Me.scrollY;
@@ -225,6 +232,8 @@ var CUI = CUI || {};
                         }
                     },
                     onComplete: function() {
+                        Me.scrollX = this.target.x;
+                        Me.scrollY = this.target.y;
                         Me.thumbX = Me.scrollX * Me.rateWidth >> 0;
                         Me.thumbY = Me.scrollY * Me.rateHeight >> 0;
                         Me.scorllOver = true;
@@ -371,8 +380,12 @@ var CUI = CUI || {};
         },
 
         startClip: function(context) {
-            var x = this.x;
-            var y = this.y;
+            var root = this.root;
+            var ox = root.originalX || 0;
+            var oy = root.originalY || 0;
+
+            var x = this.x + ox;
+            var y = this.y + oy;
             context.save();
             context.beginPath();
             context.moveTo(x, y);

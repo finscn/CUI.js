@@ -151,8 +151,11 @@ var CUI = CUI || {};
 
         renderSelf: function(context, timeStep, now) {
             if (this.backgroundColor !== null) {
+	        var alpha = context.globalAlpha;
+		context.globalAlpha = this.backgroundAlpha;
                 context.fillStyle = this.backgroundColor;
                 context.fillRect(this.x, this.y, this.w, this.h);
+                context.globalAlpha = alpha;
             }
             if (this.backgroundHolder) {
                 this.backgroundHolder.render(context, timeStep, now);
@@ -161,9 +164,12 @@ var CUI = CUI || {};
             this.imageHolder && this.imageHolder.render(context, timeStep, now);
 
             if (this.borderWidth && this.borderColor !== null) {
+	        var alpha = context.globalAlpha;
+		context.globalAlpha = this.borderAlpha;
                 context.strokeStyle = this.borderColor;
                 context.lineWidth = this.borderWidth;
                 context.strokeRect(this.x, this.y, this.w, this.h);
+                context.globalAlpha = alpha;
             }
         },
 

@@ -20,7 +20,7 @@ var CUI = CUI || {};
         render: function(context, timeStep, now) {
             context.drawImage(this.img,
                 this.sx, this.sy, this.sw, this.sh,
-                this.x + this.ox, this.y + this.oy, this.pixel.sw, this.pixel.sh);
+                this.x + this.ox, this.y + this.oy, this.pixel.width, this.pixel.height);
         },
 
     });

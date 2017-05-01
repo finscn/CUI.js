@@ -14,6 +14,8 @@ var CUI = CUI || {};
         superclass: ImageHolder,
 
         initialize: function() {
+            this.borderImage = true;
+
             this.width = "100%";
             this.height = "100%";
 
@@ -30,8 +32,8 @@ var CUI = CUI || {};
         render: function(context, timeStep, now) {
             var bi = this;
 
-            var width = this.pixel.sw;
-            var height = this.pixel.sh;
+            var width = this.pixel.width;
+            var height = this.pixel.height;
 
             if (this.useCache) {
                 if (!this.cacheCanvas) {
@@ -43,11 +45,15 @@ var CUI = CUI || {};
             }
         },
 
-        initBorderDisplayObject: function(context, w, h) {
+        initDisplayObject: function() {
+            // do nothing.
+        },
+
+        initBorderDisplayObject: function(context, w, h, cached) {
             this.borderDisplayInited = true;
         },
 
-        renderBorderImage: function(context, x, y, width, height) {
+        renderBorderImage: function(context, x, y, width, height, cached) {
             var img = this.img;
             var sx = this.sx || 0;
             var sy = this.sy || 0;

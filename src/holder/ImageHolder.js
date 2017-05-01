@@ -45,6 +45,7 @@ var CUI = CUI || {};
             // auto: 显示大小等于 图片实际大小;
             this.width = "auto";
             this.height = "auto";
+            this.fillParent = true;
         },
 
         init: function() {
@@ -147,24 +148,27 @@ var CUI = CUI || {};
         },
 
         updateSize: function() {
-            if (this.parent) {
+            // always updateSize ???
+
+            if (this.parent && this.fillParent) {
                 this.pixel.width = Utils.parseValue(this.width, this.parent.pixel.width, this.w) || 0;
             } else {
                 this.pixel.width = Utils.parseValue(this.width, this.w, this.w) || 0
             }
             this.pixel.width = this.pixel.width * this.scaleX;
-            this.pixel.sw = this.sw * this.pixel.width / this.w;
-            this.pixel.ox = this.ox * this.pixel.width / this.w;
+            // this.pixel.sw = this.sw * this.pixel.width / this.w;
+            // this.pixel.ox = this.ox * this.pixel.width / this.w;
+            this.pixel.ox = this.ox;
 
-            if (this.parent) {
+            if (this.parent && this.fillParent) {
                 this.pixel.height = Utils.parseValue(this.height, this.parent.pixel.height, this.h) || 0;
             } else {
                 this.pixel.height = Utils.parseValue(this.height, this.h, this.h) || 0
             }
             this.pixel.height = this.pixel.height * this.scaleY;
-            this.pixel.sh = this.sh * this.pixel.height / this.h;
-            this.pixel.oy = this.oy * this.pixel.height / this.h;
-
+            // this.pixel.sh = this.sh * this.pixel.height / this.h;
+            // this.pixel.oy = this.oy * this.pixel.height / this.h;
+            this.pixel.oy = this.oy;
         },
 
         setScale: function(scale) {
@@ -179,8 +183,8 @@ var CUI = CUI || {};
             }
             var x = this.x - this.anchorX + this.offsetX + this.ox;
             var y = this.y - this.anchorY + this.offsetY + this.oy;
-            var w = this.pixel.sw + this.offsetW;
-            var h = this.pixel.sh + this.offsetH;
+            var w = this.pixel.width + this.offsetW;
+            var h = this.pixel.height + this.offsetH;
             context.drawImage(this.img, this.sx, this.sy, this.sw, this.sh, x, y, w, h);
         },
 
@@ -194,8 +198,8 @@ var CUI = CUI || {};
             // }
             var x = -this.anchorX;
             var y = -this.anchorY;
-            var width = this.pixel.sw;
-            var height = this.pixel.sh;
+            var width = this.pixel.width;
+            var height = this.pixel.height;
 
             var flipX = this.flipX ? -1 : 1;
             var flipY = this.flipY ? -1 : 1;
