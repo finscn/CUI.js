@@ -20,21 +20,21 @@ var CUI = CUI || {};
         //     Button.$super.init.call(this);
         // },
 
-        doUp: function() {
+        doUp: function(x, y, id) {
             this.touchId = null;
             this.pressed = false;
-            this.onUp();
+            this.onUp(x, y, id);
         },
-        doDown: function() {
+        doDown: function(x, y, id) {
             this.pressed = true;
-            this.onDown();
+            this.onDown(x, y, id);
         },
 
-        onDown: function() {
+        onDown: function(x, y, id) {
             this.offsetY = 2;
             this.scale = 0.92;
         },
-        onUp: function() {
+        onUp: function(x, y, id) {
             this.offsetY = 0;
             this.scale = 1;
         },
@@ -45,7 +45,7 @@ var CUI = CUI || {};
             }
             this.touchId = id;
             this.onTouchStart(x, y, id);
-            this.doDown();
+            this.doDown(x, y, id);
         },
 
         pan: function(x, y, dx, dy, sx, sy, id) {
@@ -53,7 +53,7 @@ var CUI = CUI || {};
                 return false;
             }
             if (this.touchId === id && !this.isInRegion(x, y)) {
-                this.doUp();
+                this.doUp(x, y, id);
                 this.onMoveOut(x, y, dx, dy, sx, sy, id);
             }
             return false;
@@ -67,7 +67,7 @@ var CUI = CUI || {};
                 return false;
             }
             if (this.touchId === id) {
-                this.doUp();
+                this.doUp(x, y, id);
                 if (this.isInRegion(x, y)) {
                     return this.onTouchEnd(x, y, id);
                 }
@@ -80,7 +80,7 @@ var CUI = CUI || {};
                 return false;
             }
             if (this.touchId === id) {
-                this.doUp();
+                this.doUp(x, y, id);
             }
             return false;
         },
