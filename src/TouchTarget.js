@@ -93,7 +93,6 @@ var CUI = CUI || {};
 
         ///////////////////////////////////////////////////////
 
-
         touchStart: function(x, y, id) {
             return this.onTouchStart(x, y, id);
         },
@@ -104,6 +103,7 @@ var CUI = CUI || {};
             return this.onTouchMove(x, y, id);
         },
 
+        ///////////////////////////////////////////////////////
 
         tap: function(x, y, id) {
             return this.onTap(x, y, id);
@@ -118,6 +118,8 @@ var CUI = CUI || {};
             return this.onTapOut(x, y, id);
         },
 
+        ///////////////////////////////////////////////////////
+        // Return `true` to block event
         ///////////////////////////////////////////////////////
 
         onTouchStart: function(x, y, id) {

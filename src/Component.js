@@ -128,11 +128,14 @@ var CUI = CUI || {};
             this.composite = true;
             this.children = null;
             this.childrenMap = null;
-            this.needToCompute = true;
+
+            this.touchTarget = true;
 
             this.useCache = false;
             this.readyForCache = false;
             this.cached = false;
+
+            this.needToCompute = true;
         },
 
         init: function() {
@@ -169,7 +172,10 @@ var CUI = CUI || {};
             };
 
             EventDispatcher.apply(this);
-            TouchTarget.apply(this);
+
+            if (this.touchTarget) {
+                TouchTarget.apply(this);
+            }
 
             if (this.composite) {
                 Composite.apply(this);
@@ -429,6 +435,13 @@ var CUI = CUI || {};
             this.pixel.anchorY = Utils.parseValue(this.anchorY, this.h) || 0;
         },
 
+        updateAABB: function() {
+            this.aabb[0] = this.x - this.extLeft;
+            this.aabb[1] = this.y - this.extTop;
+            this.aabb[2] = this.x + this.w + this.extRight;
+            this.aabb[3] = this.y + this.h + this.extBottom;
+        },
+
         syncPosition: function() {
             var relativeObj = this.parent || this.root;
             this.x = this.pixel.relativeX + relativeObj.x;
@@ -445,13 +458,6 @@ var CUI = CUI || {};
                     child.syncPosition();
                 });
             }
-        },
-
-        updateAABB: function() {
-            this.aabb[0] = this.x - this.extLeft;
-            this.aabb[1] = this.y - this.extTop;
-            this.aabb[2] = this.x + this.w + this.extRight;
-            this.aabb[3] = this.y + this.h + this.extBottom;
         },
 
         // 在移动UI时, 可以用以下两个方法 , 更快捷, 但是不严谨.
