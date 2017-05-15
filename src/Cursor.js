@@ -122,7 +122,7 @@ var CUI = CUI || {};
                 return;
             }
             var lineWidth = 4;
-            renderer.strokeRect(btn.x - 4, btn.y - 4, btn.w + 8, btn.h + 8, this.color, lineWidth, this.pixel);
+            renderer.strokeRect(btn.x - 4, btn.y - 4, btn.w + 8, btn.h + 8, lineWidth, this.color);
         },
 
     });

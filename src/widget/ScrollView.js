@@ -375,13 +375,13 @@ var CUI = CUI || {};
 
             if (this.scrollH && this.rateWidth < 1) {
                 var y = this.y + this.h - this.thumbWidth;
-                renderer.fillRect(this.x + this.paddingLeft + 0, y, this.w, this.thumbWidth, this.thumbBgColor, this.pixel);
-                renderer.fillRect(this.x + this.paddingLeft + this.thumbX + 1, y + 1, this.thumbHSize - 2, this.thumbWidth - 2, this.thumbColor, this.pixel);
+                renderer.fillRect(this.x + this.paddingLeft + 0, y, this.w, this.thumbWidth, this.thumbBgColor);
+                renderer.fillRect(this.x + this.paddingLeft + this.thumbX + 1, y + 1, this.thumbHSize - 2, this.thumbWidth - 2, this.thumbColor);
             }
             if (this.scrollV && this.rateHeight < 1) {
                 var x = this.x + this.w - this.thumbWidth;
-                renderer.fillRect(x, this.y + this.paddingTop + 0, this.thumbWidth, this.h, this.thumbBgColor, this.pixel);
-                renderer.fillRect(x + 1, this.y + this.paddingTop + this.thumbY + 1, this.thumbWidth - 2, this.thumbVSize - 2, this.thumbColor, this.pixel);
+                renderer.fillRect(x, this.y + this.paddingTop + 0, this.thumbWidth, this.h, this.thumbBgColor);
+                renderer.fillRect(x + 1, this.y + this.paddingTop + this.thumbY + 1, this.thumbWidth - 2, this.thumbVSize - 2, this.thumbColor);
             }
         },
 

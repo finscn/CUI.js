@@ -162,8 +162,8 @@ var CUI = CUI || {};
             this.core.clear(this.clearColor);
         },
 
-        strokeRect: function(x, y, width, height, color, lineWidth) {
-            this.core.strokeRect(x, y, width, height, color, lineWidth);
+        strokeRect: function(x, y, width, height, lineWidth, color) {
+            this.core.strokeRect(x, y, width, height, lineWidth, color);
         },
 
         fillRect: function(x, y, width, height, color) {
@@ -174,8 +174,8 @@ var CUI = CUI || {};
             this.core.clearRect(x, y, width, height, this.clearColor, 1);
         },
 
-        strokeText: function(text, x, y, color, lineWidth, style) {
-            this.core.strokeText(text, x, y, color, lineWidth, style);
+        strokeText: function(text, x, y, lineWidth, color, style) {
+            this.core.strokeText(text, x, y, lineWidth, color, style);
         },
 
         fillText: function(text, x, y, color, style) {

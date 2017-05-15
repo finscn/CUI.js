@@ -24,7 +24,7 @@ var CUI = CUI || {};
         render: function(renderer, timeStep, now) {
             if (this.backgroundColor !== null) {
                 renderer.setAlpha(this.backgroundAlpha);
-                renderer.fillRect(this.x, this.y, this.w, this.h, this.backgroundColor, this.pixel);
+                renderer.fillRect(this.x, this.y, this.w, this.h, this.backgroundColor);
                 renderer.restoreAlpha();
             }
         },

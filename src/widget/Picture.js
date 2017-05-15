@@ -191,7 +191,7 @@ var CUI = CUI || {};
         renderSelf: function(renderer, timeStep, now) {
             if (this.backgroundColor !== null) {
                 renderer.setAlpha(this.backgroundAlpha);
-                renderer.fillRect(this.x, this.y, this.w, this.h, this.backgroundColor, this.pixel);
+                renderer.fillRect(this.x, this.y, this.w, this.h, this.backgroundColor);
                 renderer.restoreAlpha();
             }
             if (this.backgroundHolder) {
@@ -204,7 +204,7 @@ var CUI = CUI || {};
 
             if (this.borderWidth && this.borderColor !== null) {
                 renderer.setAlpha(this.borderAlpha);
-                renderer.strokeRect(this.x, this.y, this.w, this.h, this.borderColor, this.borderWidth, this.pixel);
+                renderer.strokeRect(this.x, this.y, this.w, this.h, this.borderWidth, this.borderColor);
                 renderer.restoreAlpha();
             }
         },
