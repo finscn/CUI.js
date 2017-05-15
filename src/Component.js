@@ -493,6 +493,10 @@ var CUI = CUI || {};
                 return false;
             }
             this.visible = true;
+
+            // TODO
+            this.update(0);
+
             this.onShow();
             return true;
         },

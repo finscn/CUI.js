@@ -72,9 +72,9 @@ var CUI = CUI || {};
             if (firstChild) {
                 var lastChild = this.children[this.children.length - 1];
 
-                var innerWdith = lastChild.x + lastChild.w - firstChild.x;
+                var innerWdith = lastChild.x + lastChild.w + lastChild.marginRight - firstChild.x + firstChild.marginLeft;
                 innerWdith += this.paddingLeft + this.paddingRight;
-                var innerHeight = lastChild.y + lastChild.h - firstChild.y;
+                var innerHeight = lastChild.y + lastChild.h + lastChild.marginBottom - firstChild.y + firstChild.marginTop;
                 innerHeight += this.paddingTop + this.paddingBottom;
 
                 this.scrollWidth = this.scrollWidthOrigin || innerWdith;
@@ -106,7 +106,6 @@ var CUI = CUI || {};
             this.resetScrollInfo();
         },
 
-
         startScroll: function(vx, vy) {
             if (!this.scrollH) {
                 vx = 0;
@@ -120,7 +119,6 @@ var CUI = CUI || {};
             this.scorllOver = false;
             this.slider.toStart = true;
             this.slider.start(vx, vy);
-
         },
 
         stopScroll: function() {
@@ -206,24 +204,36 @@ var CUI = CUI || {};
             return canY;
         },
 
-        startTween: function() {
-            if (this.scrollX < this.minScrollX || this.scrollX > this.maxScrollX || this.scrollY < this.minScrollY || this.scrollY > this.maxScrollY) {
+        startTween: function(target, duration) {
+
+            if (!target) {
+                target = {
+                    x: this.scrollX,
+                    y: this.scrollY,
+                }
+            }
+            if (this.scrollH && this.snapWidth) {
+                target.x = Math.round(target.x / this.snapWidth) * this.snapWidth;
+            }
+            if (this.scrollV && this.snapHeight) {
+                target.y = Math.round(target.y / this.snapHeight) * this.snapHeight;
+            }
+            target.x = Math.min(this.maxScrollX, Math.max(this.minScrollX, target.x));
+            target.y = Math.min(this.maxScrollY, Math.max(this.minScrollY, target.y));
+
+
+            if (target) {
                 var Me = this;
                 this.stopTween();
-                var _tx = Math.min(this.maxScrollX, Math.max(this.minScrollX, this.scrollX));
-                var _ty = Math.min(this.maxScrollY, Math.max(this.minScrollY, this.scrollY));
                 var _cx = this.scrollX;
                 var _cy = this.scrollY;
-                var _dx = _tx - _cx;
-                var _dy = _ty - _cy;
+                var _dx = target.x - _cx;
+                var _dy = target.y - _cy;
 
                 this.tween = {
-                    duration: this.bounceDuration,
+                    duration: (duration === 0 || duration) ? duration : this.bounceDuration,
                     played: 0,
-                    target: {
-                        x: _tx,
-                        y: _ty,
-                    },
+                    target: target,
                     onUpdate: function(k) {
                         var dx = _cx + _dx * k - Me.scrollX;
                         var dy = _cy + _dy * k - Me.scrollY;

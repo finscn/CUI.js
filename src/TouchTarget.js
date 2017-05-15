@@ -35,6 +35,12 @@ var CUI = CUI || {};
                 if (this.modal || this.mask) {
                     if (type === "tap") {
                         this.onTapOut.apply(this, argsList);
+                    } else if (type === "touchEnd") {
+                        if (this.composite) {
+                            this.checkTouchChildren(type, arguments);
+                        } else {
+                            this[type].apply(this, argsList);
+                        }
                     }
                     return this.modalFlag;
                 }

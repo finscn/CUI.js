@@ -17,12 +17,15 @@ var CUI = CUI || {};
             this.composite = false;
             this.disabled = false;
 
-            // 不指定宽高, 大小由 backgroundHolder 的实际大小决定
+            // 如果不指定宽高 且 scaleImg = false, 大小由 imageHolder 的实际大小决定.
+
             this.width = null;
             this.height = null;
             this.scaleX = null;
             this.scaleY = null;
             this.scaleImg = true;
+
+            this.crossOrigin = 'Anonymous';
         },
 
         init: function() {
@@ -35,8 +38,13 @@ var CUI = CUI || {};
                 height: this.scaleImg ? "100%" : "auto",
                 alignH: "center",
                 alignV: "center",
+                crossOrigin: this.crossOrigin,
             });
             this.imageHolder.init();
+
+            if (this.borderInfo) {
+                this.setBorderInfo(this.borderInfo);
+            }
 
             if (this.src) {
                 this.setSrc(this.src);
@@ -85,6 +93,24 @@ var CUI = CUI || {};
             this.needToCompute = true;
         },
 
+        setBorderInfo: function(info) {
+            if (!info) {
+                this.borderHolder = null;
+            } else {
+                if (info.borderImage) {
+                    this.borderHolder = new CUI.BorderImageHolder(info);
+                } else {
+                    this.borderHolder = new CUI.BackgroundImageHolder(info);
+                }
+                this.borderHolder.setParent(this);
+                this.borderHolder.fillParent = true;
+                this.borderHolder.init();
+                this.borderHolder.updateSize();
+                this.borderHolder.updatePosition();
+            }
+            this.needToCompute = true;
+        },
+
         computeWidth: function() {
             var pixel = this.pixel;
             var hasWidth = false;
@@ -125,16 +151,24 @@ var CUI = CUI || {};
         },
 
         computeLayout: function(forceCompute) {
-            if (this.needToCompute || forceCompute) {
-                this.imageHolder.updateSize();
-                if (this.scaleImg) {
-                    this.imageHolder.x = this.x;
-                    this.imageHolder.y = this.y;
-                } else {
-                    this.imageHolder.updatePosition();
-                }
-                this.needToCompute = false;
+            if (!this.needToCompute && !forceCompute) {
+                return;
             }
+
+            this.imageHolder.updateSize();
+            if (this.scaleImg) {
+                this.imageHolder.x = this.x;
+                this.imageHolder.y = this.y;
+            } else {
+                this.imageHolder.updatePosition();
+            }
+
+            if (this.borderHolder) {
+                this.borderHolder.updateSize();
+                this.borderHolder.updatePosition();
+            }
+
+            this.needToCompute = false;
         },
 
         syncPosition: function() {
@@ -146,6 +180,11 @@ var CUI = CUI || {};
                 this.imageHolder.y = this.y;
             } else {
                 this.imageHolder.updatePosition();
+            }
+
+            if (this.borderHolder) {
+                this.borderHolder.updateSize();
+                this.borderHolder.updatePosition();
             }
         },
 
@@ -161,15 +200,15 @@ var CUI = CUI || {};
 
             this.imageHolder && this.imageHolder.render(renderer, timeStep, now);
 
+            this.borderHolder && this.borderHolder.render(renderer, timeStep, now);
+
             if (this.borderWidth && this.borderColor !== null) {
                 renderer.setAlpha(this.borderAlpha);
                 renderer.strokeRect(this.x, this.y, this.w, this.h, this.borderColor, this.borderWidth, this.pixel);
                 renderer.restoreAlpha();
             }
         },
-
     });
-
 
     exports.Picture = Picture;
 

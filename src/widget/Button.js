@@ -14,6 +14,8 @@ var CUI = CUI || {};
         initialize: function() {
             this.borderWidth = 0;
             this.textAlign = "center";
+
+            this.scaleBg = true;
         },
 
         // init: function() {

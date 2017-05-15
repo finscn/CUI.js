@@ -45,16 +45,19 @@ var CUI = CUI || {};
                 this.renderBorderImage(renderer, this.x, this.y, width, height);
             }
         },
+
         initDisplayObject: function() {
-            // this.displayObject = CUI.renderer.createDisplayObject(this.img, this.sx, this.sy, this.sw, this.sh, true);
+            // var pixel = this.pixel;
+            // this.displayObject = CUI.renderer.createDisplayObject(this.img, pixel.sx, pixel.sy, pixel.sw, pixel.sh, true);
         },
 
         initBorderDisplayObject: function(renderer, w, h, cached) {
             var img = this.img;
-            var sx = this.sx || 0;
-            var sy = this.sy || 0;
-            var sw = this.sw || img.width;
-            var sh = this.sh || img.height;
+            var pixel = this.pixel;
+            var sx = pixel.sx || 0;
+            var sy = pixel.sy || 0;
+            var sw = pixel.sw || img.width;
+            var sh = pixel.sh || img.height;
 
             var T = this.T;
             var R = this.R;

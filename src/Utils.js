@@ -103,7 +103,7 @@ var CUI = CUI || {};
             return measure.width;
         },
 
-        getImageInfo: function(idOrImg) {
+        getImageInfo: function(idOrImg, allowNull) {
             var img, id = idOrImg;
             if (typeof id !== "string") {
                 if (id.tagName) {
@@ -150,6 +150,9 @@ var CUI = CUI || {};
                 return info;
             }
             console.log("Utils.getUIImgInfo err : ", id);
+            if (allowNull) {
+                return null;
+            }
             var info = {
                 "id": id,
                 "sx": 0,

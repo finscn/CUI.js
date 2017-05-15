@@ -22,6 +22,9 @@ var CUI = CUI || {};
             this.textAlign = "start";
             this.verticalAlign = "middle";
 
+            this.alignH = null;
+            this.alignV = null;
+
             // top 默认。文本基线是 em 方框的顶端。。
             // alphabetic  文本基线是普通的字母基线。
             // hanging 文本基线是悬挂基线。
@@ -119,8 +122,16 @@ var CUI = CUI || {};
         },
 
         setTextInfo: function(info) {
-            this.alignH = this.textAlign;
-            this.alignV = this.verticalAlign;
+            if (info.alignH) {
+                this.alignH = info.alignH;
+            } else {
+                this.alignH = info.textAlign || this.textAlign;
+            }
+            if (info.alignV) {
+                this.alignV = info.alignV;
+            } else {
+                this.alignV = info.verticalAlign || this.verticalAlign;
+            }
 
             this.setText(info.text, true);
             // this.fontName = Font.getName(info.fontName || this.fontName);
@@ -206,9 +217,9 @@ var CUI = CUI || {};
             this.needToCompute = false;
 
             if (this.useCache) {
-                if (this.textAlign == "center") {
+                if (this.alignH === "center") {
                     this.cacheOffsetX = Math.ceil(this.width / 2 + this.strokeWidth + this.cachePadding);
-                } else if (this.textAlign == "right" || this.textAlign == "end") {
+                } else if (this.alignH === "right" || this.alignH === "end") {
                     this.cacheOffsetX = this.width + this.strokeWidth + this.cachePadding;
                 } else {
                     this.cacheOffsetX = this.strokeWidth + this.cachePadding;
@@ -228,17 +239,17 @@ var CUI = CUI || {};
 
         updatePosition: function() {
             var parent = this.parent;
-            if (this.alignH == "center") {
+            if (this.alignH === "center") {
                 this.x = parent.x + (parent.w >> 1);
-            } else if (this.alignH == "right") {
+            } else if (this.alignH === "right") {
                 this.x = parent.x + parent.w - parent.pixel.paddingRight;
             } else {
                 this.x = parent.x + parent.pixel.paddingLeft;
             }
 
-            if (this.alignV == "middle" || this.alignV == "center") {
+            if (this.alignV === "middle" || this.alignV === "center") {
                 this.y = parent.y + ((parent.h - this.height) >> 1);
-            } else if (this.alignV == "bottom") {
+            } else if (this.alignV === "bottom") {
                 this.y = parent.y + parent.h - parent.pixel.paddingBottom - this.height;
             } else {
                 this.y = parent.y + parent.pixel.paddingTop;
