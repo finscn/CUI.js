@@ -2,8 +2,12 @@ var Config = {
     width: 560,
     height: 400,
     FPS: 60,
-    webgl: true,
+
+    pixi: true,
+    webgl: null,
 };
+
+console.log("PIXI.js: " + Config.pixi);
 console.log("WebGL: " + Config.webgl);
 
 var game = {};
@@ -95,9 +99,10 @@ function init() {
     game.offsetLeft = rect.left;
     game.offsetTop = rect.top;
 
-    if (Config.webgl) {
+    if (Config.pixi) {
         renderer = new CUI.PIXIRenderer({
             canvas: canvas,
+            webgl: Config.webgl,
         });
     } else {
         renderer = new CUI.CanvasRenderer({

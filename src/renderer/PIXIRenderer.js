@@ -13,6 +13,8 @@ var CUI = CUI || {};
         transparent: true,
         backgroundColor: 0x000000,
 
+        webgl: null,
+
         initialize: function() {
             this.lazyInit = false;
             this.core = null;
@@ -34,12 +36,7 @@ var CUI = CUI || {};
                 var renderer = this.renderer;
                 if (!renderer) {
                     var canvas = this.canvas;
-                    // renderer = new PIXI.CanvasRenderer({
-                    //     width: canvas.width,
-                    //     height: canvas.height,
-                    //     view: canvas,
-                    // });
-                    renderer = new PIXI.WebGLRenderer({
+                    var options = {
                         width: canvas.width,
                         height: canvas.height,
                         view: canvas,
@@ -47,7 +44,14 @@ var CUI = CUI || {};
                         transparent: this.transparent,
                         backgroundColor: this.backgroundColor,
                         clearBeforeRender: false,
-                    });
+                    };
+                    if (this.webgl === false) {
+                        renderer = new PIXI.CanvasRenderer(options);
+                    } else if (this.webgl === true) {
+                        renderer = new PIXI.WebGLRenderer(options);
+                    } else {
+                        renderer = new PIXI.autoDetectRenderer(options);
+                    }
                     renderer.resize(canvas.width, canvas.height);
                     // renderer.backgroundColor = this.clearColor || 0;
                 }
