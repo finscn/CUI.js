@@ -102,22 +102,24 @@ var CUI = CUI || {};
         },
 
         initTextObject: function() {
-            if (CUI.renderer) {
+            // var renderer = CUI.renderer;
+            var renderer = this.parent.getRenderer();
+
+            if (renderer) {
                 // TODO
-                if (CUI.renderer.webgl) {
+                if (renderer.webgl) {
                     this.useCache = true;
                     this.shareCache = false;
-                } else if (CUI.renderer.canvas2d) {
+                } else if (renderer.canvas2d) {
                     this.useCache = true;
                     // this.shareCache = true;
                     this.shareCache = false;
                 }
-            }
-
-            if (this.useCache) {
-                // TODO
-                this.createCache();
-                this.textObject = CUI.renderer.createTextObject(this.cacheContext, true);
+                if (this.useCache) {
+                    // TODO
+                    this.createCache();
+                    this.textObject = renderer.createTextObject(this.cacheContext, true);
+                }
             }
         },
 

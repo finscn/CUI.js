@@ -149,7 +149,6 @@ var CUI = CUI || {};
 
             this.inited = true;
             this.id = this.id || "cmp_" + Component._SN++;
-            // Component.addUI(this);
 
             this.root = this.root || (this.parent && this.parent.root);
             if (this.root) {
@@ -871,6 +870,10 @@ var CUI = CUI || {};
             this.y = pixel.relativeY + (parent ? parent.y : 0);
         },
 
+        getRenderer: function() {
+            // TODO. support multi-renderer in one page.
+            return CUI.renderer;
+        },
 
         ////////////////////////////////////////////////////////////////////////
         ////////////////////////////////////////////////////////////////////////
@@ -896,19 +899,7 @@ var CUI = CUI || {};
         },
     });
 
-
     Component._SN = 0;
-    Component.all = {};
-    Component.addUI = function(ui) {
-        if (!ui) {
-            return false;
-        }
-        Component.all[ui.id] = ui;
-        return ui.id;
-    };
-    Component.getUI = function(id) {
-        return Component.all[id];
-    };
 
     Component.canvasPool = {};
     Component.getCanvasFromPool = function(id) {
@@ -926,6 +917,5 @@ var CUI = CUI || {};
 
     exports.Component = Component;
     exports.noop = noop;
-
 
 }(CUI));

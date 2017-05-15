@@ -178,8 +178,10 @@ var CUI = CUI || {};
                 this.displayObject = null;
                 return;
             }
+            // var renderer = CUI.renderer;
+            var renderer = this.parent.getRenderer();
             var pixel = this.pixel;
-            this.displayObject = CUI.renderer.createDisplayObject(this.img, pixel.sx, pixel.sy, pixel.sw, pixel.sh, true);
+            this.displayObject = renderer.createDisplayObject(this.img, pixel.sx, pixel.sy, pixel.sw, pixel.sh, true);
         },
 
         removeImg: function() {

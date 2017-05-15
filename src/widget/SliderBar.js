@@ -66,7 +66,6 @@ var CUI = CUI || {};
                 centerV: true,
 
                 // borderWidth: 2,
-                // borderColor: CUI.renderer.colorHex('#333333'),
 
                 onDown: function(x, y, id) {
                     // this.offsetY = 2;
@@ -101,10 +100,7 @@ var CUI = CUI || {};
                 centerH: true,
                 centerV: true,
 
-                // backgroundColor: CUI.renderer.colorHex('#662200'),
-
                 // borderWidth: 2,
-                // borderColor: CUI.renderer.colorHex('#333333'),
 
                 pressX: null,
                 pressY: null,

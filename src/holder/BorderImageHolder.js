@@ -47,8 +47,7 @@ var CUI = CUI || {};
         },
 
         initDisplayObject: function() {
-            // var pixel = this.pixel;
-            // this.displayObject = CUI.renderer.createDisplayObject(this.img, pixel.sx, pixel.sy, pixel.sw, pixel.sh, true);
+            // do nothing.
         },
 
         initBorderDisplayObject: function(renderer, w, h, cached) {
