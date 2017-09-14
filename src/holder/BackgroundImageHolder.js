@@ -27,7 +27,7 @@ var CUI = CUI || {};
 
     exports.BackgroundImageHolder = BackgroundImageHolder;
 
-    if (typeof module != "undefined") {
+    if (typeof module !== "undefined") {
         module.exports = BackgroundImageHolder;
     }
 

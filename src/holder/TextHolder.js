@@ -290,7 +290,7 @@ var CUI = CUI || {};
             // var prevAlpha = context.globalAlpha;
             // context.globalAlpha = this.alpha;
             context.font = this.fontStyle;
-            context.textAlign = this.textAlign;
+            context.textAlign = this.alignH;
             context.textBaseline = this.textBaseline;
 
             var bakShadow;
@@ -371,7 +371,7 @@ var CUI = CUI || {};
 
     exports.TextHolder = TextHolder;
 
-    if (typeof module != "undefined") {
+    if (typeof module !== "undefined") {
         module.exports = TextHolder;
     }
 

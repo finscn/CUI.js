@@ -91,7 +91,7 @@ var CUI = CUI || {};
         }
     };
 
-    Composite.apply = function(object, override) {
+    Composite.applyTo = function(object, override) {
         var proto = Composite.prototype;
         // override = override !== false;
         for (var p in proto) {
@@ -108,7 +108,7 @@ var CUI = CUI || {};
 
     exports.Composite = Composite;
 
-    if (typeof module != "undefined") {
+    if (typeof module !== "undefined") {
         module.exports = Composite;
     }
 

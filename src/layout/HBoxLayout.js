@@ -18,6 +18,7 @@ var CUI = CUI || {};
         },
 
         compute: function(parent) {
+            // console.log('HBoxLayout.compute');
             var children = parent.children;
             var childCount = children.length;
             var idx = 0;
@@ -29,9 +30,9 @@ var CUI = CUI || {};
             for (var i = 0; i < childCount; i++) {
                 var child = children[i];
                 child.hasLayoutX = false;
-                if (child.relative == "parent") {
+                if (child.relative === "parent") {
                     this.computeChild(child, child.parent)
-                } else if (child.relative == "root") {
+                } else if (child.relative === "root") {
                     this.computeChild(child, child.root)
                 } else {
                     child.computeMargin(parent);
@@ -69,12 +70,12 @@ var CUI = CUI || {};
             if (childCount > 0) {
                 var totalWidth = size ? parent.pixel.width : currentX + margin;
                 this.tryToResizeParent(parent, totalWidth, totalHeight, true);
-                if (!size && this.align == "right") {
+                if (!size && this.align === "right") {
                     var deltaWidth = parent.pixel.width - totalWidth;
                     if (deltaWidth > 0) {
                         for (var i = 0; i < childCount; i++) {
                             var child = children[i];
-                            if (child.relative !== "parent" && child.relative != "root") {
+                            if (child.relative !== "parent" && child.relative !== "root") {
                                 child.pixel.left += deltaWidth;
                                 child.pixel.relativeX += deltaWidth;
                                 child.x += deltaWidth;
@@ -93,7 +94,7 @@ var CUI = CUI || {};
 
     exports.HBoxLayout = HBoxLayout;
 
-    if (typeof module != "undefined") {
+    if (typeof module !== "undefined") {
         module.exports = HBoxLayout;
     }
 

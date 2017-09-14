@@ -259,11 +259,7 @@ var CUI = CUI || {};
             this.needToCompute = false;
         },
 
-        syncPosition: function() {
-            this.x = this.pixel.relativeX + this.parent.x;
-            this.y = this.pixel.relativeY + this.parent.y;
-            this.updateAABB();
-
+        syncHolders: function() {
             this.backgroundHolder && this.backgroundHolder.updatePosition();
             this.iconHolder && this.iconHolder.updatePosition();
             this.textHolder && this.textHolder.updatePosition();
@@ -305,7 +301,7 @@ var CUI = CUI || {};
 
     exports.Label = Label;
 
-    if (typeof module != "undefined") {
+    if (typeof module !== "undefined") {
         module.exports = Label;
     }
 

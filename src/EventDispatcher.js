@@ -83,12 +83,12 @@ var CUI = CUI || {};
 
     });
 
-    EventDispatcher.apply = function(object, override) {
+    EventDispatcher.applyTo = function(object, override) {
         var proto = EventDispatcher.prototype;
         // override = override !== false;
         for (var p in proto) {
             var v = proto[p];
-            if (typeof v == "function") {
+            if (typeof v === "function") {
                 (override || !object[p]) && (object[p] = v);
             }
         }
@@ -98,7 +98,7 @@ var CUI = CUI || {};
 
     exports.EventDispatcher = EventDispatcher;
 
-    if (typeof module != "undefined") {
+    if (typeof module !== "undefined") {
         module.exports = EventDispatcher;
     }
 

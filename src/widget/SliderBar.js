@@ -194,7 +194,7 @@ var CUI = CUI || {};
         },
 
         pan: function(x, y, dx, dy, sx, sy, id) {
-            if (!this.visible || !this.isInRegion(x, y)) {
+            if (!this.visible || !this.containPoint(x, y)) {
                 return false;
             }
             if (this.disabled) {
@@ -209,7 +209,7 @@ var CUI = CUI || {};
             console.log(value)
         },
         // onTouchStart: function(x, y, id) {
-        //     if (this.isInRegion(x, y)) {
+        //     if (this.containPoint(x, y)) {
         //         this.stopScroll();
         //     }
         //     return false;
@@ -221,7 +221,7 @@ var CUI = CUI || {};
         // },
 
         // onPan: function(x, y, dx, dy, startX, startY, id) {
-        //     if (this.isInRegion(startX, startY)) {
+        //     if (this.containPoint(startX, startY)) {
         //         this.scrollBy(-dx, -dy);
         //         return;
         //     }

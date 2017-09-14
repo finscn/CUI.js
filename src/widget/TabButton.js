@@ -35,7 +35,7 @@ var CUI = CUI || {};
             this.bgInfo = this.active ? this.bgActive : this.bgNormal;
         },
 
-        activate: function() {
+        activate: function(link) {
             if (this.active) {
                 return;
             }
@@ -61,7 +61,7 @@ var CUI = CUI || {};
             }
             this.active = true;
             this.setBackgroundInfo(this.bgActive);
-            this.onActivate();
+            this.onActivate(link);
         },
 
         inactivate: function() {
@@ -96,7 +96,7 @@ var CUI = CUI || {};
 
     exports.TabButton = TabButton;
 
-    if (typeof module != "undefined") {
+    if (typeof module !== "undefined") {
         module.exports = TabButton;
     }
 

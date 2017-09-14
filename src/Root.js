@@ -24,12 +24,12 @@ var CUI = CUI || {};
             this.originalX = 0;
             this.originalY = 0;
 
-            this.updateSelf = noop;
-            this.renderSelf = noop;
-            this.checkTouchSelf = noop;
-
             this.resetSN = 1;
         },
+
+        updateSelf: noop,
+        renderSelf: noop,
+        checkTouchSelf: noop,
 
         init: function() {
             this.all = {};
@@ -91,7 +91,7 @@ var CUI = CUI || {};
         },
 
         setSize: function(width, height, force) {
-            if (force || this.width != width) {
+            if (force || this.width !== width) {
                 this.viewportWidth = width;
                 this.width = width;
                 this.w = width;
@@ -99,7 +99,7 @@ var CUI = CUI || {};
                 this.aabb[2] = width;
                 this.needToCompute = true;
             }
-            if (force || this.height != height) {
+            if (force || this.height !== height) {
                 this.viewportHeight = height;
                 this.height = height;
                 this.h = height;

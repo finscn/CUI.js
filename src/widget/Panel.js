@@ -93,7 +93,7 @@ var CUI = CUI || {};
 
     exports.Panel = Panel;
 
-    if (typeof module != "undefined") {
+    if (typeof module !== "undefined") {
         module.exports = Panel;
     }
 

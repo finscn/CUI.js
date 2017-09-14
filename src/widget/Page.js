@@ -27,7 +27,7 @@ var CUI = CUI || {};
 
     exports.Page = Page;
 
-    if (typeof module != "undefined") {
+    if (typeof module !== "undefined") {
         module.exports = Page;
     }
 

@@ -52,6 +52,8 @@ var CUI = CUI || {};
             this.anchorX = "50%";
             this.anchorY = "50%";
 
+            this.rotation = 0;
+
             this.extLeft = 0;
             this.extRight = 0;
             this.extTop = 0;
@@ -170,14 +172,14 @@ var CUI = CUI || {};
                 paddingLeft: 0,
             };
 
-            EventDispatcher.apply(this);
+            EventDispatcher.applyTo(this);
 
             if (this.touchTarget) {
-                TouchTarget.apply(this);
+                TouchTarget.applyTo(this);
             }
 
             if (this.composite) {
-                Composite.apply(this);
+                Composite.applyTo(this);
                 this.setLayout(this.layout);
                 this.childSN = 0;
             }
@@ -226,7 +228,7 @@ var CUI = CUI || {};
         },
 
         setBackgroundImage: function(img) {
-            this.setBackgroundInfo({
+            this.setBackgroundInfo(!img ? null : {
                 img: img
             });
         },
@@ -251,9 +253,9 @@ var CUI = CUI || {};
 
         setLayout: function(layout) {
             var name, options;
-            if (typeof layout == "string") {
+            if (typeof layout === "string") {
                 name = layout;
-            } else if (layout && layout.constructor == Object) {
+            } else if (layout && layout.constructor === Object) {
                 var name = layout.name;
                 options = layout;
             }
@@ -280,7 +282,7 @@ var CUI = CUI || {};
         },
 
         setParent: function(parent, forceCompute) {
-            if (parent && (parent != this.parent || forceCompute)) {
+            if (parent && (parent !== this.parent || forceCompute)) {
                 this.parent.addChild(this);
             }
         },
@@ -290,10 +292,10 @@ var CUI = CUI || {};
                 // child.parent = this;
                 child.root = this.root;
                 child.index = this.childSN++;
-                if (this.width == "auto") {
+                if (this.width === "auto") {
                     this.pixel.w = 0;
                 }
-                if (this.height == "auto") {
+                if (this.height === "auto") {
                     this.pixel.h = 0;
                 }
                 this.needToCompute = true;
@@ -305,10 +307,10 @@ var CUI = CUI || {};
             if (this.composite) {
                 var rs = Composite.prototype.removeChild.call(this, child);
                 if (rs) {
-                    if (this.width == "auto") {
+                    if (this.width === "auto") {
                         this.pixel.w = 0;
                     }
-                    if (this.height == "auto") {
+                    if (this.height === "auto") {
                         this.pixel.h = 0;
                     }
                     this.needToCompute = true;
@@ -357,7 +359,7 @@ var CUI = CUI || {};
                 this.needToCompute = false;
                 return false;
             }
-            if (deep == "root") {
+            if (deep === "root") {
                 var root = this.root || this.parent;
                 if (root) {
                     root.needToCompute = true;
@@ -365,7 +367,7 @@ var CUI = CUI || {};
                         root.computeLayout();
                     }
                 }
-            } else if (deep == "parent") {
+            } else if (deep === "parent") {
                 var parent = this.parent || this.root;
                 if (parent) {
                     parent.needToCompute = true;
@@ -380,9 +382,9 @@ var CUI = CUI || {};
                 while (ui) {
                     top = ui;
                     ui.needToCompute = true;
-                    if (stop || ui.relative == "root") {
+                    if (stop || ui.relative === "root") {
                         break;
-                    } else if (ui.relative == "parent") {
+                    } else if (ui.relative === "parent") {
                         stop = true;
                     }
                     ui = ui.parent;
@@ -401,24 +403,21 @@ var CUI = CUI || {};
         },
 
         setPosition: function(left, top) {
-            if (this.left != left) {
+            if (this.left !== left && left !== null) {
                 this.left = left;
-                this.computePositionX();
             }
-            if (this.top != top) {
+            if (this.top !== top && top !== null && top !== undefined) {
                 this.top = top;
-                this.computePositionY();
             }
-            // this.syncPosition();
             this.setReflow("parent");
         },
 
         setSize: function(width, height, force) {
-            if (force || this.width != width) {
+            if (force || this.width !== width) {
                 this.width = width;
                 this.computeWidth();
             }
-            if (force || this.height != height) {
+            if (force || this.height !== height) {
                 this.height = height;
                 this.computeHeight();
             }
@@ -445,12 +444,13 @@ var CUI = CUI || {};
             var relativeObj = this.parent || this.root;
             this.x = this.pixel.relativeX + relativeObj.x;
             this.y = this.pixel.relativeY + relativeObj.y;
+
+            // this.computePositionX();
+            // this.computePositionY();
+
             this.updateAABB();
 
-            if (this.backgroundHolder) {
-                this.backgroundHolder.updateSize();
-                this.backgroundHolder.updatePosition();
-            }
+            this.syncHolders();
 
             if (this.composite) {
                 this.children.forEach(function(child) {
@@ -459,31 +459,51 @@ var CUI = CUI || {};
             }
         },
 
+        syncHolders: function() {
+            if (this.backgroundHolder) {
+                this.backgroundHolder.updateSize();
+                this.backgroundHolder.updatePosition();
+            }
+        },
+
         // 在移动UI时, 可以用以下两个方法 , 更快捷, 但是不严谨.
         // 严谨的方法是调用  setPosition .
         // TODO
         moveToX: function(x) {
-            this.pixel.relativeX = x;
-            // this.left = x;
+            var pixel = this.pixel;
+            pixel.left = x;
+            pixel.relativeX = x + pixel.realMarginLeft;
+
             this.syncPosition();
         },
         moveToY: function(y) {
-            this.pixel.relativeY = y;
-            // this.top = y;
+            var pixel = this.pixel;
+            pixel.top = y;
+            pixel.relativeY = y + pixel.realMarginTop;
+
             this.syncPosition();
         },
         moveTo: function(x, y) {
-            this.pixel.relativeX = x;
-            this.pixel.relativeY = y;
-            // this.left = x;
-            // this.top = y;
+            var pixel = this.pixel;
+            pixel.left = x;
+            pixel.relativeX = x + pixel.realMarginLeft;
+            pixel.top = y;
+            pixel.relativeY = y + pixel.realMarginTop;
+
             this.syncPosition();
         },
         moveBy: function(dx, dy) {
-            this.pixel.relativeX += dx;
-            this.pixel.relativeY += dy;
-            // this.left = this.pixel.relativeX;
-            // this.top = this.pixel.relativeY;
+            var pixel = this.pixel;
+            var x = pixel.relativeX - pixel.realMarginLeft + dx;
+            pixel.left = x;
+            pixel.relativeX = x + pixel.realMarginLeft;
+            // this.left = x;
+
+            var y = pixel.relativeY - pixel.realMarginTop + dy;
+            pixel.top = y;
+            pixel.relativeY = y + pixel.realMarginTop;
+            // this.top = y;
+
             this.syncPosition();
         },
 
@@ -549,6 +569,7 @@ var CUI = CUI || {};
         },
 
         resize: function() {
+            // console.log('Component.resize');
             this.computeWidth();
             this.computeHeight();
             this.computePositionX();
@@ -556,9 +577,12 @@ var CUI = CUI || {};
             this.computePadding();
             this.updateAABB();
             this.needToCompute = true;
+            this.onResize();
         },
+        onResize: noop,
 
         computeSelf: function(parent) {
+            // console.log('Component.computeSelf');
             this.computeMargin(parent);
             this.computeRealMargin(parent);
             this.computeWidth();
@@ -571,6 +595,11 @@ var CUI = CUI || {};
 
         computeLayout: function(forceCompute) {
             if (this.needToCompute || forceCompute) {
+                // if (window.tttt == 1) {
+                //     console.log(this.id, this.needToCompute, forceCompute);
+                //     debugger
+                // }
+                // console.log(this.id, 'Component.computeLayout');
                 this.needToCompute = false;
                 if (this.composite) {
                     this.layout.compute(this);
@@ -586,7 +615,17 @@ var CUI = CUI || {};
             return this.composite ? this.children.length : 0;
         },
 
-        isInRegion: function(x, y) {
+        isInView: function() {
+            return this.checkCollideAABB(this.root.aabb);
+        },
+
+        isInRegion: function(x, y, width, height) {
+            var aabb = this.aabb;
+            return aabb[2] > x && aabb[3] > y && aabb[1] < (y + height) && aabb[0] < (x + width);
+
+        },
+
+        containPoint: function(x, y) {
             var aabb = this.aabb;
             return aabb[0] < x && x < aabb[2] && aabb[1] < y && y < aabb[3];
         },
@@ -607,7 +646,7 @@ var CUI = CUI || {};
         update: function(timeStep, now) {
             this.computeLayout();
             this.updateSelf(timeStep, now);
-            if (this.composite) {
+            if (this.composite && this.visible) {
                 this.updateChildren(timeStep, now);
             }
             this.onUpdate(timeStep, now);
@@ -702,7 +741,7 @@ var CUI = CUI || {};
             }
 
             var prevAlpha = renderer.getAlpha();
-            if (this.alpha != 1) {
+            if (this.alpha !== 1) {
                 renderer.setAlpha(this.alpha);
             }
             this.beforeTransform(renderer, timeStep, now);
@@ -735,13 +774,14 @@ var CUI = CUI || {};
         afterRender: null,
 
         beforeTransform: function(renderer, timeStep, now) {
-            if (this.scale != 1) {
+            if (this.scale !== 1 || this.rotation !== 0) {
                 var x = this.x + this.pixel.anchorX,
                     y = this.y + this.pixel.anchorY;
                 renderer.save();
                 renderer.setOrigin(x, y);
                 renderer.translate(this.offsetX, this.offsetY);
                 renderer.scale(this.scale, this.scale);
+                renderer.rotate(this.rotation);
                 // renderer.translate(-x, -y);
                 // renderer.translate(this.offsetX, this.offsetY);
                 // renderer.scale(this.scale, this.scale);
@@ -751,7 +791,7 @@ var CUI = CUI || {};
             }
         },
         afterTransform: function(renderer, timeStep, now) {
-            if (this.scale != 1 || this.offsetX || this.offsetY) {
+            if (this.scale !== 1 || !this.rotation !== 0 || this.offsetX || this.offsetY) {
                 renderer.restore();
             }
         },

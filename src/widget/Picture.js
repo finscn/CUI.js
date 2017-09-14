@@ -171,10 +171,7 @@ var CUI = CUI || {};
             this.needToCompute = false;
         },
 
-        syncPosition: function() {
-            this.x = this.pixel.relativeX + this.parent.x;
-            this.y = this.pixel.relativeY + this.parent.y;
-            this.updateAABB();
+        syncHolders: function() {
             if (this.scaleImg) {
                 this.imageHolder.x = this.x;
                 this.imageHolder.y = this.y;
@@ -212,7 +209,7 @@ var CUI = CUI || {};
 
     exports.Picture = Picture;
 
-    if (typeof module != "undefined") {
+    if (typeof module !== "undefined") {
         module.exports = Picture;
     }
 

@@ -10,6 +10,8 @@ var CUI = CUI || {};
     // var Panel = exports.Panel;
     var Slider = exports.Slider;
 
+    var noop = exports.noop;
+
 
     var ScrollView = Class.create({
         superclass: Component,
@@ -32,7 +34,7 @@ var CUI = CUI || {};
             this.damping = 0.0025;
             this.swipeScale = 1.2;
             this.minScrollVel = 0.12;
-            this.bounceDuration = 160;
+            this.bounceDuration = 180;
             this.scrollingDuration = 700;
 
             this.scrollThumb = true;
@@ -46,7 +48,6 @@ var CUI = CUI || {};
         },
 
         init: function() {
-
             ScrollView.$super.init.call(this);
 
             this.visibleChildren = [];
@@ -104,7 +105,9 @@ var CUI = CUI || {};
                 c.moveBy(Me.scrollX, Me.scrollY);
             });
             this.resetScrollInfo();
+            this.onReset();
         },
+        onReset: noop,
 
         startScroll: function(vx, vy) {
             if (!this.scrollH) {
@@ -248,6 +251,7 @@ var CUI = CUI || {};
                         Me.thumbY = Me.scrollY * Me.rateHeight >> 0;
                         Me.scorllOver = true;
                         Me.stopScroll();
+                        Me.afterTween(Me.scrollX, Me.scrollY);
                     },
                 };
             }
@@ -255,6 +259,10 @@ var CUI = CUI || {};
 
         stopTween: function() {
             this.tween = null;
+        },
+
+        afterTween: function(x, y) {
+            // do nothing.
         },
 
         updateTween: function(timeStep) {
@@ -279,7 +287,7 @@ var CUI = CUI || {};
         },
 
         onTouchStart: function(x, y, id) {
-            if (this.isInRegion(x, y)) {
+            if (this.containPoint(x, y)) {
                 this.stopScroll();
             }
             return false;
@@ -291,7 +299,7 @@ var CUI = CUI || {};
         },
 
         onPan: function(x, y, dx, dy, startX, startY, id) {
-            if (this.isInRegion(startX, startY)) {
+            if (this.containPoint(startX, startY)) {
                 this.scrollBy(-dx, -dy);
                 return;
             }
@@ -299,7 +307,7 @@ var CUI = CUI || {};
         },
 
         onSwipe: function(x, y, vx, vy, startX, startY, id) {
-            if (this.isInRegion(startX, startY)) {
+            if (this.containPoint(startX, startY)) {
                 vx = vx * this.swipeScale;
                 vy = vy * this.swipeScale;
                 this.startScroll(-vx, -vy);
@@ -424,7 +432,7 @@ var CUI = CUI || {};
 
     exports.ScrollView = ScrollView;
 
-    if (typeof module != "undefined") {
+    if (typeof module !== "undefined") {
         module.exports = ScrollView;
     }
 

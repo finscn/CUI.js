@@ -61,7 +61,7 @@ var CUI = CUI || {};
                 if (value === "auto") {
                     return autoValue === undefined ? 0 : autoValue;
                 }
-                var plus, sub, percent, num;
+                var plus, sub, mul, div, percent, num;
                 if ((plus = value.lastIndexOf("+")) > 0) {
                     var p1 = value.substring(0, plus);
                     var p2 = value.substring(plus + 1);
@@ -74,11 +74,24 @@ var CUI = CUI || {};
                     p1 = Utils.parseValue(p1, relativeValue);
                     p2 = Utils.parseValue(p2, relativeValue);
                     return p1 - p2;
+                } else if ((mul = value.lastIndexOf("*")) > 0) {
+                    var p1 = value.substring(0, mul);
+                    var p2 = value.substring(mul + 1);
+                    p1 = Utils.parseValue(p1, relativeValue);
+                    p2 = Utils.parseValue(p2, relativeValue);
+                    return p1 * p2;
+                } else if ((div = value.lastIndexOf("/")) > 0) {
+                    var p1 = value.substring(0, div);
+                    var p2 = value.substring(div + 1);
+                    p1 = Utils.parseValue(p1, relativeValue);
+                    p2 = Utils.parseValue(p2, relativeValue);
+                    return p1 * p2;
                 } else if ((percent = value.lastIndexOf("%")) > 0) {
                     value = (parseFloat(value) / 100) * (relativeValue || 0);
                     return value;
                 } else {
-                    return parseFloat(value) || 0;
+                    num = parseFloat(value) || 0;
+                    return num;
                 }
             }
             if (typeof value === "number" || value === true || value === false || value === null || value === undefined) {

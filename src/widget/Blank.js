@@ -42,7 +42,7 @@ var CUI = CUI || {};
 
     exports.Blank = Blank;
 
-    if (typeof module != "undefined") {
+    if (typeof module !== "undefined") {
         module.exports = Blank;
     }
 

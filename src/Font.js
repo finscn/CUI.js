@@ -37,7 +37,7 @@ var CUI = CUI || {};
     exports.Font = Font;
     exports.FontMapping = FontMapping;
 
-    if (typeof module != "undefined") {
+    if (typeof module !== "undefined") {
         module.exports = Font;
         module.exports = FontMapping;
     }

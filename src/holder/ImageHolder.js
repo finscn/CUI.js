@@ -247,8 +247,8 @@ var CUI = CUI || {};
 
             var rotation = this.rotation % this.DOUBLE_PI;
 
-            if (flipX != 1 || flipY != 1 || rotation != 0) {
-                // if (scaleX != 1 || scaleY != 1 || rotation != 0) {
+            if (flipX !== 1 || flipY !== 1 || rotation !== 0) {
+                // if (scaleX !== 1 || scaleY !== 1 || rotation !== 0) {
 
                 // TODO
                 renderer.save();
@@ -269,8 +269,8 @@ var CUI = CUI || {};
 
             renderer.drawDisplayObject(this.displayObject, x, y, width + this.offsetW, height + this.offsetH);
 
-            if (flipX != 1 || flipY != 1 || rotation != 0) {
-                // if (scaleX != 1 || scaleY != 1 || rotation != 0) {
+            if (flipX !== 1 || flipY !== 1 || rotation !== 0) {
+                // if (scaleX !== 1 || scaleY !== 1 || rotation !== 0) {
                 renderer.restore();
             } else {
                 if (this.alpha !== null) {
@@ -284,7 +284,7 @@ var CUI = CUI || {};
 
     exports.ImageHolder = ImageHolder;
 
-    if (typeof module != "undefined") {
+    if (typeof module !== "undefined") {
         module.exports = ImageHolder;
     }
 
