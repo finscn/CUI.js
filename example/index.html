@@ -28,53 +28,60 @@
 <script src="../lib/pixi.js"></script>
 <!-- <script src="../lib/pixi.min.js"></script> -->
 
-<script src="../src/Class.js"></script>
-<script src="../src/Utils.js"></script>
-<script src="../src/Composite.js"></script>
-<script src="../src/EventDispatcher.js"></script>
-<script src="../src/TouchTarget.js"></script>
-<script src="../src/ButtonComponent.js"></script>
-<script src="../src/Slider.js"></script>
-<script src="../src/Font.js"></script>
+<script>
+  var jsFiles = [
+"../src/Class.js",
+"../src/Utils.js",
+"../src/Composite.js",
+"../src/EventDispatcher.js",
+"../src/TouchTarget.js",
+"../src/ButtonComponent.js",
+"../src/Slider.js",
+"../src/Font.js",
 
-<script src="../src/renderer/CanvasRenderer.js"></script>
-<script src="../src/renderer/PIXIRenderer.js"></script>
+"../src/renderer/CanvasRenderer.js",
+"../src/renderer/PIXIRenderer.js",
 
-<script src="../src/layout/BaseLayout.js"></script>
-<script src="../src/layout/VBoxLayout.js"></script>
-<script src="../src/layout/HBoxLayout.js"></script>
-<script src="../src/layout/TableLayout.js"></script>
-<script src="../src/layout/Layout.js"></script>
+"../src/layout/BaseLayout.js",
+"../src/layout/VBoxLayout.js",
+"../src/layout/HBoxLayout.js",
+"../src/layout/TableLayout.js",
+"../src/layout/Layout.js",
 
-<script src="../src/Component.js"></script>
-<script src="../src/Root.js"></script>
+"../src/Component.js",
+"../src/Root.js",
 
-<script src="../src/holder/BaseHolder.js"></script>
-<script src="../src/holder/TextHolder.js"></script>
-<script src="../src/holder/ImageHolder.js"></script>
-<script src="../src/holder/BackgroundImageHolder.js"></script>
-<script src="../src/holder/BorderImageHolder.js"></script>
+"../src/holder/BaseHolder.js",
+"../src/holder/TextHolder.js",
+"../src/holder/ImageHolder.js",
+"../src/holder/BackgroundImageHolder.js",
+"../src/holder/BorderImageHolder.js",
 
-<script src="../src/widget/Blank.js"></script>
-<script src="../src/widget/Page.js"></script>
-<script src="../src/widget/Panel.js"></script>
-<script src="../src/widget/Label.js"></script>
-<script src="../src/widget/Button.js"></script>
-<script src="../src/widget/Picture.js"></script>
-<script src="../src/widget/ScrollView.js"></script>
+"../src/widget/Blank.js",
+"../src/widget/Page.js",
+"../src/widget/Panel.js",
+"../src/widget/Label.js",
+"../src/widget/Button.js",
+"../src/widget/Picture.js",
+"../src/widget/ScrollView.js",
 
-<script src="./GT-Toucher/src/Controller.js"></script>
-<script src="./GT-Toucher/src/TouchWrapper.js"></script>
-<script src="./GT-Toucher/src/Listener.js"></script>
-<script src="./GT-Toucher/src/gesture/Any.js"></script>
-<script src="./GT-Toucher/src/gesture/Tap.js"></script>
-<script src="./GT-Toucher/src/gesture/Pan.js"></script>
-<script src="./GT-Toucher/src/gesture/Swipe.js"></script>
+"./GT-Toucher/src/Controller.js",
+"./GT-Toucher/src/TouchWrapper.js",
+"./GT-Toucher/src/Listener.js",
+"./GT-Toucher/src/gesture/Any.js",
+"./GT-Toucher/src/gesture/Tap.js",
+"./GT-Toucher/src/gesture/Pan.js",
+"./GT-Toucher/src/gesture/Swipe.js",
 
-<script src="gesture.js"></script>
-<script src="main.js"></script>
-<script src="ui.js"></script>
+"gesture.js",
+"main.js",
+"ui.js",
+];
 
+jsFiles.forEach(function(js){
+  document.write('<script src="'+js+'?_ts='+(Date.now())+'"></scr' + 'ipt>');
+});
+</script>
 
 <script type="text/javascript">
 
