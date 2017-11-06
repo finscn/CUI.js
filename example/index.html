@@ -10,6 +10,7 @@
   <title>CUI.js Renderer example 1</title>
   <!-- <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no, target-densitydpi=device-dpi" /> -->
   <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no" />
+
   <meta name="apple-mobile-web-app-title" content="H5Game">
   <meta name="apple-touch-fullscreen" content="yes" >
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -83,15 +84,31 @@ jsFiles.forEach(function(js){
 });
 </script>
 
-<script type="text/javascript">
-
-
-</script>
+<style type="text/css">
+body {
+  overflow: hidden;
+}
+</style>
 
 </head>
 <body>
   <div id="container" class="splash">
     <canvas id="canvas"></canvas>
   </div>
+
+
+<script type="text/javascript">
+
+document.title=123456;
+window.addEventListener('touchmove',function(event){
+  event.stopPropagation();
+  event.preventDefault();
+},false);
+// window.document.addEventListener('touchmove',function(event){
+//   event.stopPropagation();
+//   event.preventDefault();
+// },false);
+
+</script>
 </body>
 </html>

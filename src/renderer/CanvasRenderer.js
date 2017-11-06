@@ -194,13 +194,13 @@ var CUI = CUI || {};
             this.clearRect(0, 0, this.canvas.width, this.canvas.height);
         },
 
-        strokeRect: function(x, y, width, height, color, lineWidth) {
+        strokeRect: function(x, y, width, height, lineWidth, color) {
             var t = this.globalTransform;
             var dx = x - t.originalX;
             var dy = y - t.originalY;
 
-            color && (this.context.strokeStyle = color);
             lineWidth && (this.context.lineWidth = lineWidth);
+            color && (this.context.strokeStyle = color);
             this.context.strokeRect(dx, dy, width, height);
         },
 
@@ -224,6 +224,33 @@ var CUI = CUI || {};
             } else {
                 this.context.clearRect(dx, dy, width, height);
             }
+        },
+
+        strokeText: function(text, x, y, lineWidth, color, style) {
+            var t = this.globalTransform;
+            var dx = x - t.originalX;
+            var dy = y - t.originalY;
+
+            lineWidth && (this.context.lineWidth = lineWidth);
+            color && (this.context.strokeStyle = color);
+            style && (this.context.font = style);
+            this.context.strokeText(text, dx, dy, width, height);
+        },
+
+        fillText: function(text, x, y, color, style) {
+            var t = this.globalTransform;
+            var dx = x - t.originalX;
+            var dy = y - t.originalY;
+
+            color && (this.context.fillStyle = color);
+            style && (this.context.font = style);
+            this.context.strokeText(text, dx, dy, width, height);
+        },
+
+        drawText: function(text, x, y, style) {
+            var color = style.color;
+            var font = style.font;
+            this.fillText(text, x, y, color, font);
         },
 
         drawDisplayObject: function(displayObject, dx, dy, dw, dh) {

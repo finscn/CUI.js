@@ -30,6 +30,8 @@ var CUI = CUI || {};
             this.globalContainer = null;
         },
 
+        noop: function() {},
+
         init: function() {
 
             if (!this.core) {

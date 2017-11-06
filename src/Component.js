@@ -644,14 +644,16 @@ var CUI = CUI || {};
             });
         },
         update: function(timeStep, now) {
+            this.beforeUpdate && this.beforeUpdate(timeStep, now);
             this.computeLayout();
             this.updateSelf(timeStep, now);
             if (this.composite && this.visible) {
                 this.updateChildren(timeStep, now);
             }
-            this.onUpdate(timeStep, now);
+            this.afterUpdate && this.afterUpdate(timeStep, now);
         },
-        onUpdate: noop,
+        beforeUpdate: null,
+        afterUpdate: null,
 
         createCacheCanvas: function() {
             if (!this.cacheCanvas) {
