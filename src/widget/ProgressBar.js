@@ -47,7 +47,6 @@ var CUI = CUI || {};
             if (this.afterInit) {
                 this.afterInit();
             }
-
         },
 
         computeWidth: Label.prototype.computeWidth,

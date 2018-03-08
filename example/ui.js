@@ -11,7 +11,6 @@ function initUI() {
         height: game.height,
     });
 
-
     var page = new CUI.Page({
         parent: rootUI,
         width: "100%",
@@ -135,6 +134,9 @@ function initUI() {
             alpha: 1,
             // useCache: false,
             text: "Text Test - 1",
+        },
+        updateSelf:function(){
+            this.setText("test-" + (Math.random() * 1000 >> 0), false);
         }
     });
 

@@ -48,6 +48,10 @@ var CUI = CUI || {};
         },
 
         init: function() {
+            if (this.beforeInit) {
+                this.beforeInit();
+            }
+
             ScrollView.$super.init.call(this);
 
             this.visibleChildren = [];
@@ -58,7 +62,14 @@ var CUI = CUI || {};
             }
             this.scrollWidthOrigin = this.scrollWidth;
             this.scrollHeightOrigin = this.scrollHeight;
+
+            this.initChildren();
+
             this.resetScrollInfo();
+
+            if (this.afterInit) {
+                this.afterInit();
+            }
         },
 
         resetScrollInfo: function() {

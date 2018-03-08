@@ -234,7 +234,7 @@ var CUI = CUI || {};
             lineWidth && (this.context.lineWidth = lineWidth);
             color && (this.context.strokeStyle = color);
             style && (this.context.font = style);
-            this.context.strokeText(text, dx, dy, width, height);
+            this.context.strokeText(text, dx, dy);
         },
 
         fillText: function(text, x, y, color, style) {
@@ -244,7 +244,7 @@ var CUI = CUI || {};
 
             color && (this.context.fillStyle = color);
             style && (this.context.font = style);
-            this.context.strokeText(text, dx, dy, width, height);
+            this.context.fillText(text, dx, dy);
         },
 
         drawText: function(text, x, y, style) {

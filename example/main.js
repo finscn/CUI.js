@@ -1,5 +1,5 @@
 var Config = {
-    width: 560,
+    width: 640,
     height: 400,
     FPS: 60,
 
@@ -62,9 +62,6 @@ function update(timeStep, now) {
         TouchInfo.firstSwipe = null;
     }
 
-    if (rootUI.all["label-1"]) {
-        rootUI.all["label-1"].setText("test-" + (Math.random() * 1000 >> 0), false);
-    }
     rootUI.update(timeStep, now);
 
     // uiX+=1;

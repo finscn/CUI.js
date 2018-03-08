@@ -29,6 +29,9 @@ var CUI = CUI || {};
         },
 
         init: function() {
+            if (this.beforeInit) {
+                this.beforeInit();
+            }
 
             Picture.$super.init.call(this);
 
@@ -61,6 +64,9 @@ var CUI = CUI || {};
                 this.height = this.imageHolder.h * this.scaleY;
             }
 
+            if (this.afterInit) {
+                this.afterInit();
+            }
         },
 
         setSrc: function(src) {

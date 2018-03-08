@@ -12,9 +12,9 @@ var CUI = CUI || {};
 
         initialize: function() {
             this.lazyInit = false;
-            this.hoverButton = null;
-            this.hoverId = 0;
-            this.defaultHoverId = 0;
+            this.focusButton = null;
+            this.focusId = 0;
+            this.defaultFocusId = 0;
 
             this.cyclic = true;
             this.disabled = true;
@@ -25,8 +25,8 @@ var CUI = CUI || {};
         },
 
         init: function() {
-            if (this.defaultHoverId) {
-                this.setHoverButton(this.defaultHoverId);
+            if (this.defaultFocusId) {
+                this.setFocus(this.defaultFocusId);
             }
             if (this.onInit) {
                 this.onInit();
@@ -41,14 +41,14 @@ var CUI = CUI || {};
             this.disabled = true;
         },
         reset: function() {
-            this.lastHoverButton = null;
-            this.lastHoverId = null;
-            this.hoverButton = null;
-            this.hoverId = null;
+            this.lastFocusButton = null;
+            this.lastFocusId = null;
+            this.focusButton = null;
+            this.focusId = null;
         },
 
         tap: function() {
-            var btn = this.hoverButton;
+            var btn = this.focusButton;
             if (!btn || btn.disabled) {
                 return false;
             }
@@ -63,7 +63,7 @@ var CUI = CUI || {};
             return true;
         },
         nav: function(flag) {
-            var btn = this.hoverButton;
+            var btn = this.focusButton;
             if (!btn || !this.navTree) {
                 return false;
             }
@@ -71,13 +71,13 @@ var CUI = CUI || {};
             if (btnNav && btnNav[flag]) {
                 var id = btnNav[flag];
                 if (id === -1) {
-                    id = this.lastHoverId;
+                    id = this.lastFocusId;
                 }
-                this.setHoverButton(id);
+                this.setFocus(id);
             }
         },
         back: function() {
-            this.setHoverButton(this.lastHoverId);
+            this.setFocus(this.lastFocusId);
         },
 
         up: function() {
@@ -93,31 +93,31 @@ var CUI = CUI || {};
             this.nav(3);
         },
 
-        hoverDefault: function() {
-            this.setHoverButton(this.defaultHoverId);
+        focusOnDefault: function() {
+            this.setFocus(this.defaultFocusId);
         },
-        setHoverButton: function(id) {
+        setFocus: function(id) {
             var btn = this.ui.all[id];
             if (!btn) {
                 return false;
             }
-            this.lastHoverButton = this.hoverButton;
-            this.lastHoverId = this.hoverId;
-            this.onUnhover(this.hoverButton);
+            this.lastFocusButton = this.focusButton;
+            this.lastFocusId = this.focusId;
+            this.onBlur(this.focusButton);
 
-            this.hoverButton = btn;
-            this.hoverId = id;
-            this.onHover(btn);
+            this.focusButton = btn;
+            this.focusId = id;
+            this.onFocus(btn);
             return true;
         },
-        onHover: function(btn) {
+        onFocus: function(btn) {
 
         },
-        onUnhover: function(btn) {
+        onBlur: function(btn) {
 
         },
         render: function(renderer, timeStep, now) {
-            var btn = this.hoverButton;
+            var btn = this.focusButton;
             if (!btn) {
                 return;
             }

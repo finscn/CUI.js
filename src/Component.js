@@ -147,7 +147,7 @@ var CUI = CUI || {};
             // }
 
             // TODO
-            this._beforeInit();
+            // this._beforeInit();
 
             this.inited = true;
             this.id = this.id || "cmp_" + Component._SN++;
@@ -191,12 +191,14 @@ var CUI = CUI || {};
             this.initBackground();
 
             // TODO
-            this._afterInit();
+            // this._afterInit();
 
             // if (this.afterInit) {
             //     this.afterInit();
             // }
         },
+
+        initChildren: noop,
 
         initBackground: function(reinit) {
             if (!this.backgroundHolder || reinit) {
@@ -283,7 +285,8 @@ var CUI = CUI || {};
 
         setParent: function(parent, forceCompute) {
             if (parent && (parent !== this.parent || forceCompute)) {
-                this.parent.addChild(this);
+                this.parent = parent;
+                parent.addChild(this);
             }
         },
         addChild: function(child) {
@@ -595,11 +598,6 @@ var CUI = CUI || {};
 
         computeLayout: function(forceCompute) {
             if (this.needToCompute || forceCompute) {
-                // if (window.tttt == 1) {
-                //     console.log(this.id, this.needToCompute, forceCompute);
-                //     debugger
-                // }
-                // console.log(this.id, 'Component.computeLayout');
                 this.needToCompute = false;
                 if (this.composite) {
                     this.layout.compute(this);
@@ -955,6 +953,24 @@ var CUI = CUI || {};
             Component.canvasPool[id] = canvas;
         }
         return canvas;
+    };
+
+    Component.create = function(options, parent) {
+        var ui = options.ui;
+        var children = options.children;
+        delete options.ui;
+        delete options.children;
+
+        options.parent = parent;
+
+        var comp = new ui(options);
+
+        if (children) {
+            children.forEach(function(child) {
+                Component.create(child, comp);
+            });
+        }
+        return comp;
     };
 
     exports.Component = Component;

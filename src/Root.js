@@ -82,8 +82,9 @@ var CUI = CUI || {};
             this.computePositionX();
             this.computePositionY();
 
-
             this.root = this;
+
+            this.initChildren();
 
             if (this.afterInit) {
                 this.afterInit();

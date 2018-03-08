@@ -18,6 +18,8 @@ var CUI = CUI || {};
 
             Page.$super.init.call(this);
 
+            this.initChildren();
+
             if (this.afterInit) {
                 this.afterInit();
             }

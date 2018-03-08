@@ -49,12 +49,12 @@ var CUI = CUI || {};
             this.initTextInfo();
             this.setTextInfo(this.textInfo);
 
+            this.computeSelf(this.parent);
+            this.computeSizeWithText(false);
+
             if (this.afterInit) {
                 this.afterInit();
             }
-
-            this.computeSelf(this.parent);
-            this.computeSizeWithText(false);
         },
 
         setImageHolder: function(name, info) {
@@ -127,6 +127,7 @@ var CUI = CUI || {};
                 "color",
                 "textAlign",
                 "verticalAlign",
+                "strokeColor",
                 "strokeWidth",
                 "fontSize",
                 "fontWeight",
@@ -142,6 +143,9 @@ var CUI = CUI || {};
         },
 
         setText: function(text, needToCompute) {
+            if (this.textInfo) {
+                this.textInfo.text = text;
+            }
             this.textHolder.setText(text);
             this.needToComputeSize = this.textHolder.textChanged;
             this.needToCompute = needToCompute !== false;
