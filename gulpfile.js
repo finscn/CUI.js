@@ -1,65 +1,18 @@
-var PROJECT_NAME = 'Flukes';
-var PROJECT_DOMAIN = 'cn.fattyboy.flukes';
-
 var encoding = 'utf-8';
 var newLine = '\n';
-
-// var nwVer = 'latest';
-var nwVer = '0.21.1';
 
 var argv = process.argv.slice(2);
 // if (argv.length == 0) {
 //     console.error("argv is wrong.");
 // }
 
-var demo, debug;
-var third;
-var noEval;
-var noWrap;
 
 (function() {
     console.log('\n');
     console.log(argv);
-
-    demo = argv.indexOf('--demo') !== -1;
-    debug = argv.indexOf('--debug') !== -1;
-    third = argv.indexOf('--third') !== -1 || argv.indexOf('--3rd') !== -1;
-    noWrap = argv.indexOf('--no-wrap') !== -1;
-    noEval = argv.indexOf('--no-eval') !== -1;
-
-    if (demo) {
-        console.log('\n  ---- build demo ----\n');
-    }
-    if (debug) {
-        console.log('\n  ---- build debug ----\n');
-    }
-
-    if (third) {
-        console.log('\n  ---- build third ----\n');
-    }
-
-    if (noWrap) {
-        console.log('\n  ---- NOT wrap all-in-one.js ----\n');
-    }
-
-    if (noEval) {
-        console.log('\n  ---- NOT obfuscate by eval ----\n');
-    }
 }());
 
 
-
-// debug , release
-var modes = {
-    'android': debug ? 'debug' : 'release',
-    'ios': 'debug',
-    'mac': 'release',
-    'win': 'release',
-    'linux': 'release',
-    'win32': 'release',
-};
-
-var NwBuilder = require('nw-builder');
 
 var cp = require('child_process');
 var fs = require('fs-extra');
@@ -80,10 +33,8 @@ var eslint = require('gulp-eslint');
 var pump = require('pump');
 var runSequence = require('run-sequence');
 
-var ObCode = require('./lib/ob-code/index')();
 
 var pkg = require('./package.json');
-
 
 var buildTime;
 
@@ -143,25 +94,23 @@ var jsFileList = [
     "widget/Picture.js",
     "widget/ScrollView.js",
 ];
-jsFileList.map(function(value) {
+jsFileList = jsFileList.map(function(value) {
     return srcPath + '/' + value;
-})
+});
 
 
 gulp.task('minify', function(cb) {
     var files = ([]).concat(jsFileList);
-
     pump([
             gulp.src(files, {
                 cwd: baseDir,
                 base: baseDir
             }),
-            concat('all-in-one.js'),
+            concat('cui-min.js'),
             eslint('.eslintrc.js'),
             eslint.format(),
             uglify(),
-            gulp.dest(baseDir),
-
+            gulp.dest(distPath),
         ],
         function() {
             cb && cb();
