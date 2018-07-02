@@ -201,6 +201,7 @@ var CUI = CUI || {};
                 var measure = ctx.measureText(this.lines[0]);
                 measure.height = Math.ceil(this.fontSize * 1.5);
                 this.lineHeight = this.lineHeight || measure.height;
+                // measure.height = this.lineHeight;
                 this.measure = measure;
                 this.width = measure.width;
             } else {

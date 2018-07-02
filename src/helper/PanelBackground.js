@@ -26,6 +26,9 @@ var CUI = CUI || {};
             borderColor: "rgba(0,0,0,0)",
 
             shadowColor: "rgba(0,0,0,0)",
+            shadowRadius: null,
+            shadowWidth: null,
+            shadowHeight: null,
             shadowOffsetX: 0,
             shadowOffsetY: 0,
             shadowBorderWidth: 0,
@@ -39,10 +42,10 @@ var CUI = CUI || {};
             headY: null,
             headWidth: null,
             headHeight: null,
-            headRadius: 8,
-            headColor: "#3c3c2d",
+            headRadius: 0,
+            headColor: "rgba(0,0,0,0)",
             headBorderWidth: 0,
-            headBorderColor: "#979778",
+            headBorderColor: "rgba(0,0,0,0)",
             headMarginTop: null,
             headMarginBottom: null,
 
@@ -50,20 +53,20 @@ var CUI = CUI || {};
             bodyY: null,
             bodyWidth: null,
             bodyHeight: null,
-            bodyRadius: 4,
-            bodyColor: "#ff0000",
+            bodyRadius: 0,
+            bodyColor: "rgba(0,0,0,0)",
             bodyBorderWidth: 0,
-            bodyBorderColor: "#d3c497",
+            bodyBorderColor: "rgba(0,0,0,0)",
             bodyPadding: 0,
 
             footX: null,
             footY: null,
             footWidth: 0,
             footHeight: 0,
-            footRadius: 4,
-            footColor: "#3c3c2d",
+            footRadius: 0,
+            footColor: "rgba(0,0,0,0)",
             footBorderWidth: 0,
-            footBorderColor: "#979778",
+            footBorderColor: "rgba(0,0,0,0)",
             footMarginTop: null,
             footMarginBottom: null,
 
@@ -71,10 +74,10 @@ var CUI = CUI || {};
             innerY: null,
             innerWidth: null,
             innerHeight: null,
-            innerRadius: 4,
-            innerColor: "#f1e2d3",
+            innerRadius: 0,
+            innerColor: null,
             innerBorderWidth: 0,
-            innerBorderColor: "#d3c497",
+            innerBorderColor: null,
 
         }, options);
 
@@ -134,9 +137,9 @@ var CUI = CUI || {};
             this.shadow = {
                 x: ax + options.shadowOffsetX,
                 y: ay + options.shadowOffsetY,
-                width: panelWidth,
-                height: panelHeight,
-                radius: radius,
+                width: options.shadowWidth || panelWidth,
+                height: options.shadowHeight || panelHeight,
+                radius: options.shadowRadius || radius,
                 color: options.shadowColor,
 
                 borderWidth: options.shadowBorderWidth,
@@ -166,13 +169,16 @@ var CUI = CUI || {};
         ay += headMarginTop;
 
         if (options.headHeight) {
+            var _mode = options.headMode;
+            _mode = _mode === null || _mode === undefined ? mode : _mode;
+
             var _width = options.headWidth || headWidth;
             var _height = options.headHeight || headHeight;
             var _x = options.headX === null ? panelWidth - _width >> 1 : options.headX;
             var _y = options.headY === null ? ay : options.headY;
 
             this.head = {
-                mode: mode,
+                mode: _mode,
                 lineCap: lineCap,
 
                 x: _x,
@@ -185,7 +191,6 @@ var CUI = CUI || {};
                 borderWidth: options.headBorderWidth,
                 borderColor: options.headBorderColor,
             }
-
             ay += _height + headMarginBottom;
         }
 
@@ -238,6 +243,9 @@ var CUI = CUI || {};
         }
 
         if (options.footHeight) {
+            var _mode = options.footMode;
+            _mode = _mode === null || _mode === undefined ? mode : _mode;
+
             var _width = options.footWidth || footWidth;
             var _height = options.footHeight || footHeight;
 
@@ -246,7 +254,7 @@ var CUI = CUI || {};
             _y = options.footY === null ? _y : options.footY;
 
             this.foot = {
-                mode: mode,
+                mode: _mode,
                 lineCap: lineCap,
 
                 x: _x,
@@ -306,7 +314,6 @@ var CUI = CUI || {};
         }
 
         this.canvas = canvas;
-        this.init();
     };
 
     var proto = {
@@ -317,13 +324,15 @@ var CUI = CUI || {};
                 this.shadow,
                 this.panel,
 
-                this.head,
                 this.body,
                 this.inner,
-                this.foot,
 
                 this.border,
                 this.outerBorder,
+
+                this.head,
+                this.foot,
+
             ];
 
             var canvas = this.canvas || Utils.createCanvas(this.width, this.height);

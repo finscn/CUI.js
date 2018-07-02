@@ -108,6 +108,8 @@ var CUI = CUI || {};
 
             this.thumbX = this.scrollX * this.rateWidth >> 0;
             this.thumbY = this.scrollY * this.rateHeight >> 0;
+
+            this.stopTween();
         },
 
         reset: function() {
@@ -173,6 +175,7 @@ var CUI = CUI || {};
         },
 
         scrollTo: function(x, y) {
+            this.stopTween();
             if (this.scrollH) {
                 this.setScrollX(x);
             }
@@ -180,6 +183,7 @@ var CUI = CUI || {};
                 this.setScrollY(y);
             }
         },
+
         scrollBy: function(dx, dy) {
             this.scrolling = this.scrollingDuration;
             if (this.scrollH) {
@@ -220,12 +224,11 @@ var CUI = CUI || {};
 
         startTween: function(target, duration) {
 
-            if (!target) {
-                target = {
-                    x: this.scrollX,
-                    y: this.scrollY,
-                }
+            target = target || {
+                x: this.scrollX,
+                y: this.scrollY,
             }
+
             if (this.scrollH && this.snapWidth) {
                 target.x = Math.round(target.x / this.snapWidth) * this.snapWidth;
             }
@@ -235,15 +238,15 @@ var CUI = CUI || {};
             target.x = Math.min(this.maxScrollX, Math.max(this.minScrollX, target.x));
             target.y = Math.min(this.maxScrollY, Math.max(this.minScrollY, target.y));
 
+            this.stopTween();
 
-            if (target) {
-                var Me = this;
-                this.stopTween();
-                var _cx = this.scrollX;
-                var _cy = this.scrollY;
-                var _dx = target.x - _cx;
-                var _dy = target.y - _cy;
+            var Me = this;
+            var _cx = this.scrollX;
+            var _cy = this.scrollY;
+            var _dx = target.x - _cx;
+            var _dy = target.y - _cy;
 
+            if (_dx || _dy) {
                 this.tween = {
                     duration: (duration === 0 || duration) ? duration : this.bounceDuration,
                     played: 0,
@@ -264,7 +267,7 @@ var CUI = CUI || {};
                         Me.stopScroll();
                         Me.afterTween(Me.scrollX, Me.scrollY);
                     },
-                };
+                }
             }
         },
 
@@ -310,7 +313,13 @@ var CUI = CUI || {};
         },
 
         onPan: function(x, y, dx, dy, startX, startY, id) {
-            if (this.containPoint(startX, startY)) {
+            // if (this.containPoint(startX, startY)) {
+            if (this.scrollV && this.scrollH && this.containPoint(x, y)) {
+                this.scrollBy(-dx, -dy);
+                return;
+            }
+            if (this.scrollV && this.containPoint(x, startY) ||
+                this.scrollH && this.containPoint(startX, y)) {
                 this.scrollBy(-dx, -dy);
                 return;
             }
@@ -361,12 +370,14 @@ var CUI = CUI || {};
             var Me = this;
             this.scrollDX = this.scrollX - this.lastScrollX;
             this.scrollDY = this.scrollY - this.lastScrollY;
+
             var vc = this.visibleChildren;
             var scrollChanged = this.scrollDX || this.scrollDY || vc.length === 0;
             if (scrollChanged) {
                 // console.log("scrolling : ", this.id, this.scrollDX, this.scrollDY, vc.length);
                 vc.length = 0;
             }
+
             this.children.forEach(function(child, idx) {
                 if (scrollChanged) {
                     child.moveBy(-Me.scrollDX, -Me.scrollDY);

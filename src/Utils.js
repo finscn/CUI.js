@@ -220,7 +220,7 @@ var CUI = CUI || {};
         //////////////////////////////////////////////////////////////////////
         //////////////////////////////////////////////////////////////////////
 
-        setContextColor: function(context, attribute, color, endX, end) {
+        setContextColor: function(context, attribute, color, endX, endY) {
             if (typeof color === 'string') {
                 context[attribute] = color;
             } else {
@@ -237,12 +237,12 @@ var CUI = CUI || {};
             }
         },
 
-        setFillColor: function(context, color, endX, end) {
-            Utils.setContextColor(context, 'fillStyle', color, endX, end);
+        setFillColor: function(context, color, endX, endY) {
+            Utils.setContextColor(context, 'fillStyle', color, endX, endY);
         },
 
-        setStrokeColor: function(context, color, endX, end) {
-            Utils.setContextColor(context, 'strokeStyle', color, endX, end);
+        setStrokeColor: function(context, color, endX, endY) {
+            Utils.setContextColor(context, 'strokeStyle', color, endX, endY);
         },
 
         drawPath: function(context, path, close) {
@@ -377,10 +377,14 @@ var CUI = CUI || {};
                     r2 = -r2;
                     context.arcTo(x + width - r2, y + r2, x + width, y + r2, r2);
                 } else if (r2 > 0) {
-                    context.arcTo(x + width, y, x + width, y + r2, r2);
+                    if (r2 > height) {
+                        context.lineTo(x + width, y + height);
+                    } else {
+                        context.arcTo(x + width, y, x + width, y + r2, r2);
+                    }
                 }
 
-                context.lineTo(x + width, y + height - abs3);
+                context.lineTo(x + width, y + height - Math.min(height, abs3));
                 if (r3 < 0) {
                     r3 = -r3;
                     context.arcTo(x + width - r3, y + height - r3, x + width - r3, y + height, r3);
@@ -393,10 +397,14 @@ var CUI = CUI || {};
                     r4 = -r4;
                     context.arcTo(x + r4, y + height - r4, x, y + height - r4, r4);
                 } else if (r4 > 0) {
-                    context.arcTo(x, y + height, x, y + height - r4, r4);
+                    if (r4 > height) {
+                        context.lineTo(x, y);
+                    } else {
+                        context.arcTo(x, y + height, x, y + height - r4, r4);
+                    }
                 }
 
-                context.lineTo(x, y + abs1);
+                context.lineTo(x, y + Math.min(height, abs1));
                 if (r1 < 0) {
                     r1 = -r1;
                     context.arcTo(x + r1, y + r1, x + r1, y, r1);
@@ -487,7 +495,8 @@ var CUI = CUI || {};
             Utils.borderRadiusPath(context, x, y, innerWidth, innerHeight, radiusFix[0], radiusFix[1], radiusFix[2], radiusFix[3], mode);
 
             if (options.color) {
-                Utils.setFillColor(context, options.color, innerWidth, innerHeight);
+                // Utils.setFillColor(context, options.color, innerWidth, innerHeight);
+                Utils.setFillColor(context, options.color, 0, innerHeight);
                 context.fill();
             }
 
@@ -495,7 +504,8 @@ var CUI = CUI || {};
                 context.lineWidth = options.borderWidth;
                 if (options.borderColor) {
                     Utils.borderRadiusPath(context, x, y, innerWidth, innerHeight, radiusFix[0], radiusFix[1], radiusFix[2], radiusFix[3], mode);
-                    Utils.setStrokeColor(context, options.borderColor, innerWidth, innerHeight);
+                    // Utils.setStrokeColor(context, options.borderColor, innerWidth, innerHeight);
+                    Utils.setStrokeColor(context, options.borderColor, 0, innerHeight);
                     context.stroke();
                 }
             }
@@ -540,6 +550,12 @@ var CUI = CUI || {};
             });
             return canvas;
         },
+
+        createButtonRect: function(options){
+            var bg = new CUI.ButtonBackground(options);
+            bg.init();
+            return bg.image;
+        }
 
     };
 

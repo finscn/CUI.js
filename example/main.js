@@ -3,7 +3,7 @@ var Config = {
     height: 400,
     FPS: 60,
 
-    pixi: true,
+    pixi: null,
     webgl: null,
 };
 

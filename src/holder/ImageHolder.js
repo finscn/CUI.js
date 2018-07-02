@@ -30,8 +30,8 @@ var CUI = CUI || {};
 
             this.alpha = null;
             this.scale = 1;
-            this.scaleX = 1;
-            this.scaleY = 1;
+            this.scaleX = null;
+            this.scaleY = null;
             this.flipX = false;
             this.flipY = false;
             this.rotation = 0;
@@ -50,9 +50,18 @@ var CUI = CUI || {};
             this.fillParent = true;
 
             this.crossOrigin = 'anonymous';
+
+            this.tint = null;
         },
 
         init: function() {
+            if (this.scaleX === null) {
+                this.scaleX = this.scale;
+            }
+            if (this.scaleY === null) {
+                this.scaleY = this.scale;
+            }
+
             this.pixel = {};
             if (this.src) {
                 this.load(this.src);
@@ -182,6 +191,14 @@ var CUI = CUI || {};
             var renderer = this.parent.getRenderer();
             var pixel = this.pixel;
             this.displayObject = renderer.createDisplayObject(this.img, pixel.sx, pixel.sy, pixel.sw, pixel.sh, true);
+            this.displayObject.tint = this.tint === null ? 0xFFFFFF : this.tint;
+        },
+
+        setTint: function(tint) {
+            this.tint = tint;
+            if (this.displayObject) {
+                this.displayObject.tint = this.tint === null ? 0xFFFFFF : this.tint;
+            }
         },
 
         removeImg: function() {

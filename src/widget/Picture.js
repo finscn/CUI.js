@@ -21,11 +21,12 @@ var CUI = CUI || {};
 
             this.width = null;
             this.height = null;
-            this.scaleX = null;
-            this.scaleY = null;
+            this.scaleX = 1;
+            this.scaleY = 1;
             this.scaleImg = true;
 
             this.crossOrigin = 'Anonymous';
+            this.tint = null;
         },
 
         init: function() {
@@ -42,6 +43,7 @@ var CUI = CUI || {};
                 alignH: "center",
                 alignV: "center",
                 crossOrigin: this.crossOrigin,
+                tint: this.tint,
             });
             this.imageHolder.init();
 
@@ -57,16 +59,18 @@ var CUI = CUI || {};
                 this.setImgInfo(this.imgInfo);
             }
 
-            if (this.scaleX !== null) {
-                this.width = this.imageHolder.w * this.scaleX;
-            }
-            if (this.scaleY !== null) {
-                this.height = this.imageHolder.h * this.scaleY;
-            }
-
             if (this.afterInit) {
                 this.afterInit();
             }
+        },
+
+        setTint: function(tint) {
+            this.tint = tint;
+            this.imageHolder.setTint(tint);
+        },
+
+        getTint: function(tint) {
+            return this.tint;
         },
 
         setSrc: function(src) {
@@ -95,6 +99,7 @@ var CUI = CUI || {};
 
         setImgInfo: function(imgInfo) {
             this.imageHolder.setImgInfo(imgInfo);
+            this.imageHolder.setTint(this.tint);
             this.hasImg = !!this.imageHolder.img;
             this.needToCompute = true;
         },
@@ -126,8 +131,10 @@ var CUI = CUI || {};
                 hasWidth = true;
                 pixel.width = Utils.parseValue(this.width, pixel.realOuterWidth);
             }
-            pixel.anchorX = Utils.parseValue(this.anchorX, pixel.width) || 0;
+            pixel.width *= this.scaleX;
             this.w = pixel.width;
+
+            pixel.anchorX = Utils.parseValue(this.anchorX, this.w) || 0;
 
             this.imageHolder.pixel.width = this.w;
 
@@ -145,8 +152,10 @@ var CUI = CUI || {};
                 hasHeight = true;
                 pixel.height = Utils.parseValue(this.height, pixel.realOuterHeight);
             }
-            pixel.anchorY = Utils.parseValue(this.anchorY, pixel.height) || 0;
+            pixel.height *= this.scaleY;
             this.h = pixel.height;
+
+            pixel.anchorY = Utils.parseValue(this.anchorY, this.h) || 0;
 
             this.imageHolder.pixel.height = this.h;
 

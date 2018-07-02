@@ -32,13 +32,16 @@ var CUI = CUI || {};
             lightWidth: 0,
             lightHeight: 0,
             lightRadius: 0,
-            lightOffsetX: 0,
-            lightOffsetY: 0,
+            lightOffsetX: null,
+            lightOffsetY: null,
 
             lighterColor: "rgba(0,0,0,0)",
             lighterWidth: 0,
             lighterHeight: 0,
             lighterRadius: 0,
+            lighterOffsetX: null,
+            lighterOffsetY: null,
+
 
             darkerColor: "rgba(0,0,0,0)",
             darkerHeight: 0,
@@ -130,8 +133,8 @@ var CUI = CUI || {};
         }
 
         if (options.lightColor) {
-            var ox = options.lightOffsetX;
-            var oy = options.lightOffsetY;
+            var ox = options.lightOffsetX || 0;
+            var oy = options.lightOffsetY || 0;
             ox = ox < 0 ? buttonWidth + ox : ox;
             oy = oy < 0 ? buttonHeight + oy : oy;
             this.light = {
@@ -148,17 +151,22 @@ var CUI = CUI || {};
         }
 
         if (options.lighterColor) {
-            var ox = options.lightOffsetX;
-            var oy = options.lightOffsetY;
+            var _width = options.lighterWidth || buttonWidth - 2;
+            var ox = options.lighterOffsetX;
+            if (!ox && ox !== 0) {
+                ox = (buttonWidth - _width) / 2;
+            }
+            var oy = options.lighterOffsetY || 0;
             ox = ox < 0 ? buttonWidth + ox : ox;
             oy = oy < 0 ? buttonHeight + oy : oy;
+
             this.lighter = {
                 mode: mode,
                 lineCap: lineCap,
 
                 x: x + ox,
                 y: y + oy,
-                width: options.lighterWidth || buttonWidth,
+                width: _width,
                 height: options.lighterHeight,
                 radius: [radius[0], radius[1], 0, 0],
                 color: options.lighterColor,
@@ -209,7 +217,6 @@ var CUI = CUI || {};
         }
 
         this.canvas = canvas;
-        this.init();
     };
 
     var proto = {
