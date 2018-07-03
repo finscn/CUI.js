@@ -107,6 +107,7 @@ gulp.task('minify', function(cb) {
                 base: baseDir
             }),
             concat('cui-min.js'),
+            inject.append('if(typeof module !== "undefined"){module.exports = CUI;}'),
             eslint('.eslintrc.js'),
             eslint.format(),
             uglify(),
