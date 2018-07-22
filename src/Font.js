@@ -24,12 +24,7 @@ var CUI = CUI || {};
             if (weight === "normal") {
                 weight = null;
             }
-            if (window.App) {
-                name = Font.getName(name, weight);
-                return size + "px " + name;
-            }
-            weight = weight ? weight + " " : "";
-            return weight + size + "px " + name;
+            return (weight ? weight + " " : "") + size + "px " + name;
         }
 
     };
