@@ -17,6 +17,12 @@ var CUI = CUI || {};
             this.height = "100%";
         },
 
+        updatePosition: function() {
+            var parent = this.parent;
+            this.x = parent.x + parent.pixel.paddingLeft;
+            this.y = parent.y + parent.pixel.paddingTop;
+        },
+
         render: function(renderer, timeStep, now) {
             renderer.drawDisplayObject(this.displayObject,
                 this.x + this.ox + this.offsetX, this.y + this.oy + this.offsetY, this.pixel.width, this.pixel.height);
