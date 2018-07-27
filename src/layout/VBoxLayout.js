@@ -32,9 +32,9 @@ var CUI = CUI || {};
                 var child = children[i];
                 child.hasLayoutY = false;
 
-                if (child.relative == "parent") {
+                if (child.relative === "parent") {
                     this.computeChild(child, child.parent)
-                } else if (child.relative == "root") {
+                } else if (child.relative === "root") {
                     this.computeChild(child, child.root)
                 } else {
 
@@ -73,12 +73,12 @@ var CUI = CUI || {};
             if (childCount > 0) {
                 var totalHeight = size ? parent.pixel.height : currentY + margin;
                 this.tryToResizeParent(parent, totalWidth, totalHeight, true);
-                if (!size && this.align == "bottom") {
+                if (!size && this.align === "bottom") {
                     var deltaHeight = parent.pixel.height - totalHeight;
                     if (deltaHeight > 0) {
                         for (var i = 0; i < childCount; i++) {
                             var child = children[i];
-                            if (child.relative !== "parent" && child.relative != "root") {
+                            if (child.relative !== "parent" && child.relative !== "root") {
                                 child.pixel.top += deltaHeight;
                                 child.pixel.relativeY += deltaHeight;
                                 child.y += deltaHeight;
@@ -97,7 +97,7 @@ var CUI = CUI || {};
 
     exports.VBoxLayout = VBoxLayout;
 
-    if (typeof module != "undefined") {
+    if (typeof module !== "undefined") {
         module.exports = VBoxLayout;
     }
 

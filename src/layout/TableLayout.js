@@ -31,9 +31,9 @@ var CUI = CUI || {};
 
             for (var i = 0; i < childCount; i++) {
                 var child = children[i];
-                if (child.relative == "parent") {
+                if (child.relative === "parent") {
                     this.computeChild(child, child.parent)
-                } else if (child.relative == "root") {
+                } else if (child.relative === "root") {
                     this.computeChild(child, child.root)
                 } else {
                     this.parseChild(child, parent, idx);
@@ -52,11 +52,11 @@ var CUI = CUI || {};
             var pixel = this.pixel = {};
             var parentPixel = parent.pixel;
 
-            if (parent.width == "auto") {
+            if (parent.width === "auto") {
                 parentPixel.width = (this.cellWidth + this.cellSpace) * this.cols + this.cellSpace;
                 parentPixel.width += (parentPixel.paddingLeft || 0) + (parentPixel.paddingRight || 0);
             }
-            if (parent.height == "auto") {
+            if (parent.height === "auto") {
                 parentPixel.height = (this.cellHeight + this.cellSpace) * this.rows + this.cellSpace;
                 parentPixel.height += (parentPixel.paddingTop || 0) + (parentPixel.paddingBottom || 0);
             }
@@ -154,7 +154,7 @@ var CUI = CUI || {};
 
     exports.TableLayout = TableLayout;
 
-    if (typeof module != "undefined") {
+    if (typeof module !== "undefined") {
         module.exports = TableLayout;
     }
 

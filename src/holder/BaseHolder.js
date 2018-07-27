@@ -64,17 +64,17 @@ var CUI = CUI || {};
 
         updatePosition: function() {
             var parent = this.parent;
-            if (this.alignH == "center") {
+            if (this.alignH === "center") {
                 this.x = parent.x + ((parent.w - this.pixel.width) >> 1);
-            } else if (this.alignH == "right") {
+            } else if (this.alignH === "right") {
                 this.x = parent.x + parent.w - parent.pixel.paddingRight - this.pixel.width;
             } else {
                 this.x = parent.x + parent.pixel.paddingLeft;
             }
 
-            if (this.alignV == "middle" || this.alignV == "center") {
+            if (this.alignV === "middle" || this.alignV === "center") {
                 this.y = parent.y + ((parent.h - this.pixel.height) >> 1);
-            } else if (this.alignV == "bottom") {
+            } else if (this.alignV === "bottom") {
                 this.y = parent.y + parent.h - parent.pixel.paddingBottom - this.pixel.height;
             } else {
                 this.y = parent.y + parent.pixel.paddingTop;
@@ -92,7 +92,7 @@ var CUI = CUI || {};
 
     exports.BaseHolder = BaseHolder;
 
-    if (typeof module != "undefined") {
+    if (typeof module !== "undefined") {
         module.exports = BaseHolder;
     }
 

@@ -23,6 +23,8 @@ var CUI = CUI || {};
 
             this.initHead();
 
+            this.initChildren();
+
             if (this.afterInit) {
                 this.afterInit();
             }
@@ -64,7 +66,6 @@ var CUI = CUI || {};
             this.w = pixel.width;
             if (bg && this.scaleBg) {
                 // bg.pixel.width = this.w;
-                // // bg.pixel.sw = this.w;
                 bg.width = this.w;
             }
         },
@@ -87,7 +88,6 @@ var CUI = CUI || {};
 
             if (bg && this.scaleBg) {
                 // bg.pixel.height = this.h;
-                // // bg.pixel.sh = this.h;
                 bg.height = this.h;
             }
         },
@@ -95,7 +95,7 @@ var CUI = CUI || {};
 
     exports.Panel = Panel;
 
-    if (typeof module != "undefined") {
+    if (typeof module !== "undefined") {
         module.exports = Panel;
     }
 

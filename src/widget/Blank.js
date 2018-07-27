@@ -20,10 +20,11 @@ var CUI = CUI || {};
         computeLayout: function(forceCompute) {
             this.needToCompute = false;
         },
+
         render: function(context, timeStep, now) {
             if (this.backgroundColor !== null) {
-	        var alpha = context.globalAlpha;
-		context.globalAlpha = this.backgroundAlpha;
+                var alpha = context.globalAlpha;
+                context.globalAlpha = this.backgroundAlpha;
                 context.fillStyle = this.backgroundColor;
                 context.fillRect(this.x, this.y, this.w, this.h);
                 context.globalAlpha = alpha;
@@ -43,7 +44,7 @@ var CUI = CUI || {};
 
     exports.Blank = Blank;
 
-    if (typeof module != "undefined") {
+    if (typeof module !== "undefined") {
         module.exports = Blank;
     }
 

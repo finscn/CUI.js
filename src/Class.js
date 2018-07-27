@@ -95,7 +95,7 @@ var CUI = CUI || {};
 
     exports.Class = Class;
 
-    if (typeof module != "undefined") {
+    if (typeof module !== "undefined") {
         module.exports = Class;
     }
 

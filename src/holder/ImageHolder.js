@@ -14,6 +14,8 @@ var CUI = CUI || {};
         superclass: BaseHolder,
 
         initialize: function() {
+            this.parent = null;
+
             this.src = null;
             this.img = null;
             this.sx = null;
@@ -28,8 +30,8 @@ var CUI = CUI || {};
 
             this.alpha = null;
             this.scale = 1;
-            this.scaleX = 1;
-            this.scaleY = 1;
+            this.scaleX = null;
+            this.scaleY = null;
             this.flipX = false;
             this.flipY = false;
             this.rotation = 0;
@@ -46,9 +48,20 @@ var CUI = CUI || {};
             this.width = "auto";
             this.height = "auto";
             this.fillParent = true;
+
+            this.crossOrigin = 'anonymous';
+
+            this.tint = null;
         },
 
         init: function() {
+            if (this.scaleX === null) {
+                this.scaleX = this.scale;
+            }
+            if (this.scaleY === null) {
+                this.scaleY = this.scale;
+            }
+
             this.pixel = {};
             if (this.src) {
                 this.load(this.src);
@@ -60,14 +73,17 @@ var CUI = CUI || {};
             this.id = this.id || "image-holder-" + this.parent.id;
 
         },
+
         load: function(callback) {
             this.setSrc(this.src, callback);
         },
+
         setSrc: function(src, callback) {
             this.src = src;
             var Me = this;
             this.img = null;
             var img = new Image();
+            img.crossOrigin = this.crossOrigin;
             img.onload = function(event) {
                 Me.setImg(img, callback);
             };
@@ -78,6 +94,21 @@ var CUI = CUI || {};
             return img;
         },
 
+        setImgInfo: function(info) {
+            if (info) {
+                for (var p in info) {
+                    if (p !== 'src' && p !== 'img') {
+                        this[p] = info[p];
+                    }
+                }
+                if (info.src) {
+                    this.setSrc(info.src);
+                } else if (info.img) {
+                    this.setImg(info.img);
+                }
+            }
+        },
+
         setImg: function(img, callback) {
             this.img = img;
             this.updateImgInfo();
@@ -85,18 +116,10 @@ var CUI = CUI || {};
                 callback(img);
             }
         },
-        setImgInfo: function(info) {
-            for (var p in info) {
-                this[p] = info[p];
-            }
-            if (info.src) {
-                this.setSrc(info.src);
-            } else if (info.img) {
-                this.setImg(info.img);
-            }
-        },
+
         updateImgInfo: function(info) {
             info = info || this;
+
             var sx = info.sx;
             var sy = info.sy;
             var sw = info.sw;
@@ -106,17 +129,32 @@ var CUI = CUI || {};
             var ox = info.ox;
             var oy = info.oy;
 
+            var img = this.img;
+
             if (sx === null || sx === undefined) {
                 sx = 0;
             }
             if (sy === null || sy === undefined) {
                 sy = 0;
             }
+
             if (sw === null || sw === undefined) {
-                sw = this.img ? this.img.width : 0;
+                sw = img ? img.width : 0;
+            } else if (img) {
+                sw = Math.min(sx + sw, img.width) - sx;
+                if (sw <= 0) {
+                    sx = img.width;
+                    sw = 0;
+                }
             }
             if (sh === null || sh === undefined) {
-                sh = this.img ? this.img.height : 0;
+                sh = img ? img.height : 0;
+            } else if (img) {
+                sh = Math.min(sy + sh, img.height) - sy;
+                if (sh <= 0) {
+                    sy = img.height;
+                    sh = 0;
+                }
             }
 
             if (ox === null || ox === undefined) {
@@ -132,18 +170,29 @@ var CUI = CUI || {};
                 h = sh;
             }
 
-            this.sx = sx;
-            this.sy = sy;
-            this.sw = sw;
-            this.sh = sh;
-            this.w = w;
-            this.h = h;
+            this.pixel.sx = sx;
+            this.pixel.sy = sy;
+            this.pixel.sw = sw;
+            this.pixel.sh = sh;
             this.ox = ox;
             this.oy = oy;
+            this.w = w;
+            this.h = h;
+
+            this.initDisplayObject();
+        },
+
+        initDisplayObject: function() {
+            this.displayObject = null;
+        },
+
+        setTint: function(tint) {
+            this.tint = tint;
         },
 
         removeImg: function() {
             this.img = null;
+            this.displayObject = null;
             // this.src = null;
         },
 
@@ -156,8 +205,6 @@ var CUI = CUI || {};
                 this.pixel.width = Utils.parseValue(this.width, this.w, this.w) || 0
             }
             this.pixel.width = this.pixel.width * this.scaleX;
-            // this.pixel.sw = this.sw * this.pixel.width / this.w;
-            // this.pixel.ox = this.ox * this.pixel.width / this.w;
             this.pixel.ox = this.ox;
 
             if (this.parent && this.fillParent) {
@@ -166,8 +213,6 @@ var CUI = CUI || {};
                 this.pixel.height = Utils.parseValue(this.height, this.h, this.h) || 0
             }
             this.pixel.height = this.pixel.height * this.scaleY;
-            // this.pixel.sh = this.sh * this.pixel.height / this.h;
-            // this.pixel.oy = this.oy * this.pixel.height / this.h;
             this.pixel.oy = this.oy;
         },
 
@@ -208,8 +253,10 @@ var CUI = CUI || {};
 
             var rotation = this.rotation % this.DOUBLE_PI;
 
-            if (flipX != 1 || flipY != 1 || rotation != 0) {
-                // if (scaleX != 1 || scaleY != 1 || rotation != 0) {
+            if (flipX !== 1 || flipY !== 1 || rotation !== 0) {
+                // if (scaleX !== 1 || scaleY !== 1 || rotation !== 0) {
+
+                // TODO
                 context.save();
                 context.translate(this.x + this.offsetX + this.pixel.ox, this.y + this.offsetY + this.pixel.oy);
                 if (rotation) {
@@ -249,7 +296,7 @@ var CUI = CUI || {};
 
     exports.ImageHolder = ImageHolder;
 
-    if (typeof module != "undefined") {
+    if (typeof module !== "undefined") {
         module.exports = ImageHolder;
     }
 

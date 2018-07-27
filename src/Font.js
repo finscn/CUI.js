@@ -24,12 +24,7 @@ var CUI = CUI || {};
             if (weight === "normal") {
                 weight = null;
             }
-            if (window.App) {
-                name = Font.getName(name, weight);
-                return size + "px " + name;
-            }
-            weight = weight ? weight + " " : "";
-            return weight + size + "px " + name;
+            return (weight ? weight + " " : "") + size + "px " + name;
         }
 
     };
@@ -37,7 +32,7 @@ var CUI = CUI || {};
     exports.Font = Font;
     exports.FontMapping = FontMapping;
 
-    if (typeof module != "undefined") {
+    if (typeof module !== "undefined") {
         module.exports = Font;
         module.exports = FontMapping;
     }

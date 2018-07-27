@@ -17,15 +17,22 @@ var CUI = CUI || {};
             this.composite = false;
             this.disabled = false;
 
-            // 不指定宽高, 大小由 backgroundHolder 的实际大小决定
+            // 如果不指定宽高 且 scaleImg = false, 大小由 imageHolder 的实际大小决定.
+
             this.width = null;
             this.height = null;
-            this.scaleX = null;
-            this.scaleY = null;
+            this.scaleX = 1;
+            this.scaleY = 1;
             this.scaleImg = true;
+
+            this.crossOrigin = 'Anonymous';
+            this.tint = null;
         },
 
         init: function() {
+            if (this.beforeInit) {
+                this.beforeInit();
+            }
 
             Picture.$super.init.call(this);
 
@@ -35,8 +42,14 @@ var CUI = CUI || {};
                 height: this.scaleImg ? "100%" : "auto",
                 alignH: "center",
                 alignV: "center",
+                crossOrigin: this.crossOrigin,
+                tint: this.tint,
             });
             this.imageHolder.init();
+
+            if (this.borderInfo) {
+                this.setBorderInfo(this.borderInfo);
+            }
 
             if (this.src) {
                 this.setSrc(this.src);
@@ -46,13 +59,18 @@ var CUI = CUI || {};
                 this.setImgInfo(this.imgInfo);
             }
 
-            if (this.scaleX !== null) {
-                this.width = this.imageHolder.w * this.scaleX;
+            if (this.afterInit) {
+                this.afterInit();
             }
-            if (this.scaleY !== null) {
-                this.height = this.imageHolder.h * this.scaleY;
-            }
+        },
 
+        setTint: function(tint) {
+            this.tint = tint;
+            this.imageHolder.setTint(tint);
+        },
+
+        getTint: function(tint) {
+            return this.tint;
         },
 
         setSrc: function(src) {
@@ -81,7 +99,26 @@ var CUI = CUI || {};
 
         setImgInfo: function(imgInfo) {
             this.imageHolder.setImgInfo(imgInfo);
+            this.imageHolder.setTint(this.tint);
             this.hasImg = !!this.imageHolder.img;
+            this.needToCompute = true;
+        },
+
+        setBorderInfo: function(info) {
+            if (!info) {
+                this.borderHolder = null;
+            } else {
+                if (info.borderImage) {
+                    this.borderHolder = new CUI.BorderImageHolder(info);
+                } else {
+                    this.borderHolder = new CUI.BackgroundImageHolder(info);
+                }
+                this.borderHolder.setParent(this);
+                this.borderHolder.fillParent = true;
+                this.borderHolder.init();
+                this.borderHolder.updateSize();
+                this.borderHolder.updatePosition();
+            }
             this.needToCompute = true;
         },
 
@@ -94,8 +131,10 @@ var CUI = CUI || {};
                 hasWidth = true;
                 pixel.width = Utils.parseValue(this.width, pixel.realOuterWidth);
             }
-            pixel.anchorX = Utils.parseValue(this.anchorX, pixel.width) || 0;
+            pixel.width *= this.scaleX;
             this.w = pixel.width;
+
+            pixel.anchorX = Utils.parseValue(this.anchorX, this.w) || 0;
 
             this.imageHolder.pixel.width = this.w;
 
@@ -113,8 +152,10 @@ var CUI = CUI || {};
                 hasHeight = true;
                 pixel.height = Utils.parseValue(this.height, pixel.realOuterHeight);
             }
-            pixel.anchorY = Utils.parseValue(this.anchorY, pixel.height) || 0;
+            pixel.height *= this.scaleY;
             this.h = pixel.height;
+
+            pixel.anchorY = Utils.parseValue(this.anchorY, this.h) || 0;
 
             this.imageHolder.pixel.height = this.h;
 
@@ -125,34 +166,44 @@ var CUI = CUI || {};
         },
 
         computeLayout: function(forceCompute) {
-            if (this.needToCompute || forceCompute) {
-                this.imageHolder.updateSize();
-                if (this.scaleImg) {
-                    this.imageHolder.x = this.x;
-                    this.imageHolder.y = this.y;
-                } else {
-                    this.imageHolder.updatePosition();
-                }
-                this.needToCompute = false;
+            if (!this.needToCompute && !forceCompute) {
+                return;
             }
-        },
 
-        syncPosition: function() {
-            this.x = this.pixel.relativeX + this.parent.x;
-            this.y = this.pixel.relativeY + this.parent.y;
-            this.updateAABB();
+            this.imageHolder.updateSize();
             if (this.scaleImg) {
                 this.imageHolder.x = this.x;
                 this.imageHolder.y = this.y;
             } else {
                 this.imageHolder.updatePosition();
             }
+
+            if (this.borderHolder) {
+                this.borderHolder.updateSize();
+                this.borderHolder.updatePosition();
+            }
+
+            this.needToCompute = false;
+        },
+
+        syncHolders: function() {
+            if (this.scaleImg) {
+                this.imageHolder.x = this.x;
+                this.imageHolder.y = this.y;
+            } else {
+                this.imageHolder.updatePosition();
+            }
+
+            if (this.borderHolder) {
+                this.borderHolder.updateSize();
+                this.borderHolder.updatePosition();
+            }
         },
 
         renderSelf: function(context, timeStep, now) {
             if (this.backgroundColor !== null) {
-	        var alpha = context.globalAlpha;
-		context.globalAlpha = this.backgroundAlpha;
+                var alpha = context.globalAlpha;
+                context.globalAlpha = this.backgroundAlpha;
                 context.fillStyle = this.backgroundColor;
                 context.fillRect(this.x, this.y, this.w, this.h);
                 context.globalAlpha = alpha;
@@ -163,22 +214,21 @@ var CUI = CUI || {};
 
             this.imageHolder && this.imageHolder.render(context, timeStep, now);
 
+            this.borderHolder && this.borderHolder.render(context, timeStep, now);
             if (this.borderWidth && this.borderColor !== null) {
-	        var alpha = context.globalAlpha;
-		context.globalAlpha = this.borderAlpha;
+                var alpha = context.globalAlpha;
+                context.globalAlpha = this.borderAlpha;
                 context.strokeStyle = this.borderColor;
                 context.lineWidth = this.borderWidth;
                 context.strokeRect(this.x, this.y, this.w, this.h);
                 context.globalAlpha = alpha;
             }
         },
-
     });
-
 
     exports.Picture = Picture;
 
-    if (typeof module != "undefined") {
+    if (typeof module !== "undefined") {
         module.exports = Picture;
     }
 

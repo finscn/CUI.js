@@ -22,6 +22,9 @@ var CUI = CUI || {};
             this.textAlign = "start";
             this.verticalAlign = "middle";
 
+            this.alignH = null;
+            this.alignV = null;
+
             // top 默认。文本基线是 em 方框的顶端。。
             // alphabetic  文本基线是普通的字母基线。
             // hanging 文本基线是悬挂基线。
@@ -105,8 +108,16 @@ var CUI = CUI || {};
         },
 
         setTextInfo: function(info) {
-            this.alignH = this.textAlign;
-            this.alignV = this.verticalAlign;
+            if (info.alignH) {
+                this.alignH = info.alignH;
+            } else {
+                this.alignH = info.textAlign || this.textAlign;
+            }
+            if (info.alignV) {
+                this.alignV = info.alignV;
+            } else {
+                this.alignV = info.verticalAlign || this.verticalAlign;
+            }
 
             this.setText(info.text, true);
             // this.fontName = Font.getName(info.fontName || this.fontName);
@@ -174,6 +185,7 @@ var CUI = CUI || {};
                 var measure = ctx.measureText(this.lines[0]);
                 measure.height = Math.ceil(this.fontSize * 1.5);
                 this.lineHeight = this.lineHeight || measure.height;
+                // measure.height = this.lineHeight;
                 this.measure = measure;
                 this.width = measure.width;
             } else {
@@ -192,9 +204,9 @@ var CUI = CUI || {};
             this.needToCompute = false;
 
             if (this.useCache) {
-                if (this.textAlign == "center") {
+                if (this.alignH === "center") {
                     this.cacheOffsetX = Math.ceil(this.width / 2 + this.strokeWidth + this.cachePadding);
-                } else if (this.textAlign == "right" || this.textAlign == "end") {
+                } else if (this.alignH === "right" || this.alignH === "end") {
                     this.cacheOffsetX = this.width + this.strokeWidth + this.cachePadding;
                 } else {
                     this.cacheOffsetX = this.strokeWidth + this.cachePadding;
@@ -213,17 +225,17 @@ var CUI = CUI || {};
 
         updatePosition: function() {
             var parent = this.parent;
-            if (this.alignH == "center") {
+            if (this.alignH === "center") {
                 this.x = parent.x + (parent.w >> 1);
-            } else if (this.alignH == "right") {
+            } else if (this.alignH === "right") {
                 this.x = parent.x + parent.w - parent.pixel.paddingRight;
             } else {
                 this.x = parent.x + parent.pixel.paddingLeft;
             }
 
-            if (this.alignV == "middle" || this.alignV == "center") {
+            if (this.alignV === "middle" || this.alignV === "center") {
                 this.y = parent.y + ((parent.h - this.height) >> 1);
-            } else if (this.alignV == "bottom") {
+            } else if (this.alignV === "bottom") {
                 this.y = parent.y + parent.h - parent.pixel.paddingBottom - this.height;
             } else {
                 this.y = parent.y + parent.pixel.paddingTop;
@@ -240,7 +252,6 @@ var CUI = CUI || {};
             if (this.needToCompute || this.shareCache) {
                 if (this.useCache) {
                     this.updateCache();
-                    this.textObject.updateContent();
                 }
             }
             // }
@@ -262,7 +273,7 @@ var CUI = CUI || {};
             // var prevAlpha = context.globalAlpha;
             // context.globalAlpha = this.alpha;
             context.font = this.fontStyle;
-            context.textAlign = this.textAlign;
+            context.textAlign = this.alignH;
             context.textBaseline = this.textBaseline;
 
             var bakShadow;
@@ -290,12 +301,13 @@ var CUI = CUI || {};
 
                 context.lineCap = this.lineCap;
                 context.lineJoin = this.lineJoin;
-
-                context.lineWidth = this.strokeWidth;
+                // TODO
+                context.lineWidth = this.strokeWidth * 2;
                 context.strokeStyle = this.strokeColor;
             }
 
             this.renderLines(context, x, y);
+
             this.textChanged = false;
             this.needToCompute = false;
 
@@ -343,7 +355,7 @@ var CUI = CUI || {};
 
     exports.TextHolder = TextHolder;
 
-    if (typeof module != "undefined") {
+    if (typeof module !== "undefined") {
         module.exports = TextHolder;
     }
 

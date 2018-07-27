@@ -49,12 +49,12 @@ var CUI = CUI || {};
             this.initTextInfo();
             this.setTextInfo(this.textInfo);
 
+            this.computeSelf(this.parent);
+            this.computeSizeWithText(false);
+
             if (this.afterInit) {
                 this.afterInit();
             }
-
-            this.computeSelf(this.parent);
-            this.computeSizeWithText(false);
         },
 
         setImageHolder: function(name, info) {
@@ -127,6 +127,7 @@ var CUI = CUI || {};
                 "color",
                 "textAlign",
                 "verticalAlign",
+                "strokeColor",
                 "strokeWidth",
                 "fontSize",
                 "fontWeight",
@@ -142,6 +143,9 @@ var CUI = CUI || {};
         },
 
         setText: function(text, needToCompute) {
+            if (this.textInfo) {
+                this.textInfo.text = text;
+            }
             this.textHolder.setText(text);
             this.needToComputeSize = this.textHolder.textChanged;
             this.needToCompute = needToCompute !== false;
@@ -168,7 +172,6 @@ var CUI = CUI || {};
             this.w = pixel.width;
             if (bg && this.scaleBg) {
                 // bg.pixel.width = this.w;
-                // // bg.pixel.sw = this.w;
                 bg.width = this.w;
             }
         },
@@ -195,7 +198,6 @@ var CUI = CUI || {};
 
             if (bg && this.scaleBg) {
                 // bg.pixel.height = this.h;
-                // // bg.pixel.sh = this.h;
                 bg.height = this.h;
             }
         },
@@ -261,11 +263,7 @@ var CUI = CUI || {};
             this.needToCompute = false;
         },
 
-        syncPosition: function() {
-            this.x = this.pixel.relativeX + this.parent.x;
-            this.y = this.pixel.relativeY + this.parent.y;
-            this.updateAABB();
-
+        syncHolders: function() {
             this.backgroundHolder && this.backgroundHolder.updatePosition();
             this.iconHolder && this.iconHolder.updatePosition();
             this.textHolder && this.textHolder.updatePosition();
@@ -281,23 +279,22 @@ var CUI = CUI || {};
             }
 
             if (this.backgroundColor !== null) {
-	        var alpha = context.globalAlpha;
-		context.globalAlpha = this.backgroundAlpha;
+                var alpha = context.globalAlpha;
+                context.globalAlpha = this.backgroundAlpha;
                 context.fillStyle = this.backgroundColor;
                 context.fillRect(this.x, this.y, this.w, this.h);
                 context.globalAlpha = alpha;
             }
-            if (this.backgroundHolder) {
-                this.backgroundHolder.render(context, timeStep, now);
-            }
+
+            this.backgroundHolder && this.backgroundHolder.render(context, timeStep, now);
 
             this.iconHolder && this.iconHolder.render(context, timeStep, now);
             this.textHolder && this.textHolder.render(context, timeStep, now);
             this.flagHolder && this.flagHolder.render(context, timeStep, now);
 
             if (this.borderWidth && this.borderColor !== null) {
-	        var alpha = context.globalAlpha;
-		context.globalAlpha = this.borderAlpha;
+                var alpha = context.globalAlpha;
+                context.globalAlpha = this.borderAlpha;
                 context.strokeStyle = this.borderColor;
                 context.lineWidth = this.borderWidth;
                 // context.strokeRect(this.x, this.y, this.w, this.h, this.borderColor, this.borderWidth);
@@ -312,7 +309,7 @@ var CUI = CUI || {};
 
     exports.Label = Label;
 
-    if (typeof module != "undefined") {
+    if (typeof module !== "undefined") {
         module.exports = Label;
     }
 

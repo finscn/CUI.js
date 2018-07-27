@@ -18,6 +18,8 @@ var CUI = CUI || {};
 
             Page.$super.init.call(this);
 
+            this.initChildren();
+
             if (this.afterInit) {
                 this.afterInit();
             }
@@ -27,7 +29,7 @@ var CUI = CUI || {};
 
     exports.Page = Page;
 
-    if (typeof module != "undefined") {
+    if (typeof module !== "undefined") {
         module.exports = Page;
     }
 

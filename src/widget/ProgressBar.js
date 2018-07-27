@@ -47,7 +47,6 @@ var CUI = CUI || {};
             if (this.afterInit) {
                 this.afterInit();
             }
-
         },
 
         computeWidth: Label.prototype.computeWidth,
@@ -77,11 +76,7 @@ var CUI = CUI || {};
             this.needToCompute = false;
         },
 
-        syncPosition: function() {
-            this.x = this.pixel.relativeX + this.parent.x;
-            this.y = this.pixel.relativeY + this.parent.y;
-            this.updateAABB();
-
+        syncHolders: function() {
             this.backgroundHolder && this.backgroundHolder.updatePosition();
             this.valueHolder && this.valueHolder.updatePosition();
         },
@@ -114,7 +109,7 @@ var CUI = CUI || {};
 
     exports.ProgressBar = ProgressBar;
 
-    if (typeof module != "undefined") {
+    if (typeof module !== "undefined") {
         module.exports = ProgressBar;
     }
 

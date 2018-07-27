@@ -15,10 +15,10 @@ var CUI = CUI || {};
                 return false;
             }
             var argsList = Array.prototype.slice.call(arguments, 1);
-            // if (type != "swipe") {
+            // if (type !== "swipe") {
             //     var x = argsList[0],
             //         y = argsList[1];
-            //     if (!this.isInRegion(x, y)) {
+            //     if (!this.containPoint(x, y)) {
             //         if (this.modal) {
             //             if (type === "tap") {
             //                 this.onTapOut.apply(this, argsList);
@@ -31,10 +31,16 @@ var CUI = CUI || {};
 
             var x = argsList[0],
                 y = argsList[1];
-            if (!this.isInRegion(x, y)) {
+            if (!this.containPoint(x, y)) {
                 if (this.modal || this.mask) {
                     if (type === "tap") {
                         this.onTapOut.apply(this, argsList);
+                    } else if (type === "touchEnd") {
+                        if (this.composite) {
+                            this.checkTouchChildren(type, arguments);
+                        } else {
+                            this[type].apply(this, argsList);
+                        }
                     }
                     return this.modalFlag;
                 }
@@ -152,7 +158,7 @@ var CUI = CUI || {};
 
     });
 
-    TouchTarget.apply = function(object, override) {
+    TouchTarget.applyTo = function(object, override) {
         var proto = TouchTarget.prototype;
         for (var p in proto) {
             var v = proto[p];
@@ -165,7 +171,7 @@ var CUI = CUI || {};
 
     exports.TouchTarget = TouchTarget;
 
-    if (typeof module != "undefined") {
+    if (typeof module !== "undefined") {
         module.exports = TouchTarget;
     }
 

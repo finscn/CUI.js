@@ -104,7 +104,7 @@ var CUI = CUI || {};
 
     exports.TabPanel = TabPanel;
 
-    if (typeof module != "undefined") {
+    if (typeof module !== "undefined") {
         module.exports = TabPanel;
     }
 

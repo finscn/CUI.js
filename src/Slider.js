@@ -94,7 +94,7 @@ var CUI = CUI || {};
 
     exports.Slider = Slider;
 
-    if (typeof module != "undefined") {
+    if (typeof module !== "undefined") {
         module.exports = Slider;
     }
 

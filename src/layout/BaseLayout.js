@@ -19,9 +19,9 @@ var CUI = CUI || {};
             var idx = 0;
             for (var i = 0, len = children.length; i < len; i++) {
                 var child = children[i];
-                if (child.relative == "parent") {
+                if (child.relative === "parent") {
                     this.computeChild(child, child.parent)
-                } else if (child.relative == "root") {
+                } else if (child.relative === "root") {
                     this.computeChild(child, child.root)
                 } else {
                     this.computeChild(child, parent);
@@ -36,12 +36,12 @@ var CUI = CUI || {};
 
         tryToResizeParent: function(parent, width, height, immediately) {
             var resize = false;
-            if (parent.width == "auto" && !parent.w) {
+            if (parent.width === "auto" && !parent.w) {
                 parent.pixel.width = width;
                 parent.w = width;
                 resize = true;
             }
-            if (parent.height == "auto" && !parent.h) {
+            if (parent.height === "auto" && !parent.h) {
                 parent.pixel.height = height;
                 parent.h = height;
                 resize = true;
@@ -72,7 +72,7 @@ var CUI = CUI || {};
 
     exports.BaseLayout = BaseLayout;
 
-    if (typeof module != "undefined") {
+    if (typeof module !== "undefined") {
         module.exports = BaseLayout;
     }
 

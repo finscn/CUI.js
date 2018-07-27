@@ -8,16 +8,16 @@ var CUI = CUI || {};
     var Class = exports.Class;
     var Utils = exports.Utils;
     var Component = exports.Component;
-    var ImageHolder = exports.ImageHolder;
+    var BackgroundImageHolder = exports.BackgroundImageHolder;
 
     var BorderImageHolder = Class.create({
-        superclass: ImageHolder,
+        superclass: BackgroundImageHolder,
 
         initialize: function() {
-            this.borderImage = true;
-
             this.width = "100%";
             this.height = "100%";
+
+            this.borderImage = true;
 
             this.T = null;
             this.R = null;

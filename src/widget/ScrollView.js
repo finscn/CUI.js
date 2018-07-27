@@ -10,6 +10,8 @@ var CUI = CUI || {};
     // var Panel = exports.Panel;
     var Slider = exports.Slider;
 
+    var noop = exports.noop;
+
 
     var ScrollView = Class.create({
         superclass: Component,
@@ -32,7 +34,7 @@ var CUI = CUI || {};
             this.damping = 0.0025;
             this.swipeScale = 1.2;
             this.minScrollVel = 0.12;
-            this.bounceDuration = 160;
+            this.bounceDuration = 180;
             this.scrollingDuration = 700;
 
             this.scrollThumb = true;
@@ -46,6 +48,9 @@ var CUI = CUI || {};
         },
 
         init: function() {
+            if (this.beforeInit) {
+                this.beforeInit();
+            }
 
             ScrollView.$super.init.call(this);
 
@@ -57,7 +62,14 @@ var CUI = CUI || {};
             }
             this.scrollWidthOrigin = this.scrollWidth;
             this.scrollHeightOrigin = this.scrollHeight;
+
+            this.initChildren();
+
             this.resetScrollInfo();
+
+            if (this.afterInit) {
+                this.afterInit();
+            }
         },
 
         resetScrollInfo: function() {
@@ -72,9 +84,9 @@ var CUI = CUI || {};
             if (firstChild) {
                 var lastChild = this.children[this.children.length - 1];
 
-                var innerWdith = lastChild.x + lastChild.w - firstChild.x;
+                var innerWdith = lastChild.x + lastChild.w + lastChild.marginRight - firstChild.x + firstChild.marginLeft;
                 innerWdith += this.paddingLeft + this.paddingRight;
-                var innerHeight = lastChild.y + lastChild.h - firstChild.y;
+                var innerHeight = lastChild.y + lastChild.h + lastChild.marginBottom - firstChild.y + firstChild.marginTop;
                 innerHeight += this.paddingTop + this.paddingBottom;
 
                 this.scrollWidth = this.scrollWidthOrigin || innerWdith;
@@ -96,6 +108,8 @@ var CUI = CUI || {};
 
             this.thumbX = this.scrollX * this.rateWidth >> 0;
             this.thumbY = this.scrollY * this.rateHeight >> 0;
+
+            this.stopTween();
         },
 
         reset: function() {
@@ -104,8 +118,9 @@ var CUI = CUI || {};
                 c.moveBy(Me.scrollX, Me.scrollY);
             });
             this.resetScrollInfo();
+            this.onReset();
         },
-
+        onReset: noop,
 
         startScroll: function(vx, vy) {
             if (!this.scrollH) {
@@ -120,7 +135,6 @@ var CUI = CUI || {};
             this.scorllOver = false;
             this.slider.toStart = true;
             this.slider.start(vx, vy);
-
         },
 
         stopScroll: function() {
@@ -161,6 +175,7 @@ var CUI = CUI || {};
         },
 
         scrollTo: function(x, y) {
+            this.stopTween();
             if (this.scrollH) {
                 this.setScrollX(x);
             }
@@ -168,6 +183,7 @@ var CUI = CUI || {};
                 this.setScrollY(y);
             }
         },
+
         scrollBy: function(dx, dy) {
             this.scrolling = this.scrollingDuration;
             if (this.scrollH) {
@@ -206,24 +222,35 @@ var CUI = CUI || {};
             return canY;
         },
 
-        startTween: function() {
-            if (this.scrollX < this.minScrollX || this.scrollX > this.maxScrollX || this.scrollY < this.minScrollY || this.scrollY > this.maxScrollY) {
-                var Me = this;
-                this.stopTween();
-                var _tx = Math.min(this.maxScrollX, Math.max(this.minScrollX, this.scrollX));
-                var _ty = Math.min(this.maxScrollY, Math.max(this.minScrollY, this.scrollY));
-                var _cx = this.scrollX;
-                var _cy = this.scrollY;
-                var _dx = _tx - _cx;
-                var _dy = _ty - _cy;
+        startTween: function(target, duration) {
 
+            target = target || {
+                x: this.scrollX,
+                y: this.scrollY,
+            }
+
+            if (this.scrollH && this.snapWidth) {
+                target.x = Math.round(target.x / this.snapWidth) * this.snapWidth;
+            }
+            if (this.scrollV && this.snapHeight) {
+                target.y = Math.round(target.y / this.snapHeight) * this.snapHeight;
+            }
+            target.x = Math.min(this.maxScrollX, Math.max(this.minScrollX, target.x));
+            target.y = Math.min(this.maxScrollY, Math.max(this.minScrollY, target.y));
+
+            this.stopTween();
+
+            var Me = this;
+            var _cx = this.scrollX;
+            var _cy = this.scrollY;
+            var _dx = target.x - _cx;
+            var _dy = target.y - _cy;
+
+            if (_dx || _dy) {
                 this.tween = {
-                    duration: this.bounceDuration,
+                    duration: (duration === 0 || duration) ? duration : this.bounceDuration,
                     played: 0,
-                    target: {
-                        x: _tx,
-                        y: _ty,
-                    },
+                    target: target,
                     onUpdate: function(k) {
                         var dx = _cx + _dx * k - Me.scrollX;
                         var dy = _cy + _dy * k - Me.scrollY;
@@ -238,13 +265,18 @@ var CUI = CUI || {};
                         Me.thumbY = Me.scrollY * Me.rateHeight >> 0;
                         Me.scorllOver = true;
                         Me.stopScroll();
+                        Me.afterTween(Me.scrollX, Me.scrollY);
                     },
-                };
+                }
             }
         },
 
         stopTween: function() {
             this.tween = null;
+        },
+
+        afterTween: function(x, y) {
+            // do nothing.
         },
 
         updateTween: function(timeStep) {
@@ -269,7 +301,7 @@ var CUI = CUI || {};
         },
 
         onTouchStart: function(x, y, id) {
-            if (this.isInRegion(x, y)) {
+            if (this.containPoint(x, y)) {
                 this.stopScroll();
             }
             return false;
@@ -281,7 +313,13 @@ var CUI = CUI || {};
         },
 
         onPan: function(x, y, dx, dy, startX, startY, id) {
-            if (this.isInRegion(startX, startY)) {
+            // if (this.containPoint(startX, startY)) {
+            if (this.scrollV && this.scrollH && this.containPoint(x, y)) {
+                this.scrollBy(-dx, -dy);
+                return;
+            }
+            if (this.scrollV && this.containPoint(x, startY) ||
+                this.scrollH && this.containPoint(startX, y)) {
                 this.scrollBy(-dx, -dy);
                 return;
             }
@@ -289,7 +327,7 @@ var CUI = CUI || {};
         },
 
         onSwipe: function(x, y, vx, vy, startX, startY, id) {
-            if (this.isInRegion(startX, startY)) {
+            if (this.containPoint(startX, startY)) {
                 vx = vx * this.swipeScale;
                 vy = vy * this.swipeScale;
                 this.startScroll(-vx, -vy);
@@ -332,12 +370,14 @@ var CUI = CUI || {};
             var Me = this;
             this.scrollDX = this.scrollX - this.lastScrollX;
             this.scrollDY = this.scrollY - this.lastScrollY;
+
             var vc = this.visibleChildren;
             var scrollChanged = this.scrollDX || this.scrollDY || vc.length === 0;
             if (scrollChanged) {
                 // console.log("scrolling : ", this.id, this.scrollDX, this.scrollDY, vc.length);
                 vc.length = 0;
             }
+
             this.children.forEach(function(child, idx) {
                 if (scrollChanged) {
                     child.moveBy(-Me.scrollDX, -Me.scrollDY);
@@ -427,7 +467,7 @@ var CUI = CUI || {};
 
     exports.ScrollView = ScrollView;
 
-    if (typeof module != "undefined") {
+    if (typeof module !== "undefined") {
         module.exports = ScrollView;
     }
 
