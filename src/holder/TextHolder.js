@@ -319,7 +319,7 @@ var CUI = CUI || {};
 
                 context.lineCap = this.lineCap;
                 context.lineJoin = this.lineJoin;
-
+                // TODO
                 context.lineWidth = this.strokeWidth * 2;
                 context.strokeStyle = this.strokeColor;
             }

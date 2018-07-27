@@ -283,9 +283,8 @@ var CUI = CUI || {};
                 renderer.fillRect(this.x, this.y, this.w, this.h, this.backgroundColor);
                 renderer.restoreAlpha();
             }
-            if (this.backgroundHolder) {
-                this.backgroundHolder.render(renderer, timeStep, now);
-            }
+
+            this.backgroundHolder && this.backgroundHolder.render(renderer, timeStep, now);
 
             this.iconHolder && this.iconHolder.render(renderer, timeStep, now);
             this.textHolder && this.textHolder.render(renderer, timeStep, now);
