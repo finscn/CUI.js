@@ -47,8 +47,8 @@ var CUI = CUI || {};
             });
             this.imageHolder.init();
 
-            if (this.borderInfo) {
-                this.setBorderInfo(this.borderInfo);
+            if (this.imageBorderInfo) {
+                this.setImageBorderInfo(this.imageBorderInfo);
             }
 
             if (this.src) {
@@ -104,20 +104,20 @@ var CUI = CUI || {};
             this.needToCompute = true;
         },
 
-        setBorderInfo: function(info) {
+        setImageBorderInfo: function(info) {
             if (!info) {
-                this.borderHolder = null;
+                this.imageBorderHolder = null;
             } else {
                 if (info.borderImage) {
-                    this.borderHolder = new CUI.BorderImageHolder(info);
+                    this.imageBorderHolder = new CUI.BorderImageHolder(info);
                 } else {
-                    this.borderHolder = new CUI.BackgroundImageHolder(info);
+                    this.imageBorderHolder = new CUI.BackgroundImageHolder(info);
                 }
-                this.borderHolder.setParent(this);
-                this.borderHolder.fillParent = true;
-                this.borderHolder.init();
-                this.borderHolder.updateSize();
-                this.borderHolder.updatePosition();
+                this.imageBorderHolder.setParent(this);
+                this.imageBorderHolder.fillParent = true;
+                this.imageBorderHolder.init();
+                this.imageBorderHolder.updateSize();
+                this.imageBorderHolder.updatePosition();
             }
             this.needToCompute = true;
         },
@@ -178,6 +178,11 @@ var CUI = CUI || {};
                 this.imageHolder.updatePosition();
             }
 
+            if (this.imageBorderHolder) {
+                this.imageBorderHolder.updateSize();
+                this.imageBorderHolder.updatePosition();
+            }
+
             if (this.borderHolder) {
                 this.borderHolder.updateSize();
                 this.borderHolder.updatePosition();
@@ -192,6 +197,11 @@ var CUI = CUI || {};
                 this.imageHolder.y = this.y;
             } else {
                 this.imageHolder.updatePosition();
+            }
+
+            if (this.imageBorderHolder) {
+                this.imageBorderHolder.updateSize();
+                this.imageBorderHolder.updatePosition();
             }
 
             if (this.borderHolder) {
@@ -212,13 +222,9 @@ var CUI = CUI || {};
 
             this.imageHolder && this.imageHolder.render(renderer, timeStep, now);
 
-            this.borderHolder && this.borderHolder.render(renderer, timeStep, now);
+            this.imageBorderHolder && this.imageBorderHolder.render(renderer, timeStep, now);
 
-            if (this.borderWidth && this.borderColor !== null) {
-                renderer.setAlpha(this.borderAlpha);
-                renderer.strokeRect(this.x, this.y, this.w, this.h, this.borderWidth, this.borderColor);
-                renderer.restoreAlpha();
-            }
+            this.borderHolder && this.borderHolder.render(renderer, timeStep, now);
         },
     });
 

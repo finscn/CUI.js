@@ -162,6 +162,8 @@ var CUI = CUI || {};
 
             this.aabb = [];
             this.pixel = {
+                // x: 0,
+                // y: 0,
                 // width: 0,
                 // height: 0,
                 relativeX: 0,
@@ -189,6 +191,7 @@ var CUI = CUI || {};
             this.setParent(this.parent, true);
 
             this.initBackground();
+            this.initBorder();
 
             // TODO
             // this._afterInit();
@@ -211,6 +214,20 @@ var CUI = CUI || {};
                 } else if (this.backgroundImage) {
                     this.setBackgroundImage(this.backgroundImage);
                 }
+            }
+        },
+
+        initBorder: function() {
+            if (this.borderWidth && this.borderColor !== null) {
+                this.borderHolder = new CUI.BorderHolder({
+                    alpha: this.borderAlpha,
+                    lineWidth: this.borderWidth,
+                    color: this.borderColor,
+                });
+                this.borderHolder.setParent(this);
+                this.borderHolder.init();
+                this.borderHolder.updateSize();
+                this.borderHolder.updatePosition();
             }
         },
 
@@ -296,10 +313,10 @@ var CUI = CUI || {};
                 child.root = this.root;
                 child.index = this.childSN++;
                 if (this.width === "auto") {
-                    this.pixel.w = 0;
+                    this.pixel.width = 0;
                 }
                 if (this.height === "auto") {
-                    this.pixel.h = 0;
+                    this.pixel.height = 0;
                 }
                 this.needToCompute = true;
                 this.sortChildren();
@@ -445,8 +462,11 @@ var CUI = CUI || {};
 
         syncPosition: function() {
             var relativeObj = this.parent || this.root;
-            this.x = this.pixel.relativeX + relativeObj.x;
-            this.y = this.pixel.relativeY + relativeObj.y;
+            var pixel = this.pixel;
+            pixel.x = pixel.relativeX + relativeObj.x;
+            pixel.y = pixel.relativeY + relativeObj.y;
+            this.x = pixel.x;
+            this.y = pixel.y;
 
             // this.computePositionX();
             // this.computePositionY();
@@ -466,6 +486,11 @@ var CUI = CUI || {};
             if (this.backgroundHolder) {
                 this.backgroundHolder.updateSize();
                 this.backgroundHolder.updatePosition();
+            }
+
+            if (this.borderHolder) {
+                this.borderHolder.updateSize();
+                this.borderHolder.updatePosition();
             }
         },
 
@@ -606,6 +631,10 @@ var CUI = CUI || {};
                     this.backgroundHolder.updateSize();
                     this.backgroundHolder.updatePosition();
                 }
+                if (this.borderHolder) {
+                    this.borderHolder.updateSize();
+                    this.borderHolder.updatePosition();
+                }
             }
         },
 
@@ -692,11 +721,8 @@ var CUI = CUI || {};
             if (this.backgroundHolder) {
                 this.backgroundHolder.render(renderer, timeStep, now);
             }
-
-            if (this.borderWidth && this.borderColor !== null) {
-                renderer.setAlpha(this.borderAlpha);
-                renderer.strokeRect(this.x, this.y, this.w, this.h, this.borderWidth, this.borderColor);
-                renderer.restoreAlpha();
+            if (this.borderHolder) {
+                this.borderHolder.render(renderer, timeStep, now);
             }
         },
         renderChildren: function(renderer, timeStep, now) {
@@ -884,8 +910,8 @@ var CUI = CUI || {};
                 x = pixel.left || 0;
             }
             pixel.relativeX = x + pixel.realMarginLeft;
-
-            this.x = pixel.relativeX + (parent ? parent.x : 0);
+            pixel.x = pixel.relativeX + (parent ? parent.x : 0);
+            this.x = pixel.x;
         },
 
         computePositionY: function(parent) {
@@ -907,7 +933,8 @@ var CUI = CUI || {};
             }
             pixel.relativeY = y + pixel.realMarginTop;
 
-            this.y = pixel.relativeY + (parent ? parent.y : 0);
+            pixel.y = pixel.relativeY + (parent ? parent.y : 0);
+            this.y = pixel.y;
         },
 
         getRenderer: function() {

@@ -95,16 +95,16 @@ var CUI = CUI || {};
             if (force || this.width !== width) {
                 this.viewportWidth = width;
                 this.width = width;
-                this.w = width;
                 this.pixel.width = width;
+                this.w = width;
                 this.aabb[2] = width;
                 this.needToCompute = true;
             }
             if (force || this.height !== height) {
                 this.viewportHeight = height;
                 this.height = height;
-                this.h = height;
                 this.pixel.height = height;
+                this.h = height;
                 this.aabb[3] = height;
                 this.needToCompute = true;
             }

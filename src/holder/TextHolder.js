@@ -98,7 +98,7 @@ var CUI = CUI || {};
                 }
             }
             this.cacheContext = this.cacheCanvas.getContext('2d');
-            this.cacheContext.textBaseline = "top";
+            // this.cacheContext.textBaseline = "top";
         },
 
         initTextObject: function() {
@@ -292,7 +292,13 @@ var CUI = CUI || {};
             // context.globalAlpha = this.alpha;
             context.font = this.fontStyle;
             context.textAlign = this.alignH;
-            context.textBaseline = this.textBaseline;
+
+            if (this.textBaseline === "top") {
+                context.textBaseline = 'alphabetic';
+                y += this.fontSize;
+            } else {
+                context.textBaseline = this.textBaseline;
+            }
 
             var bakShadow;
             if (this.shadowColor !== null) {

@@ -38,6 +38,10 @@ var CUI = CUI || {};
 
             Label.$super.init.call(this);
 
+            if (this.borderHolder) {
+                this.borderHolder.updateSize = this.borderHolder.updateSizeWithParentAABB;
+            }
+
             this._sizeChanged = true;
 
             if (this.iconInfo) {
@@ -213,6 +217,10 @@ var CUI = CUI || {};
             // var ext = this.sizePadding * 2 + this.borderWidth;
             var extX = this.borderWidth + this.paddingLeft + this.paddingRight + this.textHolder.offsetX;
             var extY = this.borderWidth + this.paddingTop + this.paddingBottom + this.textHolder.offsetY;
+
+            // extX += this.textHolder.strokeWidth * 2;
+            // extY += this.textHolder.strokeWidth * 2;
+
             if (this.width === null || this.width === "auto") {
                 var textWidth = measure.width + extX;
                 this.pixel.width = textWidth;
@@ -235,6 +243,10 @@ var CUI = CUI || {};
                     bg.h = this.h;
                     bg.cacheCanvas = null;
                 }
+                if (this.borderHolder) {
+                    this.borderHolder.updateSize();
+                    this.borderHolder.updatePosition();
+                }
 
                 this.setReflow("parent", immediately);
             }
@@ -249,6 +261,12 @@ var CUI = CUI || {};
                 this.backgroundHolder.updateSize();
                 this.backgroundHolder.updatePosition();
             }
+
+            if (this.borderHolder) {
+                this.borderHolder.updateSize();
+                this.borderHolder.updatePosition();
+            }
+
             if (this.iconHolder) {
                 this.iconHolder.updateSize();
                 this.iconHolder.updatePosition();
@@ -265,6 +283,7 @@ var CUI = CUI || {};
 
         syncHolders: function() {
             this.backgroundHolder && this.backgroundHolder.updatePosition();
+            this.borderHolder && this.borderHolder.updatePosition();
             this.iconHolder && this.iconHolder.updatePosition();
             this.textHolder && this.textHolder.updatePosition();
             this.flagHolder && this.flagHolder.updatePosition();
@@ -283,20 +302,15 @@ var CUI = CUI || {};
                 renderer.fillRect(this.x, this.y, this.w, this.h, this.backgroundColor);
                 renderer.restoreAlpha();
             }
-
-            this.backgroundHolder && this.backgroundHolder.render(renderer, timeStep, now);
-
+            if (this.backgroundHolder) {
+                this.backgroundHolder.render(renderer, timeStep, now);
+            }
+            if (this.borderHolder) {
+                this.borderHolder.render(renderer, timeStep, now);
+            }
             this.iconHolder && this.iconHolder.render(renderer, timeStep, now);
             this.textHolder && this.textHolder.render(renderer, timeStep, now);
             this.flagHolder && this.flagHolder.render(renderer, timeStep, now);
-
-            if (this.borderWidth && this.borderColor !== null) {
-                renderer.setAlpha(this.borderAlpha);
-                var aabb = this.aabb;
-                renderer.strokeRect(aabb[0], aabb[1], aabb[2] - aabb[0], aabb[3] - aabb[1], this.borderWidth, this.borderColor);
-                // renderer.strokeRect(this.x, this.y, this.w, this.h, this.borderWidth, this.borderColor);
-                renderer.restoreAlpha();
-            }
         },
 
     });
