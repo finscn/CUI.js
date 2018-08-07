@@ -235,7 +235,7 @@ var CUI = CUI || {};
             var holder = null;
             if (info) {
                 ("color" in info) && (this.backgroundColor = info.color);
-                holder = new CUI.BackgroundImageHolder(info);
+                holder = new CUI.BackgroundHolder(info);
             }
             this.setBackgroundHolder(holder);
         },

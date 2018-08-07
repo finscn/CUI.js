@@ -111,7 +111,7 @@ var CUI = CUI || {};
                 if (info.borderImage) {
                     this.imageBorderHolder = new CUI.BorderImageHolder(info);
                 } else {
-                    this.imageBorderHolder = new CUI.BackgroundImageHolder(info);
+                    this.imageBorderHolder = new CUI.BackgroundHolder(info);
                 }
                 this.imageBorderHolder.setParent(this);
                 this.imageBorderHolder.fillParent = true;

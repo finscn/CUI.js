@@ -8,10 +8,10 @@ var CUI = CUI || {};
     var Class = exports.Class;
     var Utils = exports.Utils;
     var Component = exports.Component;
-    var BackgroundImageHolder = exports.BackgroundImageHolder;
+    var BackgroundHolder = exports.BackgroundHolder;
 
     var BorderImageHolder = Class.create({
-        superclass: BackgroundImageHolder,
+        superclass: BackgroundHolder,
 
         initialize: function() {
             this.width = "100%";

@@ -23,12 +23,12 @@ var CUI = CUI || {};
             this.sw = null;
             this.sh = null;
 
-            this.ox = null;
-            this.oy = null;
+            this.ox = 0;
+            this.oy = 0;
             this.w = null;
             this.h = null;
 
-            this.alpha = null;
+            this.alpha = 1;
             this.scale = 1;
             this.scaleX = null;
             this.scaleY = null;
@@ -280,7 +280,7 @@ var CUI = CUI || {};
                 y += this.y + this.offsetY + this.pixel.oy;
             }
 
-            if (this.alpha !== null) {
+            if (this.alpha !== 1) {
                 renderer.setAlpha(this.alpha);
             }
 
@@ -290,7 +290,7 @@ var CUI = CUI || {};
                 // if (scaleX !== 1 || scaleY !== 1 || rotation !== 0) {
                 renderer.restore();
             } else {
-                if (this.alpha !== null) {
+                if (this.alpha !== 1) {
                     renderer.restoreAlpha();
                 }
             }

@@ -16,9 +16,9 @@ var CUI = CUI || {};
             this.width = "100%";
             this.height = "100%";
 
+            this.color = null;
             this.alpha = 1;
             this.lineWidth = 1;
-            this.color = 0;
         },
 
         updateSize: function() {
