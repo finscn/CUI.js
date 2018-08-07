@@ -48,7 +48,7 @@ var CUI = CUI || {};
 
             if (this.displayObject) {
                 renderer.drawDisplayObject(this.displayObject,
-                    x, y, this.pixel.width, this.pixel.heigh);
+                    x, y, this.pixel.width, this.pixel.height);
             }
 
             if (this.alpha !== 1) {
