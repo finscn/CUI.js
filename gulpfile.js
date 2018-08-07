@@ -83,7 +83,8 @@ var jsFileList = [
     "holder/BaseHolder.js",
     "holder/TextHolder.js",
     "holder/ImageHolder.js",
-    "holder/BackgroundImageHolder.js",
+    "holder/BackgroundHolder.js",
+    "holder/BorderHolder.js",
     "holder/BorderImageHolder.js",
 
     "widget/Blank.js",

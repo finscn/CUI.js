@@ -135,13 +135,14 @@ function initUI() {
             // useCache: false,
             text: "Text Test - 1",
         },
-        updateSelf:function(){
+        updateSelf: function() {
             this.setText("test-" + (Math.random() * 1000 >> 0), false);
         }
     });
 
     for (var i = 0; i < 2; i++) {
         var comp = new CUI.Button({
+            id: 'btn-test-' + i,
             backgroundColor: CUI.renderer.colorRgb(255, 240, 230),
             borderWidth: 2,
             borderColor: CUI.renderer.colorHex("#ff0000"),
