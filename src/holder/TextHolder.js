@@ -161,7 +161,7 @@ var CUI = CUI || {};
                 return;
             }
             this.color = color;
-            this.needToCompute = true;
+            this._needToCompute = true;
         },
 
         setShadowOffset: function(x, y) {
@@ -170,7 +170,7 @@ var CUI = CUI || {};
             }
             this.shadowOffsetX = x;
             this.shadowOffsetY = y;
-            this.needToCompute = true;
+            this._needToCompute = true;
         },
 
         setText: function(text) {
@@ -186,12 +186,12 @@ var CUI = CUI || {};
                 this.lines = String(text).split(/(?:\r\n|\r|\n)/);
             }
             this.lineCount = this.lines.length;
-            this.needToCompute = true;
+            this._needToCompute = true;
         },
 
         computeSize: function(force) {
             if (!this.lines) {
-                this.needToCompute = false;
+                this._needToCompute = false;
                 return;
             }
 
@@ -217,7 +217,7 @@ var CUI = CUI || {};
             this.pixel.width = this.width;
             this.pixel.height = this.height;
             this.updatePosition();
-            this.needToCompute = false;
+            this._needToCompute = false;
 
             if (this.useCache) {
                 if (this.alignH === "center") {
@@ -237,6 +237,7 @@ var CUI = CUI || {};
             this.cacheCanvas.width = this.width + (this.strokeWidth + this.cachePadding) * 2;
             this.cacheCanvas.height = this.height + (this.strokeWidth + this.cachePadding) * 2;
             this.renderContent(this.cacheContext, this.cacheOffsetX, this.cacheOffsetY);
+            // this.cacheContext.lineWidth = 4;
             // this.cacheContext.strokeRect(0, 0, this.cacheCanvas.width, this.cacheCanvas.height);
         },
 
@@ -263,10 +264,10 @@ var CUI = CUI || {};
             if (!this.visible || this.text === "" || !this.lines) {
                 return false;
             }
-            // if (this.needToCompute) {
+            // if (this._needToCompute) {
             //     this.computeSize();
             // } else {
-            if (this.needToCompute || this.shareCache) {
+            if (this._needToCompute || this.shareCache) {
                 if (this.useCache) {
                     this.updateCache();
                     this.textObject.updateContent();
@@ -333,7 +334,7 @@ var CUI = CUI || {};
             this.renderLines(context, x, y);
 
             this.textChanged = false;
-            this.needToCompute = false;
+            this._needToCompute = false;
 
             if (bakShadow) {
                 context.shadowBlur = bakShadow.blur;

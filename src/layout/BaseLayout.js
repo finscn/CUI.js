@@ -56,7 +56,7 @@ var CUI = CUI || {};
                 }
                 parent.computePadding();
                 parent.updateAABB();
-                parent.needToCompute = true;
+                parent._needToCompute = true;
                 if (immediately) {
                     parent.computeLayout();
                 }

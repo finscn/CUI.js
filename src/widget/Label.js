@@ -53,8 +53,10 @@ var CUI = CUI || {};
             this.initTextInfo();
             this.setTextInfo(this.textInfo);
 
+            this.computeTextSize();
             this.computeSelf(this.parent);
-            this.computeSizeWithText(false);
+
+            this.setDisabled(this.disabled);
 
             if (this.afterInit) {
                 this.afterInit();
@@ -73,7 +75,7 @@ var CUI = CUI || {};
                     this[name].setImgInfo(info);
                 }
             }
-            this.needToCompute = true;
+            this._needToCompute = true;
         },
 
         setIconInfo: function(iconInfo) {
@@ -88,7 +90,7 @@ var CUI = CUI || {};
                     this.iconHolder.setImgInfo(iconInfo);
                 }
             }
-            this.needToCompute = true;
+            this._needToCompute = true;
         },
 
         setFlagInfo: function(flagInfo) {
@@ -103,7 +105,7 @@ var CUI = CUI || {};
                     this.flagHolder.setImgInfo(flagInfo);
                 }
             }
-            this.needToCompute = true;
+            this._needToCompute = true;
         },
 
         setTextInfo: function(textInfo) {
@@ -114,8 +116,8 @@ var CUI = CUI || {};
             } else {
                 this.textHolder.setTextInfo(textInfo);
             }
-            this.needToCompute = true;
-            this.needToComputeSize = true;
+            this._needToCompute = true;
+            this._needToComputeSize = true;
         },
 
         setTextColor: function(color) {
@@ -151,8 +153,8 @@ var CUI = CUI || {};
                 this.textInfo.text = text;
             }
             this.textHolder.setText(text);
-            this.needToComputeSize = this.textHolder.textChanged;
-            this.needToCompute = needToCompute !== false;
+            this._needToComputeSize = this.textHolder.textChanged;
+            this._needToCompute = needToCompute !== false;
         },
 
         computeWidth: function() {
@@ -161,7 +163,9 @@ var CUI = CUI || {};
             var bg = this.backgroundHolder;
 
             if (autoWidth) {
-                if (bg && !bg.borderImage) {
+                if (this.resizeWithText) {
+                    pixel.width = this.textWidth;
+                } else if (bg && !bg.borderImage) {
                     pixel.width = bg.w;
                 } else {
                     pixel.width = pixel.width || 0;
@@ -175,8 +179,8 @@ var CUI = CUI || {};
             pixel.innerWidth = pixel.width - pixel.paddingLeft - pixel.paddingRight;
             this.w = pixel.width;
             if (bg && this.scaleBg) {
-                // bg.pixel.width = this.w;
-                bg.width = this.w;
+                bg.pixel.width = this.w;
+                // bg.width = this.w;
             }
         },
 
@@ -186,7 +190,9 @@ var CUI = CUI || {};
             var bg = this.backgroundHolder;
 
             if (autoHeight) {
-                if (bg && !bg.borderImage) {
+                if (this.resizeWithText) {
+                    pixel.height = this.textHeight;
+                } else if (bg && !bg.borderImage) {
                     pixel.height = bg.h;
                 } else {
                     pixel.height = pixel.height || 0;
@@ -201,62 +207,32 @@ var CUI = CUI || {};
             this.h = pixel.height;
 
             if (bg && this.scaleBg) {
-                // bg.pixel.height = this.h;
-                bg.height = this.h;
+                bg.pixel.height = this.h;
+                // bg.height = this.h;
             }
         },
 
-        computeSizeWithText: function(immediately) {
+        computeTextSize: function(immediately) {
             var measure = this.textHolder.measure;
             if (!measure) {
                 return;
             }
-            this.needToComputeSize = false;
-            this._sizeChanged = false;
-            var needToCompute = false;
+
             // var ext = this.sizePadding * 2 + this.borderWidth;
             var extX = this.borderWidth + this.paddingLeft + this.paddingRight + this.textHolder.offsetX;
             var extY = this.borderWidth + this.paddingTop + this.paddingBottom + this.textHolder.offsetY;
-
-            // extX += this.textHolder.strokeWidth * 2;
-            // extY += this.textHolder.strokeWidth * 2;
-
-            if (this.width === null || this.width === "auto") {
-                var textWidth = measure.width + extX;
-                this.pixel.width = textWidth;
-                this.w = textWidth;
-                needToCompute = true;
-            }
-            if (this.height === null || this.height === "auto") {
-                var textHeight = measure.height * this.textHolder.lineCount + extY;
-                this.pixel.height = textHeight;
-                this.h = textHeight;
-                needToCompute = true;
-            }
-
-            if (needToCompute) {
-                var bg = this.backgroundHolder;
-                if (bg && bg.borderImage) {
-                    bg.width = this.w;
-                    bg.height = this.h;
-                    bg.w = this.w;
-                    bg.h = this.h;
-                    bg.cacheCanvas = null;
-                }
-                if (this.borderHolder) {
-                    this.borderHolder.updateSize();
-                    this.borderHolder.updatePosition();
-                }
-
-                this.setReflow("parent", immediately);
-            }
+            this.textWidth = measure.width + extX;
+            this.textHeight = measure.height * this.textHolder.lineCount + extY;
         },
 
         computeLayout: function(forceCompute) {
-            if (!this.needToCompute && !forceCompute) {
+
+            if (!this._needToCompute && !forceCompute) {
                 return;
             }
+
             this.textHolder && this.textHolder.updatePosition();
+
             if (this.backgroundHolder) {
                 this.backgroundHolder.updateSize();
                 this.backgroundHolder.updatePosition();
@@ -271,6 +247,7 @@ var CUI = CUI || {};
                 this.iconHolder.updateSize();
                 this.iconHolder.updatePosition();
             }
+
             if (this.flagHolder) {
                 this.flagHolder.updateSize();
                 this.flagHolder.updatePosition();
@@ -278,36 +255,67 @@ var CUI = CUI || {};
 
             this.updateAnchor();
 
-            this.needToCompute = false;
+            this._needToCompute = false;
         },
 
         syncHolders: function() {
-            this.backgroundHolder && this.backgroundHolder.updatePosition();
-            this.borderHolder && this.borderHolder.updatePosition();
-            this.iconHolder && this.iconHolder.updatePosition();
-            this.textHolder && this.textHolder.updatePosition();
-            this.flagHolder && this.flagHolder.updatePosition();
+            if (this.backgroundHolder) {
+                this.backgroundHolder.updateSize();
+                this.backgroundHolder.updatePosition();
+            }
+            if (this.borderHolder) {
+                this.borderHolder.updateSize();
+                this.borderHolder.updatePosition();
+            }
+            if (this.iconHolder) {
+                this.iconHolder.updateSize();
+                this.iconHolder.updatePosition();
+            }
+            if (this.textHolder) {
+                this.textHolder.updateSize();
+                this.textHolder.updatePosition();
+            }
+            if (this.flagHolder) {
+                this.flagHolder.updateSize();
+                this.flagHolder.updatePosition();
+            }
+        },
+
+        updateSizeWithText: function() {
+            // if (this.textHolder._needToCompute) {
+            this.textHolder.computeSize();
+            // }
+
+            this.computeTextSize();
+
+            var bg = this.backgroundHolder;
+            if (bg && bg.borderImage) {
+                bg.cacheCanvas = null;
+            }
+
+            this.setReflow("parent", true);
+
+            this._needToComputeSize = false;
+            this._sizeChanged = false;
+        },
+
+        update: function(timeStep, now) {
+            this.beforeUpdate && this.beforeUpdate(timeStep, now);
+
+            this.updateSelf(timeStep, now);
+
+            if (this.textHolder && (this.resizeWithText || this._sizeChanged) && this._needToComputeSize) {
+                this.updateSizeWithText();
+            } else {
+                this.computeLayout();
+            }
+
+            this.afterUpdate && this.afterUpdate(timeStep, now);
         },
 
         renderSelf: function(renderer, timeStep, now) {
-            if (this.textHolder && (this.resizeWithText || this._sizeChanged) && this.needToComputeSize) {
-                // if (this.textHolder.needToCompute) {
-                this.textHolder.computeSize();
-                // }
-                this.computeSizeWithText(true);
-            }
-
-            if (this.backgroundColor !== null) {
-                renderer.setAlpha(this.backgroundAlpha);
-                renderer.fillRect(this.x, this.y, this.w, this.h, this.backgroundColor);
-                renderer.restoreAlpha();
-            }
-            if (this.backgroundHolder) {
-                this.backgroundHolder.render(renderer, timeStep, now);
-            }
-            if (this.borderHolder) {
-                this.borderHolder.render(renderer, timeStep, now);
-            }
+            this.backgroundHolder && this.backgroundHolder.render(renderer, timeStep, now);
+            this.borderHolder && this.borderHolder.render(renderer, timeStep, now);
             this.iconHolder && this.iconHolder.render(renderer, timeStep, now);
             this.textHolder && this.textHolder.render(renderer, timeStep, now);
             this.flagHolder && this.flagHolder.render(renderer, timeStep, now);

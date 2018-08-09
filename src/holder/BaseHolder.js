@@ -36,7 +36,7 @@ var CUI = CUI || {};
             this.visible = true;
 
             this.parent = null;
-            this.needToCompute = true;
+            this._needToCompute = true;
         },
 
         init: function() {
@@ -45,7 +45,7 @@ var CUI = CUI || {};
 
         setParent: function(parent) {
             this.parent = parent;
-            this.needToCompute = true;
+            this._needToCompute = true;
         },
 
         setAnchor: function(x, y) {

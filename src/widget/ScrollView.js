@@ -337,10 +337,19 @@ var CUI = CUI || {};
         },
 
         computeLayout: function(forceCompute) {
-            if (this.composite && (this.needToCompute || forceCompute)) {
-                this.needToCompute = false;
+            if (this._needToCompute || forceCompute) {
+                this._needToCompute = false;
                 this.layout.compute(this);
                 this.reset();
+
+                if (this.backgroundHolder) {
+                    this.backgroundHolder.updateSize();
+                    this.backgroundHolder.updatePosition();
+                }
+                if (this.borderHolder) {
+                    this.borderHolder.updateSize();
+                    this.borderHolder.updatePosition();
+                }
             }
         },
 

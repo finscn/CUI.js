@@ -53,7 +53,7 @@ var CUI = CUI || {};
         computeHeight: Label.prototype.computeHeight,
 
         computeLayout: function(forceCompute) {
-            if (!this.needToCompute && !forceCompute) {
+            if (!this._needToCompute && !forceCompute) {
                 return;
             }
             if (this.backgroundHolder) {
@@ -73,20 +73,24 @@ var CUI = CUI || {};
 
             this.updateAnchor();
 
-            this.needToCompute = false;
+            this._needToCompute = false;
         },
 
         syncHolders: function() {
-            this.backgroundHolder && this.backgroundHolder.updatePosition();
-            this.valueHolder && this.valueHolder.updatePosition();
+            if (this.backgroundHolder) {
+                this.backgroundHolder.updateSize();
+                this.backgroundHolder.updatePosition();
+            }
+            if (this.valueHolder) {
+                this.valueHolder.updateSize();
+                this.valueHolder.updatePosition();
+            }
         },
 
         renderSelf: function(renderer, timeStep, now) {
             var p = Math.min(1, this.progress);
             if (this.backgroundHolder) {
                 this.backgroundHolder.simpleRender(renderer, timeStep, now);
-            } else {
-                renderer.fillRect(this.x, this.y, this.w, this.h, this.backgroundColor);
             }
             if (p > 0) {
                 if (this.valueHolder) {

@@ -32,19 +32,14 @@ var CUI = CUI || {};
             this.scale = 1;
         },
 
-        beforeRender: function(renderer, timeStep, now) {
-            if (this.disabled) {
-                this._prevAlpha = this.alpha;
+        setDisabled: function(disabled) {
+            this.disabled = disabled;
+            if (disabled) {
                 this.alpha = 0.6;
+            } else {
+                this.alpha = this._defaultAlpha;
             }
         },
-
-        afterRender: function(renderer, timeStep, now) {
-            if (this.disabled) {
-                this.alpha = this._prevAlpha;
-            }
-        },
-
     });
 
     ButtonComponent.applyTo(Button.prototype);

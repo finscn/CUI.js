@@ -137,7 +137,7 @@ var CUI = CUI || {};
             this.readyForCache = false;
             this.cached = false;
 
-            this.needToCompute = true;
+            this._needToCompute = true;
         },
 
         init: function() {
@@ -173,6 +173,8 @@ var CUI = CUI || {};
                 paddingBottom: 0,
                 paddingLeft: 0,
             };
+
+            this._defaultAlpha = this.alpha;
 
             EventDispatcher.applyTo(this);
 
@@ -213,12 +215,17 @@ var CUI = CUI || {};
                     this.setBackgroundInfo(this.backgroundInfo);
                 } else if (this.backgroundImage) {
                     this.setBackgroundImage(this.backgroundImage);
+                } else if (this.backgroundColor !== null) {
+                    this.setBackgroundInfo({
+                        color: this.backgroundColor,
+                        alpha: this.backgroundAlpha,
+                    });
                 }
             }
         },
 
         initBorder: function() {
-            if (this.borderWidth && this.borderColor !== null) {
+            if (this.borderWidth > 0 && this.borderColor !== null) {
                 this.borderHolder = new CUI.BorderHolder({
                     alpha: this.borderAlpha,
                     lineWidth: this.borderWidth,
@@ -231,10 +238,13 @@ var CUI = CUI || {};
             }
         },
 
+        setDisabled: function(disabled) {
+            this.disabled = disabled;
+        },
+
         setBackgroundInfo: function(info) {
             var holder = null;
             if (info) {
-                ("color" in info) && (this.backgroundColor = info.color);
                 holder = new CUI.BackgroundHolder(info);
             }
             this.setBackgroundHolder(holder);
@@ -255,13 +265,16 @@ var CUI = CUI || {};
         setBackgroundHolder: function(holder) {
             this.backgroundHolder = holder;
             if (holder) {
-                this.backgroundHolder.setParent(this);
-                this.backgroundHolder.fillParent = this.scaleBg;
-                this.backgroundHolder.init();
-                this.backgroundHolder.updateSize();
-                this.backgroundHolder.updatePosition();
+                holder.color = Utils.getExistValue(holder.color, this.backgroundColor);
+                holder.alpha = Utils.getExistValue(holder.alpha, this.backgroundAlpha);
+                holder.fillParent = this.scaleBg;
+
+                holder.setParent(this);
+                holder.init();
+                holder.updateSize();
+                holder.updatePosition();
             }
-            this.needToCompute = true;
+            this._needToCompute = true;
         },
 
         beforeInit: null,
@@ -318,7 +331,7 @@ var CUI = CUI || {};
                 if (this.height === "auto") {
                     this.pixel.height = 0;
                 }
-                this.needToCompute = true;
+                this._needToCompute = true;
                 this.sortChildren();
             }
         },
@@ -333,7 +346,7 @@ var CUI = CUI || {};
                     if (this.height === "auto") {
                         this.pixel.h = 0;
                     }
-                    this.needToCompute = true;
+                    this._needToCompute = true;
                 }
             }
         },
@@ -376,23 +389,23 @@ var CUI = CUI || {};
 
         setReflow: function(deep, immediately) {
             if (!deep) {
-                this.needToCompute = false;
+                this._needToCompute = false;
                 return false;
             }
             if (deep === "root") {
                 var root = this.root || this.parent;
                 if (root) {
-                    root.needToCompute = true;
+                    root._needToCompute = true;
                     if (immediately) {
-                        root.computeLayout();
+                        root.computeLayout(true);
                     }
                 }
             } else if (deep === "parent") {
                 var parent = this.parent || this.root;
                 if (parent) {
-                    parent.needToCompute = true;
+                    parent._needToCompute = true;
                     if (immediately) {
-                        parent.computeLayout();
+                        parent.computeLayout(true);
                     }
                 }
             } else if (deep === true) {
@@ -401,7 +414,7 @@ var CUI = CUI || {};
                 var top;
                 while (ui) {
                     top = ui;
-                    ui.needToCompute = true;
+                    ui._needToCompute = true;
                     if (stop || ui.relative === "root") {
                         break;
                     } else if (ui.relative === "parent") {
@@ -410,10 +423,10 @@ var CUI = CUI || {};
                     ui = ui.parent;
                 }
                 if (immediately) {
-                    top.computeLayout();
+                    top.computeLayout(true);
                 }
             } else {
-                this.needToCompute = true;
+                this._needToCompute = true;
                 if (immediately) {
                     this.computeLayout();
                 }
@@ -604,7 +617,7 @@ var CUI = CUI || {};
             this.computePositionY();
             this.computePadding();
             this.updateAABB();
-            this.needToCompute = true;
+            this._needToCompute = true;
             this.onResize();
         },
         onResize: noop,
@@ -622,11 +635,12 @@ var CUI = CUI || {};
         },
 
         computeLayout: function(forceCompute) {
-            if (this.needToCompute || forceCompute) {
-                this.needToCompute = false;
+            if (this._needToCompute || forceCompute) {
+                this._needToCompute = false;
                 if (this.composite) {
                     this.layout.compute(this);
                 }
+
                 if (this.backgroundHolder) {
                     this.backgroundHolder.updateSize();
                     this.backgroundHolder.updatePosition();
@@ -713,18 +727,10 @@ var CUI = CUI || {};
         },
 
         renderSelf: function(renderer, timeStep, now) {
-            if (this.backgroundColor !== null) {
-                renderer.setAlpha(this.backgroundAlpha);
-                renderer.fillRect(this.x, this.y, this.w, this.h, this.backgroundColor);
-                renderer.restoreAlpha();
-            }
-            if (this.backgroundHolder) {
-                this.backgroundHolder.render(renderer, timeStep, now);
-            }
-            if (this.borderHolder) {
-                this.borderHolder.render(renderer, timeStep, now);
-            }
+            this.backgroundHolder && this.backgroundHolder.render(renderer, timeStep, now);
+            this.borderHolder && this.borderHolder.render(renderer, timeStep, now);
         },
+
         renderChildren: function(renderer, timeStep, now) {
             this.children.forEach(function(child) {
                 child.render(renderer, timeStep, now);

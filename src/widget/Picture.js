@@ -81,7 +81,7 @@ var CUI = CUI || {};
                     Me.setReflow(true);
                 }
                 Me.hasImg = !!Me.imageHolder.img;
-                Me.needToCompute = true;
+                Me._needToCompute = true;
             });
         },
 
@@ -93,7 +93,7 @@ var CUI = CUI || {};
                     Me.setReflow(true);
                 }
                 Me.hasImg = !!Me.imageHolder.img;
-                Me.needToCompute = true;
+                Me._needToCompute = true;
             });
         },
 
@@ -101,7 +101,7 @@ var CUI = CUI || {};
             this.imageHolder.setImgInfo(imgInfo);
             this.imageHolder.setTint(this.tint);
             this.hasImg = !!this.imageHolder.img;
-            this.needToCompute = true;
+            this._needToCompute = true;
         },
 
         setImageBorderInfo: function(info) {
@@ -119,7 +119,7 @@ var CUI = CUI || {};
                 this.imageBorderHolder.updateSize();
                 this.imageBorderHolder.updatePosition();
             }
-            this.needToCompute = true;
+            this._needToCompute = true;
         },
 
         computeWidth: function() {
@@ -166,7 +166,7 @@ var CUI = CUI || {};
         },
 
         computeLayout: function(forceCompute) {
-            if (!this.needToCompute && !forceCompute) {
+            if (!this._needToCompute && !forceCompute) {
                 return;
             }
 
@@ -188,7 +188,7 @@ var CUI = CUI || {};
                 this.borderHolder.updatePosition();
             }
 
-            this.needToCompute = false;
+            this._needToCompute = false;
         },
 
         syncHolders: function() {
@@ -196,6 +196,7 @@ var CUI = CUI || {};
                 this.imageHolder.x = this.x;
                 this.imageHolder.y = this.y;
             } else {
+                this.imageHolder.updateSize();
                 this.imageHolder.updatePosition();
             }
 
@@ -211,20 +212,10 @@ var CUI = CUI || {};
         },
 
         renderSelf: function(renderer, timeStep, now) {
-            if (this.backgroundColor !== null) {
-                renderer.setAlpha(this.backgroundAlpha);
-                renderer.fillRect(this.x, this.y, this.w, this.h, this.backgroundColor);
-                renderer.restoreAlpha();
-            }
-            if (this.backgroundHolder) {
-                this.backgroundHolder.render(renderer, timeStep, now);
-            }
-
-            this.imageHolder && this.imageHolder.render(renderer, timeStep, now);
-
-            this.imageBorderHolder && this.imageBorderHolder.render(renderer, timeStep, now);
-
+            this.backgroundHolder && this.backgroundHolder.render(renderer, timeStep, now);
             this.borderHolder && this.borderHolder.render(renderer, timeStep, now);
+            this.imageHolder && this.imageHolder.render(renderer, timeStep, now);
+            this.imageBorderHolder && this.imageBorderHolder.render(renderer, timeStep, now);
         },
     });
 

@@ -23,6 +23,7 @@ function initUI() {
     });
 
     var scorllView = new CUI.ScrollView({
+        id:'test-1',
 
         scrollH: true,
         scrollV: !true,
@@ -121,6 +122,7 @@ function initUI() {
     });
 
     var label = new CUI.Label({
+        testCmp:1,
         id: "label-1",
         parent: panel,
         backgroundColor: CUI.renderer.colorRgb(255, 240, 230),
@@ -135,7 +137,7 @@ function initUI() {
             // useCache: false,
             text: "Text Test - 1",
         },
-        updateSelf: function() {
+        beforeUpdate: function() {
             this.setText("test-" + (Math.random() * 1000 >> 0), false);
         }
     });
@@ -149,6 +151,7 @@ function initUI() {
             parent: scorllView,
             width: i === 0 ? "auto" : 100,
             height: i === 0 ? "auto" : 60,
+            padding: 8,
             backgroundImg: i === 0 ? CUI.ImagePool["btn-bg"] : null,
             margin: 10,
             disabled: i % 2,
