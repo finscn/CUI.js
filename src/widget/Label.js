@@ -157,6 +157,11 @@ var CUI = CUI || {};
             this._needToCompute = needToCompute !== false;
         },
 
+        updateText: function(text) {
+            this.setText(text, true);
+            this.updateSizeWithText();
+        },
+
         computeWidth: function() {
             var pixel = this.pixel;
             var autoWidth = this.width === null || this.width === "auto";
