@@ -21,13 +21,18 @@ var CUI = CUI || {};
         },
 
         updatePosition: function() {
-            this.x = this.parent.x;
-            this.y = this.parent.y;
+            var parent = this.parent;
+            // this.x = parent.x;
+            // this.y = parent.y;
+            this.x = parent.x + ((parent.w - this.pixel.width) >> 1);
+            this.y = parent.y + ((parent.h - this.pixel.height) >> 1);
         },
 
         updateSize: function() {
-            this.pixel.width = this.parent.pixel.width;
-            this.pixel.height = this.parent.pixel.height;
+            if (this.parent && this.fillParent) {
+                this.pixel.width = this.parent.pixel.width;
+                this.pixel.height = this.parent.pixel.height;
+            }
         },
 
         render: function(renderer, timeStep, now) {

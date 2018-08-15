@@ -174,6 +174,11 @@ var CUI = CUI || {};
             this.pixel.sy = sy;
             this.pixel.sw = sw;
             this.pixel.sh = sh;
+            this.pixel.ox = ox;
+            this.pixel.oy = oy;
+            this.pixel.width = w;
+            this.pixel.height = h;
+
             this.ox = ox;
             this.oy = oy;
             this.w = w;
