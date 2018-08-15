@@ -32,17 +32,15 @@ var CUI = CUI || {};
         render: function(renderer, timeStep, now) {
             var bi = this;
 
-            var width = this.pixel.width;
-            var height = this.pixel.height;
-
             if (this.useCache) {
+                // TODO
                 if (!this.cacheCanvas) {
-                    this.cacheCanvas = this.cacheBorderImage(width, height);
+                    this.cacheCanvas = this.cacheBorderImage(this.w, this.h);
                     this.cacheDisplayObject = renderer.createDisplayObject(this.cacheCanvas);
                 }
-                renderer.drawDisplayObject(this.cacheDisplayObject, 0, 0, width, height);
+                renderer.drawDisplayObject(this.cacheDisplayObject, this.x, this.y, this.w, this.h);
             } else {
-                this.renderBorderImage(renderer, this.x, this.y, width, height);
+                this.renderBorderImage(renderer, this.x, this.y, this.w, this.h);
             }
         },
 
@@ -50,7 +48,7 @@ var CUI = CUI || {};
             // do nothing.
         },
 
-        initBorderDisplayObject: function(renderer, w, h, cached) {
+        initBorderDisplayObject: function(renderer, width, height) {
             var img = this.img;
             var pixel = this.pixel;
             var sx = pixel.sx || 0;
@@ -63,22 +61,21 @@ var CUI = CUI || {};
             var B = this.B;
             var L = this.L;
 
-            this.borderObject = renderer.createNineSliceObject(img, sx, sy, sw, sh, T, R, B, L, true);
-            this.borderObject.width = w;
-            this.borderObject.height = h;
-            this.borderDisplayInited = true;
+            this.displayObject = renderer.createNineSliceObject(img, sx, sy, sw, sh, T, R, B, L, true);
+            this.displayObject.width = width;
+            this.displayObject.height = height;
         },
 
-        renderBorderImage: function(renderer, x, y, width, height, cached) {
+        renderBorderImage: function(renderer, x, y, width, height) {
             // debugger;
-            if (!this.borderDisplayInited) {
-                this.initBorderDisplayObject(renderer, width, height, cached);
-                // console.log(this.borderObject.scale, width, height);
+            if (!this.displayObject) {
+                this.initBorderDisplayObject(renderer, width, height);
+                // console.log(this.displayObject.scale, width, height);
             } else {
-                this.borderObject.width = width;
-                this.borderObject.height = height;
+                this.displayObject.width = width;
+                this.displayObject.height = height;
             }
-            renderer.renderNineSliceObject(this.borderObject, x, y, width, height);
+            renderer.renderNineSliceObject(this.displayObject, x, y, width, height);
         },
 
         cacheBorderImage: function(w, h) {

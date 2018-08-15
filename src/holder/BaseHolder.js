@@ -30,8 +30,8 @@ var CUI = CUI || {};
             this.offsetY = 0;
             this.offsetAlpha = 0;
 
-            this.alignH = "center", // left center righ;
-            this.alignV = "middle", // top middle botto;
+            this.alignH = "center"; // left center righ;
+            this.alignV = "middle"; // top middle botto;
 
             this.visible = true;
 
@@ -71,6 +71,7 @@ var CUI = CUI || {};
             } else {
                 this.x = parent.x + parent.pixel.paddingLeft;
             }
+            this.x += this.offsetX + this.pixel.ox;
 
             if (this.alignV === "middle" || this.alignV === "center") {
                 this.y = parent.y + ((parent.h - this.pixel.height) >> 1);
@@ -79,6 +80,7 @@ var CUI = CUI || {};
             } else {
                 this.y = parent.y + parent.pixel.paddingTop;
             }
+            this.y += this.offsetY + this.pixel.oy;
         },
 
         render: function(renderer, timeStep, now) {

@@ -24,14 +24,16 @@ var CUI = CUI || {};
             var parent = this.parent;
             // this.x = parent.x;
             // this.y = parent.y;
-            this.x = parent.x + ((parent.w - this.pixel.width) >> 1);
-            this.y = parent.y + ((parent.h - this.pixel.height) >> 1);
+            this.x = parent.x + ((parent.w - this.pixel.width) >> 1) + this.ox + this.offsetX;
+            this.y = parent.y + ((parent.h - this.pixel.height) >> 1) + this.oy + this.offsetY;
         },
 
         updateSize: function() {
             if (this.parent && this.fillParent) {
                 this.pixel.width = this.parent.pixel.width;
                 this.pixel.height = this.parent.pixel.height;
+                this.w = this.pixel.width;
+                this.h = this.pixel.height;
             }
         },
 
@@ -44,16 +46,13 @@ var CUI = CUI || {};
                 renderer.setAlpha(this.alpha);
             }
 
-            var x = this.x + this.ox + this.offsetX;
-            var y = this.y + this.oy + this.offsetY;
-
             if (this.color !== null) {
-                renderer.fillRect(x, y, this.pixel.width, this.pixel.height, this.color);
+                renderer.fillRect(this.x, this.y, this.w, this.h, this.color);
             }
 
             if (this.displayObject) {
                 renderer.drawDisplayObject(this.displayObject,
-                    x, y, this.pixel.width, this.pixel.height);
+                    this.x, this.y, this.w, this.h);
             }
 
             if (this.alpha !== 1) {

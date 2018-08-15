@@ -250,6 +250,7 @@ var CUI = CUI || {};
             } else {
                 this.x = parent.x + parent.pixel.paddingLeft;
             }
+            this.x += this.offsetX;
 
             if (this.alignV === "middle" || this.alignV === "center") {
                 this.y = parent.y + ((parent.h - this.height) >> 1);
@@ -258,6 +259,7 @@ var CUI = CUI || {};
             } else {
                 this.y = parent.y + parent.pixel.paddingTop;
             }
+            this.y += this.offsetY;
         },
 
         render: function(renderer, timeStep, now) {
@@ -275,13 +277,11 @@ var CUI = CUI || {};
             }
             // }
 
-            var x = this.x - this.anchorX + this.offsetX;
-            var y = this.y - this.anchorY + this.offsetY;
+            var x = this.x - this.anchorX;
+            var y = this.y - this.anchorY;
 
             if (this.useCache) {
-                x -= this.cacheOffsetX;
-                y -= this.cacheOffsetY;
-                renderer.renderAt(this.textObject, x, y);
+                renderer.renderAt(this.textObject, x - this.cacheOffsetX, y - this.cacheOffsetY);
             } else {
                 this.renderContent(renderer.context, x, y);
             }

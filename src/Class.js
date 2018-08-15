@@ -73,8 +73,16 @@ var CUI = CUI || {};
         }
 
         for (var key in superProto) {
+            // if (Object.hasOwnProperty(proto, key) !== (key in proto)) {
+            //     // console.log(key)
+            // }
             if (!(key in proto) && key !== "constructor") {
-                proto[key] = superProto[key];
+                var desc = Object.getOwnPropertyDescriptor(superProto, key);
+                if (desc) {
+                    Object.defineProperty(proto, key, desc);
+                } else {
+                    proto[key] = superProto[key];
+                }
             }
         }
 
@@ -91,6 +99,17 @@ var CUI = CUI || {};
         }
 
         return subclass;
+    };
+
+    Class.defineProperties = function(target, props) {
+        for (var i = 0; i < props.length; i++) {
+            var descriptor = props[i];
+            var enumerable = descriptor.enumerable;
+            descriptor.enumerable = enumerable !== false;
+            descriptor.configurable = true;
+            if ("value" in descriptor) descriptor.writable = true;
+            Object.defineProperty(target, descriptor.key, descriptor);
+        }
     };
 
     exports.Class = Class;

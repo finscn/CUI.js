@@ -179,12 +179,12 @@ var CUI = CUI || {};
             this.pixel.width = w;
             this.pixel.height = h;
 
+            this.initDisplayObject();
+
             this.ox = ox;
             this.oy = oy;
             this.w = w;
             this.h = h;
-
-            this.initDisplayObject();
         },
 
         initDisplayObject: function() {
@@ -197,13 +197,6 @@ var CUI = CUI || {};
             var pixel = this.pixel;
             this.displayObject = renderer.createDisplayObject(this.img, pixel.sx, pixel.sy, pixel.sw, pixel.sh, true);
             this.displayObject.tint = this.tint === null ? 0xFFFFFF : this.tint;
-        },
-
-        setTint: function(tint) {
-            this.tint = tint;
-            if (this.displayObject) {
-                this.displayObject.tint = this.tint === null ? 0xFFFFFF : this.tint;
-            }
         },
 
         removeImg: function() {
@@ -242,8 +235,8 @@ var CUI = CUI || {};
             if (!this.visible || !this.img) {
                 return false;
             }
-            var x = this.x - this.anchorX + this.offsetX + this.ox;
-            var y = this.y - this.anchorY + this.offsetY + this.oy;
+            var x = this.x - this.anchorX;
+            var y = this.y - this.anchorY;
             var w = this.pixel.width + this.offsetW;
             var h = this.pixel.height + this.offsetH;
             renderer.drawDisplayObject(this.displayObject, x, y, w, h);
@@ -274,15 +267,15 @@ var CUI = CUI || {};
 
                 // TODO
                 renderer.save();
-                renderer.translate(this.x + this.offsetX + this.pixel.ox, this.y + this.offsetY + this.pixel.oy);
+                renderer.translate(this.x, this.y);
                 if (rotation) {
                     renderer.rotate(rotation);
                 }
                 renderer.scale(flipX, flipY);
                 // renderer.scale(scaleX, scaleY);
             } else {
-                x += this.x + this.offsetX + this.pixel.ox;
-                y += this.y + this.offsetY + this.pixel.oy;
+                x += this.x;
+                y += this.y;
             }
 
             if (this.alpha !== 1) {

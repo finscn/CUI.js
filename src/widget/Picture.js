@@ -66,7 +66,7 @@ var CUI = CUI || {};
 
         setTint: function(tint) {
             this.tint = tint;
-            this.imageHolder.setTint(tint);
+            this.imageHolder.tint = tint;
         },
 
         getTint: function(tint) {
@@ -99,7 +99,7 @@ var CUI = CUI || {};
 
         setImgInfo: function(imgInfo) {
             this.imageHolder.setImgInfo(imgInfo);
-            this.imageHolder.setTint(this.tint);
+            this.imageHolder.tint = this.tint;
             this.hasImg = !!this.imageHolder.img;
             this._needToCompute = true;
         },
