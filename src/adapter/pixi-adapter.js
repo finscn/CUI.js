@@ -180,44 +180,6 @@ var CUI = CUI || {};
     Class.defineProperties(Component.prototype, properties);
     Class.defineProperties(BaseHolder.prototype, properties);
 
-    var TestCmp = Class.create({
-        superclass: Component,
-        initialize: function() {
-            this.id = "cmp_root";
-
-            this.width = null;
-            this.height = null;
-
-            this.left = null;
-            this.top = null;
-            this.originalX = 0;
-            this.originalY = 0;
-
-            this.resetSN = 1;
-        },
-        init: function() {
-
-        }
-    });
-
-    // console.log(Component.prototype)
-    console.log(TestCmp.prototype)
-    // debugger
-
-    // __defineGetter__
-    // __defineSetter__
-    // console.log(Component.prototype.__lookupGetter__('visible'))
-    // console.log(Component.prototype.__lookupSetter__('visible'))
-    // for (var p in Component.prototype) {
-    //     fun.prototype[p] = Component.prototype[p];
-    // }
-    // debugger;
-    // var f = new TestCmp();
-    // f.visible = true;
-    // f.init();
-    // console.log(f)
-    // debugger
-
     ///////////////////////////////////////////////////////////
     ///////////////////////////////////////////////////////////
     ///////////////////////////////////////////////////////////

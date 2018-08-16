@@ -56,6 +56,9 @@ var CUI = CUI || {};
             Root.$super.init.call(this);
 
             this.pixel = {
+                relativeX: 0,
+                relativeY: 0,
+
                 paddingLeft: 0,
                 paddingTop: 0,
                 paddingRight: 0,

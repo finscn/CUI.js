@@ -160,7 +160,6 @@ var CUI = CUI || {};
                 this.root.all[this.id] = this;
             }
 
-            this.aabb = [];
             this.pixel = {
                 // x: 0,
                 // y: 0,
@@ -168,11 +167,14 @@ var CUI = CUI || {};
                 // height: 0,
                 relativeX: 0,
                 relativeY: 0,
+
                 paddingTop: 0,
                 paddingRight: 0,
                 paddingBottom: 0,
                 paddingLeft: 0,
             };
+
+            this.aabb = [];
 
             this._defaultAlpha = this.alpha;
 
@@ -192,6 +194,7 @@ var CUI = CUI || {};
             this.setPadding(this.padding || 0);
             this.setParent(this.parent, true);
 
+            this.initDisplayObject();
             this.initBackground();
             this.initBorder();
 
@@ -201,6 +204,13 @@ var CUI = CUI || {};
             // if (this.afterInit) {
             //     this.afterInit();
             // }
+        },
+
+        initDisplayObject: function() {
+            // do nothing.
+        },
+        updateDisplayObject: function(img, x, y, w, h) {
+            // do nothing.
         },
 
         initChildren: noop,
@@ -879,7 +889,6 @@ var CUI = CUI || {};
             this.h = pixel.height;
         },
 
-
         computePadding: function() {
             var pixel = this.pixel;
             this.paddingLeft = this.paddingLeft === null ? this.padding : this.paddingLeft;
@@ -894,7 +903,6 @@ var CUI = CUI || {};
 
             pixel.innerWidth = pixel.width - pixel.paddingLeft - pixel.paddingRight;
             pixel.innerHeight = pixel.height - pixel.paddingTop - pixel.paddingBottom;
-
         },
 
         computePositionX: function(parent) {

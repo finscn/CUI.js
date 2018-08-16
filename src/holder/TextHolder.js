@@ -73,6 +73,9 @@ var CUI = CUI || {};
 
         init: function() {
             this.pixel = {
+                relativeX: 0,
+                relativeY: 0,
+
                 width: this.width,
                 height: this.height,
             };

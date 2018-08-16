@@ -62,13 +62,18 @@ var CUI = CUI || {};
                 this.scaleY = this.scale;
             }
 
-            this.pixel = {};
+            this.pixel = {
+                relativeX: 0,
+                relativeY: 0,
+            };
+
+            this.setParent(this.parent);
+
             if (this.src) {
                 this.load(this.src);
             } else if (this.img) {
                 this.setImg(this.img);
             }
-            this.setParent(this.parent);
 
             this.id = this.id || "image-holder-" + this.parent.id;
 

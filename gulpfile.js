@@ -78,9 +78,11 @@ var jsFileList = [
     "layout/Layout.js",
 
     "Component.js",
+    "holder/BaseHolder.js",
+    "adapter/pixi-adapter.js",
+
     "Root.js",
 
-    "holder/BaseHolder.js",
     "holder/TextHolder.js",
     "holder/ImageHolder.js",
     "holder/BackgroundHolder.js",

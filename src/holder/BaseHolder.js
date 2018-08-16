@@ -41,6 +41,14 @@ var CUI = CUI || {};
 
         init: function() {
             this.setParent(this.parent);
+            this.initDisplayObject();
+        },
+
+        initDisplayObject: function() {
+            // do nothing.
+        },
+        updateDisplayObject: function(img, x, y, w, h) {
+            // do nothing.
         },
 
         setParent: function(parent) {
