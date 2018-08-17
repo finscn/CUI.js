@@ -21,20 +21,14 @@ var CUI = CUI || {};
             return this.children[index];
         },
 
-        _removeChild: function(child) {
-            delete this.childrenMap[child.id];
-            child.parent = null;
-            if (child.root) {
-                delete child.root.all[child.id];
-                child.root = null;
-            }
-        },
+        _removeChild: function(child) {},
 
         removeChild: function(child) {
             var index = this.indexOf(child);
             if (index >= 0) {
                 this.children.splice(index, 1);
-                this._removeChild(child);
+                delete this.childrenMap[child.id];
+                child.parent = null;
                 return child;
             }
             return false;
@@ -50,7 +44,8 @@ var CUI = CUI || {};
             var child = this.children[index];
             if (child) {
                 this.children.splice(index, 1);
-                this._removeChild(child);
+                delete this.childrenMap[child.id];
+                child.parent = null;
                 return child;
             }
             return false;

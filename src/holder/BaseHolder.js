@@ -30,22 +30,33 @@ var CUI = CUI || {};
             this.offsetY = 0;
             this.offsetAlpha = 0;
 
-            this.alignH = "center", // left center righ;
-            this.alignV = "middle", // top middle botto;
+            this.alignH = "center"; // left center righ;
+            this.alignV = "middle"; // top middle botto;
 
             this.visible = true;
 
             this.parent = null;
-            this.needToCompute = true;
+            this._needToCompute = true;
         },
 
         init: function() {
             this.setParent(this.parent);
+            this.initDisplayObject();
+            this.updateSize();
+            this.updatePosition();
+        },
+
+        initDisplayObject: function() {
+            // do nothing.
+        },
+        updateDisplayObject: function(img, x, y, w, h) {
+            // do nothing.
         },
 
         setParent: function(parent) {
             this.parent = parent;
-            this.needToCompute = true;
+            this.root = parent ? parent.root : null;
+            this._needToCompute = true;
         },
 
         setAnchor: function(x, y) {
@@ -71,6 +82,7 @@ var CUI = CUI || {};
             } else {
                 this.x = parent.x + parent.pixel.paddingLeft;
             }
+            this.x += this.offsetX + this.pixel.ox;
 
             if (this.alignV === "middle" || this.alignV === "center") {
                 this.y = parent.y + ((parent.h - this.pixel.height) >> 1);
@@ -79,12 +91,7 @@ var CUI = CUI || {};
             } else {
                 this.y = parent.y + parent.pixel.paddingTop;
             }
-        },
-
-        render: function(renderer, timeStep, now) {
-            if (!this.visible) {
-                return false;
-            }
+            this.y += this.offsetY + this.pixel.oy;
         },
 
     });

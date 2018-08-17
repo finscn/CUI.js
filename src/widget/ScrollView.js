@@ -63,8 +63,6 @@ var CUI = CUI || {};
             this.scrollWidthOrigin = this.scrollWidth;
             this.scrollHeightOrigin = this.scrollHeight;
 
-            this.initChildren();
-
             this.resetScrollInfo();
 
             if (this.afterInit) {
@@ -337,10 +335,19 @@ var CUI = CUI || {};
         },
 
         computeLayout: function(forceCompute) {
-            if (this.composite && (this.needToCompute || forceCompute)) {
-                this.needToCompute = false;
+            if (this._needToCompute || forceCompute) {
+                this._needToCompute = false;
                 this.layout.compute(this);
                 this.reset();
+
+                if (this.backgroundHolder) {
+                    this.backgroundHolder.updateSize();
+                    this.backgroundHolder.updatePosition();
+                }
+                if (this.borderHolder) {
+                    this.borderHolder.updateSize();
+                    this.borderHolder.updatePosition();
+                }
             }
         },
 
@@ -381,7 +388,8 @@ var CUI = CUI || {};
             this.children.forEach(function(child, idx) {
                 if (scrollChanged) {
                     child.moveBy(-Me.scrollDX, -Me.scrollDY);
-                    if (Me.checkCollideAABB(child.aabb)) {
+                    child.visible = Me.checkCollideAABB(child.aabb);
+                    if (child.visible) {
                         vc.push(child);
                     }
                 }
@@ -394,55 +402,6 @@ var CUI = CUI || {};
             this.lastScrollY = this.scrollY;
         },
 
-        renderScrollbar: function(renderer, timeStep, now) {
-            if (!this.thumbWidth) {
-                return;
-            }
-            if (this.scrollThumb && this.scrolling <= 0) {
-                return;
-            }
-            this.scrolling -= timeStep;
-
-            if (this.scrollH && this.rateWidth < 1) {
-                var y = this.y + this.h - this.thumbWidth;
-                renderer.fillRect(this.x + this.paddingLeft + 0, y, this.w, this.thumbWidth, this.thumbBgColor);
-                renderer.fillRect(this.x + this.paddingLeft + this.thumbX + 1, y + 1, this.thumbHSize - 2, this.thumbWidth - 2, this.thumbColor);
-            }
-            if (this.scrollV && this.rateHeight < 1) {
-                var x = this.x + this.w - this.thumbWidth;
-                renderer.fillRect(x, this.y + this.paddingTop + 0, this.thumbWidth, this.h, this.thumbBgColor);
-                renderer.fillRect(x + 1, this.y + this.paddingTop + this.thumbY + 1, this.thumbWidth - 2, this.thumbVSize - 2, this.thumbColor);
-            }
-        },
-
-        startClip: function(renderer) {
-            var root = this.root;
-            var ox = root.originalX || 0;
-            var oy = root.originalY || 0;
-            renderer.clipRect(this.x + ox, this.y + oy, this.w, this.h);
-
-        },
-        endClip: function(renderer) {
-            renderer.unclipRect();
-        },
-
-        renderChildren: function(renderer, timeStep, now) {
-
-            if (this.clip) {
-                this.startClip(renderer);
-            }
-
-            this.visibleChildren.forEach(function(c) {
-                c.render(renderer, timeStep, now);
-            });
-
-            this.renderScrollbar(renderer, timeStep, now);
-
-            if (this.clip) {
-                this.endClip(renderer);
-            }
-
-        },
 
         getTouchableChildren: function() {
             // return this.children;

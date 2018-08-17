@@ -18,17 +18,8 @@ var CUI = CUI || {};
         },
 
         computeLayout: function(forceCompute) {
-            this.needToCompute = false;
+            this._needToCompute = false;
         },
-
-        render: function(renderer, timeStep, now) {
-            if (this.backgroundColor !== null) {
-                renderer.setAlpha(this.backgroundAlpha);
-                renderer.fillRect(this.x, this.y, this.w, this.h, this.backgroundColor);
-                renderer.restoreAlpha();
-            }
-        },
-
     });
 
     Blank.create = function(width, height, parent) {

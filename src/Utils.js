@@ -100,6 +100,10 @@ var CUI = CUI || {};
             return parseFloat(value) || 0;
         },
 
+        getExistValue: function(value, defaultValue) {
+            return value !== null && value !== undefined ? value : defaultValue;
+        },
+
         createCanvas: function(width, height) {
             var canvas = document.createElement("canvas");
             canvas.width = width;
@@ -551,7 +555,7 @@ var CUI = CUI || {};
             return canvas;
         },
 
-        createButtonRect: function(options){
+        createButtonRect: function(options) {
             var bg = new CUI.ButtonBackground(options);
             bg.init();
             return bg.image;

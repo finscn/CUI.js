@@ -116,15 +116,6 @@ var CUI = CUI || {};
         onBlur: function(btn) {
 
         },
-        render: function(renderer, timeStep, now) {
-            var btn = this.focusButton;
-            if (!btn) {
-                return;
-            }
-            var lineWidth = 4;
-            renderer.strokeRect(btn.x - 4, btn.y - 4, btn.w + 8, btn.h + 8, lineWidth, this.color);
-        },
-
     });
 
     exports.Cursor = Cursor;

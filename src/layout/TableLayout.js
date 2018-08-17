@@ -49,7 +49,10 @@ var CUI = CUI || {};
         },
 
         initTable: function(parent) {
-            var pixel = this.pixel = {};
+            var pixel = this.pixel = {
+                relativeX: 0,
+                relativeY: 0,
+            };
             var parentPixel = parent.pixel;
 
             if (parent.width === "auto") {

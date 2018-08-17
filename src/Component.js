@@ -119,25 +119,27 @@ var CUI = CUI || {};
             // 以下属性为内部属性, 用户通常不需要关心
 
             // 绝对定位和大小, 单位:像素
-            this.x = 0;
-            this.y = 0;
-            this.w = 0;
-            this.h = 0;
+            this.absoluteX = 0;
+            this.absoluteY = 0;
+            this.absoluteWidth = 0;
+            this.absoluteHeight = 0;
+
+            // 以像素为单位的定位和大小, 单位:像素
+            this.pixel = null;
 
             this.aabb = null;
-            this.pixel = null;
+
+            this.touchTarget = true;
 
             this.composite = true;
             this.children = null;
             this.childrenMap = null;
 
-            this.touchTarget = true;
-
             this.useCache = false;
             this.readyForCache = false;
             this.cached = false;
 
-            this.needToCompute = true;
+            this._needToCompute = true;
         },
 
         init: function() {
@@ -152,25 +154,27 @@ var CUI = CUI || {};
             this.inited = true;
             this.id = this.id || "cmp_" + Component._SN++;
 
-            this.root = this.root || (this.parent && this.parent.root);
-            if (this.root) {
-                if (this.root.all[this.id]) {
-                    console.log("Duplicate id : " + this.id);
-                }
-                this.root.all[this.id] = this;
-            }
-
-            this.aabb = [];
             this.pixel = {
+                // x: 0,
+                // y: 0,
                 // width: 0,
                 // height: 0,
                 relativeX: 0,
                 relativeY: 0,
+
                 paddingTop: 0,
                 paddingRight: 0,
                 paddingBottom: 0,
                 paddingLeft: 0,
             };
+
+            this.aabb = [];
+
+            this._defaultAlpha = this.alpha;
+
+            if (this.parent) {
+                this.parent.addChild(this);
+            }
 
             EventDispatcher.applyTo(this);
 
@@ -179,6 +183,7 @@ var CUI = CUI || {};
             }
 
             if (this.composite) {
+                this.all = {};
                 Composite.applyTo(this);
                 this.setLayout(this.layout);
                 this.childSN = 0;
@@ -186,9 +191,10 @@ var CUI = CUI || {};
 
             this.setMargin(this.margin || 0);
             this.setPadding(this.padding || 0);
-            this.setParent(this.parent, true);
 
+            this.initDisplayObject();
             this.initBackground();
+            this.initBorder();
 
             // TODO
             // this._afterInit();
@@ -198,7 +204,12 @@ var CUI = CUI || {};
             // }
         },
 
-        initChildren: noop,
+        initDisplayObject: function() {
+            // do nothing.
+        },
+        updateDisplayObject: function(img, x, y, w, h) {
+            // do nothing.
+        },
 
         initBackground: function(reinit) {
             if (!this.backgroundHolder || reinit) {
@@ -210,15 +221,35 @@ var CUI = CUI || {};
                     this.setBackgroundInfo(this.backgroundInfo);
                 } else if (this.backgroundImage) {
                     this.setBackgroundImage(this.backgroundImage);
+                } else if (this.backgroundColor !== null) {
+                    this.setBackgroundInfo({
+                        color: this.backgroundColor,
+                        alpha: this.backgroundAlpha,
+                    });
                 }
             }
+        },
+
+        initBorder: function() {
+            if (this.borderWidth > 0 && this.borderColor !== null) {
+                this.borderHolder = new CUI.BorderHolder({
+                    alpha: this.borderAlpha,
+                    lineWidth: this.borderWidth,
+                    color: this.borderColor,
+                });
+                this.borderHolder.setParent(this);
+                this.borderHolder.init();
+            }
+        },
+
+        setDisabled: function(disabled) {
+            this.disabled = disabled;
         },
 
         setBackgroundInfo: function(info) {
             var holder = null;
             if (info) {
-                ("color" in info) && (this.backgroundColor = info.color);
-                holder = new CUI.BackgroundImageHolder(info);
+                holder = new CUI.BackgroundHolder(info);
             }
             this.setBackgroundHolder(holder);
         },
@@ -238,13 +269,14 @@ var CUI = CUI || {};
         setBackgroundHolder: function(holder) {
             this.backgroundHolder = holder;
             if (holder) {
-                this.backgroundHolder.setParent(this);
-                this.backgroundHolder.fillParent = this.scaleBg;
-                this.backgroundHolder.init();
-                this.backgroundHolder.updateSize();
-                this.backgroundHolder.updatePosition();
+                holder.color = Utils.getExistValue(holder.color, this.backgroundColor);
+                holder.alpha = Utils.getExistValue(holder.alpha, this.backgroundAlpha);
+                holder.fillParent = this.scaleBg;
+
+                holder.setParent(this);
+                holder.init();
             }
-            this.needToCompute = true;
+            this._needToCompute = true;
         },
 
         beforeInit: null,
@@ -283,42 +315,59 @@ var CUI = CUI || {};
             this.layout = layout;
         },
 
-        setParent: function(parent, forceCompute) {
-            if (parent && (parent !== this.parent || forceCompute)) {
-                this.parent = parent;
-                parent.addChild(this);
+        setRoot: function(root) {
+            if (!root) {
+                if (this.root) {
+                    delete this.root.all[this.id];
+                    this.root = null;
+                }
+                return;
+            }
+
+            this.root = root;
+
+            var _comp = root.all[this.id];
+            if (_comp !== this) {
+                root.all[this.id] = this;
+                if (_comp) {
+                    console.log("Duplicate id : " + this.id);
+                }
             }
         },
+
         addChild: function(child) {
             if (this.composite) {
                 Composite.prototype.addChild.call(this, child);
-                // child.parent = this;
-                child.root = this.root;
                 child.index = this.childSN++;
+
+                child.setRoot(this.root);
                 if (this.width === "auto") {
-                    this.pixel.w = 0;
+                    this.pixel.width = 0;
                 }
                 if (this.height === "auto") {
-                    this.pixel.h = 0;
+                    this.pixel.height = 0;
                 }
-                this.needToCompute = true;
+                this._needToCompute = true;
                 this.sortChildren();
             }
         },
 
         removeChild: function(child) {
+            var removed = false;
             if (this.composite) {
-                var rs = Composite.prototype.removeChild.call(this, child);
-                if (rs) {
+                removed = Composite.prototype.removeChild.call(this, child);
+                if (removed) {
+                    child.setRoot(null);
                     if (this.width === "auto") {
                         this.pixel.w = 0;
                     }
                     if (this.height === "auto") {
                         this.pixel.h = 0;
                     }
-                    this.needToCompute = true;
+                    this._needToCompute = true;
                 }
             }
+            return removed;
         },
 
         sortChildren: function() {
@@ -359,23 +408,23 @@ var CUI = CUI || {};
 
         setReflow: function(deep, immediately) {
             if (!deep) {
-                this.needToCompute = false;
+                this._needToCompute = false;
                 return false;
             }
             if (deep === "root") {
                 var root = this.root || this.parent;
                 if (root) {
-                    root.needToCompute = true;
+                    root._needToCompute = true;
                     if (immediately) {
-                        root.computeLayout();
+                        root.computeLayout(true);
                     }
                 }
             } else if (deep === "parent") {
                 var parent = this.parent || this.root;
                 if (parent) {
-                    parent.needToCompute = true;
+                    parent._needToCompute = true;
                     if (immediately) {
-                        parent.computeLayout();
+                        parent.computeLayout(true);
                     }
                 }
             } else if (deep === true) {
@@ -384,7 +433,7 @@ var CUI = CUI || {};
                 var top;
                 while (ui) {
                     top = ui;
-                    ui.needToCompute = true;
+                    ui._needToCompute = true;
                     if (stop || ui.relative === "root") {
                         break;
                     } else if (ui.relative === "parent") {
@@ -393,10 +442,10 @@ var CUI = CUI || {};
                     ui = ui.parent;
                 }
                 if (immediately) {
-                    top.computeLayout();
+                    top.computeLayout(true);
                 }
             } else {
-                this.needToCompute = true;
+                this._needToCompute = true;
                 if (immediately) {
                     this.computeLayout();
                 }
@@ -437,16 +486,17 @@ var CUI = CUI || {};
         },
 
         updateAABB: function() {
-            this.aabb[0] = this.x - this.extLeft;
-            this.aabb[1] = this.y - this.extTop;
-            this.aabb[2] = this.x + this.w + this.extRight;
-            this.aabb[3] = this.y + this.h + this.extBottom;
+            this.aabb[0] = this.absoluteX - this.extLeft;
+            this.aabb[1] = this.absoluteY - this.extTop;
+            this.aabb[2] = this.absoluteX + this.absoluteWidth + this.extRight;
+            this.aabb[3] = this.absoluteY + this.absoluteHeight + this.extBottom;
         },
 
         syncPosition: function() {
             var relativeObj = this.parent || this.root;
-            this.x = this.pixel.relativeX + relativeObj.x;
-            this.y = this.pixel.relativeY + relativeObj.y;
+            var pixel = this.pixel;
+            this.absoluteX = pixel.relativeX + relativeObj.absoluteX;
+            this.absoluteY = pixel.relativeY + relativeObj.absoluteY;
 
             // this.computePositionX();
             // this.computePositionY();
@@ -466,6 +516,11 @@ var CUI = CUI || {};
             if (this.backgroundHolder) {
                 this.backgroundHolder.updateSize();
                 this.backgroundHolder.updatePosition();
+            }
+
+            if (this.borderHolder) {
+                this.borderHolder.updateSize();
+                this.borderHolder.updatePosition();
             }
         },
 
@@ -579,13 +634,13 @@ var CUI = CUI || {};
             this.computePositionY();
             this.computePadding();
             this.updateAABB();
-            this.needToCompute = true;
+            this._needToCompute = true;
             this.onResize();
         },
         onResize: noop,
 
         computeSelf: function(parent) {
-            // console.log('Component.computeSelf');
+            // console.log('Component.computeSelf', this.id);
             this.computeMargin(parent);
             this.computeRealMargin(parent);
             this.computeWidth();
@@ -597,14 +652,19 @@ var CUI = CUI || {};
         },
 
         computeLayout: function(forceCompute) {
-            if (this.needToCompute || forceCompute) {
-                this.needToCompute = false;
+            if (this._needToCompute || forceCompute) {
+                this._needToCompute = false;
                 if (this.composite) {
                     this.layout.compute(this);
                 }
+
                 if (this.backgroundHolder) {
                     this.backgroundHolder.updateSize();
                     this.backgroundHolder.updatePosition();
+                }
+                if (this.borderHolder) {
+                    this.borderHolder.updateSize();
+                    this.borderHolder.updatePosition();
                 }
             }
         },
@@ -656,145 +716,24 @@ var CUI = CUI || {};
         createCacheCanvas: function() {
             if (!this.cacheCanvas) {
                 var canvas = Component.getCanvasFromPool(this.id);
-                canvas.width = this.w + 4;
-                canvas.height = this.h + 4;
+                canvas.width = this.absoluteWidth + 4;
+                canvas.height = this.absoluteHeight + 4;
                 this.cacheCanvas = canvas;
             }
             var cacheContext = this.cacheCanvas.getContext("2d");
-            var cacheRenderer = new CUI.CanvasRenderer({
-                context: cacheContext
-            });
+
             var useCache = this.useCache;
             var visible = this.visible;
             this.useCache = false;
             this.visible = true;
-            cacheRenderer.translate(-this.x + 2, -this.y + 2);
 
-            var timeStep = 0;
-            var now = Date.now();
-            this.renderSelf(cacheRenderer, timeStep, now);
-            if (this.composite) {
-                this.renderChildren(cacheRenderer, timeStep, now);
-            }
+            // TODO
 
-            cacheRenderer.translate(this.x - 2, this.y - 2);
             this.useCache = useCache;
             this.visible = visible;
             this.cached = true;
         },
 
-        renderSelf: function(renderer, timeStep, now) {
-            if (this.backgroundColor !== null) {
-                renderer.setAlpha(this.backgroundAlpha);
-                renderer.fillRect(this.x, this.y, this.w, this.h, this.backgroundColor);
-                renderer.restoreAlpha();
-            }
-            if (this.backgroundHolder) {
-                this.backgroundHolder.render(renderer, timeStep, now);
-            }
-
-            if (this.borderWidth && this.borderColor !== null) {
-                renderer.setAlpha(this.borderAlpha);
-                renderer.strokeRect(this.x, this.y, this.w, this.h, this.borderWidth, this.borderColor);
-                renderer.restoreAlpha();
-            }
-        },
-        renderChildren: function(renderer, timeStep, now) {
-            this.children.forEach(function(child) {
-                child.render(renderer, timeStep, now);
-            });
-        },
-
-        renderModalMask: function(renderer, timeStep, now) {
-            if (!this.maskColor && this.maskColor !== 0 || this.maskColor === "none") {
-                return;
-            }
-            var root = this.root;
-            var x = root.x,
-                y = root.y;
-            var w = root.w,
-                h = root.h;
-            var offset = root.maskOffset;
-            if (offset) {
-                x += offset.x || 0;
-                y += offset.y || 0;
-                w += offset.w || 0;
-                h += offset.h || 0;
-            }
-
-            renderer.setAlpha(this.maskAlpha);
-            renderer.fillRect(x, y, w, h, this.maskColor);
-            renderer.restoreAlpha();
-        },
-
-        render: function(renderer, timeStep, now) {
-            if (!this.visible || this.alpha <= 0) {
-                return;
-            }
-
-            if (this.modal) {
-                this.renderModalMask(renderer, timeStep, now);
-            }
-
-            if (this.beforeRender) {
-                this.beforeRender(renderer, timeStep, now);
-            }
-
-            var prevAlpha = renderer.getAlpha();
-            if (this.alpha !== 1) {
-                renderer.setAlpha(this.alpha);
-            }
-            this.beforeTransform(renderer, timeStep, now);
-
-            if (this.useCache && this.readyForCache) {
-                if (!this.cached) {
-                    this.createCacheCanvas();
-                    this.cacheDisplayObject = renderer.createDisplayObject(this.cacheCanvas);
-                }
-                renderer.renderAt(this.cacheDisplayObject, this.x - 2, this.y - 2);
-            } else {
-                this.readyForCache = true;
-
-                this.renderSelf(renderer, timeStep, now);
-                if (this.composite) {
-                    this.renderChildren(renderer, timeStep, now);
-                }
-            }
-
-            this.afterTransform(renderer, timeStep, now);
-            renderer.setAlpha(prevAlpha);
-
-            if (this.afterRender) {
-                this.afterRender(renderer, timeStep, now);
-            }
-
-        },
-
-        beforeRender: null,
-        afterRender: null,
-
-        beforeTransform: function(renderer, timeStep, now) {
-            if (this.scale !== 1 || this.rotation !== 0) {
-                var x = this.x + this.pixel.anchorX,
-                    y = this.y + this.pixel.anchorY;
-                renderer.save();
-                renderer.setOrigin(x, y);
-                renderer.translate(this.offsetX, this.offsetY);
-                renderer.scale(this.scale, this.scale);
-                renderer.rotate(this.rotation);
-                // renderer.translate(-x, -y);
-                // renderer.translate(this.offsetX, this.offsetY);
-                // renderer.scale(this.scale, this.scale);
-            } else if (this.offsetX || this.offsetY) {
-                renderer.save();
-                renderer.translate(this.offsetX, this.offsetY);
-            }
-        },
-        afterTransform: function(renderer, timeStep, now) {
-            if (this.scale !== 1 || !this.rotation !== 0 || this.offsetX || this.offsetY) {
-                renderer.restore();
-            }
-        },
 
         ////////////////////////////////////////////////////////////////////////
         ////////////////////////////////////////////////////////////////////////
@@ -803,31 +742,30 @@ var CUI = CUI || {};
         computeMargin: function(parent) {
             // parent.pixel.width/height
             parent = parent || this.parent;
-            var relativePixel = parent.pixel;
+            var parentPixel = parent.pixel;
             var pixel = this.pixel;
             this.marginLeft = this.marginLeft === null ? this.margin : this.marginLeft;
             this.marginTop = this.marginTop === null ? this.margin : this.marginTop;
             this.marginRight = this.marginRight === null ? this.margin : this.marginRight;
             this.marginBottom = this.marginBottom === null ? this.margin : this.marginBottom;
 
-            pixel.marginLeft = Utils.parseValue(this.marginLeft, relativePixel.width) || 0;
-            pixel.marginRight = Utils.parseValue(this.marginRight, relativePixel.width) || 0;
-            pixel.marginTop = Utils.parseValue(this.marginTop, relativePixel.height) || 0;
-            pixel.marginBottom = Utils.parseValue(this.marginBottom, relativePixel.height) || 0;
+            pixel.marginLeft = Utils.parseValue(this.marginLeft, parentPixel.width) || 0;
+            pixel.marginRight = Utils.parseValue(this.marginRight, parentPixel.width) || 0;
+            pixel.marginTop = Utils.parseValue(this.marginTop, parentPixel.height) || 0;
+            pixel.marginBottom = Utils.parseValue(this.marginBottom, parentPixel.height) || 0;
         },
 
         computeRealMargin: function(parent) {
             // parent.pixel.padding
             parent = parent || this.parent;
-
-            var relativePixel = parent.pixel;
+            var parentPixel = parent.pixel;
             var pixel = this.pixel;
-            pixel.realMarginLeft = Math.max(relativePixel.paddingLeft, pixel.marginLeft) || 0;
-            pixel.realMarginTop = Math.max(relativePixel.paddingTop, pixel.marginTop) || 0;
-            pixel.realMarginRight = Math.max(relativePixel.paddingRight, pixel.marginRight) || 0;
-            pixel.realMarginBottom = Math.max(relativePixel.paddingBottom, pixel.marginBottom) || 0;
-            pixel.realOuterWidth = relativePixel.width - pixel.realMarginLeft - pixel.realMarginRight;
-            pixel.realOuterHeight = relativePixel.height - pixel.realMarginTop - pixel.realMarginBottom;
+            pixel.realMarginLeft = Math.max(parentPixel.paddingLeft, pixel.marginLeft) || 0;
+            pixel.realMarginTop = Math.max(parentPixel.paddingTop, pixel.marginTop) || 0;
+            pixel.realMarginRight = Math.max(parentPixel.paddingRight, pixel.marginRight) || 0;
+            pixel.realMarginBottom = Math.max(parentPixel.paddingBottom, pixel.marginBottom) || 0;
+            pixel.realOuterWidth = parentPixel.width - pixel.realMarginLeft - pixel.realMarginRight;
+            pixel.realOuterHeight = parentPixel.height - pixel.realMarginTop - pixel.realMarginBottom;
         },
 
         computeWidth: function() {
@@ -836,17 +774,17 @@ var CUI = CUI || {};
             pixel.width = Utils.parseValue(this.width, relativeWidth);
             pixel.anchorX = Utils.parseValue(this.anchorX, pixel.width) || 0;
             pixel.innerWidth = pixel.width - pixel.paddingLeft - pixel.paddingRight;
-            this.w = pixel.width;
+            this.absoluteWidth = pixel.width;
         },
+
         computeHeight: function() {
             var pixel = this.pixel;
             var relativeHeight = pixel.realOuterHeight;
             pixel.height = Utils.parseValue(this.height, relativeHeight);
             pixel.anchorY = Utils.parseValue(this.anchorY, pixel.height) || 0;
             pixel.innerHeight = pixel.height - pixel.paddingTop - pixel.paddingBottom;
-            this.h = pixel.height;
+            this.absoluteHeight = pixel.height;
         },
-
 
         computePadding: function() {
             var pixel = this.pixel;
@@ -862,7 +800,6 @@ var CUI = CUI || {};
 
             pixel.innerWidth = pixel.width - pixel.paddingLeft - pixel.paddingRight;
             pixel.innerHeight = pixel.height - pixel.paddingTop - pixel.paddingBottom;
-
         },
 
         computePositionX: function(parent) {
@@ -884,8 +821,7 @@ var CUI = CUI || {};
                 x = pixel.left || 0;
             }
             pixel.relativeX = x + pixel.realMarginLeft;
-
-            this.x = pixel.relativeX + (parent ? parent.x : 0);
+            this.absoluteX = pixel.relativeX + (parent ? parent.absoluteX : 0);
         },
 
         computePositionY: function(parent) {
@@ -906,19 +842,17 @@ var CUI = CUI || {};
                 y = pixel.top || 0;
             }
             pixel.relativeY = y + pixel.realMarginTop;
-
-            this.y = pixel.relativeY + (parent ? parent.y : 0);
+            this.absoluteY = pixel.relativeY + (parent ? parent.absoluteY : 0);
         },
 
-        getRenderer: function() {
-            // TODO. support multi-renderer in one page.
-            return CUI.renderer;
+        useCacheCanvas: function() {
+            // TOTO
+
         },
 
         ////////////////////////////////////////////////////////////////////////
         ////////////////////////////////////////////////////////////////////////
         ////////////////////////////////////////////////////////////////////////
-
 
         destructor: function() {
             if (this.root) {
@@ -931,11 +865,14 @@ var CUI = CUI || {};
             // 不会自动显式的销毁子元素. (不会调用子元素的destructor)
             if (this.composite) {
                 this.children.forEach(function(child) {
-                    child.setParent(child.root);
+                    child.parent = null;
+                    child.root = null;
                 });
                 this.children = null;
                 this.childrenMap = null;
             }
+
+            // TODO
         },
     });
 

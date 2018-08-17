@@ -73,6 +73,9 @@ var CUI = CUI || {};
 
         init: function() {
             this.pixel = {
+                relativeX: 0,
+                relativeY: 0,
+
                 width: this.width,
                 height: this.height,
             };
@@ -82,9 +85,12 @@ var CUI = CUI || {};
 
             this.id = this.id || "text-holder-" + this.parent.id;
 
-            this.initTextObject();
+            this.initDisplayObject();
 
             this.computeSize();
+
+            this.updateSize();
+            this.updatePosition();
         },
 
         createCache: function() {
@@ -98,12 +104,10 @@ var CUI = CUI || {};
                 }
             }
             this.cacheContext = this.cacheCanvas.getContext('2d');
-            this.cacheContext.textBaseline = "top";
+            // this.cacheContext.textBaseline = "top";
         },
 
-        initTextObject: function() {
-            // var renderer = CUI.renderer;
-            var renderer = this.parent.getRenderer();
+        initDisplayObject: function() {
 
             if (renderer) {
                 // TODO
@@ -118,7 +122,7 @@ var CUI = CUI || {};
                 if (this.useCache) {
                     // TODO
                     this.createCache();
-                    this.textObject = renderer.createTextObject(this.cacheContext, true);
+                    this.textObject = CUI.Utils.createTextObject(this.cacheContext, true);
                 }
             }
         },
@@ -161,7 +165,7 @@ var CUI = CUI || {};
                 return;
             }
             this.color = color;
-            this.needToCompute = true;
+            this._needToCompute = true;
         },
 
         setShadowOffset: function(x, y) {
@@ -170,7 +174,7 @@ var CUI = CUI || {};
             }
             this.shadowOffsetX = x;
             this.shadowOffsetY = y;
-            this.needToCompute = true;
+            this._needToCompute = true;
         },
 
         setText: function(text) {
@@ -186,12 +190,12 @@ var CUI = CUI || {};
                 this.lines = String(text).split(/(?:\r\n|\r|\n)/);
             }
             this.lineCount = this.lines.length;
-            this.needToCompute = true;
+            this._needToCompute = true;
         },
 
         computeSize: function(force) {
             if (!this.lines) {
-                this.needToCompute = false;
+                this._needToCompute = false;
                 return;
             }
 
@@ -214,10 +218,12 @@ var CUI = CUI || {};
 
             this.height = this.lineHeight * this.lineCount;
 
+            // TODO
             this.pixel.width = this.width;
             this.pixel.height = this.height;
-            this.updatePosition();
-            this.needToCompute = false;
+            // this.updatePosition();
+
+            this._needToCompute = false;
 
             if (this.useCache) {
                 if (this.alignH === "center") {
@@ -237,6 +243,7 @@ var CUI = CUI || {};
             this.cacheCanvas.width = this.width + (this.strokeWidth + this.cachePadding) * 2;
             this.cacheCanvas.height = this.height + (this.strokeWidth + this.cachePadding) * 2;
             this.renderContent(this.cacheContext, this.cacheOffsetX, this.cacheOffsetY);
+            // this.cacheContext.lineWidth = 4;
             // this.cacheContext.strokeRect(0, 0, this.cacheCanvas.width, this.cacheCanvas.height);
         },
 
@@ -249,6 +256,7 @@ var CUI = CUI || {};
             } else {
                 this.x = parent.x + parent.pixel.paddingLeft;
             }
+            this.x += this.offsetX;
 
             if (this.alignV === "middle" || this.alignV === "center") {
                 this.y = parent.y + ((parent.h - this.height) >> 1);
@@ -257,33 +265,7 @@ var CUI = CUI || {};
             } else {
                 this.y = parent.y + parent.pixel.paddingTop;
             }
-        },
-
-        render: function(renderer, timeStep, now) {
-            if (!this.visible || this.text === "" || !this.lines) {
-                return false;
-            }
-            // if (this.needToCompute) {
-            //     this.computeSize();
-            // } else {
-            if (this.needToCompute || this.shareCache) {
-                if (this.useCache) {
-                    this.updateCache();
-                    this.textObject.updateContent();
-                }
-            }
-            // }
-
-            var x = this.x - this.anchorX + this.offsetX;
-            var y = this.y - this.anchorY + this.offsetY;
-
-            if (this.useCache) {
-                x -= this.cacheOffsetX;
-                y -= this.cacheOffsetY;
-                renderer.renderAt(this.textObject, x, y);
-            } else {
-                this.renderContent(renderer.context, x, y);
-            }
+            this.y += this.offsetY;
         },
 
         renderContent: function(context, x, y) {
@@ -292,7 +274,13 @@ var CUI = CUI || {};
             // context.globalAlpha = this.alpha;
             context.font = this.fontStyle;
             context.textAlign = this.alignH;
-            context.textBaseline = this.textBaseline;
+
+            if (this.textBaseline === "top") {
+                context.textBaseline = 'alphabetic';
+                y += this.fontSize;
+            } else {
+                context.textBaseline = this.textBaseline;
+            }
 
             var bakShadow;
             if (this.shadowColor !== null) {
@@ -319,7 +307,7 @@ var CUI = CUI || {};
 
                 context.lineCap = this.lineCap;
                 context.lineJoin = this.lineJoin;
-
+                // TODO
                 context.lineWidth = this.strokeWidth * 2;
                 context.strokeStyle = this.strokeColor;
             }
@@ -327,7 +315,7 @@ var CUI = CUI || {};
             this.renderLines(context, x, y);
 
             this.textChanged = false;
-            this.needToCompute = false;
+            this._needToCompute = false;
 
             if (bakShadow) {
                 context.shadowBlur = bakShadow.blur;

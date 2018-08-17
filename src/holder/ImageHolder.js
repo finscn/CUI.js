@@ -23,12 +23,12 @@ var CUI = CUI || {};
             this.sw = null;
             this.sh = null;
 
-            this.ox = null;
-            this.oy = null;
+            this.ox = 0;
+            this.oy = 0;
             this.w = null;
             this.h = null;
 
-            this.alpha = null;
+            this.alpha = 1;
             this.scale = 1;
             this.scaleX = null;
             this.scaleY = null;
@@ -62,16 +62,25 @@ var CUI = CUI || {};
                 this.scaleY = this.scale;
             }
 
-            this.pixel = {};
+            this.pixel = {
+                relativeX: 0,
+                relativeY: 0,
+            };
+
+            this.setParent(this.parent);
+
+            this.initDisplayObject();
+
             if (this.src) {
                 this.load(this.src);
             } else if (this.img) {
                 this.setImg(this.img);
             }
-            this.setParent(this.parent);
 
             this.id = this.id || "image-holder-" + this.parent.id;
 
+            this.updateSize();
+            this.updatePosition();
         },
 
         load: function(callback) {
@@ -174,31 +183,27 @@ var CUI = CUI || {};
             this.pixel.sy = sy;
             this.pixel.sw = sw;
             this.pixel.sh = sh;
+            this.pixel.ox = ox;
+            this.pixel.oy = oy;
+            this.pixel.width = w;
+            this.pixel.height = h;
+
+            this.updateDisplayObject();
+
             this.ox = ox;
             this.oy = oy;
             this.w = w;
             this.h = h;
-
-            this.initDisplayObject();
         },
 
-        initDisplayObject: function() {
+        updateDisplayObject: function() {
             if (!this.img) {
-                this.displayObject = null;
+                // this.displayObject = null;
                 return;
             }
-            // var renderer = CUI.renderer;
-            var renderer = this.parent.getRenderer();
             var pixel = this.pixel;
-            this.displayObject = renderer.createDisplayObject(this.img, pixel.sx, pixel.sy, pixel.sw, pixel.sh, true);
+            CUI.Utils.updateDisplayObject(this.displayObject, this.img, pixel.sx, pixel.sy, pixel.sw, pixel.sh);
             this.displayObject.tint = this.tint === null ? 0xFFFFFF : this.tint;
-        },
-
-        setTint: function(tint) {
-            this.tint = tint;
-            if (this.displayObject) {
-                this.displayObject.tint = this.tint === null ? 0xFFFFFF : this.tint;
-            }
         },
 
         removeImg: function() {
@@ -232,70 +237,6 @@ var CUI = CUI || {};
             this.scaleX = scale;
             this.scaleY = scale;
         },
-
-        simpleRender: function(renderer, timeStep, now) {
-            if (!this.visible || !this.img) {
-                return false;
-            }
-            var x = this.x - this.anchorX + this.offsetX + this.ox;
-            var y = this.y - this.anchorY + this.offsetY + this.oy;
-            var w = this.pixel.width + this.offsetW;
-            var h = this.pixel.height + this.offsetH;
-            renderer.drawDisplayObject(this.displayObject, x, y, w, h);
-        },
-
-        render: function(renderer, timeStep, now) {
-            if (!this.visible || !this.img) {
-                return false;
-            }
-            // var alpha = this.alpha + this.offsetAlpha;
-            // if (alpha <= 0) {
-            //     return false;
-            // }
-            var x = -this.anchorX;
-            var y = -this.anchorY;
-            var width = this.pixel.width;
-            var height = this.pixel.height;
-
-            var flipX = this.flipX ? -1 : 1;
-            var flipY = this.flipY ? -1 : 1;
-            // var scaleX = this.scaleX * (this.flipX ? -1 : 1);
-            // var scaleY = this.scaleY * (this.flipY ? -1 : 1);
-
-            var rotation = this.rotation % this.DOUBLE_PI;
-
-            if (flipX !== 1 || flipY !== 1 || rotation !== 0) {
-                // if (scaleX !== 1 || scaleY !== 1 || rotation !== 0) {
-
-                // TODO
-                renderer.save();
-                renderer.translate(this.x + this.offsetX + this.pixel.ox, this.y + this.offsetY + this.pixel.oy);
-                if (rotation) {
-                    renderer.rotate(rotation);
-                }
-                renderer.scale(flipX, flipY);
-                // renderer.scale(scaleX, scaleY);
-            } else {
-                x += this.x + this.offsetX + this.pixel.ox;
-                y += this.y + this.offsetY + this.pixel.oy;
-            }
-
-            if (this.alpha !== null) {
-                renderer.setAlpha(this.alpha);
-            }
-
-            renderer.drawDisplayObject(this.displayObject, x, y, width + this.offsetW, height + this.offsetH);
-
-            if (flipX !== 1 || flipY !== 1 || rotation !== 0) {
-                // if (scaleX !== 1 || scaleY !== 1 || rotation !== 0) {
-                renderer.restore();
-            } else {
-                if (this.alpha !== null) {
-                    renderer.restoreAlpha();
-                }
-            }
-        },
-
     });
 
 

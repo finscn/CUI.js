@@ -68,9 +68,6 @@ var jsFileList = [
     "Slider.js",
     "Font.js",
 
-    "renderer/CanvasRenderer.js",
-    "renderer/PIXIRenderer.js",
-
     "layout/BaseLayout.js",
     "layout/VBoxLayout.js",
     "layout/HBoxLayout.js",
@@ -78,12 +75,15 @@ var jsFileList = [
     "layout/Layout.js",
 
     "Component.js",
+    "holder/BaseHolder.js",
+    "adapter/pixi-adapter.js",
+
     "Root.js",
 
-    "holder/BaseHolder.js",
     "holder/TextHolder.js",
     "holder/ImageHolder.js",
-    "holder/BackgroundImageHolder.js",
+    "holder/BackgroundHolder.js",
+    "holder/BorderHolder.js",
     "holder/BorderImageHolder.js",
 
     "widget/Blank.js",

@@ -28,15 +28,14 @@ var CUI = CUI || {};
         },
 
         updateSelf: noop,
-        renderSelf: noop,
         checkTouchSelf: noop,
 
         init: function() {
-            this.all = {};
-
             if (this.resetSN || this.resetSN === 0) {
                 Component._SN = Number(this.resetSN) || 1;
             }
+
+            this.id = this.id || "root_" + Component._SN++;
 
             if (this.left === null) {
                 this.left = this.originalX;
@@ -56,6 +55,9 @@ var CUI = CUI || {};
             Root.$super.init.call(this);
 
             this.pixel = {
+                relativeX: 0,
+                relativeY: 0,
+
                 paddingLeft: 0,
                 paddingTop: 0,
                 paddingRight: 0,
@@ -84,8 +86,6 @@ var CUI = CUI || {};
 
             this.root = this;
 
-            this.initChildren();
-
             if (this.afterInit) {
                 this.afterInit();
             }
@@ -95,18 +95,18 @@ var CUI = CUI || {};
             if (force || this.width !== width) {
                 this.viewportWidth = width;
                 this.width = width;
-                this.w = width;
                 this.pixel.width = width;
+                this.absoluteWidth = width;
                 this.aabb[2] = width;
-                this.needToCompute = true;
+                this._needToCompute = true;
             }
             if (force || this.height !== height) {
                 this.viewportHeight = height;
                 this.height = height;
-                this.h = height;
                 this.pixel.height = height;
+                this.absoluteHeight = height;
                 this.aabb[3] = height;
-                this.needToCompute = true;
+                this._needToCompute = true;
             }
         },
 

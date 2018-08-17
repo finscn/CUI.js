@@ -15,20 +15,21 @@ function initUI() {
         parent: rootUI,
         width: "100%",
         height: "100%",
-        backgroundColor: CUI.renderer.colorRgb(155, 155, 155),
+        backgroundColor: CUI.Utils.colorRgb(155, 155, 155),
         borderWidth: 8,
-        // borderColor: CUI.renderer.colorRgb(255, 50, 50),
+        // borderColor: CUI.Utils.colorRgb(255, 50, 50),
         // borderAlpha: 0.6,
         padding: 10,
     });
 
     var scorllView = new CUI.ScrollView({
+        id:'test-1',
 
         scrollH: true,
         scrollV: !true,
 
         parent: page,
-        backgroundColor: CUI.renderer.colorRgb(255, 240, 230),
+        backgroundColor: CUI.Utils.colorRgb(255, 240, 230),
         left: 0,
         top: 0,
         padding: 20,
@@ -39,7 +40,7 @@ function initUI() {
         layout: "hbox",
 
         borderWidth: 2,
-        borderColor: CUI.renderer.colorRgb(90, 200, 60),
+        borderColor: CUI.Utils.colorRgb(90, 200, 60),
 
     });
 
@@ -61,7 +62,7 @@ function initUI() {
         width: 120,
         height: 120,
 
-        // backgroundColor: CUI.renderer.colorRgb(100,240,23),
+        // backgroundColor: CUI.Utils.colorRgb(100,240,23),
         // margin: 10,
         // layout: new CUI.HBoxLayout(),
     });
@@ -75,7 +76,7 @@ function initUI() {
         parent: scorllView,
         relative: "parent",
         // src: "res/btn-bg.png",
-        backgroundColor: CUI.renderer.colorHex("#ffffff"),
+        backgroundColor: CUI.Utils.colorHex("#ffffff"),
         bgInfo: {
             img: CUI.ImagePool["bg"]
         },
@@ -86,7 +87,7 @@ function initUI() {
         width: 200,
         height: 120,
 
-        // backgroundColor: CUI.renderer.colorRgb(100,240,23),
+        // backgroundColor: CUI.Utils.colorRgb(100,240,23),
         // margin: 10,
         // layout: new CUI.HBoxLayout(),
     });
@@ -100,7 +101,7 @@ function initUI() {
         parent: scorllView,
         relative: "parent",
         // src: "res/btn-bg.png",
-        backgroundColor: CUI.renderer.colorHex("#ffffff"),
+        backgroundColor: CUI.Utils.colorHex("#ffffff"),
         borderImageInfo: {
             img: CUI.ImagePool["bg"],
             T: 20,
@@ -115,39 +116,42 @@ function initUI() {
         width: 200,
         height: 120,
 
-        // backgroundColor: CUI.renderer.colorRgb(100,240,23),
+        // backgroundColor: CUI.Utils.colorRgb(100,240,23),
         // margin: 10,
         // layout: new CUI.HBoxLayout(),
     });
 
     var label = new CUI.Label({
+        testCmp:1,
         id: "label-1",
         parent: panel,
-        backgroundColor: CUI.renderer.colorRgb(255, 240, 230),
+        backgroundColor: CUI.Utils.colorRgb(255, 240, 230),
         borderWidth: 2,
-        borderColor: CUI.renderer.colorHex("#ff0000"),
+        borderColor: CUI.Utils.colorHex("#ff0000"),
         // text: "Text Test",
         textInfo: {
             // useCache: true,
-            // color: CUI.renderer.colorRgb(255, 0, 0),
+            // color: CUI.Utils.colorRgb(255, 0, 0),
             color: "#ff0000",
             alpha: 1,
             // useCache: false,
             text: "Text Test - 1",
         },
-        updateSelf:function(){
+        beforeUpdate: function() {
             this.setText("test-" + (Math.random() * 1000 >> 0), false);
         }
     });
 
     for (var i = 0; i < 2; i++) {
         var comp = new CUI.Button({
-            backgroundColor: CUI.renderer.colorRgb(255, 240, 230),
+            id: 'btn-test-' + i,
+            backgroundColor: CUI.Utils.colorRgb(255, 240, 230),
             borderWidth: 2,
-            borderColor: CUI.renderer.colorHex("#ff0000"),
+            borderColor: CUI.Utils.colorHex("#ff0000"),
             parent: scorllView,
             width: i === 0 ? "auto" : 100,
             height: i === 0 ? "auto" : 60,
+            padding: 8,
             backgroundImg: i === 0 ? CUI.ImagePool["btn-bg"] : null,
             margin: 10,
             disabled: i % 2,
@@ -158,9 +162,9 @@ function initUI() {
     }
 
     var comp = new CUI.Button({
-        backgroundColor: CUI.renderer.colorRgb(255, 240, 230),
+        backgroundColor: CUI.Utils.colorRgb(255, 240, 230),
         borderWidth: 2,
-        // borderColor: CUI.renderer.colorHex("#ff0000"),
+        // borderColor: CUI.Utils.colorHex("#ff0000"),
         parent: scorllView,
         width: 100,
         height: 90,

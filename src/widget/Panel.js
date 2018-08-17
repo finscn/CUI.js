@@ -23,8 +23,6 @@ var CUI = CUI || {};
 
             this.initHead();
 
-            this.initChildren();
-
             if (this.afterInit) {
                 this.afterInit();
             }

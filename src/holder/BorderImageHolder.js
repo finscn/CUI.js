@@ -8,16 +8,16 @@ var CUI = CUI || {};
     var Class = exports.Class;
     var Utils = exports.Utils;
     var Component = exports.Component;
-    var ImageHolder = exports.ImageHolder;
+    var BackgroundHolder = exports.BackgroundHolder;
 
     var BorderImageHolder = Class.create({
-        superclass: ImageHolder,
+        superclass: BackgroundHolder,
 
         initialize: function() {
-            this.borderImage = true;
-
             this.width = "100%";
             this.height = "100%";
+
+            this.borderImage = true;
 
             this.T = null;
             this.R = null;
@@ -29,28 +29,7 @@ var CUI = CUI || {};
             this.useCache = false;
         },
 
-        render: function(renderer, timeStep, now) {
-            var bi = this;
-
-            var width = this.pixel.width;
-            var height = this.pixel.height;
-
-            if (this.useCache) {
-                if (!this.cacheCanvas) {
-                    this.cacheCanvas = this.cacheBorderImage(width, height);
-                    this.cacheDisplayObject = renderer.createDisplayObject(this.cacheCanvas);
-                }
-                renderer.drawDisplayObject(this.cacheDisplayObject, 0, 0, width, height);
-            } else {
-                this.renderBorderImage(renderer, this.x, this.y, width, height);
-            }
-        },
-
-        initDisplayObject: function() {
-            // do nothing.
-        },
-
-        initBorderDisplayObject: function(renderer, w, h, cached) {
+        initDisplayObject: function(width, height) {
             var img = this.img;
             var pixel = this.pixel;
             var sx = pixel.sx || 0;
@@ -63,36 +42,10 @@ var CUI = CUI || {};
             var B = this.B;
             var L = this.L;
 
-            this.borderObject = renderer.createNineSliceObject(img, sx, sy, sw, sh, T, R, B, L, true);
-            this.borderObject.width = w;
-            this.borderObject.height = h;
-            this.borderDisplayInited = true;
+            this.displayObject = CUI.Utils.createNineSlicePlane(img, sx, sy, sw, sh, T, R, B, L);
+            this.displayObject.width = sw;
+            this.displayObject.height = sh;
         },
-
-        renderBorderImage: function(renderer, x, y, width, height, cached) {
-            // debugger;
-            if (!this.borderDisplayInited) {
-                this.initBorderDisplayObject(renderer, width, height, cached);
-                // console.log(this.borderObject.scale, width, height);
-            } else {
-                this.borderObject.width = width;
-                this.borderObject.height = height;
-            }
-            renderer.renderNineSliceObject(this.borderObject, x, y, width, height);
-        },
-
-        cacheBorderImage: function(w, h) {
-            var canvas = Component.getCanvasFromPool(this.id);
-            canvas.width = w;
-            canvas.height = h;
-            var context = canvas.getContext("2d");
-            var renderer = new CUI.CanvasRenderer({
-                context: context
-            });
-            this.renderBorderImage(renderer, 0, 0, w, h, true);
-            return canvas;
-        },
-
     });
 
 

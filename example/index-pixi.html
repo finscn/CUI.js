@@ -31,7 +31,42 @@
 
 <script>
   var jsFiles = [
-"../dist/cui-min.js",
+// "../dist/cui-min.js",
+
+    "../src/Class.js",
+    "../src/Utils.js",
+    "../src/Composite.js",
+    "../src/EventDispatcher.js",
+    "../src/TouchTarget.js",
+    "../src/ButtonComponent.js",
+    "../src/Slider.js",
+    "../src/Font.js",
+
+    "../src/layout/BaseLayout.js",
+    "../src/layout/VBoxLayout.js",
+    "../src/layout/HBoxLayout.js",
+    "../src/layout/TableLayout.js",
+    "../src/layout/Layout.js",
+
+    "../src/Component.js",
+    "../src/holder/BaseHolder.js",
+    "../src/adapter/pixi-adapter.js",
+
+
+    "../src/Root.js",
+
+    "../src/holder/TextHolder.js",
+    "../src/holder/ImageHolder.js",
+    "../src/holder/BackgroundHolder.js",
+    "../src/holder/BorderHolder.js",
+    "../src/holder/BorderImageHolder.js",
+
+    "../src/widget/Blank.js",
+    "../src/widget/Panel.js",
+    "../src/widget/Label.js",
+    "../src/widget/Button.js",
+    "../src/widget/Picture.js",
+    "../src/widget/ScrollView.js",
 
 "./GT-Toucher/src/Controller.js",
 "./GT-Toucher/src/TouchWrapper.js",
@@ -42,8 +77,8 @@
 "./GT-Toucher/src/gesture/Swipe.js",
 
 "gesture.js",
-"main.js",
-"ui.js",
+"main-pixi.js",
+// "ui.js",
 ];
 
 jsFiles.forEach(function(js){
@@ -66,7 +101,7 @@ body {
 
 <script type="text/javascript">
 
-document.title=123456;
+document.title='CUI pixi';
 window.addEventListener('touchmove',function(event){
   event.stopPropagation();
   event.preventDefault();
