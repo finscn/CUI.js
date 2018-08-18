@@ -36,9 +36,9 @@ var CUI = CUI || {};
         },
 
         updateSize: function() {
-            if (this.parent && this.fillParent) {
-                this.pixel.width = this.parent.pixel.width;
-                this.pixel.height = this.parent.pixel.height;
+            if (this.fillParent) {
+                this.pixel.width = this.parent._absoluteWidth;
+                this.pixel.height = this.parent._absoluteHeight;
                 this.absoluteWidth = this.pixel.width;
                 this.absoluteHeight = this.pixel.height;
             }
@@ -46,8 +46,8 @@ var CUI = CUI || {};
 
         updatePosition: function() {
             var parent = this.parent;
-            this.absoluteX = parent.absoluteX + ((parent.absoluteWidth - this.pixel.width) >> 1) + this.ox + this.offsetX;
-            this.absoluteY = parent.absoluteY + ((parent.absoluteHeight - this.pixel.height) >> 1) + this.oy + this.offsetY;
+            this.absoluteX = parent._absoluteX + ((parent._absoluteWidth - this.pixel.width) >> 1) + this.ox + this.offsetX;
+            this.absoluteY = parent._absoluteY + ((parent._absoluteHeight - this.pixel.height) >> 1) + this.oy + this.offsetY;
         },
     });
 

@@ -87,27 +87,27 @@ var CUI = CUI || {};
             var parent = this.parent;
 
             if (this.fillParent) {
-                this.absoluteX = this.pixel.x = parent.absoluteX;
-                this.absoluteY = this.pixel.y = parent.absoluteY;
+                this.absoluteX = this.pixel.x = parent._absoluteX;
+                this.absoluteY = this.pixel.y = parent._absoluteY;
                 this._positionChanged = true;
                 return;
             }
 
             if (this.alignH === "center") {
-                this.absoluteX = parent.absoluteX + ((parent.absoluteWidth - this.pixel.width) >> 1);
+                this.absoluteX = parent._absoluteX + ((parent._absoluteWidth - this.pixel.width) >> 1);
             } else if (this.alignH === "right") {
-                this.absoluteX = parent.absoluteX + parent.absoluteWidth - parent.pixel.paddingRight - this.pixel.width;
+                this.absoluteX = parent._absoluteX + parent._absoluteWidth - parent.pixel.paddingRight - this.pixel.width;
             } else {
-                this.absoluteX = parent.absoluteX + parent.pixel.paddingLeft;
+                this.absoluteX = parent._absoluteX + parent.pixel.paddingLeft;
             }
             this.absoluteX += this.offsetX + this.pixel.ox;
 
             if (this.alignV === "middle" || this.alignV === "center") {
-                this.absoluteY = parent.absoluteY + ((parent.absoluteHeight - this.pixel.height) >> 1);
+                this.absoluteY = parent._absoluteY + ((parent._absoluteHeight - this.pixel.height) >> 1);
             } else if (this.alignV === "bottom") {
-                this.absoluteY = parent.absoluteY + parent.absoluteHeight - parent.pixel.paddingBottom - this.pixel.height;
+                this.absoluteY = parent._absoluteY + parent._absoluteHeight - parent.pixel.paddingBottom - this.pixel.height;
             } else {
-                this.absoluteY = parent.absoluteY + parent.pixel.paddingTop;
+                this.absoluteY = parent._absoluteY + parent.pixel.paddingTop;
             }
             this.absoluteY += this.offsetY + this.pixel.oy;
 

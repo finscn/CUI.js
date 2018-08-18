@@ -43,7 +43,7 @@ var CUI = CUI || {};
             }
 
             if (childCount > 0) {
-                this.tryToResizeParent(parent, parent.pixel.width, parent.pixel.height);
+                this.tryToResizeParent(parent, parent._absoluteWidth, parent._absoluteHeight);
             }
             return idx;
         },

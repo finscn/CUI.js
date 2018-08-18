@@ -210,20 +210,22 @@ var CUI = CUI || {};
         updateSize: function() {
             // always updateSize ???
             if (this.parent && this.fillParent) {
-                this.pixel.width = Utils.parseValue(this.width, this.parent.pixel.width, this.absoluteWidth) || 0;
+                this.pixel.width = Utils.parseValue(this.width, this.parent._absoluteWidth, this.pixel.width) || 0;
             } else {
-                this.pixel.width = Utils.parseValue(this.width, this.absoluteWidth, this.absoluteWidth) || 0
+                this.pixel.width = Utils.parseValue(this.width, this.pixel.width, this.pixel.width) || 0
             }
             this.pixel.width = this.pixel.width * this.scaleX;
             this.pixel.ox = this.ox;
+            this.absoluteWidth = this.pixel.width;
 
             if (this.parent && this.fillParent) {
-                this.pixel.height = Utils.parseValue(this.height, this.parent.pixel.height, this.absoluteHeight) || 0;
+                this.pixel.height = Utils.parseValue(this.height, this.parent._absoluteHeight, this.pixel.height) || 0;
             } else {
-                this.pixel.height = Utils.parseValue(this.height, this.absoluteHeight, this.absoluteHeight) || 0
+                this.pixel.height = Utils.parseValue(this.height, this.pixel.height, this.pixel.height) || 0
             }
             this.pixel.height = this.pixel.height * this.scaleY;
             this.pixel.oy = this.oy;
+            this.absoluteHeight = this.pixel.height;
         },
 
         setScale: function(scale) {

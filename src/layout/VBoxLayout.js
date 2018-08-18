@@ -50,13 +50,13 @@ var CUI = CUI || {};
                             currentY += size;
                         } else {
                             y += Math.max(margin, child.pixel.marginTop);
-                            currentY = y + child.pixel.height;
+                            currentY = y + child._absoluteHeight;
                         }
                     }
 
                     child.pixel.top = Utils.parseValue(child.top, child.pixel.realOuterHeight);
                     child.pixel.relativeY = y + child.pixel.top;
-                    child.pixel.y = child.pixel.relativeY + parent.absoluteY;
+                    child.pixel.y = child.pixel.relativeY + parent._absoluteY;
                     child.absoluteY = child.pixel.y;
 
                     child.hasLayoutY = true;
@@ -72,10 +72,10 @@ var CUI = CUI || {};
             }
 
             if (childCount > 0) {
-                var totalHeight = size ? parent.pixel.height : currentY + margin;
+                var totalHeight = size ? parent._absoluteHeight : currentY + margin;
                 this.tryToResizeParent(parent, totalWidth, totalHeight, true);
                 if (!size && this.align === "bottom") {
-                    var deltaHeight = parent.pixel.height - totalHeight;
+                    var deltaHeight = parent._absoluteHeight - totalHeight;
                     if (deltaHeight > 0) {
                         for (var i = 0; i < childCount; i++) {
                             var child = children[i];

@@ -245,18 +245,18 @@ var CUI = CUI || {};
         updatePosition: function() {
             var parent = this.parent;
             if (this.alignH === "center") {
-                this.x = parent.x + (parent.absoluteWidth >> 1);
+                this.x = parent.x + (parent._absoluteWidth >> 1);
             } else if (this.alignH === "right") {
-                this.x = parent.x + parent.absoluteWidth - parent.pixel.paddingRight;
+                this.x = parent.x + parent._absoluteWidth - parent.pixel.paddingRight;
             } else {
                 this.x = parent.x + parent.pixel.paddingLeft;
             }
             this.x += this.offsetX;
 
             if (this.alignV === "middle" || this.alignV === "center") {
-                this.y = parent.y + ((parent.absoluteHeight - this.height) >> 1);
+                this.y = parent.y + ((parent._absoluteHeight - this.height) >> 1);
             } else if (this.alignV === "bottom") {
-                this.y = parent.y + parent.absoluteHeight - parent.pixel.paddingBottom - this.height;
+                this.y = parent.y + parent._absoluteHeight - parent.pixel.paddingBottom - this.height;
             } else {
                 this.y = parent.y + parent.pixel.paddingTop;
             }

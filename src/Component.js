@@ -757,7 +757,6 @@ var CUI = CUI || {};
         ////////////////////////////////////////////////////////////////////////
 
         computeMargin: function(parent) {
-            // parent.pixel.width/height
             parent = parent || this.parent;
             var parentPixel = parent.pixel;
             var pixel = this.pixel;
@@ -869,7 +868,7 @@ var CUI = CUI || {};
                 x = pixel.left || 0;
             }
             pixel.relativeX = x + pixel.realMarginLeft;
-            pixel.x = pixel.relativeX + (parent ? parent.absoluteX : 0);
+            pixel.x = pixel.relativeX + (parent ? parent._absoluteX : 0);
             this.absoluteX = pixel.x;
         },
 
@@ -891,7 +890,7 @@ var CUI = CUI || {};
                 y = pixel.top || 0;
             }
             pixel.relativeY = y + pixel.realMarginTop;
-            pixel.y = pixel.relativeY + (parent ? parent.absoluteY : 0);
+            pixel.y = pixel.relativeY + (parent ? parent._absoluteY : 0);
             this.absoluteY = pixel.y;
         },
 

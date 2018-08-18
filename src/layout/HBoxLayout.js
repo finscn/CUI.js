@@ -53,7 +53,7 @@ var CUI = CUI || {};
 
                     child.pixel.left = Utils.parseValue(child.left, child.pixel.realOuterWidth);
                     child.pixel.relativeX = x + child.pixel.left;
-                    child.pixel.x = child.pixel.relativeX + parent.absoluteX;
+                    child.pixel.x = child.pixel.relativeX + parent._absoluteX;
                     child.absoluteX = child.pixel.x;
 
                     child.hasLayoutX = true;
@@ -69,10 +69,10 @@ var CUI = CUI || {};
             }
 
             if (childCount > 0) {
-                var totalWidth = size ? parent.pixel.width : currentX + margin;
+                var totalWidth = size ? parent._absoluteWidth : currentX + margin;
                 this.tryToResizeParent(parent, totalWidth, totalHeight, true);
                 if (!size && this.align === "right") {
-                    var deltaWidth = parent.pixel.width - totalWidth;
+                    var deltaWidth = parent._absoluteWidth - totalWidth;
                     if (deltaWidth > 0) {
                         for (var i = 0; i < childCount; i++) {
                             var child = children[i];

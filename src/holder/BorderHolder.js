@@ -35,17 +35,16 @@ var CUI = CUI || {};
         },
 
         updateSize: function() {
-            this.pixel.width = this.parent.pixel.width;
-            this.pixel.height = this.parent.pixel.height;
-            this.absoluteWidth = this.parent.absoluteWidth;
-            this.absoluteHeight = this.parent.absoluteHeight;
-            console.log(this.absoluteWidth, this.absoluteHeight);
+            this.pixel.width = this.parent._absoluteWidth;
+            this.pixel.height = this.parent._absoluteHeight;
+            this.absoluteWidth = this.pixel.width;
+            this.absoluteHeight = this.pixel.height;
             this._sizeChanged = true;
         },
 
         updatePosition: function() {
-            this.absoluteX = this.parent.absoluteX;
-            this.absoluteY = this.parent.absoluteY;
+            this.absoluteX = this.parent._absoluteX;
+            this.absoluteY = this.parent._absoluteY;
             this._positionChanged = true;
         },
 

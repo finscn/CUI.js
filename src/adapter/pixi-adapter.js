@@ -165,10 +165,10 @@ var CUI = CUI || {};
         {
             key: 'absoluteX',
             get: function() {
-                return this._x;
+                return this._absoluteX;
             },
             set: function(value) {
-                this._x = value;
+                this._absoluteX = value;
                 if (this.displayObject) {
                     this.displayObject.position.x = this.pixel ? this.pixel.relativeX : value;
                 }
@@ -178,10 +178,10 @@ var CUI = CUI || {};
         {
             key: 'absoluteY',
             get: function() {
-                return this._y;
+                return this._absoluteY;
             },
             set: function(value) {
-                this._y = value;
+                this._absoluteY = value;
                 if (this.displayObject) {
                     // this.updateDisplayObjectX(value);
                     this.displayObject.position.y = this.pixel ? this.pixel.relativeY : value;
@@ -192,10 +192,10 @@ var CUI = CUI || {};
         {
             key: 'absoluteWidth',
             get: function() {
-                return this._w;
+                return this._absoluteWidth;
             },
             set: function(value) {
-                this._w = value;
+                this._absoluteWidth = value;
                 if (this.displayObject) {
                     // console.log('absoluteWidth', value);
                     !this.displayObject.ignoreResize && (this.displayObject.width = value);
@@ -206,10 +206,10 @@ var CUI = CUI || {};
         {
             key: 'absoluteHeight',
             get: function() {
-                return this._h;
+                return this._absoluteHeight;
             },
             set: function(value) {
-                this._h = value;
+                this._absoluteHeight = value;
                 if (this.displayObject) {
                     console.log('absoluteHeight', value);
                     !this.displayObject.ignoreResize && (this.displayObject.height = value);
