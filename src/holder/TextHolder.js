@@ -72,13 +72,8 @@ var CUI = CUI || {};
         },
 
         init: function() {
-            this.pixel = {
-                relativeX: 0,
-                relativeY: 0,
-
-                width: this.width,
-                height: this.height,
-            };
+            this.pixel.width = this.width;
+            this.pixel.height = this.height;
 
             this.setTextInfo(this);
             this.setParent(this.parent);
@@ -250,18 +245,18 @@ var CUI = CUI || {};
         updatePosition: function() {
             var parent = this.parent;
             if (this.alignH === "center") {
-                this.x = parent.x + (parent.w >> 1);
+                this.x = parent.x + (parent.absoluteWidth >> 1);
             } else if (this.alignH === "right") {
-                this.x = parent.x + parent.w - parent.pixel.paddingRight;
+                this.x = parent.x + parent.absoluteWidth - parent.pixel.paddingRight;
             } else {
                 this.x = parent.x + parent.pixel.paddingLeft;
             }
             this.x += this.offsetX;
 
             if (this.alignV === "middle" || this.alignV === "center") {
-                this.y = parent.y + ((parent.h - this.height) >> 1);
+                this.y = parent.y + ((parent.absoluteHeight - this.height) >> 1);
             } else if (this.alignV === "bottom") {
-                this.y = parent.y + parent.h - parent.pixel.paddingBottom - this.height;
+                this.y = parent.y + parent.absoluteHeight - parent.pixel.paddingBottom - this.height;
             } else {
                 this.y = parent.y + parent.pixel.paddingTop;
             }

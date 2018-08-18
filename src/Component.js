@@ -44,6 +44,8 @@ var CUI = CUI || {};
             // 缩放只适合用来做瞬间的、纯视觉上的动画效果, 它不会改变UI的响应区域和行为
             // 如果要真正改变UI的大小, 请通过修改UI(以及内部元素的)width/height来实现
             this.scale = 1;
+            this.scaleX = 1;
+            this.scaleY = 1;
 
             this.offsetX = 0;
             this.offsetY = 0;
@@ -69,6 +71,8 @@ var CUI = CUI || {};
 
             this.displayObject = null;
             this.transform = null;
+
+            this.tint = null;
 
             /////////////////////////////////////////////
             // 对象创建后, 以下属性不可更改
@@ -118,14 +122,39 @@ var CUI = CUI || {};
             ////////////////////////////////////////
             // 以下属性为内部属性, 用户通常不需要关心
 
+            // 以像素为单位的定位和大小, 单位:像素
+            this.pixel = {
+                x: 0,
+                y: 0,
+                width: 0,
+                height: 0,
+                relativeX: 0,
+                relativeY: 0,
+
+                paddingLeft: 0,
+                paddingTop: 0,
+                paddingRight: 0,
+                paddingBottom: 0,
+
+                marginLeft: 0,
+                marginTop: 0,
+                marginRight: 0,
+                marginBottom: 0,
+
+                realMarginLeft: 0,
+                realMarginTop: 0,
+                realMarginRight: 0,
+                realMarginBottom: 0,
+
+                realOuterWidth: 0,
+                realOuterHeight: 0,
+            };
+
             // 绝对定位和大小, 单位:像素
             this.absoluteX = 0;
             this.absoluteY = 0;
             this.absoluteWidth = 0;
             this.absoluteHeight = 0;
-
-            // 以像素为单位的定位和大小, 单位:像素
-            this.pixel = null;
 
             this.aabb = null;
 
@@ -143,7 +172,6 @@ var CUI = CUI || {};
         },
 
         init: function() {
-
             // if (this.beforeInit) {
             //     this.beforeInit();
             // }
@@ -154,21 +182,8 @@ var CUI = CUI || {};
             this.inited = true;
             this.id = this.id || "cmp_" + Component._SN++;
 
-            this.pixel = {
-                // x: 0,
-                // y: 0,
-                // width: 0,
-                // height: 0,
-                relativeX: 0,
-                relativeY: 0,
-
-                paddingTop: 0,
-                paddingRight: 0,
-                paddingBottom: 0,
-                paddingLeft: 0,
-            };
-
             this.aabb = [];
+            this.holders = [];
 
             this._defaultAlpha = this.alpha;
 
@@ -192,6 +207,7 @@ var CUI = CUI || {};
             this.setMargin(this.margin || 0);
             this.setPadding(this.padding || 0);
 
+            this.computeSelf(this.parent);
             this.initDisplayObject();
             this.initBackground();
             this.initBorder();
@@ -209,6 +225,10 @@ var CUI = CUI || {};
         },
         updateDisplayObject: function(img, x, y, w, h) {
             // do nothing.
+        },
+
+        setDisabled: function(disabled) {
+            this.disabled = disabled;
         },
 
         initBackground: function(reinit) {
@@ -242,9 +262,6 @@ var CUI = CUI || {};
             }
         },
 
-        setDisabled: function(disabled) {
-            this.disabled = disabled;
-        },
 
         setBackgroundInfo: function(info) {
             var holder = null;
@@ -359,10 +376,10 @@ var CUI = CUI || {};
                 if (removed) {
                     child.setRoot(null);
                     if (this.width === "auto") {
-                        this.pixel.w = 0;
+                        this.pixel.width = 0;
                     }
                     if (this.height === "auto") {
-                        this.pixel.h = 0;
+                        this.pixel.height = 0;
                     }
                     this._needToCompute = true;
                 }
@@ -481,8 +498,8 @@ var CUI = CUI || {};
         },
 
         updateAnchor: function() {
-            this.pixel.anchorX = Utils.parseValue(this.anchorX, this.w) || 0;
-            this.pixel.anchorY = Utils.parseValue(this.anchorY, this.h) || 0;
+            this.pixel.anchorX = Utils.parseValue(this.anchorX, this.absoluteWidth) || 0;
+            this.pixel.anchorY = Utils.parseValue(this.anchorY, this.absoluteHeight) || 0;
         },
 
         updateAABB: function() {
@@ -490,6 +507,28 @@ var CUI = CUI || {};
             this.aabb[1] = this.absoluteY - this.extTop;
             this.aabb[2] = this.absoluteX + this.absoluteWidth + this.extRight;
             this.aabb[3] = this.absoluteY + this.absoluteHeight + this.extBottom;
+        },
+
+        updateHolders: function() {
+            if (this.backgroundHolder) {
+                this.backgroundHolder.updateSize();
+                this.backgroundHolder.updatePosition();
+                this.backgroundHolder.update();
+            }
+
+            if (this.borderHolder) {
+                this.borderHolder.updateSize();
+                this.borderHolder.updatePosition();
+                this.borderHolder.update();
+            }
+
+            this.holders.forEach(function(holder) {
+                if (holder) {
+                    holder.updateSize();
+                    holder.updatePosition();
+                    holder.update();
+                }
+            });
         },
 
         syncPosition: function() {
@@ -503,24 +542,12 @@ var CUI = CUI || {};
 
             this.updateAABB();
 
-            this.syncHolders();
+            this.updateHolders();
 
             if (this.composite) {
                 this.children.forEach(function(child) {
                     child.syncPosition();
                 });
-            }
-        },
-
-        syncHolders: function() {
-            if (this.backgroundHolder) {
-                this.backgroundHolder.updateSize();
-                this.backgroundHolder.updatePosition();
-            }
-
-            if (this.borderHolder) {
-                this.borderHolder.updateSize();
-                this.borderHolder.updatePosition();
             }
         },
 
@@ -658,14 +685,7 @@ var CUI = CUI || {};
                     this.layout.compute(this);
                 }
 
-                if (this.backgroundHolder) {
-                    this.backgroundHolder.updateSize();
-                    this.backgroundHolder.updatePosition();
-                }
-                if (this.borderHolder) {
-                    this.borderHolder.updateSize();
-                    this.borderHolder.updatePosition();
-                }
+                this.updateHolders();
             }
         },
 
@@ -760,30 +780,13 @@ var CUI = CUI || {};
             parent = parent || this.parent;
             var parentPixel = parent.pixel;
             var pixel = this.pixel;
+            console.log(parentPixel.paddingLeft)
             pixel.realMarginLeft = Math.max(parentPixel.paddingLeft, pixel.marginLeft) || 0;
             pixel.realMarginTop = Math.max(parentPixel.paddingTop, pixel.marginTop) || 0;
             pixel.realMarginRight = Math.max(parentPixel.paddingRight, pixel.marginRight) || 0;
             pixel.realMarginBottom = Math.max(parentPixel.paddingBottom, pixel.marginBottom) || 0;
             pixel.realOuterWidth = parentPixel.width - pixel.realMarginLeft - pixel.realMarginRight;
             pixel.realOuterHeight = parentPixel.height - pixel.realMarginTop - pixel.realMarginBottom;
-        },
-
-        computeWidth: function() {
-            var pixel = this.pixel;
-            var relativeWidth = pixel.realOuterWidth;
-            pixel.width = Utils.parseValue(this.width, relativeWidth);
-            pixel.anchorX = Utils.parseValue(this.anchorX, pixel.width) || 0;
-            pixel.innerWidth = pixel.width - pixel.paddingLeft - pixel.paddingRight;
-            this.absoluteWidth = pixel.width;
-        },
-
-        computeHeight: function() {
-            var pixel = this.pixel;
-            var relativeHeight = pixel.realOuterHeight;
-            pixel.height = Utils.parseValue(this.height, relativeHeight);
-            pixel.anchorY = Utils.parseValue(this.anchorY, pixel.height) || 0;
-            pixel.innerHeight = pixel.height - pixel.paddingTop - pixel.paddingBottom;
-            this.absoluteHeight = pixel.height;
         },
 
         computePadding: function() {
@@ -802,6 +805,55 @@ var CUI = CUI || {};
             pixel.innerHeight = pixel.height - pixel.paddingTop - pixel.paddingBottom;
         },
 
+        getFillWidth: function(relativeWidth) {
+            if (this.width === null && this.left !== null && this.right !== null) {
+                var _left = Utils.parseValue(this.left, relativeWidth);
+                var _right = Utils.parseValue(this.right, relativeWidth);
+                return relativeWidth - _left - _right;
+            }
+            return null;
+        },
+        getFillHeight: function(relativeHeight) {
+            if (this.height === null && this.top !== null && this.bottom !== null) {
+                var _top = Utils.parseValue(this.top, relativeHeight);
+                var _bottom = Utils.parseValue(this.bottom, relativeHeight);
+                return relativeHeight - _top - _bottom;
+            }
+            return null;
+        },
+
+        computeWidth: function() {
+            var pixel = this.pixel;
+            var relativeWidth = pixel.realOuterWidth;
+
+            var fillWidth = this.getFillWidth(relativeWidth);
+            if (fillWidth !== null) {
+                pixel.width = fillWidth;
+            } else {
+                pixel.width = Utils.parseValue(this.width, relativeWidth);
+            }
+
+            pixel.anchorX = Utils.parseValue(this.anchorX, pixel.width) || 0;
+            pixel.innerWidth = pixel.width - pixel.paddingLeft - pixel.paddingRight;
+            this.absoluteWidth = pixel.width;
+        },
+
+        computeHeight: function() {
+            var pixel = this.pixel;
+            var relativeHeight = pixel.realOuterHeight;
+
+            var fillHeight = this.getFillHeight(relativeHeight);
+            if (fillHeight !== null) {
+                pixel.height = fillHeight;
+            } else {
+                pixel.height = Utils.parseValue(this.height, relativeHeight);
+            }
+
+            pixel.anchorY = Utils.parseValue(this.anchorY, pixel.height) || 0;
+            pixel.innerHeight = pixel.height - pixel.paddingTop - pixel.paddingBottom;
+            this.absoluteHeight = pixel.height;
+        },
+
         computePositionX: function(parent) {
             // parent.pixel.innerWidth/innerHeight ( size - Math.max(padding, margin) );
             parent = parent || this.parent;
@@ -811,7 +863,6 @@ var CUI = CUI || {};
 
             pixel.left = Utils.parseValue(this.left, relativeWidth);
             pixel.right = Utils.parseValue(this.right, relativeWidth);
-
             var x = 0;
             if (this.centerH === true) {
                 x = (relativeWidth - pixel.width) / 2 + (pixel.left || 0);
@@ -821,7 +872,8 @@ var CUI = CUI || {};
                 x = pixel.left || 0;
             }
             pixel.relativeX = x + pixel.realMarginLeft;
-            this.absoluteX = pixel.relativeX + (parent ? parent.absoluteX : 0);
+            pixel.x = pixel.relativeX + (parent ? parent.absoluteX : 0);
+            this.absoluteX = pixel.x;
         },
 
         computePositionY: function(parent) {
@@ -842,7 +894,8 @@ var CUI = CUI || {};
                 y = pixel.top || 0;
             }
             pixel.relativeY = y + pixel.realMarginTop;
-            this.absoluteY = pixel.relativeY + (parent ? parent.absoluteY : 0);
+            pixel.y = pixel.relativeY + (parent ? parent.absoluteY : 0);
+            this.absoluteY = pixel.y;
         },
 
         useCacheCanvas: function() {

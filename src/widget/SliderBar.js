@@ -188,8 +188,8 @@ var CUI = CUI || {};
         updateTrack: function() {
             this.minX = 0;
             this.minY = 0;
-            this.maxX = this.w - this.handle.w;
-            this.maxY = this.h - this.handle.h;
+            this.maxX = this.absoluteWidth - this.handle.w;
+            this.maxY = this.absoluteHeight - this.handle.h;
             this.trackRealSize = this.vertical ? this.maxY : this.maxX;
         },
 

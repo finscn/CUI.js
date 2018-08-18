@@ -9,6 +9,17 @@ var CUI = CUI || {};
 
     var BaseLayout = Class.create({
 
+        initialize: function() {
+            this.pixel = {
+                x: 0,
+                y: 0,
+                width: 0,
+                height: 0,
+                relativeX: 0,
+                relativeY: 0,
+            };
+        },
+
         init: function() {
 
         },
@@ -36,14 +47,14 @@ var CUI = CUI || {};
 
         tryToResizeParent: function(parent, width, height, immediately) {
             var resize = false;
-            if (parent.width === "auto" && !parent.w) {
+            if (parent.width === "auto" && !parent.absoluteWidth) {
                 parent.pixel.width = width;
-                parent.w = width;
+                parent.absoluteWidth = width;
                 resize = true;
             }
-            if (parent.height === "auto" && !parent.h) {
+            if (parent.height === "auto" && !parent.absoluteHeight) {
                 parent.pixel.height = height;
-                parent.h = height;
+                parent.absoluteHeight = height;
                 resize = true;
             }
             if (resize) {

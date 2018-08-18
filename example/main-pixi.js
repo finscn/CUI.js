@@ -1,4 +1,5 @@
 var Config = {
+    forceCanvas: false,
     width: 640,
     height: 400,
     FPS: 60,
@@ -18,7 +19,6 @@ var rootUI;
 
 window.onload = function() {
     init();
-
     CUI.Utils.loadImages(
         [
             { id: "bg", src: "./res/bg.png" },
@@ -35,67 +35,99 @@ window.onload = function() {
 
 };
 
-
 function beforeStart(timeStep, now) {
 
     rootUI = new CUI.Root({
         parent: rootUI,
         width: game.width,
         height: game.height,
-        backgroundColor: CUI.Utils.colorRgb(155, 155, 155),
-        borderWidth: 8,
-        // borderColor: CUI.Utils.colorRgb(255, 50, 50),
-        // borderAlpha: 0.6,
+
+        // backgroundColor: CUI.Utils.colorRgb(100, 0, 0),
+        // backgroundAlpha: 0.2,
+        borderWidth: 20,
+        borderColor: CUI.Utils.colorRgb(255, 50, 50),
+        borderAlpha: 0.6,
+
         padding: 10,
     });
-    // var comp = new CUI.Picture({
-    //     // centerH: true,
-    //     // centerV: true,
-    //     left: 0,
-    //     // top: 20,
+    var comp = rootUI;
 
-    //     parent: rootUI,
-    //     // src: "res/btn-bg.png",
-    //     img: CUI.ImagePool["bg"],
+
+    var panel = new CUI.Panel({
+        test: true,
+        parent: rootUI,
+        // backgroundColor: CUI.Utils.colorRgb(100, 0, 0),
+        // backgroundAlpha: 0.3,
+        borderWidth: 20,
+        borderColor: CUI.Utils.colorRgb(0, 0, 255),
+        borderAlpha: 0.6,
+
+
+        // width: null,
+        // height: null,
+        width: 250,
+        height: 250,
+        left: 0,
+        top: 0,
+        // right: 0,
+        // bottom: 10,
+    });
+
+    var comp = new CUI.Picture({
+        // test: true,
+        parent: panel,
+        // centerH: true,
+        // centerV: true,
+        left: 20,
+        top: 20,
+        right: 20,
+        // bottom: 20,
+        // width: null,
+        // height: null,
+        // width: 200,
+        height: '100%-40',
+
+        // src: "res/btn-bg.png",
+        img: CUI.ImagePool["bg"],
+        // borderWidth: 2,
+        // scaleX: 2,
+        // scaleY: 2,
+        // scaleImg: false,
+
+        // backgroundColor: CUI.Utils.colorRgb(100,240,23),
+        // margin: 10,
+        // layout: new CUI.HBoxLayout(),
+    });
+
+    // var comp = new CUI.Button({
+    //     backgroundColor: CUI.Utils.colorRgb(255, 240, 230),
+    //     left: 200,
     //     borderWidth: 2,
-    //     // scaleX: 2,
-    //     // scaleY: 2,
-    //     scaleImg: false,
+    //     // borderColor: CUI.Utils.colorHex("#ff0000"),
+    //     parent: rootUI,
     //     width: 100,
-    //     height: 100,
-
-    //     // backgroundColor: CUI.Utils.colorRgb(100,240,23),
-    //     // margin: 10,
-    //     // layout: new CUI.HBoxLayout(),
+    //     height: 90,
+    //     borderImageInfo: {
+    //         img: CUI.ImagePool["bg"],
+    //         T: 20,
+    //         R: 20,
+    //         B: 20,
+    //         L: 20,
+    //     },
+    //     // backgroundImg: i === 0 ? CUI.ImagePool["btn-bg"] : null,
+    //     margin: 10,
+    //     disabled: 0,
+    //     textInfo: {
+    //         text: "Big-Button-0",
+    //         shadowColor: "#0000ff",
+    //         shadowBlur: 2,
+    //         shadowOffsetX: 4,
+    //         shadowOffsetY: 4,
+    //     },
     // });
 
-    var comp = new CUI.Button({
-        backgroundColor: CUI.Utils.colorRgb(255, 240, 230),
-        left: 200,
-        borderWidth: 2,
-        // borderColor: CUI.Utils.colorHex("#ff0000"),
-        parent: rootUI,
-        width: 100,
-        height: 90,
-        borderImageInfo: {
-            img: CUI.ImagePool["bg"],
-            T: 20,
-            R: 20,
-            B: 20,
-            L: 20,
-        },
-        // backgroundImg: i === 0 ? CUI.ImagePool["btn-bg"] : null,
-        margin: 10,
-        disabled: 0,
-        textInfo: {
-            text: "Big-Button-0",
-            shadowColor: "#0000ff",
-            shadowBlur: 2,
-            shadowOffsetX: 4,
-            shadowOffsetY: 4,
-        },
-    });
     // rootUI.computeLayout();
+
     setTimeout(function() {
         // console.log(comp.parent.absoluteX, comp.parent.absoluteY);
         console.log(comp.absoluteX, comp.absoluteY, comp.absoluteWidth, comp.absoluteHeight);
@@ -105,27 +137,7 @@ function beforeStart(timeStep, now) {
 
 function update(timeStep, now) {
 
-    if (TouchInfo.firstTap) {
-        var data = TouchInfo.firstTap;
-        rootUI.checkTouch("tap", data.x, data.y, data.id);
-        TouchInfo.firstTap = null;
-    } else if (TouchInfo.firstStart) {
-        var data = TouchInfo.firstStart;
-        rootUI.checkTouch("touchStart", data.x, data.y, data.id);
-        TouchInfo.firstStart = null;
-    } else if (TouchInfo.firstEnd) {
-        var data = TouchInfo.firstEnd;
-        rootUI.checkTouch("touchEnd", data.x, data.y, data.id);
-        TouchInfo.firstEnd = null;
-    } else if (TouchInfo.firstPan) {
-        var data = TouchInfo.firstPan;
-        rootUI.checkTouch("pan", data.x, data.y, data.dx, data.dy, data.sx, data.sy, data.id);
-        TouchInfo.firstPan = null;
-    } else if (TouchInfo.firstSwipe) {
-        var data = TouchInfo.firstSwipe;
-        rootUI.checkTouch("swipe", data.x, data.y, data.vx, data.vy, data.sx, data.sy, data.id);
-        TouchInfo.firstSwipe = null;
-    }
+    updateControl(rootUI, timeStep, now);
 
     rootUI.update(timeStep, now);
 
@@ -148,10 +160,7 @@ function init() {
     game.offsetTop = rect.top;
 
 
-    initTouchController();
-    initTapListener();
-    initPanListener();
-    initSwipeListener();
+    initControl();
 
     controller.offsetLeft = game.offsetLeft;
     controller.offsetTop = game.offsetTop;
@@ -168,6 +177,9 @@ function start() {
     beforeStart();
 
     app = new PIXI.Application({
+        forceCanvas: Config.forceCanvas,
+        width: Config.width,
+        height: Config.height,
         view: canvas,
         backgroundColor: 0x1099bb
     });
@@ -186,6 +198,20 @@ function start() {
     app.stage.addChild(bunny);
 
     app.stage.addChild(rootUI.displayObject);
+
+    // // var container = new PIXI.Container();
+    // var rect = new PIXI.Graphics();
+    // rect.beginFill(0x222222, 0.5);
+    // rect.lineStyle(40, 0x0000FF, 1, 0.5);
+    // rect.drawRect(0, 0, Config.width, Config.height);
+    // rect.endFill();
+    // console.log(rect.width);
+    // app.stage.addChild(rect);
+    // container.addChild(rect);
+    // rootUI.displayObject.addChild(rect);
+    // // app.stage.addChild(container);
+
+
 
     // Listen for animate update
     app.ticker.add(function(delta) {

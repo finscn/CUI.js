@@ -14,8 +14,6 @@ var CUI = CUI || {};
         superclass: Component,
 
         initialize: function() {
-            this.id = "cmp_root";
-
             this.width = null;
             this.height = null;
 
@@ -50,45 +48,30 @@ var CUI = CUI || {};
 
             this.left = this.left || 0;
             this.top = this.top || 0;
+
             this.relative = "root";
+            this.root = this;
+            this.aabb = [0, 0, 0, 0];
 
             Root.$super.init.call(this);
-
-            this.pixel = {
-                relativeX: 0,
-                relativeY: 0,
-
-                paddingLeft: 0,
-                paddingTop: 0,
-                paddingRight: 0,
-                paddingBottom: 0,
-
-                marginLeft: 0,
-                marginTop: 0,
-                marginRight: 0,
-                marginBottom: 0,
-
-                realMarginLeft: 0,
-                realMarginTop: 0,
-                realMarginRight: 0,
-                realMarginBottom: 0,
-
-                realOuterWidth: this.width,
-                realOuterHeight: this.height,
-            };
-
-            this.aabb = [
-                0, 0
-            ];
-            this.setSize(this.width, this.height, true);
-            this.computePositionX();
-            this.computePositionY();
-
-            this.root = this;
 
             if (this.afterInit) {
                 this.afterInit();
             }
+        },
+
+        computeSelf: function(parent) {
+            // console.log('Component.computeSelf', this.id);
+            parent = parent || {};
+            this.pixel.realOuterWidth = this.width;
+            this.pixel.realOuterHeight = this.height;
+            this.setSize(this.width, this.height, true);
+
+            this.computePositionX();
+            this.computePositionY();
+            this.computePadding();
+
+            this.updateAABB();
         },
 
         setSize: function(width, height, force) {
@@ -108,6 +91,7 @@ var CUI = CUI || {};
                 this.aabb[3] = height;
                 this._needToCompute = true;
             }
+            console.log(this.pixel)
         },
 
         checkTouch: function(type, args) {

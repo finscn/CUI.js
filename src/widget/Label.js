@@ -38,10 +38,6 @@ var CUI = CUI || {};
 
             Label.$super.init.call(this);
 
-            if (this.borderHolder) {
-                this.borderHolder.updateSize = this.borderHolder.updateSizeWithParentAABB;
-            }
-
             this._sizeChanged = true;
 
             if (this.iconInfo) {
@@ -184,8 +180,8 @@ var CUI = CUI || {};
             pixel.innerWidth = pixel.width - pixel.paddingLeft - pixel.paddingRight;
             this.absoluteWidth = pixel.width;
             if (bg && this.scaleBg) {
-                bg.pixel.width = this.w;
-                // bg.width = this.w;
+                bg.pixel.width = this.absoluteWidth;
+                // bg.width = this.absoluteWidth;
             }
         },
 
@@ -212,8 +208,8 @@ var CUI = CUI || {};
             this.absoluteHeight = pixel.height;
 
             if (bg && this.scaleBg) {
-                bg.pixel.height = this.h;
-                // bg.height = this.h;
+                bg.pixel.height = this.absoluteHeight;
+                // bg.height = this.absoluteHeight;
             }
         },
 
@@ -263,7 +259,7 @@ var CUI = CUI || {};
             this._needToCompute = false;
         },
 
-        syncHolders: function() {
+        updateHolders: function() {
             if (this.backgroundHolder) {
                 this.backgroundHolder.updateSize();
                 this.backgroundHolder.updatePosition();

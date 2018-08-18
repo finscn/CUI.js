@@ -82,9 +82,9 @@ var CUI = CUI || {};
             if (firstChild) {
                 var lastChild = this.children[this.children.length - 1];
 
-                var innerWdith = lastChild.x + lastChild.w + lastChild.marginRight - firstChild.x + firstChild.marginLeft;
+                var innerWdith = lastChild.absoluteX + lastChild.absoluteWidth + lastChild.marginRight - firstChild.absoluteX + firstChild.marginLeft;
                 innerWdith += this.paddingLeft + this.paddingRight;
-                var innerHeight = lastChild.y + lastChild.h + lastChild.marginBottom - firstChild.y + firstChild.marginTop;
+                var innerHeight = lastChild.absoluteY + lastChild.absoluteHeight + lastChild.marginBottom - firstChild.absoluteY + firstChild.marginTop;
                 innerHeight += this.paddingTop + this.paddingBottom;
 
                 this.scrollWidth = this.scrollWidthOrigin || innerWdith;
@@ -95,14 +95,14 @@ var CUI = CUI || {};
             }
 
             this.minScrollX = this.minScrollY = 0;
-            this.maxScrollX = Math.max(0, this.scrollWidth - this.w);
-            this.maxScrollY = Math.max(0, this.scrollHeight - this.h);
+            this.maxScrollX = Math.max(0, this.scrollWidth - this.absoluteWidth);
+            this.maxScrollY = Math.max(0, this.scrollHeight - this.absoluteHeight);
 
-            this.rateWidth = this.w / this.scrollWidth;
-            this.rateHeight = this.h / this.scrollHeight;
+            this.rateWidth = this.absoluteWidth / this.scrollWidth;
+            this.rateHeight = this.absoluteHeight / this.scrollHeight;
 
-            this.thumbHSize = (this.w - this.paddingLeft - this.paddingRight) * this.rateWidth >> 0;
-            this.thumbVSize = (this.h - this.paddingTop - this.paddingBottom) * this.rateHeight >> 0;
+            this.thumbHSize = (this.absoluteWidth - this.paddingLeft - this.paddingRight) * this.rateWidth >> 0;
+            this.thumbVSize = (this.absoluteHeight - this.paddingTop - this.paddingBottom) * this.rateHeight >> 0;
 
             this.thumbX = this.scrollX * this.rateWidth >> 0;
             this.thumbY = this.scrollY * this.rateHeight >> 0;

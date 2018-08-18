@@ -49,10 +49,8 @@ var CUI = CUI || {};
         },
 
         initTable: function(parent) {
-            var pixel = this.pixel = {
-                relativeX: 0,
-                relativeY: 0,
-            };
+            var pixel = this.pixel;
+
             var parentPixel = parent.pixel;
 
             if (parent.width === "auto") {
@@ -103,11 +101,17 @@ var CUI = CUI || {};
             }
 
             this.parentCell = {
-                x: 0,
-                y: 0,
+                absoluteX: 0,
+                absoluteY: 0,
+                absoluteWidth: 0,
+                absoluteHeight: 0,
                 pixel: {
+                    x: 0,
+                    y: 0,
                     width: 0,
                     height: 0,
+                    relativeX: 0,
+                    relativeY: 0,
                     paddingLeft: 0,
                     paddingTop: 0,
                     paddingRight: 0,
@@ -133,21 +137,27 @@ var CUI = CUI || {};
             var cellSpaceH = this.pixel.cellSpaceH;
             var cellSpaceV = this.pixel.cellSpaceV;
 
-            this.parentCell.x = parent.x;
-            this.parentCell.y = parent.y;
-            this.parentCell.pixel.width = child.colspan * (w + cellSpaceH) - cellSpaceH;
-            this.parentCell.pixel.height = child.rowspan * (h + cellSpaceV) - cellSpaceV;
+            var parentCell = this.parentCell;
 
-            child.computeMargin(this.parentCell);
-            child.computeRealMargin(this.parentCell);
+            parentCell.pixel.x = parent.absoluteX;
+            parentCell.pixel.y = parent.absoluteY;
+            parentCell.absoluteX = parentCell.pixel.x;
+            parentCell.absoluteY = parentCell.pixel.y;
+            parentCell.pixel.width = child.colspan * (w + cellSpaceH) - cellSpaceH;
+            parentCell.pixel.height = child.rowspan * (h + cellSpaceV) - cellSpaceV;
+            parentCell.absoluteWidth = parentCell.pixel.width;
+            parentCell.absoluteHeight = parentCell.pixel.height;
+
+            child.computeMargin(parentCell);
+            child.computeRealMargin(parentCell);
 
             child.pixel.realMarginLeft = Math.max(child.marginLeft, parent.paddingLeft) + col * (w + cellSpaceH);
             child.pixel.realMarginTop = Math.max(child.marginTop, parent.paddingTop) + row * (h + cellSpaceV);
 
             child.computeWidth();
             child.computeHeight();
-            child.computePositionX(this.parentCell);
-            child.computePositionY(this.parentCell);
+            child.computePositionX(parentCell);
+            child.computePositionY(parentCell);
             child.computePadding();
             child.updateAABB();
         }

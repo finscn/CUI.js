@@ -25,13 +25,13 @@ var CUI = CUI || {};
 
             this.ox = 0;
             this.oy = 0;
-            this.w = null;
-            this.h = null;
+            this.absoluteWidth = null;
+            this.absoluteHeight = null;
 
             this.alpha = 1;
             this.scale = 1;
-            this.scaleX = null;
-            this.scaleY = null;
+            this.scaleX = 1;
+            this.scaleY = 1;
             this.flipX = false;
             this.flipY = false;
             this.rotation = 0;
@@ -61,11 +61,6 @@ var CUI = CUI || {};
             if (this.scaleY === null) {
                 this.scaleY = this.scale;
             }
-
-            this.pixel = {
-                relativeX: 0,
-                relativeY: 0,
-            };
 
             this.setParent(this.parent);
 
@@ -192,8 +187,8 @@ var CUI = CUI || {};
 
             this.ox = ox;
             this.oy = oy;
-            this.w = w;
-            this.h = h;
+            this.absoluteWidth = w;
+            this.absoluteHeight = h;
         },
 
         updateDisplayObject: function() {
@@ -214,19 +209,18 @@ var CUI = CUI || {};
 
         updateSize: function() {
             // always updateSize ???
-
             if (this.parent && this.fillParent) {
-                this.pixel.width = Utils.parseValue(this.width, this.parent.pixel.width, this.w) || 0;
+                this.pixel.width = Utils.parseValue(this.width, this.parent.pixel.width, this.absoluteWidth) || 0;
             } else {
-                this.pixel.width = Utils.parseValue(this.width, this.w, this.w) || 0
+                this.pixel.width = Utils.parseValue(this.width, this.absoluteWidth, this.absoluteWidth) || 0
             }
             this.pixel.width = this.pixel.width * this.scaleX;
             this.pixel.ox = this.ox;
 
             if (this.parent && this.fillParent) {
-                this.pixel.height = Utils.parseValue(this.height, this.parent.pixel.height, this.h) || 0;
+                this.pixel.height = Utils.parseValue(this.height, this.parent.pixel.height, this.absoluteHeight) || 0;
             } else {
-                this.pixel.height = Utils.parseValue(this.height, this.h, this.h) || 0
+                this.pixel.height = Utils.parseValue(this.height, this.absoluteHeight, this.absoluteHeight) || 0
             }
             this.pixel.height = this.pixel.height * this.scaleY;
             this.pixel.oy = this.oy;

@@ -19,14 +19,9 @@ var CUI = CUI || {};
 
             // 如果不指定宽高 且 scaleImg = false, 大小由 imageHolder 的实际大小决定.
 
-            this.width = null;
-            this.height = null;
-            this.scaleX = 1;
-            this.scaleY = 1;
             this.scaleImg = true;
 
             this.crossOrigin = 'Anonymous';
-            this.tint = null;
         },
 
         init: function() {
@@ -38,6 +33,7 @@ var CUI = CUI || {};
 
             this.imageHolder = new ImageHolder({
                 parent: this,
+                fillParent: this.scaleImg,
                 width: this.scaleImg ? "100%" : "auto",
                 height: this.scaleImg ? "100%" : "auto",
                 alignH: "center",
@@ -122,45 +118,66 @@ var CUI = CUI || {};
             this._needToCompute = true;
         },
 
-        computeWidth: function() {
+        _computeWidth: function() {
             var pixel = this.pixel;
+            var relativeWidth = pixel.realOuterWidth;
+
             var hasWidth = false;
-            if (this.width === null || this.width === "auto") {
-                pixel.width = this.imageHolder.w;
+
+            var fillWidth = this.getFillWidth(relativeWidth);
+            if (fillWidth !== null) {
+                pixel.width = fillWidth;
             } else {
-                hasWidth = true;
-                pixel.width = Utils.parseValue(this.width, pixel.realOuterWidth);
+                if (this.width === null || this.width === "auto") {
+                    pixel.width = this.imageHolder.absoluteWidth;
+                } else {
+                    hasWidth = true;
+                    pixel.width = Utils.parseValue(this.width, relativeWidth);
+                }
             }
+
             pixel.width *= this.scaleX;
-            this.w = pixel.width;
+            pixel.anchorX = Utils.parseValue(this.anchorX, pixel.width) || 0;
+            this.absoluteWidth = pixel.width;
 
-            pixel.anchorX = Utils.parseValue(this.anchorX, this.w) || 0;
 
-            this.imageHolder.pixel.width = this.w;
+            this.imageHolder.pixel.width = this.absoluteWidth;
 
+            // TODO
             if (!this.hasImg && !hasWidth) {
-                this.w = 0.01;
+                this.absoluteWidth = 0.01;
                 pixel.width = 0.01;
             }
         },
-        computeHeight: function() {
+
+        _computeHeight: function() {
             var pixel = this.pixel;
+            var relativeHeight = pixel.realOuterHeight;
+
             var hasHeight = false;
-            if (this.height === null || this.height === "auto") {
-                pixel.height = this.imageHolder.h;
+
+            var fillHeight = this.getFillHeight(relativeHeight);
+            if (fillHeight !== null) {
+                pixel.height = fillHeight;
             } else {
-                hasHeight = true;
-                pixel.height = Utils.parseValue(this.height, pixel.realOuterHeight);
+                if (this.height === null || this.height === "auto") {
+                    pixel.height = this.imageHolder.absoluteHeight;
+                } else {
+                    hasHeight = true;
+                    pixel.height = Utils.parseValue(this.height, relativeHeight);
+                }
             }
+
             pixel.height *= this.scaleY;
-            this.h = pixel.height;
+            pixel.anchorY = Utils.parseValue(this.anchorY, pixel.height) || 0;
+            this.absoluteHeight = pixel.height;
 
-            pixel.anchorY = Utils.parseValue(this.anchorY, this.h) || 0;
 
-            this.imageHolder.pixel.height = this.h;
+            this.imageHolder.pixel.height = this.absoluteHeight;
 
+            // TODO
             if (!this.hasImg && !hasHeight) {
-                this.h = 0.01;
+                this.absoluteHeight = 0.01;
                 pixel.height = 0.01;
             }
         },
@@ -170,44 +187,32 @@ var CUI = CUI || {};
                 return;
             }
 
-            this.imageHolder.updateSize();
-            if (this.scaleImg) {
-                this.imageHolder.x = this.x;
-                this.imageHolder.y = this.y;
-            } else {
-                this.imageHolder.updatePosition();
-            }
-
-            if (this.imageBorderHolder) {
-                this.imageBorderHolder.updateSize();
-                this.imageBorderHolder.updatePosition();
-            }
-
-            if (this.borderHolder) {
-                this.borderHolder.updateSize();
-                this.borderHolder.updatePosition();
-            }
+            this.computeSelf(this.parent);
+            this.updateHolders();
 
             this._needToCompute = false;
         },
 
-        syncHolders: function() {
-            if (this.scaleImg) {
-                this.imageHolder.x = this.x;
-                this.imageHolder.y = this.y;
-            } else {
-                this.imageHolder.updateSize();
-                this.imageHolder.updatePosition();
-            }
+        updateHolders: function() {
+            this.imageHolder.pixel.width = this.absoluteWidth;
+            this.imageHolder.absoluteWidth = this.absoluteWidth;
+            this.imageHolder.pixel.height = this.absoluteHeight;
+            this.imageHolder.absoluteHeight = this.absoluteHeight;
+            // this.imageHolder.updateSize();
+            this.imageHolder.updatePosition();
+            this.imageHolder.update();
+
 
             if (this.imageBorderHolder) {
                 this.imageBorderHolder.updateSize();
                 this.imageBorderHolder.updatePosition();
+                this.imageBorderHolder.update();
             }
 
             if (this.borderHolder) {
                 this.borderHolder.updateSize();
                 this.borderHolder.updatePosition();
+                this.borderHolder.update();
             }
         },
     });

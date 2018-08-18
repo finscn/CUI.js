@@ -56,7 +56,8 @@ var CUI = CUI || {};
 
                     child.pixel.top = Utils.parseValue(child.top, child.pixel.realOuterHeight);
                     child.pixel.relativeY = y + child.pixel.top;
-                    child.y = child.pixel.relativeY + parent.y;
+                    child.pixel.y = child.pixel.relativeY + parent.absoluteY;
+                    child.absoluteY = child.pixel.y;
 
                     child.hasLayoutY = true;
                     child.computePositionX(parent);
@@ -81,7 +82,8 @@ var CUI = CUI || {};
                             if (child.relative !== "parent" && child.relative !== "root") {
                                 child.pixel.top += deltaHeight;
                                 child.pixel.relativeY += deltaHeight;
-                                child.y += deltaHeight;
+                                child.pixel.y += deltaHeight;
+                                child.absoluteY = child.pixel.y;
                                 child.updateAABB();
                                 child.computeLayout(true);
                             }

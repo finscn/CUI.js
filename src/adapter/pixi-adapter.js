@@ -44,6 +44,27 @@ var CUI = CUI || {};
             return sprite;
         },
 
+        createRect: function(width, height, backgroundColor, backgroundAlpha, borderWidth, borderColor, borderAlpha) {
+            return this.updateRect(null, width, height, backgroundColor, backgroundAlpha, borderWidth, borderColor, borderAlpha);
+        },
+        updateRect: function(rect, width, height, backgroundColor, backgroundAlpha, borderWidth, borderColor, borderAlpha) {
+            borderWidth = borderWidth || 0;
+            if (rect) {
+                rect.clear();
+            } else {
+                rect = new PIXI.Graphics();
+                rect.ignoreResize = true;
+            }
+            rect.beginFill(backgroundColor, backgroundAlpha);
+            if (borderWidth > 0 && (borderColor || borderColor === 0)) {
+                rect.lineStyle(borderWidth, borderColor, borderAlpha, 0.5);
+            }
+            // rect.drawRect(borderWidth / 2, borderWidth / 2, width, height);
+            rect.drawRect(0, 0, width, height);
+            rect.endFill();
+            return rect;
+        },
+
         createNineSlicePlane: function(image, sx, sy, sw, sh, L, T, R, B) {
             var count = arguments.length;
             var texture;
@@ -148,10 +169,8 @@ var CUI = CUI || {};
             },
             set: function(value) {
                 this._x = value;
-                if (this.pixel) {
-                    this.displayObject && (this.displayObject.position.x = this.pixel.relativeX);
-                } else {
-                    this.displayObject && (this.displayObject.position.x = value);
+                if (this.displayObject) {
+                    this.displayObject.position.x = this.pixel ? this.pixel.relativeX : value;
                 }
             }
         },
@@ -163,10 +182,9 @@ var CUI = CUI || {};
             },
             set: function(value) {
                 this._y = value;
-                if (this.pixel) {
-                    this.displayObject && (this.displayObject.position.y = this.pixel.relativeY);
-                } else {
-                    this.displayObject && (this.displayObject.position.y = value);
+                if (this.displayObject) {
+                    // this.updateDisplayObjectX(value);
+                    this.displayObject.position.y = this.pixel ? this.pixel.relativeY : value;
                 }
             }
         },
@@ -178,7 +196,10 @@ var CUI = CUI || {};
             },
             set: function(value) {
                 this._w = value;
-                this.displayObject && (this.displayObject.width = value);
+                if (this.displayObject) {
+                    // console.log('absoluteWidth', value);
+                    !this.displayObject.ignoreResize && (this.displayObject.width = value);
+                }
             }
         },
 
@@ -189,7 +210,10 @@ var CUI = CUI || {};
             },
             set: function(value) {
                 this._h = value;
-                this.displayObject && (this.displayObject.height = value);
+                if (this.displayObject) {
+                    console.log('absoluteHeight', value);
+                    !this.displayObject.ignoreResize && (this.displayObject.height = value);
+                }
             }
         },
 
@@ -199,6 +223,7 @@ var CUI = CUI || {};
                 return this._scale;
             },
             set: function(value) {
+                console.log('scale', value);
                 this._scale = value;
                 this.displayObject && (this.displayObject.scale.set(value, value));
             }
@@ -210,6 +235,10 @@ var CUI = CUI || {};
                 return this._scaleX;
             },
             set: function(value) {
+                console.log('scaleX', value);
+                if (value === null) {
+                    debugger
+                }
                 this._scaleX = value;
                 this.displayObject && (this.displayObject.scale.x = value);
             }
@@ -299,6 +328,7 @@ var CUI = CUI || {};
 
     Component.prototype.initDisplayObject = function() {
         var displayObject = CUI.Utils.createContainer();
+        displayObject.ignoreResize = true;
         this.displayObject = displayObject;
         if (this.parent) {
             this.parent.addChildDisplayObject(this);

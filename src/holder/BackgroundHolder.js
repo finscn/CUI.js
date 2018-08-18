@@ -2,14 +2,14 @@
 
 var CUI = CUI || {};
 
-
 (function(exports) {
-
     var Class = exports.Class;
     var Utils = exports.Utils;
+    // var BaseHolder = exports.BaseHolder;
     var ImageHolder = exports.ImageHolder;
 
     var BackgroundHolder = Class.create({
+        // superclass: BaseHolder,
         superclass: ImageHolder,
 
         initialize: function() {
@@ -20,10 +20,19 @@ var CUI = CUI || {};
             this.alpha = 1;
         },
 
-        updatePosition: function() {
-            var parent = this.parent;
-            this.absoluteX = parent.absoluteX + ((parent.absoluteWidth - this.pixel.width) >> 1) + this.ox + this.offsetX;
-            this.absoluteY = parent.absoluteY + ((parent.absoluteHeight - this.pixel.height) >> 1) + this.oy + this.offsetY;
+        init: function() {
+            this.setParent(this.parent);
+            this.updateSize();
+            this.updatePosition();
+            this.initDisplayObject();
+        },
+
+        initDisplayObject: function() {
+            var displayObject = CUI.Utils.createRect(this.absoluteWidth, this.absoluteHeight, this.color, this.alpha);
+            this.displayObject = displayObject;
+            if (this.parent) {
+                this.parent.addChildDisplayObject(this);
+            }
         },
 
         updateSize: function() {
@@ -33,6 +42,12 @@ var CUI = CUI || {};
                 this.absoluteWidth = this.pixel.width;
                 this.absoluteHeight = this.pixel.height;
             }
+        },
+
+        updatePosition: function() {
+            var parent = this.parent;
+            this.absoluteX = parent.absoluteX + ((parent.absoluteWidth - this.pixel.width) >> 1) + this.ox + this.offsetX;
+            this.absoluteY = parent.absoluteY + ((parent.absoluteHeight - this.pixel.height) >> 1) + this.oy + this.offsetY;
         },
     });
 
