@@ -80,12 +80,20 @@ function beforeStart(timeStep, now) {
         // centerV: true,
         left: 20,
         top: 20,
-        right: 20,
+        width:'auto',
+        height:'auto',
+
+        borderWidth: 4,
+        borderColor: CUI.Utils.colorRgb(255, 0, 0),
+        borderAlpha: 0.6,
+
+        // right: 20,
         // bottom: 20,
+        // bottom: '50% + 10',
         // width: null,
         // height: null,
         // width: 200,
-        height: '100%-40',
+        // height: '100%-40',
 
         // src: "res/btn-bg.png",
         img: CUI.ImagePool["bg"],
@@ -139,6 +147,8 @@ function update(timeStep, now) {
 
     updateControl(rootUI, timeStep, now);
 
+    // rootUI.scale = 1.0 + Math.sin(now / 600) * 0.1;
+    // rootUI.rotation = now / 10000;
     rootUI.update(timeStep, now);
 
     // uiX+=1;

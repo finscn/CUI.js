@@ -51,8 +51,8 @@ var CUI = CUI || {};
             this.offsetY = 0;
 
             // 缩放时才需要
-            this.anchorX = "50%";
-            this.anchorY = "50%";
+            this.anchorX = 0.5;
+            this.anchorY = 0.5;
 
             this.rotation = 0;
 
@@ -207,7 +207,7 @@ var CUI = CUI || {};
             this.setMargin(this.margin || 0);
             this.setPadding(this.padding || 0);
 
-            this.computeSelf(this.parent);
+            this.computeSelf();
             this.initDisplayObject();
             this.initBackground();
             this.initBorder();
@@ -497,11 +497,6 @@ var CUI = CUI || {};
             this.anchorY = y;
         },
 
-        updateAnchor: function() {
-            this.pixel.anchorX = Utils.parseValue(this.anchorX, this.absoluteWidth) || 0;
-            this.pixel.anchorY = Utils.parseValue(this.anchorY, this.absoluteHeight) || 0;
-        },
-
         updateAABB: function() {
             this.aabb[0] = this.absoluteX - this.extLeft;
             this.aabb[1] = this.absoluteY - this.extTop;
@@ -668,6 +663,8 @@ var CUI = CUI || {};
 
         computeSelf: function(parent) {
             // console.log('Component.computeSelf', this.id);
+            parent = parent || this.parent;
+
             this.computeMargin(parent);
             this.computeRealMargin(parent);
             this.computeWidth();
@@ -806,7 +803,8 @@ var CUI = CUI || {};
         },
 
         getFillWidth: function(relativeWidth) {
-            if (this.width === null && this.left !== null && this.right !== null) {
+            if (this.left !== null && this.right !== null) {
+                this.width = null;
                 var _left = Utils.parseValue(this.left, relativeWidth);
                 var _right = Utils.parseValue(this.right, relativeWidth);
                 return relativeWidth - _left - _right;
@@ -814,7 +812,8 @@ var CUI = CUI || {};
             return null;
         },
         getFillHeight: function(relativeHeight) {
-            if (this.height === null && this.top !== null && this.bottom !== null) {
+            if (this.top !== null && this.bottom !== null) {
+                this.height = null;
                 var _top = Utils.parseValue(this.top, relativeHeight);
                 var _bottom = Utils.parseValue(this.bottom, relativeHeight);
                 return relativeHeight - _top - _bottom;
@@ -833,7 +832,6 @@ var CUI = CUI || {};
                 pixel.width = Utils.parseValue(this.width, relativeWidth);
             }
 
-            pixel.anchorX = Utils.parseValue(this.anchorX, pixel.width) || 0;
             pixel.innerWidth = pixel.width - pixel.paddingLeft - pixel.paddingRight;
             this.absoluteWidth = pixel.width;
         },
@@ -849,7 +847,6 @@ var CUI = CUI || {};
                 pixel.height = Utils.parseValue(this.height, relativeHeight);
             }
 
-            pixel.anchorY = Utils.parseValue(this.anchorY, pixel.height) || 0;
             pixel.innerHeight = pixel.height - pixel.paddingTop - pixel.paddingBottom;
             this.absoluteHeight = pixel.height;
         },

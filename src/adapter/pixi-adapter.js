@@ -223,7 +223,6 @@ var CUI = CUI || {};
                 return this._scale;
             },
             set: function(value) {
-                console.log('scale', value);
                 this._scale = value;
                 this.displayObject && (this.displayObject.scale.set(value, value));
             }
@@ -235,7 +234,6 @@ var CUI = CUI || {};
                 return this._scaleX;
             },
             set: function(value) {
-                console.log('scaleX', value);
                 if (value === null) {
                     debugger
                 }

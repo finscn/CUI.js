@@ -118,68 +118,29 @@ var CUI = CUI || {};
             this._needToCompute = true;
         },
 
-        _computeWidth: function() {
-            var pixel = this.pixel;
-            var relativeWidth = pixel.realOuterWidth;
+        computeSelf: function(parent) {
+            parent = parent || this.parent;
 
-            var hasWidth = false;
+            this.computeMargin(parent);
+            this.computeRealMargin(parent);
 
-            var fillWidth = this.getFillWidth(relativeWidth);
-            if (fillWidth !== null) {
-                pixel.width = fillWidth;
+            if (this.width === "auto" && this.imageHolder) {
+                this.pixel.width = this.imageHolder.absoluteWidth;
+                this.absoluteWidth = this.pixel.width;
             } else {
-                if (this.width === null || this.width === "auto") {
-                    pixel.width = this.imageHolder.absoluteWidth;
-                } else {
-                    hasWidth = true;
-                    pixel.width = Utils.parseValue(this.width, relativeWidth);
-                }
+                this.computeWidth();
             }
-
-            pixel.width *= this.scaleX;
-            pixel.anchorX = Utils.parseValue(this.anchorX, pixel.width) || 0;
-            this.absoluteWidth = pixel.width;
-
-
-            this.imageHolder.pixel.width = this.absoluteWidth;
-
-            // TODO
-            if (!this.hasImg && !hasWidth) {
-                this.absoluteWidth = 0.01;
-                pixel.width = 0.01;
-            }
-        },
-
-        _computeHeight: function() {
-            var pixel = this.pixel;
-            var relativeHeight = pixel.realOuterHeight;
-
-            var hasHeight = false;
-
-            var fillHeight = this.getFillHeight(relativeHeight);
-            if (fillHeight !== null) {
-                pixel.height = fillHeight;
+            if (this.height === "auto" && this.imageHolder) {
+                this.pixel.height = this.imageHolder.absoluteHeight;
+                this.absoluteHeight = this.pixel.height;
             } else {
-                if (this.height === null || this.height === "auto") {
-                    pixel.height = this.imageHolder.absoluteHeight;
-                } else {
-                    hasHeight = true;
-                    pixel.height = Utils.parseValue(this.height, relativeHeight);
-                }
+                this.computeHeight();
             }
 
-            pixel.height *= this.scaleY;
-            pixel.anchorY = Utils.parseValue(this.anchorY, pixel.height) || 0;
-            this.absoluteHeight = pixel.height;
-
-
-            this.imageHolder.pixel.height = this.absoluteHeight;
-
-            // TODO
-            if (!this.hasImg && !hasHeight) {
-                this.absoluteHeight = 0.01;
-                pixel.height = 0.01;
-            }
+            this.computePositionX(parent);
+            this.computePositionY(parent);
+            this.computePadding();
+            this.updateAABB();
         },
 
         computeLayout: function(forceCompute) {
@@ -187,7 +148,7 @@ var CUI = CUI || {};
                 return;
             }
 
-            this.computeSelf(this.parent);
+            this.computeSelf();
             this.updateHolders();
 
             this._needToCompute = false;

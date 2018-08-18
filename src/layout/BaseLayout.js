@@ -58,7 +58,6 @@ var CUI = CUI || {};
                 resize = true;
             }
             if (resize) {
-                parent.updateAnchor();
                 if (!parent.hasLayoutX) {
                     parent.computePositionX(parent.parent);
                 }

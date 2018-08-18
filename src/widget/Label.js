@@ -50,7 +50,7 @@ var CUI = CUI || {};
             this.setTextInfo(this.textInfo);
 
             this.computeTextSize();
-            this.computeSelf(this.parent);
+            this.computeSelf();
 
             this.setDisabled(this.disabled);
 
@@ -175,7 +175,6 @@ var CUI = CUI || {};
             } else {
                 pixel.width = Utils.parseValue(this.width, pixel.realOuterWidth);
             }
-            pixel.anchorX = Utils.parseValue(this.anchorX, pixel.width) || 0;
             pixel.width = pixel.width || this.sizeHolder;
             pixel.innerWidth = pixel.width - pixel.paddingLeft - pixel.paddingRight;
             this.absoluteWidth = pixel.width;
@@ -202,7 +201,6 @@ var CUI = CUI || {};
             } else {
                 pixel.height = Utils.parseValue(this.height, pixel.realOuterHeight);
             }
-            pixel.anchorY = Utils.parseValue(this.anchorY, pixel.height) || 0;
             pixel.height = pixel.height || this.sizeHolder;
             pixel.innerHeight = pixel.height - pixel.paddingTop - pixel.paddingBottom;
             this.absoluteHeight = pixel.height;
@@ -253,8 +251,6 @@ var CUI = CUI || {};
                 this.flagHolder.updateSize();
                 this.flagHolder.updatePosition();
             }
-
-            this.updateAnchor();
 
             this._needToCompute = false;
         },

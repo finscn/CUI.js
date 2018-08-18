@@ -61,8 +61,8 @@ var CUI = CUI || {};
         },
 
         computeSelf: function(parent) {
-            // console.log('Component.computeSelf', this.id);
             parent = parent || {};
+
             this.pixel.realOuterWidth = this.width;
             this.pixel.realOuterHeight = this.height;
             this.setSize(this.width, this.height, true);
