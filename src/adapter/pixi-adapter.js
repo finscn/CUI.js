@@ -113,6 +113,7 @@ var CUI = CUI || {};
     // position (x, y)
     // scale
     // anchor
+    // zIndex
 
     var properties = [
 
@@ -135,6 +136,18 @@ var CUI = CUI || {};
             set: function(value) {
                 this._alpha = value;
                 this.displayObject && (this.displayObject.alpha = value);
+            }
+        },
+
+        {
+            key: 'zIndex',
+            get: function() {
+                return this._zIndex;
+            },
+            set: function(value) {
+                this._zIndex = value;
+                this.displayObject && (this.displayObject.zIndex = value);
+                this.parent && (this.parent._toSortChildren = true);
             }
         },
 
@@ -211,7 +224,6 @@ var CUI = CUI || {};
             set: function(value) {
                 this._absoluteHeight = value;
                 if (this.displayObject) {
-                    console.log('absoluteHeight', value);
                     !this.displayObject.ignoreResize && (this.displayObject.height = value);
                 }
             }

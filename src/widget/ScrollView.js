@@ -95,14 +95,14 @@ var CUI = CUI || {};
             }
 
             this.minScrollX = this.minScrollY = 0;
-            this.maxScrollX = Math.max(0, this.scrollWidth - this.absoluteWidth);
-            this.maxScrollY = Math.max(0, this.scrollHeight - this.absoluteHeight);
+            this.maxScrollX = Math.max(0, this.scrollWidth - this._absoluteWidth);
+            this.maxScrollY = Math.max(0, this.scrollHeight - this._absoluteHeight);
 
-            this.rateWidth = this.absoluteWidth / this.scrollWidth;
-            this.rateHeight = this.absoluteHeight / this.scrollHeight;
+            this.rateWidth = this._absoluteWidth / this.scrollWidth;
+            this.rateHeight = this._absoluteHeight / this.scrollHeight;
 
-            this.thumbHSize = (this.absoluteWidth - this.paddingLeft - this.paddingRight) * this.rateWidth >> 0;
-            this.thumbVSize = (this.absoluteHeight - this.paddingTop - this.paddingBottom) * this.rateHeight >> 0;
+            this.thumbHSize = (this._absoluteWidth - this.paddingLeft - this.paddingRight) * this.rateWidth >> 0;
+            this.thumbVSize = (this._absoluteHeight - this.paddingTop - this.paddingBottom) * this.rateHeight >> 0;
 
             this.thumbX = this.scrollX * this.rateWidth >> 0;
             this.thumbY = this.scrollY * this.rateHeight >> 0;

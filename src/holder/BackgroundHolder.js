@@ -5,12 +5,10 @@ var CUI = CUI || {};
 (function(exports) {
     var Class = exports.Class;
     var Utils = exports.Utils;
-    // var BaseHolder = exports.BaseHolder;
-    var ImageHolder = exports.ImageHolder;
+    var BaseHolder = exports.BaseHolder;
 
     var BackgroundHolder = Class.create({
-        // superclass: BaseHolder,
-        superclass: ImageHolder,
+        superclass: BaseHolder,
 
         initialize: function() {
             this.width = "100%";
@@ -18,13 +16,8 @@ var CUI = CUI || {};
 
             this.color = null;
             this.alpha = 1;
-        },
 
-        init: function() {
-            this.setParent(this.parent);
-            this.updateSize();
-            this.updatePosition();
-            this.initDisplayObject();
+            this.fillParent = true;
         },
 
         initDisplayObject: function() {
@@ -33,21 +26,6 @@ var CUI = CUI || {};
             if (this.parent) {
                 this.parent.addChildDisplayObject(this);
             }
-        },
-
-        updateSize: function() {
-            if (this.fillParent) {
-                this.pixel.width = this.parent._absoluteWidth;
-                this.pixel.height = this.parent._absoluteHeight;
-                this.absoluteWidth = this.pixel.width;
-                this.absoluteHeight = this.pixel.height;
-            }
-        },
-
-        updatePosition: function() {
-            var parent = this.parent;
-            this.absoluteX = parent._absoluteX + ((parent._absoluteWidth - this.pixel.width) >> 1) + this.ox + this.offsetX;
-            this.absoluteY = parent._absoluteY + ((parent._absoluteHeight - this.pixel.height) >> 1) + this.oy + this.offsetY;
         },
     });
 

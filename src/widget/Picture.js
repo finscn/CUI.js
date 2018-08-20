@@ -18,8 +18,9 @@ var CUI = CUI || {};
             this.disabled = false;
 
             // 如果不指定宽高 且 scaleImg = false, 大小由 imageHolder 的实际大小决定.
-
+            // TODO: 多种方式缩放
             this.scaleImg = true;
+            this.lockScaleRatio = true;
 
             this.crossOrigin = 'Anonymous';
         },
@@ -34,6 +35,7 @@ var CUI = CUI || {};
             this.imageHolder = new ImageHolder({
                 parent: this,
                 fillParent: this.scaleImg,
+                lockScaleRatio: this.lockScaleRatio,
                 width: this.scaleImg ? "100%" : "auto",
                 height: this.scaleImg ? "100%" : "auto",
                 alignH: "center",
@@ -43,8 +45,8 @@ var CUI = CUI || {};
             });
             this.imageHolder.init();
 
-            if (this.imageBorderInfo) {
-                this.setImageBorderInfo(this.imageBorderInfo);
+            if (this.borderImageInfo) {
+                this.setBorderImageInfo(this.borderImageInfo);
             }
 
             if (this.src) {
@@ -100,47 +102,34 @@ var CUI = CUI || {};
             this._needToCompute = true;
         },
 
-        setImageBorderInfo: function(info) {
+        setBorderImageInfo: function(info) {
             if (!info) {
-                this.imageBorderHolder = null;
+                this.borderImageHolder = null;
             } else {
                 if (info.borderImage) {
-                    this.imageBorderHolder = new CUI.BorderImageHolder(info);
+                    this.borderImageHolder = new CUI.BorderImageHolder(info);
                 } else {
-                    this.imageBorderHolder = new CUI.BackgroundHolder(info);
+                    this.borderImageHolder = new CUI.BackgroundHolder(info);
                 }
-                this.imageBorderHolder.setParent(this);
-                this.imageBorderHolder.fillParent = true;
-                this.imageBorderHolder.init();
-                this.imageBorderHolder.updateSize();
-                this.imageBorderHolder.updatePosition();
+                this.borderImageHolder.setParent(this);
+                this.borderImageHolder.fillParent = true;
+                this.borderImageHolder.init();
+                this.borderImageHolder.updateSize();
+                this.borderImageHolder.updatePosition();
             }
             this._needToCompute = true;
         },
 
-        computeSelf: function(parent) {
-            parent = parent || this.parent;
+        computAutoWidth: function() {
+            var width = this.imageHolder ? this.imageHolder._absoluteWidth : 0;
+            this.pixel.width = width;
+            this.absoluteWidth = width;
+        },
 
-            this.computeMargin(parent);
-            this.computeRealMargin(parent);
-
-            if (this.width === "auto" && this.imageHolder) {
-                this.pixel.width = this.imageHolder.absoluteWidth;
-                this.absoluteWidth = this.pixel.width;
-            } else {
-                this.computeWidth();
-            }
-            if (this.height === "auto" && this.imageHolder) {
-                this.pixel.height = this.imageHolder.absoluteHeight;
-                this.absoluteHeight = this.pixel.height;
-            } else {
-                this.computeHeight();
-            }
-
-            this.computePositionX(parent);
-            this.computePositionY(parent);
-            this.computePadding();
-            this.updateAABB();
+        computAutoHeight: function() {
+            var height = this.imageHolder ? this.imageHolder._absoluteHeight : 0;
+            this.pixel.height = height;
+            this.absoluteHeight = height;
         },
 
         computeLayout: function(forceCompute) {
@@ -155,19 +144,20 @@ var CUI = CUI || {};
         },
 
         updateHolders: function() {
-            this.imageHolder.pixel.width = this.absoluteWidth;
-            this.imageHolder.absoluteWidth = this.absoluteWidth;
-            this.imageHolder.pixel.height = this.absoluteHeight;
-            this.imageHolder.absoluteHeight = this.absoluteHeight;
-            // this.imageHolder.updateSize();
+            // TODO
+            // this.imageHolder.pixel.width = this._absoluteWidth;
+            // this.imageHolder.absoluteWidth = this._absoluteWidth;
+            // this.imageHolder.pixel.height = this._absoluteHeight;
+            // this.imageHolder.absoluteHeight = this._absoluteHeight;
+            this.imageHolder.updateSize();
             this.imageHolder.updatePosition();
             this.imageHolder.update();
 
 
-            if (this.imageBorderHolder) {
-                this.imageBorderHolder.updateSize();
-                this.imageBorderHolder.updatePosition();
-                this.imageBorderHolder.update();
+            if (this.borderImageHolder) {
+                this.borderImageHolder.updateSize();
+                this.borderImageHolder.updatePosition();
+                this.borderImageHolder.update();
             }
 
             if (this.borderHolder) {

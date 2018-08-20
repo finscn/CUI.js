@@ -34,12 +34,12 @@ var CUI = CUI || {};
             this.width = null;
             this.height = null;
 
+            this.alpha = 1;
+            this.tint = null;
+
             this.visible = true;
             this.zIndex = 0;
             this.index = 0;
-
-            // alpha不影响子元素
-            this.alpha = 1;
 
             // 缩放只适合用来做瞬间的、纯视觉上的动画效果, 它不会改变UI的响应区域和行为
             // 如果要真正改变UI的大小, 请通过修改UI(以及内部元素的)width/height来实现
@@ -71,8 +71,6 @@ var CUI = CUI || {};
 
             this.displayObject = null;
             this.transform = null;
-
-            this.tint = null;
 
             /////////////////////////////////////////////
             // 对象创建后, 以下属性不可更改
@@ -498,10 +496,10 @@ var CUI = CUI || {};
         },
 
         updateAABB: function() {
-            this.aabb[0] = this.absoluteX - this.extLeft;
-            this.aabb[1] = this.absoluteY - this.extTop;
-            this.aabb[2] = this.absoluteX + this.absoluteWidth + this.extRight;
-            this.aabb[3] = this.absoluteY + this.absoluteHeight + this.extBottom;
+            this.aabb[0] = this._absoluteX - this.extLeft;
+            this.aabb[1] = this._absoluteY - this.extTop;
+            this.aabb[2] = this._absoluteX + this._absoluteWidth + this.extRight;
+            this.aabb[3] = this._absoluteY + this._absoluteHeight + this.extBottom;
         },
 
         updateHolders: function() {
@@ -511,10 +509,22 @@ var CUI = CUI || {};
                 this.backgroundHolder.update();
             }
 
+            if (this.backgroundImageHolder) {
+                this.backgroundImageHolder.updateSize();
+                this.backgroundImageHolder.updatePosition();
+                this.backgroundImageHolder.update();
+            }
+
             if (this.borderHolder) {
                 this.borderHolder.updateSize();
                 this.borderHolder.updatePosition();
                 this.borderHolder.update();
+            }
+
+            if (this.borderImageHolder) {
+                this.borderImageHolder.updateSize();
+                this.borderImageHolder.updatePosition();
+                this.borderImageHolder.update();
             }
 
             this.holders.forEach(function(holder) {
@@ -529,8 +539,12 @@ var CUI = CUI || {};
         syncPosition: function() {
             var relativeObj = this.parent || this.root;
             var pixel = this.pixel;
-            this.absoluteX = pixel.relativeX + relativeObj.absoluteX;
-            this.absoluteY = pixel.relativeY + relativeObj.absoluteY;
+
+            pixel.x = pixel.relativeX + relativeObj.absoluteX;
+            this.absoluteX = pixel.x;
+
+            pixel.y = pixel.relativeY + relativeObj.absoluteY;
+            this.absoluteY = pixel.y;
 
             // this.computePositionX();
             // this.computePositionY();
@@ -733,8 +747,8 @@ var CUI = CUI || {};
         createCacheCanvas: function() {
             if (!this.cacheCanvas) {
                 var canvas = Component.getCanvasFromPool(this.id);
-                canvas.width = this.absoluteWidth + 4;
-                canvas.height = this.absoluteHeight + 4;
+                canvas.width = this._absoluteWidth + 4;
+                canvas.height = this._absoluteHeight + 4;
                 this.cacheCanvas = canvas;
             }
             var cacheContext = this.cacheCanvas.getContext("2d");
@@ -776,7 +790,6 @@ var CUI = CUI || {};
             parent = parent || this.parent;
             var parentPixel = parent.pixel;
             var pixel = this.pixel;
-            console.log(parentPixel.paddingLeft)
             pixel.realMarginLeft = Math.max(parentPixel.paddingLeft, pixel.marginLeft) || 0;
             pixel.realMarginTop = Math.max(parentPixel.paddingTop, pixel.marginTop) || 0;
             pixel.realMarginRight = Math.max(parentPixel.paddingRight, pixel.marginRight) || 0;
@@ -820,7 +833,14 @@ var CUI = CUI || {};
             return null;
         },
 
+        computAutoWidth: function() {
+            this.pixel.width = 0;
+        },
         computeWidth: function() {
+            if (this.width === "auto") {
+                this.computAutoWidth();
+                return;
+            }
             var pixel = this.pixel;
             var relativeWidth = pixel.realOuterWidth;
 
@@ -835,7 +855,15 @@ var CUI = CUI || {};
             this.absoluteWidth = pixel.width;
         },
 
+        computAutoHeight: function() {
+            this.pixel.height = 0;
+        },
         computeHeight: function() {
+            if (this.height === "auto") {
+                this.computAutoHeight();
+                return;
+            }
+
             var pixel = this.pixel;
             var relativeHeight = pixel.realOuterHeight;
 

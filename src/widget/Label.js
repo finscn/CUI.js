@@ -178,9 +178,10 @@ var CUI = CUI || {};
             pixel.width = pixel.width || this.sizeHolder;
             pixel.innerWidth = pixel.width - pixel.paddingLeft - pixel.paddingRight;
             this.absoluteWidth = pixel.width;
+
             if (bg && this.scaleBg) {
-                bg.pixel.width = this.absoluteWidth;
-                // bg.width = this.absoluteWidth;
+                bg.pixel.width = this._absoluteWidth;
+                bg.absoluteWidth = this._absoluteWidth;
             }
         },
 
@@ -206,8 +207,8 @@ var CUI = CUI || {};
             this.absoluteHeight = pixel.height;
 
             if (bg && this.scaleBg) {
-                bg.pixel.height = this.absoluteHeight;
-                // bg.height = this.absoluteHeight;
+                bg.pixel.height = this._absoluteHeight;
+                bg.absoluteHeight = this._absoluteHeight;
             }
         },
 

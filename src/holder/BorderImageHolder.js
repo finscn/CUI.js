@@ -31,11 +31,11 @@ var CUI = CUI || {};
 
         initDisplayObject: function(width, height) {
             var img = this.img;
-            var pixel = this.pixel;
-            var sx = pixel.sx || 0;
-            var sy = pixel.sy || 0;
-            var sw = pixel.sw || img.width;
-            var sh = pixel.sh || img.height;
+            var config = this.config;
+            var sx = config.sx || 0;
+            var sy = config.sy || 0;
+            var sw = config.sw || img.width;
+            var sh = config.sh || img.height;
 
             var T = this.T;
             var R = this.R;

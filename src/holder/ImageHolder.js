@@ -23,15 +23,10 @@ var CUI = CUI || {};
             this.sw = null;
             this.sh = null;
 
-            this.ox = 0;
-            this.oy = 0;
             this.absoluteWidth = null;
             this.absoluteHeight = null;
 
             this.alpha = 1;
-            this.scale = 1;
-            this.scaleX = 1;
-            this.scaleY = 1;
             this.flipX = false;
             this.flipY = false;
             this.rotation = 0;
@@ -49,21 +44,18 @@ var CUI = CUI || {};
             this.height = "auto";
             this.fillParent = true;
 
+            this.ratio = null;
+            this.lockScaleRatio = true;
+
             this.crossOrigin = 'anonymous';
 
             this.tint = null;
+
+            this.config = {};
         },
 
         init: function() {
-            if (this.scaleX === null) {
-                this.scaleX = this.scale;
-            }
-            if (this.scaleY === null) {
-                this.scaleY = this.scale;
-            }
-
             this.setParent(this.parent);
-
             this.initDisplayObject();
 
             if (this.src) {
@@ -71,8 +63,6 @@ var CUI = CUI || {};
             } else if (this.img) {
                 this.setImg(this.img);
             }
-
-            this.id = this.id || "image-holder-" + this.parent.id;
 
             this.updateSize();
             this.updatePosition();
@@ -174,30 +164,36 @@ var CUI = CUI || {};
                 h = sh;
             }
 
-            this.pixel.sx = sx;
-            this.pixel.sy = sy;
-            this.pixel.sw = sw;
-            this.pixel.sh = sh;
-            this.pixel.ox = ox;
-            this.pixel.oy = oy;
-            this.pixel.width = w;
-            this.pixel.height = h;
+            this.config.sx = sx;
+            this.config.sy = sy;
+            this.config.sw = sw;
+            this.config.sh = sh;
+            this.config.ox = ox;
+            this.config.oy = oy;
+            this.config.w = w;
+            this.config.h = h;
 
             this.updateDisplayObject();
 
-            this.ox = ox;
-            this.oy = oy;
+            this.pixel.width = w;
+            this.pixel.height = h;
             this.absoluteWidth = w;
             this.absoluteHeight = h;
+
+            this.ratio = w / h;
         },
+
+        // initDisplayObject: function(){
+
+        // },
 
         updateDisplayObject: function() {
             if (!this.img) {
                 // this.displayObject = null;
                 return;
             }
-            var pixel = this.pixel;
-            CUI.Utils.updateDisplayObject(this.displayObject, this.img, pixel.sx, pixel.sy, pixel.sw, pixel.sh);
+            var config = this.config;
+            CUI.Utils.updateDisplayObject(this.displayObject, this.img, config.sx, config.sy, config.sw, config.sh);
             this.displayObject.tint = this.tint === null ? 0xFFFFFF : this.tint;
         },
 
@@ -207,32 +203,6 @@ var CUI = CUI || {};
             // this.src = null;
         },
 
-        updateSize: function() {
-            // always updateSize ???
-            if (this.parent && this.fillParent) {
-                this.pixel.width = Utils.parseValue(this.width, this.parent._absoluteWidth, this.pixel.width) || 0;
-            } else {
-                this.pixel.width = Utils.parseValue(this.width, this.pixel.width, this.pixel.width) || 0
-            }
-            this.pixel.width = this.pixel.width * this.scaleX;
-            this.pixel.ox = this.ox;
-            this.absoluteWidth = this.pixel.width;
-
-            if (this.parent && this.fillParent) {
-                this.pixel.height = Utils.parseValue(this.height, this.parent._absoluteHeight, this.pixel.height) || 0;
-            } else {
-                this.pixel.height = Utils.parseValue(this.height, this.pixel.height, this.pixel.height) || 0
-            }
-            this.pixel.height = this.pixel.height * this.scaleY;
-            this.pixel.oy = this.oy;
-            this.absoluteHeight = this.pixel.height;
-        },
-
-        setScale: function(scale) {
-            this.scale = scale;
-            this.scaleX = scale;
-            this.scaleY = scale;
-        },
     });
 
 

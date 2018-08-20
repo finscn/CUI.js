@@ -34,6 +34,9 @@ var CUI = CUI || {};
             this.anchorY = 0;
 
             this.alpha = 1;
+            this.scale = 1;
+            this.rotation = 0;
+            this.tint = null;
 
             this.offsetX = 0;
             this.offsetY = 0;
@@ -45,15 +48,18 @@ var CUI = CUI || {};
             this.visible = true;
             this.fillParent = false;
 
+            this.ratio = null;
+            this.lockScaleRatio = true;
+
             this.parent = null;
             this._needToCompute = true;
         },
 
         init: function() {
-            // this.setParent(this.parent);
-            // this.initDisplayObject();
-            // this.updateSize();
-            // this.updatePosition();
+            this.setParent(this.parent);
+            this.updateSize();
+            this.updatePosition();
+            this.initDisplayObject();
         },
 
         initDisplayObject: function() {
@@ -80,6 +86,45 @@ var CUI = CUI || {};
         },
 
         updateSize: function() {
+            var parent = this.parent;
+
+            if (this.fillParent) {
+                var width = parent._absoluteWidth;
+                var height = parent._absoluteHeight;
+
+                if (this.ratio !== null && this.lockScaleRatio) {
+                    // debugger;
+                    var _r = width / height;
+                    if (_r >= this.ratio) {
+                        width = height * this.ratio;
+                    } else {
+                        height = width / this.ratio;
+                    }
+                }
+
+                this.pixel.width = width;
+                this.pixel.height = height;
+                this.absoluteWidth = width;
+                this.absoluteHeight = height;
+
+                this._sizeChanged = true;
+                return;
+            }
+
+            if (this.width === 'auto') {
+
+            } else {
+                this.pixel.width = Utils.parseValue(this.width, parent._absoluteWidth, this.pixel.width) || 0;
+            }
+            this.absoluteWidth = this.pixel.width;
+
+            if (this.height === 'auto') {
+
+            } else {
+                this.pixel.height = Utils.parseValue(this.height, parent._absoluteHeight, this.pixel.height) || 0;
+            }
+            this.absoluteHeight = this.pixel.height;
+
             this._sizeChanged = true;
         },
 
@@ -87,29 +132,47 @@ var CUI = CUI || {};
             var parent = this.parent;
 
             if (this.fillParent) {
-                this.absoluteX = this.pixel.x = parent._absoluteX;
-                this.absoluteY = this.pixel.y = parent._absoluteY;
+                var rx = this.offsetX;
+                var ry = this.offsetY;
+
+                if (this.ratio !== null && this.lockScaleRatio) {
+                    rx = (parent._absoluteWidth - this._absoluteWidth) / 2;
+                    ry = (parent._absoluteHeight - this._absoluteHeight) / 2;
+                }
+
+                this.pixel.relativeX = rx;
+                this.pixel.relativeY = ry;
+                this.absoluteX = this.pixel.x = parent._absoluteX + rx;
+                this.absoluteY = this.pixel.y = parent._absoluteY + ry;
+
                 this._positionChanged = true;
+
                 return;
             }
 
+            var x = 0;
             if (this.alignH === "center") {
-                this.absoluteX = parent._absoluteX + ((parent._absoluteWidth - this.pixel.width) >> 1);
+                x = (parent._absoluteWidth - this.pixel.width) >> 1;
             } else if (this.alignH === "right") {
-                this.absoluteX = parent._absoluteX + parent._absoluteWidth - parent.pixel.paddingRight - this.pixel.width;
+                x = parent._absoluteWidth - parent.pixel.paddingRight - this.pixel.width;
             } else {
-                this.absoluteX = parent._absoluteX + parent.pixel.paddingLeft;
+                x = parent.pixel.paddingLeft;
             }
-            this.absoluteX += this.offsetX + this.pixel.ox;
+            this.pixel.relativeX = x + this.offsetX;
+            this.pixel.x = parent._absoluteX + x;
+            this.absoluteX = this.pixel.x;
 
+            var y = 0;
             if (this.alignV === "middle" || this.alignV === "center") {
-                this.absoluteY = parent._absoluteY + ((parent._absoluteHeight - this.pixel.height) >> 1);
+                y = (parent._absoluteHeight - this.pixel.height) >> 1;
             } else if (this.alignV === "bottom") {
-                this.absoluteY = parent._absoluteY + parent._absoluteHeight - parent.pixel.paddingBottom - this.pixel.height;
+                y = parent._absoluteHeight - parent.pixel.paddingBottom - this.pixel.height;
             } else {
-                this.absoluteY = parent._absoluteY + parent.pixel.paddingTop;
+                y = parent.pixel.paddingTop;
             }
-            this.absoluteY += this.offsetY + this.pixel.oy;
+            this.pixel.relativeY = y + this.offsetY;
+            this.pixel.y = parent._absoluteY + y;
+            this.absoluteY = this.pixel.y;
 
             this._positionChanged = true;
         },

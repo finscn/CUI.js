@@ -47,12 +47,12 @@ var CUI = CUI || {};
 
         tryToResizeParent: function(parent, width, height, immediately) {
             var resize = false;
-            if (parent.width === "auto" && !parent._absoluteWidth) {
+            if (parent.width === "auto") {
                 parent.pixel.width = width;
                 parent.absoluteWidth = width;
                 resize = true;
             }
-            if (parent.height === "auto" && !parent._absoluteHeight) {
+            if (parent.height === "auto") {
                 parent.pixel.height = height;
                 parent.absoluteHeight = height;
                 resize = true;

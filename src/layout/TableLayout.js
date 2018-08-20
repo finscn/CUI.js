@@ -141,12 +141,21 @@ var CUI = CUI || {};
 
             parentCell.pixel.x = parent.absoluteX;
             parentCell.pixel.y = parent.absoluteY;
-            parentCell.absoluteX = parentCell.pixel.x;
-            parentCell.absoluteY = parentCell.pixel.y;
+
+            parentCell._absoluteX = parentCell.pixel.x;
+            parentCell.absoluteX = parentCell._absoluteX;
+
+            parentCell._absoluteY = parentCell.pixel.y;
+            parentCell.absoluteY = parentCell._absoluteY;
+
             parentCell.pixel.width = child.colspan * (w + cellSpaceH) - cellSpaceH;
             parentCell.pixel.height = child.rowspan * (h + cellSpaceV) - cellSpaceV;
-            parentCell.absoluteWidth = parentCell.pixel.width;
-            parentCell.absoluteHeight = parentCell.pixel.height;
+
+            parentCell._absoluteWidth = parentCell.pixel.width;
+            parentCell.absoluteWidth = parentCell._absoluteWidth;
+
+            parentCell._absoluteHeight = parentCell.pixel.height;
+            parentCell.absoluteHeight = parentCell._absoluteHeight;
 
             child.computeMargin(parentCell);
             child.computeRealMargin(parentCell);
