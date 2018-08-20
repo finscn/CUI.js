@@ -101,9 +101,14 @@ var CUI = CUI || {};
     }
 
     for (var p in _utils) {
-        console.log(p)
         Utils[p] = _utils[p];
     }
+
+    ///////////////////////////////////////////
+    ///////////////////////////////////////////
+    ///////////////////////////////////////////
+    ///////////////////////////////////////////
+
 
     // visible
     // alpha
@@ -115,7 +120,7 @@ var CUI = CUI || {};
     // anchor
     // zIndex
 
-    var properties = [
+    var propertiesCommon = [
 
         {
             key: 'visible',
@@ -136,18 +141,6 @@ var CUI = CUI || {};
             set: function(value) {
                 this._alpha = value;
                 this.displayObject && (this.displayObject.alpha = value);
-            }
-        },
-
-        {
-            key: 'zIndex',
-            get: function() {
-                return this._zIndex;
-            },
-            set: function(value) {
-                this._zIndex = value;
-                this.displayObject && (this.displayObject.zIndex = value);
-                this.parent && (this.parent._toSortChildren = true);
             }
         },
 
@@ -175,6 +168,7 @@ var CUI = CUI || {};
             }
         },
 
+
         {
             key: 'absoluteX',
             get: function() {
@@ -183,7 +177,8 @@ var CUI = CUI || {};
             set: function(value) {
                 this._absoluteX = value;
                 if (this.displayObject) {
-                    this.displayObject.position.x = this.pixel ? this.pixel.relativeX : value;
+                    var x = this.pixel ? this.pixel.relativeX : value;
+                    this.displayObject.position.x = x + this._pivotX;
                 }
             }
         },
@@ -197,7 +192,8 @@ var CUI = CUI || {};
                 this._absoluteY = value;
                 if (this.displayObject) {
                     // this.updateDisplayObjectX(value);
-                    this.displayObject.position.y = this.pixel ? this.pixel.relativeY : value;
+                    var y = this.pixel ? this.pixel.relativeY : value;
+                    this.displayObject.position.y = y + this._pivotY;
                 }
             }
         },
@@ -209,6 +205,8 @@ var CUI = CUI || {};
             },
             set: function(value) {
                 this._absoluteWidth = value;
+                this._pivotX = this._absoluteWidth * this._anchorX;
+
                 if (this.displayObject) {
                     // console.log('absoluteWidth', value);
                     !this.displayObject.ignoreResize && (this.displayObject.width = value);
@@ -223,6 +221,7 @@ var CUI = CUI || {};
             },
             set: function(value) {
                 this._absoluteHeight = value;
+                this._pivotY = this._absoluteHeight * this._anchorY;
                 if (this.displayObject) {
                     !this.displayObject.ignoreResize && (this.displayObject.height = value);
                 }
@@ -236,6 +235,8 @@ var CUI = CUI || {};
             },
             set: function(value) {
                 this._scale = value;
+                this._scaleX = value;
+                this._scaleY = value;
                 this.displayObject && (this.displayObject.scale.set(value, value));
             }
         },
@@ -246,9 +247,6 @@ var CUI = CUI || {};
                 return this._scaleX;
             },
             set: function(value) {
-                if (value === null) {
-                    debugger
-                }
                 this._scaleX = value;
                 this.displayObject && (this.displayObject.scale.x = value);
             }
@@ -264,6 +262,29 @@ var CUI = CUI || {};
                 this.displayObject && (this.displayObject.scale.y = value);
             }
         },
+    ];
+
+
+    //////////////////////////////////////////////
+    //////////////////////////////////////////////
+    //////////////////////////////////////////////
+    //////////////////////////////////////////////
+    //////////////////////////////////////////////
+
+
+    var propertiesComponent = [
+
+        {
+            key: 'zIndex',
+            get: function() {
+                return this._zIndex;
+            },
+            set: function(value) {
+                this._zIndex = value;
+                this.displayObject && (this.displayObject.zIndex = value);
+                this.parent && (this.parent._toSortChildren = true);
+            }
+        },
 
         {
             key: 'anchor',
@@ -272,7 +293,13 @@ var CUI = CUI || {};
             },
             set: function(value) {
                 this._anchor = value;
-                this.displayObject && (this.displayObject.anchor.set(value, value));
+
+                this._anchorX = value;
+                this._pivotX = this._absoluteWidth * this._anchorX;
+
+                this._anchorY = value;
+                this._pivotY = this._absoluteHeight * this._anchorY;
+                this.displayObject && (this.displayObject.pivot.set(this._pivotX, this._pivotY));
             }
         },
 
@@ -283,7 +310,9 @@ var CUI = CUI || {};
             },
             set: function(value) {
                 this._anchorX = value;
-                this.displayObject && (this.displayObject.anchor.x = value);
+                this._pivotX = this._absoluteWidth * this._anchorX;
+
+                this.displayObject && (this.displayObject.pivot.x = value);
             }
         },
 
@@ -294,13 +323,54 @@ var CUI = CUI || {};
             },
             set: function(value) {
                 this._anchorY = value;
-                this.displayObject && (this.displayObject.anchor.y = value);
+                this._pivotY = this._absoluteHeight * this._anchorY;
+                this.displayObject && (this.displayObject.pivot.y = value);
+            }
+        },
+
+        {
+            key: 'offsetX',
+            get: function() {
+                return this._offsetX;
+            },
+            set: function(value) {
+                this._offsetX = value;
+                this.pixel.relativeX = this.pixel.baseX + this._offsetX;
+                this.pixel.x = this.pixel.relativeX + (this.parent ? this.parent._absoluteX : 0);
+                this.absoluteX = this.pixel.x;
+            }
+        },
+
+        {
+            key: 'offsetY',
+            get: function() {
+                return this._offsetY;
+            },
+            set: function(value) {
+                this._offsetY = value;
+                this.pixel.relativeY = this.pixel.baseY + this._offsetY;
+                this.pixel.y = this.pixel.relativeY + (this.parent ? this.parent._absoluteY : 0);
+                this.absoluteY = this.pixel.y;
             }
         },
     ];
 
-    Class.defineProperties(Component.prototype, properties);
-    Class.defineProperties(BaseHolder.prototype, properties);
+    Class.defineProperties(Component.prototype, propertiesCommon);
+    Class.defineProperties(Component.prototype, propertiesComponent);
+
+
+    ///////////////////////////////////////////////////////////
+    ///////////////////////////////////////////////////////////
+    ///////////////////////////////////////////////////////////
+    ///////////////////////////////////////////////////////////
+    ///////////////////////////////////////////////////////////
+    ///////////////////////////////////////////////////////////
+
+
+    var propertiesHolder = [];
+
+    Class.defineProperties(BaseHolder.prototype, propertiesCommon);
+    Class.defineProperties(BaseHolder.prototype, propertiesHolder);
 
     ///////////////////////////////////////////////////////////
     ///////////////////////////////////////////////////////////
@@ -340,6 +410,7 @@ var CUI = CUI || {};
         var displayObject = CUI.Utils.createContainer();
         displayObject.ignoreResize = true;
         this.displayObject = displayObject;
+        this.displayObject.pivot.set(this._pivotX, this._pivotY);
         if (this.parent) {
             this.parent.addChildDisplayObject(this);
         }

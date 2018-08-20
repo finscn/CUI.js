@@ -101,15 +101,17 @@ var CUI = CUI || {};
             }
 
             this.parentCell = {
-                absoluteX: 0,
-                absoluteY: 0,
-                absoluteWidth: 0,
-                absoluteHeight: 0,
+                _absoluteX: 0,
+                _absoluteY: 0,
+                _absoluteWidth: 0,
+                _absoluteHeight: 0,
                 pixel: {
                     x: 0,
                     y: 0,
                     width: 0,
                     height: 0,
+                    baseX: 0,
+                    baseY: 0,
                     relativeX: 0,
                     relativeY: 0,
                     paddingLeft: 0,

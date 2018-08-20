@@ -60,6 +60,20 @@ var CUI = CUI || {};
             }
         },
 
+        computeLayout: function(forceCompute) {
+            if (this._needToCompute || forceCompute) {
+                this._needToCompute = false;
+
+                this.computeSelf();
+
+                if (this.composite) {
+                    this.layout.compute(this);
+                }
+
+                this.updateHolders();
+            }
+        },
+
         computeSelf: function(parent) {
             parent = parent || {};
 
@@ -81,7 +95,6 @@ var CUI = CUI || {};
                 this.pixel.width = width;
                 this.absoluteWidth = width;
                 this.aabb[2] = width;
-                this._needToCompute = true;
             }
             if (force || this.height !== height) {
                 this.viewportHeight = height;
@@ -89,9 +102,7 @@ var CUI = CUI || {};
                 this.pixel.height = height;
                 this.absoluteHeight = height;
                 this.aabb[3] = height;
-                this._needToCompute = true;
             }
-            console.log(this.pixel)
         },
 
         checkTouch: function(type, args) {

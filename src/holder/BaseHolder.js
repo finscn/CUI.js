@@ -22,16 +22,28 @@ var CUI = CUI || {};
                 y: 0,
                 width: 0,
                 height: 0,
+                baseX: 0,
+                baseY: 0,
                 relativeX: 0,
                 relativeY: 0,
             };
+
+            this._absoluteWidth = 0;
+            this._absoluteHeight = 0;
+            this._pivotX = 0;
+            this._pivotY = 0;
+            this._anchorX = 0;
+            this._anchorY = 0;
+
+            this.anchor = 0;
+            this.anchorX = 0;
+            this.anchorY = 0;
 
             this.absoluteX = 0;
             this.absoluteY = 0;
             this.width = null;
             this.height = null;
-            this.anchorX = 0;
-            this.anchorY = 0;
+
 
             this.alpha = 1;
             this.scale = 1;
@@ -73,16 +85,6 @@ var CUI = CUI || {};
             this.parent = parent;
             this.root = parent ? parent.root : null;
             this._needToCompute = true;
-        },
-
-        setAnchor: function(x, y) {
-            this.anchorX = x;
-            this.anchorY = y;
-        },
-
-        setOffset: function(x, y) {
-            this.offsetX = x;
-            this.offsetY = y;
         },
 
         updateSize: function() {

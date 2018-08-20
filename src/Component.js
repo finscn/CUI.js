@@ -20,6 +20,36 @@ var CUI = CUI || {};
             this.id = null;
             this.lazyInit = false;
 
+            // 以像素为单位的定位和大小, 单位:像素
+            this.pixel = {
+                x: 0,
+                y: 0,
+                width: 0,
+                height: 0,
+                baseX: 0,
+                baseY: 0,
+                relativeX: 0,
+                relativeY: 0,
+
+                paddingLeft: 0,
+                paddingTop: 0,
+                paddingRight: 0,
+                paddingBottom: 0,
+
+                marginLeft: 0,
+                marginTop: 0,
+                marginRight: 0,
+                marginBottom: 0,
+
+                realMarginLeft: 0,
+                realMarginTop: 0,
+                realMarginRight: 0,
+                realMarginBottom: 0,
+
+                realOuterWidth: 0,
+                realOuterHeight: 0,
+            };
+
             /////////////////////////////////////////////
             // 对象创建后, 以下属性可更改
 
@@ -47,14 +77,20 @@ var CUI = CUI || {};
             this.scaleX = 1;
             this.scaleY = 1;
 
-            this.offsetX = 0;
-            this.offsetY = 0;
+            this.rotation = 0;
 
-            // 缩放时才需要
+            this._absoluteWidth = 0;
+            this._absoluteHeight = 0;
+            this._pivotX = 0;
+            this._pivotY = 0;
+
+            // 缩放/旋转 时才需要
+            this.anchor = 0.5;
             this.anchorX = 0.5;
             this.anchorY = 0.5;
 
-            this.rotation = 0;
+            this.offsetX = 0;
+            this.offsetY = 0;
 
             this.extLeft = 0;
             this.extRight = 0;
@@ -106,9 +142,10 @@ var CUI = CUI || {};
             this.backgroundColor = null; //"rgba(200,220,255,1)";
             this.backgroundAlpha = 1;
             this.backgroundImage = null;
+            this.backgroundImageAlpha = 1;
             this.backgroundInfo = null;
 
-            this.scaleBg = true;
+            this.scaleBgImg = true;
 
             // this.borderColor = "rgba(30,50,80,1)";
             this.borderColor = null;
@@ -120,33 +157,6 @@ var CUI = CUI || {};
             ////////////////////////////////////////
             // 以下属性为内部属性, 用户通常不需要关心
 
-            // 以像素为单位的定位和大小, 单位:像素
-            this.pixel = {
-                x: 0,
-                y: 0,
-                width: 0,
-                height: 0,
-                relativeX: 0,
-                relativeY: 0,
-
-                paddingLeft: 0,
-                paddingTop: 0,
-                paddingRight: 0,
-                paddingBottom: 0,
-
-                marginLeft: 0,
-                marginTop: 0,
-                marginRight: 0,
-                marginBottom: 0,
-
-                realMarginLeft: 0,
-                realMarginTop: 0,
-                realMarginRight: 0,
-                realMarginBottom: 0,
-
-                realOuterWidth: 0,
-                realOuterHeight: 0,
-            };
 
             // 绝对定位和大小, 单位:像素
             this.absoluteX = 0;
@@ -207,8 +217,12 @@ var CUI = CUI || {};
 
             this.computeSelf();
             this.initDisplayObject();
-            this.initBackground();
+
+            this.initBackgroundColor();
             this.initBorder();
+            this.initBorderImage();
+            this.backgroundImage = this.backgroundImage || this.bgImg;
+            this.initBackgroundImage();
 
             // TODO
             // this._afterInit();
@@ -229,68 +243,65 @@ var CUI = CUI || {};
             this.disabled = disabled;
         },
 
-        initBackground: function(reinit) {
-            if (!this.backgroundHolder || reinit) {
-                this.backgroundInfo = this.backgroundInfo || this.bgInfo;
-                this.backgroundImage = this.backgroundImage || this.backgroundImg || this.bgImg;
-                if (this.borderImageInfo) {
-                    this.setBorderImageInfo(this.borderImageInfo);
-                } else if (this.backgroundInfo) {
-                    this.setBackgroundInfo(this.backgroundInfo);
-                } else if (this.backgroundImage) {
-                    this.setBackgroundImage(this.backgroundImage);
-                } else if (this.backgroundColor !== null) {
-                    this.setBackgroundInfo({
-                        color: this.backgroundColor,
-                        alpha: this.backgroundAlpha,
-                    });
-                }
+        initBackgroundColor: function() {
+            if (this.backgroundColor === null) {
+                this.backgroundHolder = null;
+                return;
             }
+            var holder = new CUI.BackgroundHolder({
+                color: this.backgroundColor,
+                alpha: this.backgroundAlpha,
+                fillParent: true,
+            });
+            holder.setParent(this);
+            holder.init();
+            this.backgroundHolder = holder;
+            this._needToCompute = true;
         },
 
         initBorder: function() {
-            if (this.borderWidth > 0 && this.borderColor !== null) {
-                this.borderHolder = new CUI.BorderHolder({
-                    alpha: this.borderAlpha,
-                    lineWidth: this.borderWidth,
-                    color: this.borderColor,
-                });
-                this.borderHolder.setParent(this);
-                this.borderHolder.init();
+            if (this.borderColor === null || this.borderWidth <= 0) {
+                this.borderHolder = null;
+                return;
             }
-        },
-
-
-        setBackgroundInfo: function(info) {
-            var holder = null;
-            if (info) {
-                holder = new CUI.BackgroundHolder(info);
-            }
-            this.setBackgroundHolder(holder);
-        },
-
-        setBorderImageInfo: function(info) {
-            var holder = info ? new CUI.BorderImageHolder(info) : null;
-            this.scaleBg = true;
-            this.setBackgroundHolder(holder);
-        },
-
-        setBackgroundImage: function(img) {
-            this.setBackgroundInfo(!img ? null : {
-                img: img
+            var holder = new CUI.BorderHolder({
+                alpha: this.borderAlpha,
+                lineWidth: this.borderWidth,
+                color: this.borderColor,
             });
+            holder.setParent(this);
+            holder.init();
+            this.borderHolder = holder;
+            this._needToCompute = true;
         },
 
-        setBackgroundHolder: function(holder) {
-            this.backgroundHolder = holder;
-            if (holder) {
-                holder.color = Utils.getExistValue(holder.color, this.backgroundColor);
-                holder.alpha = Utils.getExistValue(holder.alpha, this.backgroundAlpha);
-                holder.fillParent = this.scaleBg;
-
-                holder.setParent(this);
-                holder.init();
+        initBorderImage: function(info) {
+            var info = this.borderImageInfo;
+            if (!info) {
+                this.borderImageHolder = null;
+                return;
             }
+            var holder = new CUI.BorderImageHolder(info);
+            holder.setParent(this);
+            holder.init();
+            this.borderImageHolder = holder;
+            this._needToCompute = true;
+        },
+
+        initBackgroundImage: function() {
+            if (!this.backgroundImage) {
+                this.backgroundImageHolder = null;
+                return;
+            }
+            var holder = new CUI.ImageHolder({
+                img: this.backgroundImage,
+                alpha: this.backgroundImageAlpha,
+                fillParent: this.scaleBgImg,
+                lockScaleRatio: false,
+            });
+            holder.setParent(this);
+            holder.init();
+            this.backgroundImageHolder = holder;
             this._needToCompute = true;
         },
 
@@ -490,11 +501,6 @@ var CUI = CUI || {};
             }
         },
 
-        setAnchor: function(x, y) {
-            this.anchorX = x;
-            this.anchorY = y;
-        },
-
         updateAABB: function() {
             this.aabb[0] = this._absoluteX - this.extLeft;
             this.aabb[1] = this._absoluteY - this.extTop;
@@ -509,12 +515,6 @@ var CUI = CUI || {};
                 this.backgroundHolder.update();
             }
 
-            if (this.backgroundImageHolder) {
-                this.backgroundImageHolder.updateSize();
-                this.backgroundImageHolder.updatePosition();
-                this.backgroundImageHolder.update();
-            }
-
             if (this.borderHolder) {
                 this.borderHolder.updateSize();
                 this.borderHolder.updatePosition();
@@ -525,6 +525,12 @@ var CUI = CUI || {};
                 this.borderImageHolder.updateSize();
                 this.borderImageHolder.updatePosition();
                 this.borderImageHolder.update();
+            }
+
+            if (this.backgroundImageHolder) {
+                this.backgroundImageHolder.updateSize();
+                this.backgroundImageHolder.updatePosition();
+                this.backgroundImageHolder.update();
             }
 
             this.holders.forEach(function(holder) {
@@ -837,11 +843,12 @@ var CUI = CUI || {};
             this.pixel.width = 0;
         },
         computeWidth: function() {
+            var pixel = this.pixel;
             if (this.width === "auto") {
                 this.computAutoWidth();
+                this.absoluteWidth = pixel.width;
                 return;
             }
-            var pixel = this.pixel;
             var relativeWidth = pixel.realOuterWidth;
 
             var fillWidth = this.getFillWidth(relativeWidth);
@@ -859,12 +866,14 @@ var CUI = CUI || {};
             this.pixel.height = 0;
         },
         computeHeight: function() {
+            var pixel = this.pixel;
+
             if (this.height === "auto") {
                 this.computAutoHeight();
+                this.absoluteHeight = pixel.height;
                 return;
             }
 
-            var pixel = this.pixel;
             var relativeHeight = pixel.realOuterHeight;
 
             var fillHeight = this.getFillHeight(relativeHeight);
@@ -895,10 +904,13 @@ var CUI = CUI || {};
             } else {
                 x = pixel.left || 0;
             }
-            pixel.relativeX = x + pixel.realMarginLeft;
+            pixel.baseX = x + pixel.realMarginLeft;
+
+            pixel.relativeX = pixel.baseX + this._offsetX;
             pixel.x = pixel.relativeX + (parent ? parent._absoluteX : 0);
             this.absoluteX = pixel.x;
         },
+
 
         computePositionY: function(parent) {
             // parent.pixel.innerWidth/innerHeight ( size - Math.max(padding, margin) );

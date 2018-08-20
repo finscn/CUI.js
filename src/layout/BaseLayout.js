@@ -15,6 +15,8 @@ var CUI = CUI || {};
                 y: 0,
                 width: 0,
                 height: 0,
+                baseX: 0,
+                baseY: 0,
                 relativeX: 0,
                 relativeY: 0,
             };

@@ -102,24 +102,6 @@ var CUI = CUI || {};
             this._needToCompute = true;
         },
 
-        setBorderImageInfo: function(info) {
-            if (!info) {
-                this.borderImageHolder = null;
-            } else {
-                if (info.borderImage) {
-                    this.borderImageHolder = new CUI.BorderImageHolder(info);
-                } else {
-                    this.borderImageHolder = new CUI.BackgroundHolder(info);
-                }
-                this.borderImageHolder.setParent(this);
-                this.borderImageHolder.fillParent = true;
-                this.borderImageHolder.init();
-                this.borderImageHolder.updateSize();
-                this.borderImageHolder.updatePosition();
-            }
-            this._needToCompute = true;
-        },
-
         computAutoWidth: function() {
             var width = this.imageHolder ? this.imageHolder._absoluteWidth : 0;
             this.pixel.width = width;

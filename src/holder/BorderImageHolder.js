@@ -24,12 +24,24 @@ var CUI = CUI || {};
             this.B = null;
             this.L = null;
 
-            this.fill = true;
-
             this.useCache = false;
         },
 
-        initDisplayObject: function(width, height) {
+        init: function() {
+            this.config = {
+                sx: this.sx,
+                sy: this.sy,
+                sw: this.sw,
+                sh: this.sh,
+            };
+
+            this.setParent(this.parent);
+            this.initDisplayObject();
+            this.updateSize();
+            this.updatePosition();
+        },
+
+        initDisplayObject: function() {
             var img = this.img;
             var config = this.config;
             var sx = config.sx || 0;
@@ -45,6 +57,10 @@ var CUI = CUI || {};
             this.displayObject = CUI.Utils.createNineSlicePlane(img, sx, sy, sw, sh, T, R, B, L);
             this.displayObject.width = sw;
             this.displayObject.height = sh;
+
+            if (this.parent) {
+                this.parent.addChildDisplayObject(this);
+            }
         },
     });
 
