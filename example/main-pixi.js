@@ -46,9 +46,9 @@ function update(timeStep, now) {
 
     var panel = rootUI.children[0];
     if (panel) {
-        panel.scale = 1.0 + Math.sin(now / 600) * 0.1;
-        panel.rotation += timeStep / 1000;
-        panel.offsetX = Math.sin(now / 600) * 110;
+        // panel.scale = 1.0 + Math.sin(now / 600) * 0.1;
+        // panel.rotation += timeStep / 1000;
+        // panel.offsetX = Math.sin(now / 600) * 110;
     }
     rootUI.update(timeStep, now);
 

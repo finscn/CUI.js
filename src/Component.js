@@ -929,7 +929,9 @@ var CUI = CUI || {};
             } else {
                 y = pixel.top || 0;
             }
-            pixel.relativeY = y + pixel.realMarginTop;
+            pixel.baseY = y + pixel.realMarginTop;
+
+            pixel.relativeY = pixel.baseY + this._offsetY;
             pixel.y = pixel.relativeY + (parent ? parent._absoluteY : 0);
             this.absoluteY = pixel.y;
         },
