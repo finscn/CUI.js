@@ -26,11 +26,6 @@ var CUI = CUI || {};
             this.visible = true;
             this.disabled = false;
 
-            // 不指定宽高, 大小由 backgroundHolder 的实际大小决定
-            this.width = null;
-            this.height = null;
-            this.scaleBg = false;
-
             this.vertical = false;
             this.inverted = false;
 
@@ -45,10 +40,6 @@ var CUI = CUI || {};
 
             this.handle = null;
             this.track = null;
-
-            // this.backgroundColor = "rgba(50,50,50,0.5)";
-            // this.borderColor = "rgba(50,50,50,1)";
-            // this.valueColor = "rgba(230,60,60,1)";
         },
 
         afterInit: function() {

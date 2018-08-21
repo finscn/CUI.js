@@ -61,12 +61,14 @@ var distPath = './dist';
 var jsFileList = [
     "Class.js",
     "Utils.js",
+    "Core.js",
+
     "Composite.js",
     "EventDispatcher.js",
     "TouchTarget.js",
+    "Font.js",
     "ButtonComponent.js",
     "Slider.js",
-    "Font.js",
 
     "layout/BaseLayout.js",
     "layout/VBoxLayout.js",
@@ -75,11 +77,9 @@ var jsFileList = [
     "layout/Layout.js",
 
     "Component.js",
-    "holder/BaseHolder.js",
-    "adapter/pixi-adapter.js",
-
     "Root.js",
 
+    "holder/BaseHolder.js",
     "holder/TextHolder.js",
     "holder/ImageHolder.js",
     "holder/BackgroundHolder.js",
@@ -87,13 +87,18 @@ var jsFileList = [
     "holder/BorderImageHolder.js",
 
     "widget/Blank.js",
-    "widget/Page.js",
     "widget/Panel.js",
     "widget/Label.js",
     "widget/Button.js",
     "widget/Picture.js",
     "widget/ScrollView.js",
+    "widget/ProgressBar.js",
+
+    "renderer/DisplayObject.js",
+    "renderer/CanvasRenderer.js",
+    "renderer/PIXIRenderer.js",
 ];
+
 jsFileList = jsFileList.map(function(value) {
     return srcPath + '/' + value;
 });

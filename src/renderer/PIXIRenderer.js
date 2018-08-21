@@ -59,9 +59,25 @@ var CUI = CUI || {};
             return sprite;
         },
 
-        updateSprite: function(sprite, image, sx, sy, sw, sh) {
-            var texture = this._createTexture(image, sx, sy, sw, sh);
-            sprite.texture = texture;
+        updateSprite: function(sprite, sx, sy, sw, sh, image) {
+            var texture;
+            if (image) {
+                texture = this._createTexture(image, sx, sy, sw, sh);
+                sprite.texture = texture;
+                return;
+            }
+
+            texture = sprite._texture;
+            var frame = texture._frame;
+
+            frame.x = sx;
+            frame.y = sy;
+            frame.width = sw;
+            frame.height = sh;
+            texture._updateUvs();
+
+            sprite._onTextureUpdate();
+            texture.baseTexture.emit('update', texture.baseTexture);
         },
 
         createRect: function(width, height, backgroundColor, backgroundAlpha, borderWidth, borderColor, borderAlpha) {

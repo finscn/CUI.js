@@ -137,6 +137,10 @@ var CUI = CUI || {};
 
             var info = displayObject.rectInfo;
 
+            if (info.width <= 0 || info.height <= 0) {
+                return;
+            }
+
             x += info.x;
             y += info.y;
 
@@ -165,7 +169,9 @@ var CUI = CUI || {};
             var w = displayObject.width;
             var h = displayObject.height;
 
-            ctx.drawImage(info.img, info.sx, info.sy, info.sw, info.sh, x, y, w, h);
+            if (w > 0 && h > 0) {
+                ctx.drawImage(info.img, info.sx, info.sy, info.sw, info.sh, x, y, w, h);
+            }
         },
 
         drawBorderImage: function(displayObject, x, y) {
@@ -199,28 +205,34 @@ var CUI = CUI || {};
             var CH = h - T - B;
 
             // center-
-            ctx.drawImage(img, sx, sy + T, L, bh,
-                x, y + T, L, CH);
-            ctx.drawImage(img, sx + L, sy + T, bw, bh,
-                x + L, y + T, CW, CH);
-            ctx.drawImage(img, sx + sw - R, sy + T, R, bh,
-                x + w - R, y + T, R, CH);
+            if (CH > 0) {
+                L > 0 && ctx.drawImage(img, sx, sy + T, L, bh,
+                    x, y + T, L, CH);
+                CW > 0 && ctx.drawImage(img, sx + L, sy + T, bw, bh,
+                    x + L, y + T, CW, CH);
+                R > 0 && ctx.drawImage(img, sx + sw - R, sy + T, R, bh,
+                    x + w - R, y + T, R, CH);
+            }
 
             // top-
-            ctx.drawImage(img, sx, sy, L, T,
-                x, y, L, T);
-            ctx.drawImage(img, sx + L, sy, bw, T,
-                x + L, y, CW, T);
-            ctx.drawImage(img, sx + sw - R, sy, R, T,
-                x + w - R, y, R, T);
+            if (T > 0) {
+                L > 0 && ctx.drawImage(img, sx, sy, L, T,
+                    x, y, L, T);
+                CW > 0 && ctx.drawImage(img, sx + L, sy, bw, T,
+                    x + L, y, CW, T);
+                R > 0 && ctx.drawImage(img, sx + sw - R, sy, R, T,
+                    x + w - R, y, R, T);
+            }
 
             // bottom-
-            ctx.drawImage(img, sx, sy + sh - B, L, B,
-                x, y + h - B, L, B);
-            ctx.drawImage(img, sx + L, sy + sh - B, bw, B,
-                x + L, y + h - B, CW, B);
-            ctx.drawImage(img, sx + sw - R, sy + sh - B, R, B,
-                x + w - R, y + h - B, R, B);
+            if (B > 0) {
+                L > 0 && ctx.drawImage(img, sx, sy + sh - B, L, B,
+                    x, y + h - B, L, B);
+                CW > 0 && ctx.drawImage(img, sx + L, sy + sh - B, bw, B,
+                    x + L, y + h - B, CW, B);
+                R > 0 && ctx.drawImage(img, sx + sw - R, sy + sh - B, R, B,
+                    x + w - R, y + h - B, R, B);
+            }
         },
 
 
@@ -265,14 +277,14 @@ var CUI = CUI || {};
             return sprite;
         },
 
-        updateSprite: function(sprite, image, sx, sy, sw, sh) {
-            sprite.imageInfo = {
-                img: image,
-                sx: sx || 0,
-                sy: sy || 0,
-                sw: sw || (image ? image.width : 0),
-                sh: sh || (image ? image.height : 0),
-            };
+        updateSprite: function(sprite, sx, sy, sw, sh, image) {
+            var info = sprite.imageInfo || {};
+            info.img = image || info.img;
+            info.sx = sx || 0;
+            info.sy = sy || 0;
+            info.sw = sw || sw === 0 ? sw : (image ? image.width : 0);
+            info.sh = sh || sh === 0 ? sh : (image ? image.height : 0);
+            sprite.imageInfo = info;
         },
 
         createRect: function(width, height, backgroundColor, backgroundAlpha, borderWidth, borderColor, borderAlpha) {

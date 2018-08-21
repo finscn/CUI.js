@@ -198,7 +198,7 @@ var CUI = CUI || {};
                 return;
             }
             var config = this.config;
-            this.parent.root.renderer.updateSprite(this.displayObject, this.img, config.sx, config.sy, config.sw, config.sh);
+            this.parent.root.renderer.updateSprite(this.displayObject, config.sx, config.sy, config.sw, config.sh, this.img);
             this.displayObject.tint = this.tint === null ? 0xFFFFFF : this.tint;
         },
 

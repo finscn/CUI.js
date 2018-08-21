@@ -81,6 +81,7 @@ var CUI = CUI || {};
             holder.parent = this;
             holder.init();
             this.holders.push(holder);
+            return holder;
         },
 
         setIconInfo: function(iconInfo) {
