@@ -6,6 +6,7 @@ var CUI = CUI || {};
 
     var Class = exports.Class;
     var Utils = exports.Utils;
+    var Component = exports.Component;
     var Label = exports.Label;
     var ButtonComponent = exports.ButtonComponent;
 
@@ -17,6 +18,8 @@ var CUI = CUI || {};
             this.textAlign = "center";
 
             this.scaleBg = true;
+
+            this.id = this.id || "button_" + Component._SN++;
         },
 
         // init: function() {

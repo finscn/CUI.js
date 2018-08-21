@@ -57,35 +57,35 @@ var CUI = CUI || {};
             this.shadowOffsetY = 0;
 
             this.measure = null;
+            this.textWidth = 0;
+            this.textHeight = 0;
 
-            this.useCache = false;
+            this.useCache = true;
+            this.cacheWidth = 0;
+            this.cacheHeight = 0;
             this.cacheOffsetX = 0;
             this.cacheOffsetY = 0;
             this.cachePadding = 4;
-            this.shareCache = false;
             this.useCachePool = true;
+            this.shareCache = false;
 
             this.resizeWithText = true;
             this.lineHeight = 0;
-            this.width = 8;
-            this.height = 8;
+            this.width = "auto";
+            this.height = "auto";
         },
 
         init: function() {
-            this.pixel.width = this.width;
-            this.pixel.height = this.height;
-
-            this.setTextInfo(this);
-            this.setParent(this.parent);
 
             this.id = this.id || "text-holder-" + this.parent.id;
+
+            this.setTextInfo(this);
 
             this.initDisplayObject();
 
             this.computeSize();
-
-            this.updateSize();
-            this.updatePosition();
+            // this.updateSize();
+            // this.updatePosition();
         },
 
         createCache: function() {
@@ -98,27 +98,21 @@ var CUI = CUI || {};
                     this.cacheCanvas = document.createElement("canvas");
                 }
             }
+            // document.body.appendChild(this.cacheCanvas)
             this.cacheContext = this.cacheCanvas.getContext('2d');
-            // this.cacheContext.textBaseline = "top";
         },
 
         initDisplayObject: function() {
+            if (this.useCache) {
+                this.createCache();
+                this.displayObject = this.parent.root.renderer.createTextObject(this.cacheContext);
+            } else {
+                this.displayObject = this.parent.root.renderer.createTextObject();
+                this.displayObject.textInfo = this;
+            }
 
-            if (renderer) {
-                // TODO
-                if (renderer.webgl) {
-                    this.useCache = true;
-                    this.shareCache = false;
-                } else if (renderer.canvas2d) {
-                    this.useCache = true;
-                    // this.shareCache = true;
-                    this.shareCache = false;
-                }
-                if (this.useCache) {
-                    // TODO
-                    this.createCache();
-                    this.textObject = CUI.Utils.createTextObject(this.cacheContext, true);
-                }
+            if (this.parent) {
+                this.parent.addChildDisplayObject(this);
             }
         },
 
@@ -134,7 +128,7 @@ var CUI = CUI || {};
                 this.alignV = info.verticalAlign || this.verticalAlign;
             }
 
-            this.setText(info.text, true);
+            this.setText(info.text);
             // this.fontName = Font.getName(info.fontName || this.fontName);
             this.color = info.color || this.color;
             this.fontName = info.fontName || this.fontName;
@@ -202,7 +196,7 @@ var CUI = CUI || {};
                 this.lineHeight = this.lineHeight || measure.height;
                 // measure.height = this.lineHeight;
                 this.measure = measure;
-                this.width = measure.width;
+                this.textWidth = measure.width;
             } else {
                 this.lineHeight = this.lineHeight || this.height;
                 this.measure = {
@@ -211,140 +205,59 @@ var CUI = CUI || {};
                 }
             }
 
-            this.height = this.lineHeight * this.lineCount;
+            this.textHeight = this.lineHeight * this.lineCount;
 
             // TODO
-            this.pixel.width = this.width;
-            this.pixel.height = this.height;
             // this.updatePosition();
 
             this._needToCompute = false;
 
             if (this.useCache) {
                 if (this.alignH === "center") {
-                    this.cacheOffsetX = Math.ceil(this.width / 2 + this.strokeWidth + this.cachePadding);
+                    this.cacheOffsetX = Math.ceil(this.textWidth / 2 + this.strokeWidth + this.cachePadding);
                 } else if (this.alignH === "right" || this.alignH === "end") {
-                    this.cacheOffsetX = this.width + this.strokeWidth + this.cachePadding;
+                    this.cacheOffsetX = this.textWidth + this.strokeWidth + this.cachePadding;
                 } else {
                     this.cacheOffsetX = this.strokeWidth + this.cachePadding;
                 }
                 this.cacheOffsetY = this.strokeWidth + this.cachePadding;
+
+                this.cacheWidth = this.textWidth + (this.strokeWidth + this.cachePadding) * 2;
+                this.cacheHeight = this.textHeight + (this.strokeWidth + this.cachePadding) * 2;
+                // debugger
                 this.updateCache();
-                this.textObject.updateSize();
+                this.displayObject.updateSize();
+                // this.displayObject.updateContent();
             }
-        },
 
+            // this.pixel.width = this.cacheWidth;
+            // this.pixel.height = this.cacheHeight;
+
+        },
+        computAutoWidth: function() {
+            this.pixel.width = this.cacheWidth;
+        },
+        computAutoHeight: function() {
+            this.pixel.height = this.cacheHeight;
+        },
         updateCache: function() {
-            this.cacheCanvas.width = this.width + (this.strokeWidth + this.cachePadding) * 2;
-            this.cacheCanvas.height = this.height + (this.strokeWidth + this.cachePadding) * 2;
-            this.renderContent(this.cacheContext, this.cacheOffsetX, this.cacheOffsetY);
-            // this.cacheContext.lineWidth = 4;
-            // this.cacheContext.strokeRect(0, 0, this.cacheCanvas.width, this.cacheCanvas.height);
-        },
+            this.cacheCanvas.width = this.cacheWidth;
+            this.cacheCanvas.height = this.cacheHeight;
 
-        updatePosition: function() {
-            var parent = this.parent;
-            if (this.alignH === "center") {
-                this.x = parent.x + (parent._absoluteWidth >> 1);
-            } else if (this.alignH === "right") {
-                this.x = parent.x + parent._absoluteWidth - parent.pixel.paddingRight;
-            } else {
-                this.x = parent.x + parent.pixel.paddingLeft;
-            }
-            this.x += this.offsetX;
-
-            if (this.alignV === "middle" || this.alignV === "center") {
-                this.y = parent.y + ((parent._absoluteHeight - this.height) >> 1);
-            } else if (this.alignV === "bottom") {
-                this.y = parent.y + parent._absoluteHeight - parent.pixel.paddingBottom - this.height;
-            } else {
-                this.y = parent.y + parent.pixel.paddingTop;
-            }
-            this.y += this.offsetY;
-        },
-
-        renderContent: function(context, x, y) {
-            // var prevTextAlign = context.textAlign;
-            // var prevAlpha = context.globalAlpha;
-            // context.globalAlpha = this.alpha;
-            context.font = this.fontStyle;
-            context.textAlign = this.alignH;
-
-            if (this.textBaseline === "top") {
-                context.textBaseline = 'alphabetic';
-                y += this.fontSize;
-            } else {
-                context.textBaseline = this.textBaseline;
-            }
-
-            var bakShadow;
-            if (this.shadowColor !== null) {
-                bakShadow = {
-                    blur: context.shadowBlur,
-                    color: context.shadowColor,
-                    offsetX: context.shadowOffsetX,
-                    offsetY: context.shadowOffsetY,
-                };
-                context.shadowBlur = this.shadowBlur;
-                context.shadowColor = this.shadowColor;
-                context.shadowOffsetX = this.shadowOffsetX;
-                context.shadowOffsetY = this.shadowOffsetY;
-
-                // context.fillStyle = this.shadowColor;
-                // this.renderLines(context, x + this.shadowOffsetX, y + this.shadowOffsetY, true);
-            }
-
-            if (this.color !== null) {
-                context.fillStyle = this.color;
-            }
-
-            if (this.strokeColor !== null) {
-
-                context.lineCap = this.lineCap;
-                context.lineJoin = this.lineJoin;
-                // TODO
-                context.lineWidth = this.strokeWidth * 2;
-                context.strokeStyle = this.strokeColor;
-            }
-
-            this.renderLines(context, x, y);
+            CUI.Utils.renderContent(this.cacheContext, this, this.cacheOffsetX, this.cacheOffsetY);
 
             this.textChanged = false;
             this._needToCompute = false;
 
-            if (bakShadow) {
-                context.shadowBlur = bakShadow.blur;
-                context.shadowColor = bakShadow.color;
-                context.shadowOffsetX = bakShadow.offsetX;
-                context.shadowOffsetY = bakShadow.offsetY;
-            }
-            // context.textAlign = prevTextAlign;
-            // context.globalAlpha = prevAlpha;
+            // this.cacheContext.lineWidth = 4;
+            // this.cacheContext.strokeRect(0, 0, this.cacheCanvas.width, this.cacheCanvas.height);
         },
 
-        renderLines: function(context, x, y, shadow) {
-            if (this.lineCount > 1) {
-                var Me = this;
-                var lineHeight = this.lineHeight;
-                this.lines.forEach(function(line) {
-                    Me.renderText(context, line, x, y, shadow);
-                    y += lineHeight;
-                });
-            } else {
-                this.renderText(context, this.lines[0], x, y, shadow);
+        update: function() {
+            if (this._needToCompute) {
+                // this.computeSize();
             }
         },
-
-        renderText: function(context, text, x, y, shadow) {
-            if (!text) {
-                return;
-            }
-            if (this.strokeColor && !shadow) {
-                context.strokeText(text, x, y);
-            }
-            context.fillText(text, x, y);
-        },
-
     });
 
     var textCanvas = document.createElement("canvas");

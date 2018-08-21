@@ -48,6 +48,8 @@ var CUI = CUI || {};
         },
 
         init: function() {
+            this.id = this.id || "scrollview_" + Component._SN++;
+
             if (this.beforeInit) {
                 this.beforeInit();
             }
@@ -112,8 +114,13 @@ var CUI = CUI || {};
 
         reset: function() {
             var Me = this;
-            this.children.forEach(function(c) {
-                c.moveBy(Me.scrollX, Me.scrollY);
+            this.scrollX = 0;
+            this.scrollY = 0;
+            this.children.forEach(function(child) {
+                child.syncPosition();
+                // child.computeLayout();
+                // child.update(timeStep, now);
+                // c.moveBy(Me.scrollX, Me.scrollY);
             });
             this.resetScrollInfo();
             this.onReset();
@@ -337,20 +344,21 @@ var CUI = CUI || {};
         computeLayout: function(forceCompute) {
             if (this._needToCompute || forceCompute) {
                 this._needToCompute = false;
-                this.layout.compute(this);
-                this.reset();
 
-                if (this.backgroundHolder) {
-                    this.backgroundHolder.updateSize();
-                    this.backgroundHolder.updatePosition();
-                }
-                if (this.borderHolder) {
-                    this.borderHolder.updateSize();
-                    this.borderHolder.updatePosition();
-                }
+                this.layout.compute(this);
+
+                this.resetScrollInfo();
+                // this.reset();
+
+                this.updateMask();
+
+                this.updateHolders();
             }
         },
-
+        updateMask: function() {
+            this.maskShape = this.root.renderer.updateRect(this.maskShape, this._absoluteX, this._absoluteY, this._absoluteWidth, this._absoluteHeight, 0x000000, 1);
+            this.displayObject.mask = this.maskShape;
+        },
         updateSelf: function(timeStep, now) {
 
             this.updateTween(timeStep);
@@ -387,15 +395,18 @@ var CUI = CUI || {};
 
             this.children.forEach(function(child, idx) {
                 if (scrollChanged) {
-                    child.moveBy(-Me.scrollDX, -Me.scrollDY);
+                //     // child.moveBy(-Me.scrollDX, -Me.scrollDY);
+                    child.syncPosition();
+
                     child.visible = Me.checkCollideAABB(child.aabb);
                     if (child.visible) {
                         vc.push(child);
                     }
                 }
-                child.update(timeStep, now);
+                // child.update(timeStep, now);
             });
 
+            // console.log(frame, vc.length)
             this.scrollDX = 0;
             this.scrollDY = 0;
             this.lastScrollX = this.scrollX;

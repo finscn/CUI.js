@@ -8,10 +8,10 @@ var CUI = CUI || {};
     var Class = exports.Class;
     var Utils = exports.Utils;
     var Component = exports.Component;
-    var BackgroundHolder = exports.BackgroundHolder;
+    var BaseHolder = exports.BaseHolder;
 
     var BorderImageHolder = Class.create({
-        superclass: BackgroundHolder,
+        superclass: BaseHolder,
 
         initialize: function() {
             this.width = "100%";
@@ -24,6 +24,9 @@ var CUI = CUI || {};
             this.B = null;
             this.L = null;
 
+            this.alpha = 1;
+            this.fillParent = true;
+
             this.useCache = false;
         },
 
@@ -35,10 +38,9 @@ var CUI = CUI || {};
                 sh: this.sh,
             };
 
-            this.setParent(this.parent);
             this.initDisplayObject();
-            this.updateSize();
-            this.updatePosition();
+            // this.updateSize();
+            // this.updatePosition();
         },
 
         initDisplayObject: function() {
@@ -54,7 +56,7 @@ var CUI = CUI || {};
             var B = this.B;
             var L = this.L;
 
-            this.displayObject = CUI.Utils.createNineSlicePlane(img, sx, sy, sw, sh, T, R, B, L);
+            this.displayObject = this.parent.root.renderer.createNineSlicePlane(img, sx, sy, sw, sh, T, R, B, L);
             this.displayObject.width = sw;
             this.displayObject.height = sh;
 
@@ -62,6 +64,8 @@ var CUI = CUI || {};
                 this.parent.addChildDisplayObject(this);
             }
         },
+
+
     });
 
 

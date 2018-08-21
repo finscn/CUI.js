@@ -21,10 +21,18 @@ var CUI = CUI || {};
         },
 
         initDisplayObject: function() {
-            var displayObject = CUI.Utils.createRect(this.absoluteWidth, this.absoluteHeight, this.color, this.alpha);
+            var displayObject = this.parent.root.renderer.createRect(this.absoluteWidth, this.absoluteHeight, this.color, this.alpha);
             this.displayObject = displayObject;
             if (this.parent) {
                 this.parent.addChildDisplayObject(this);
+            }
+        },
+
+        update: function() {
+            if (this._sizeChanged || this._positionChanged) {
+                this.parent.root.renderer.updateRect(this.displayObject, 0, 0, this.absoluteWidth, this.absoluteHeight, this.color, this.alpha);
+                this._sizeChanged = false;
+                this._positionChanged = false;
             }
         },
     });

@@ -1,116 +1,113 @@
 <!doctype html>
 <html>
+
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-<meta http-equiv="Pragma" content="no-cache" />
-<meta http-equiv="Expires" content="-1" />
-<meta http-equiv="Cache-Control" content="no-cache" />
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta http-equiv="Pragma" content="no-cache" />
+    <meta http-equiv="Expires" content="-1" />
+    <meta http-equiv="Cache-Control" content="no-cache" />
+    <meta charset="utf-8">
+    <title>CUI.js Renderer example 1</title>
+    <!-- <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no, target-densitydpi=device-dpi" /> -->
+    <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no" />
+    <meta name="apple-mobile-web-app-title" content="H5Game">
+    <meta name="apple-touch-fullscreen" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name='format-detection' content='telephone=no'>
+    <meta name="screen-orientation" content="portrait">
+    <meta name="full-screen" content="yes">
+    <meta name="360-fullscreen" content="true">
+    <meta name="x5-fullscreen" content="true">
+    <meta name="x5-page-mode" content="app" />
+    <meta name="x5-orientation" content="portrait" />
+    <script src="stats.min.js"></script>
+    <script src="../lib/pixi.js"></script>
+    <!-- <script src="../lib/pixi.min.js"></script> -->
+    <script>
+    var jsFiles = [
+        // "../dist/cui-min.js",
 
-  <meta charset="utf-8">
-  <title>CUI.js Renderer example 1</title>
-  <!-- <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no, target-densitydpi=device-dpi" /> -->
-  <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no" />
+        "../src/Class.js",
+        "../src/Utils.js",
+        "../src/Core.js",
 
-  <meta name="apple-mobile-web-app-title" content="H5Game">
-  <meta name="apple-touch-fullscreen" content="yes" >
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black">
-  <meta name='format-detection' content='telephone=no'>
-  <meta name="screen-orientation" content="portrait">
-  <meta name="full-screen" content="yes">
-  <meta name="360-fullscreen" content="true">
+        "../src/Composite.js",
+        "../src/EventDispatcher.js",
+        "../src/TouchTarget.js",
+        "../src/Font.js",
+        "../src/ButtonComponent.js",
+        "../src/Slider.js",
 
-  <meta name="x5-fullscreen" content="true">
-  <meta name="x5-page-mode" content="app"/>
-  <meta name="x5-orientation" content="portrait"/>
+        "../src/layout/BaseLayout.js",
+        "../src/layout/VBoxLayout.js",
+        "../src/layout/HBoxLayout.js",
+        "../src/layout/TableLayout.js",
+        "../src/layout/Layout.js",
 
+        "../src/Component.js",
+        "../src/Root.js",
 
-<script src="stats.min.js"></script>
-<script src="../lib/pixi.js"></script>
-<!-- <script src="../lib/pixi.min.js"></script> -->
+        "../src/holder/BaseHolder.js",
+        "../src/holder/TextHolder.js",
+        "../src/holder/ImageHolder.js",
+        "../src/holder/BackgroundHolder.js",
+        "../src/holder/BorderHolder.js",
+        "../src/holder/BorderImageHolder.js",
 
-<script>
-  var jsFiles = [
-// "../dist/cui-min.js",
+        "../src/widget/Blank.js",
+        "../src/widget/Panel.js",
+        "../src/widget/Label.js",
+        "../src/widget/Button.js",
+        "../src/widget/Picture.js",
+        "../src/widget/ScrollView.js",
 
-    "../src/Class.js",
-    "../src/Utils.js",
-    "../src/Composite.js",
-    "../src/EventDispatcher.js",
-    "../src/TouchTarget.js",
-    "../src/ButtonComponent.js",
-    "../src/Slider.js",
-    "../src/Font.js",
+        "../src/renderer/DisplayObject.js",
+        "../src/renderer/CanvasRenderer.js",
+        "../src/renderer/PIXIRenderer.js",
 
-    "../src/layout/BaseLayout.js",
-    "../src/layout/VBoxLayout.js",
-    "../src/layout/HBoxLayout.js",
-    "../src/layout/TableLayout.js",
-    "../src/layout/Layout.js",
+        "./GT-Toucher/src/Controller.js",
+        "./GT-Toucher/src/TouchWrapper.js",
+        "./GT-Toucher/src/Listener.js",
+        "./GT-Toucher/src/gesture/Any.js",
+        "./GT-Toucher/src/gesture/Tap.js",
+        "./GT-Toucher/src/gesture/Pan.js",
+        "./GT-Toucher/src/gesture/Swipe.js",
 
-    "../src/Component.js",
-    "../src/holder/BaseHolder.js",
-    "../src/adapter/pixi-adapter.js",
+        "gesture.js",
+        "main.js",
+        "test-pixi.js",
+        // "test-canvas.js",
+        "ui.js",
+        // "ui-json.js",
+    ];
 
-
-    "../src/Root.js",
-
-    "../src/holder/TextHolder.js",
-    "../src/holder/ImageHolder.js",
-    "../src/holder/BackgroundHolder.js",
-    "../src/holder/BorderHolder.js",
-    "../src/holder/BorderImageHolder.js",
-
-    "../src/widget/Blank.js",
-    "../src/widget/Panel.js",
-    "../src/widget/Label.js",
-    "../src/widget/Button.js",
-    "../src/widget/Picture.js",
-    "../src/widget/ScrollView.js",
-
-"./GT-Toucher/src/Controller.js",
-"./GT-Toucher/src/TouchWrapper.js",
-"./GT-Toucher/src/Listener.js",
-"./GT-Toucher/src/gesture/Any.js",
-"./GT-Toucher/src/gesture/Tap.js",
-"./GT-Toucher/src/gesture/Pan.js",
-"./GT-Toucher/src/gesture/Swipe.js",
-
-"gesture.js",
-"main-pixi.js",
-"ui-pixi.js",
-];
-
-jsFiles.forEach(function(js){
-  document.write('<script src="'+js+'?_ts='+(Date.now())+'"></scr' + 'ipt>');
-});
-</script>
-
-<style type="text/css">
-body {
-  overflow: hidden;
-}
-</style>
-
+    jsFiles.forEach(function(js) {
+        document.write('<script src="' + js + '?_ts=' + (Date.now()) + '"></scr' + 'ipt>');
+    });
+    </script>
+    <style type="text/css">
+    body {
+        overflow: hidden;
+    }
+    </style>
 </head>
+
 <body>
-  <div id="container" class="splash">
-    <canvas id="canvas"></canvas>
-  </div>
-
-
-<script type="text/javascript">
-
-document.title='CUI pixi';
-window.addEventListener('touchmove',function(event){
-  event.stopPropagation();
-  event.preventDefault();
-},false);
-// window.document.addEventListener('touchmove',function(event){
-//   event.stopPropagation();
-//   event.preventDefault();
-// },false);
-
-</script>
+    <div id="container" class="splash">
+        <canvas id="canvas"></canvas>
+    </div>
+    <script type="text/javascript">
+    document.title = 'CUI pixi';
+    window.addEventListener('touchmove', function(event) {
+        event.stopPropagation();
+        event.preventDefault();
+    }, false);
+    // window.document.addEventListener('touchmove',function(event){
+    //   event.stopPropagation();
+    //   event.preventDefault();
+    // },false);
+    </script>
 </body>
+
 </html>

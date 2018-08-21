@@ -42,7 +42,7 @@ var CUI = CUI || {};
             // auto: 显示大小等于 图片实际大小;
             this.width = "auto";
             this.height = "auto";
-            this.fillParent = true;
+            this.fillParent = false;
 
             this.ratio = null;
             this.lockScaleRatio = true;
@@ -55,7 +55,8 @@ var CUI = CUI || {};
         },
 
         init: function() {
-            this.setParent(this.parent);
+            this.id = this.id || "text-holder-" + this.parent.id;
+
             this.initDisplayObject();
 
             if (this.src) {
@@ -64,8 +65,8 @@ var CUI = CUI || {};
                 this.setImg(this.img);
             }
 
-            this.updateSize();
-            this.updatePosition();
+            // this.updateSize();
+            // this.updatePosition();
         },
 
         load: function(callback) {
@@ -183,9 +184,13 @@ var CUI = CUI || {};
             this.ratio = w / h;
         },
 
-        // initDisplayObject: function(){
-
-        // },
+        initDisplayObject: function() {
+            var displayObject = this.parent.root.renderer.createSprite();
+            this.displayObject = displayObject;
+            if (this.parent) {
+                this.parent.addChildDisplayObject(this);
+            }
+        },
 
         updateDisplayObject: function() {
             if (!this.img) {
@@ -193,8 +198,16 @@ var CUI = CUI || {};
                 return;
             }
             var config = this.config;
-            CUI.Utils.updateDisplayObject(this.displayObject, this.img, config.sx, config.sy, config.sw, config.sh);
+            this.parent.root.renderer.updateSprite(this.displayObject, this.img, config.sx, config.sy, config.sw, config.sh);
             this.displayObject.tint = this.tint === null ? 0xFFFFFF : this.tint;
+        },
+
+        computAutoWidth: function() {
+            this.pixel.width = this.config.w;
+        },
+
+        computAutoHeight: function() {
+            this.pixel.height = this.config.h;
         },
 
         removeImg: function() {

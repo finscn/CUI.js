@@ -20,10 +20,10 @@ var CUI = CUI || {};
         compute: function(parent) {
             var children = parent.children;
             var childCount = children.length;
-
             var idx = 0;
-            var currentY = parent.pixel.paddingTop;
-            var margin = -Infinity;
+
+            var currentY = 0;
+            var margin = parent.pixel.paddingTop;
             var totalWidth = 0;
             var size = this.equalSize ? parent.pixel.innerHeight / childCount : this.size;
 
@@ -54,13 +54,11 @@ var CUI = CUI || {};
                         }
                     }
 
-                    child.pixel.top = Utils.parseValue(child.top, child.pixel.realOuterHeight);
-                    child.pixel.relativeY = y + child.pixel.top;
-                    child.pixel.y = child.pixel.relativeY + parent._absoluteY;
-                    child.absoluteY = child.pixel.y;
-
                     child.hasLayoutY = true;
+                    child.pixel.realMarginTop = y;
+
                     child.computePositionX(parent);
+                    child.computePositionY(parent);
                     child.computePadding();
                     child.updateAABB();
 

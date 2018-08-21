@@ -1,3 +1,0 @@
-useCachePool
-useCache
-shareCache

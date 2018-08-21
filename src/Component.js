@@ -6,49 +6,22 @@ var CUI = CUI || {};
 
     var Class = exports.Class;
     var Utils = exports.Utils;
+    var Core = exports.Core;
+    var noop = exports.noop;
+
     var Composite = exports.Composite;
     var EventDispatcher = exports.EventDispatcher;
     var TouchTarget = exports.TouchTarget;
     var Layout = exports.Layout;
 
-    var noop = function() {};
-
     var Component = Class.create({
+        superclass: Core,
 
         initialize: function() {
 
-            this.id = null;
-            this.lazyInit = false;
+            this.component = true;
 
-            // 以像素为单位的定位和大小, 单位:像素
-            this.pixel = {
-                x: 0,
-                y: 0,
-                width: 0,
-                height: 0,
-                baseX: 0,
-                baseY: 0,
-                relativeX: 0,
-                relativeY: 0,
-
-                paddingLeft: 0,
-                paddingTop: 0,
-                paddingRight: 0,
-                paddingBottom: 0,
-
-                marginLeft: 0,
-                marginTop: 0,
-                marginRight: 0,
-                marginBottom: 0,
-
-                realMarginLeft: 0,
-                realMarginTop: 0,
-                realMarginRight: 0,
-                realMarginBottom: 0,
-
-                realOuterWidth: 0,
-                realOuterHeight: 0,
-            };
+            this.anchor = 0.5;
 
             /////////////////////////////////////////////
             // 对象创建后, 以下属性可更改
@@ -59,38 +32,15 @@ var CUI = CUI || {};
             this.top = null;
             this.right = null;
             this.bottom = null;
-            // 默写组件支持 "auto" , 根据布局和子元素来确定自己的宽高
-            // 支持 混合单位, 如 "100% - 25" , 意思为 父容器的100%再减去25像素.
-            this.width = null;
-            this.height = null;
 
-            this.alpha = 1;
-            this.tint = null;
-
-            this.visible = true;
+            this.inView = true;
             this.zIndex = 0;
             this.index = 0;
 
-            // 缩放只适合用来做瞬间的、纯视觉上的动画效果, 它不会改变UI的响应区域和行为
-            // 如果要真正改变UI的大小, 请通过修改UI(以及内部元素的)width/height来实现
-            this.scale = 1;
-            this.scaleX = 1;
-            this.scaleY = 1;
-
-            this.rotation = 0;
-
-            this._absoluteWidth = 0;
-            this._absoluteHeight = 0;
-            this._pivotX = 0;
-            this._pivotY = 0;
-
-            // 缩放/旋转 时才需要
-            this.anchor = 0.5;
-            this.anchorX = 0.5;
-            this.anchorY = 0.5;
-
             this.offsetX = 0;
             this.offsetY = 0;
+            this.scrollX = 0;
+            this.scrollY = 0;
 
             this.extLeft = 0;
             this.extRight = 0;
@@ -98,15 +48,10 @@ var CUI = CUI || {};
             this.extBottom = 0;
 
             this.layout = null;
-            this.root = null;
-            this.parent = null;
 
             this.modal = false;
             this.maskColor = "#000000";
             this.maskAlpha = 0.50;
-
-            this.displayObject = null;
-            this.transform = null;
 
             /////////////////////////////////////////////
             // 对象创建后, 以下属性不可更改
@@ -134,7 +79,6 @@ var CUI = CUI || {};
             this.marginBottom = null;
             this.marginLeft = null;
 
-
             // relative: "root", // 相对于 root容器 定位, 类似dom的position:absolute
             // relative: "parent", // 相对于 parent容器 定位
             this.relative = false; // 其他(默认值) :遵循parent容器的layout, left,top按偏移量处理( 类似dom的position:relative )
@@ -152,34 +96,16 @@ var CUI = CUI || {};
             this.borderAlpha = 1;
             this.borderWidth = 0;
             this.borderImageInfo = null; // { img , sx, sy, sw, sh, top, right, bottom, left }
-            this.cacheBorderImage = false;
-
-            ////////////////////////////////////////
-            // 以下属性为内部属性, 用户通常不需要关心
-
-
-            // 绝对定位和大小, 单位:像素
-            this.absoluteX = 0;
-            this.absoluteY = 0;
-            this.absoluteWidth = 0;
-            this.absoluteHeight = 0;
-
-            this.aabb = null;
 
             this.touchTarget = true;
 
             this.composite = true;
             this.children = null;
             this.childrenMap = null;
-
-            this.useCache = false;
-            this.readyForCache = false;
-            this.cached = false;
-
-            this._needToCompute = true;
         },
 
         init: function() {
+            this.id = this.id || "cmp_" + Component._SN++;
             // if (this.beforeInit) {
             //     this.beforeInit();
             // }
@@ -188,7 +114,6 @@ var CUI = CUI || {};
             // this._beforeInit();
 
             this.inited = true;
-            this.id = this.id || "cmp_" + Component._SN++;
 
             this.aabb = [];
             this.holders = [];
@@ -221,7 +146,7 @@ var CUI = CUI || {};
             this.initBackgroundColor();
             this.initBorder();
             this.initBorderImage();
-            this.backgroundImage = this.backgroundImage || this.bgImg;
+            this.backgroundImage = this.backgroundImage || this.backgroundImg || this.bgImg;
             this.initBackgroundImage();
 
             // TODO
@@ -233,10 +158,13 @@ var CUI = CUI || {};
         },
 
         initDisplayObject: function() {
-            // do nothing.
-        },
-        updateDisplayObject: function(img, x, y, w, h) {
-            // do nothing.
+            var displayObject = this.root.renderer.createContainer();
+            displayObject._ignoreResize = true;
+            this.displayObject = displayObject;
+            this.displayObject.pivot.set(this._pivotX, this._pivotY);
+            if (this.parent) {
+                this.parent.addChildDisplayObject(this);
+            }
         },
 
         setDisabled: function(disabled) {
@@ -249,11 +177,11 @@ var CUI = CUI || {};
                 return;
             }
             var holder = new CUI.BackgroundHolder({
+                parent: this,
                 color: this.backgroundColor,
                 alpha: this.backgroundAlpha,
                 fillParent: true,
             });
-            holder.setParent(this);
             holder.init();
             this.backgroundHolder = holder;
             this._needToCompute = true;
@@ -265,11 +193,11 @@ var CUI = CUI || {};
                 return;
             }
             var holder = new CUI.BorderHolder({
+                parent: this,
                 alpha: this.borderAlpha,
                 lineWidth: this.borderWidth,
                 color: this.borderColor,
             });
-            holder.setParent(this);
             holder.init();
             this.borderHolder = holder;
             this._needToCompute = true;
@@ -282,7 +210,7 @@ var CUI = CUI || {};
                 return;
             }
             var holder = new CUI.BorderImageHolder(info);
-            holder.setParent(this);
+            holder.parent = this;
             holder.init();
             this.borderImageHolder = holder;
             this._needToCompute = true;
@@ -294,12 +222,12 @@ var CUI = CUI || {};
                 return;
             }
             var holder = new CUI.ImageHolder({
+                parent: this,
                 img: this.backgroundImage,
                 alpha: this.backgroundImageAlpha,
                 fillParent: this.scaleBgImg,
                 lockScaleRatio: false,
             });
-            holder.setParent(this);
             holder.init();
             this.backgroundImageHolder = holder;
             this._needToCompute = true;
@@ -542,67 +470,48 @@ var CUI = CUI || {};
             });
         },
 
-        syncPosition: function() {
-            var relativeObj = this.parent || this.root;
+        syncPositionX: function() {
             var pixel = this.pixel;
-
-            pixel.x = pixel.relativeX + relativeObj.absoluteX;
+            var parent = this.parent;
+            pixel.relativeX = pixel.baseX + this._offsetX - (parent ? parent.scrollX : 0);
+            pixel.x = pixel.relativeX + (parent ? parent._absoluteX : 0);
             this.absoluteX = pixel.x;
-
-            pixel.y = pixel.relativeY + relativeObj.absoluteY;
+        },
+        syncPositionY: function() {
+            var pixel = this.pixel;
+            var parent = this.parent;
+            pixel.relativeY = pixel.baseY + this._offsetY - (parent ? parent.scrollY : 0);
+            pixel.y = pixel.relativeY + (parent ? parent._absoluteY : 0);
             this.absoluteY = pixel.y;
+        },
 
-            // this.computePositionX();
-            // this.computePositionY();
+        syncPosition: function() {
+            this.syncPositionX();
+            this.syncPositionY();
 
             this.updateAABB();
-
-            this.updateHolders();
 
             if (this.composite) {
                 this.children.forEach(function(child) {
                     child.syncPosition();
                 });
             }
+
+            this._needToCompute = true;
         },
 
-        // 在移动UI时, 可以用以下两个方法 , 更快捷, 但是不严谨.
-        // 严谨的方法是调用  setPosition .
-        // TODO
-        moveToX: function(x) {
+        moveTo: function(dx, dy) {
             var pixel = this.pixel;
-            pixel.left = x;
-            pixel.relativeX = x + pixel.realMarginLeft;
+
+            // TODO
 
             this.syncPosition();
         },
-        moveToY: function(y) {
-            var pixel = this.pixel;
-            pixel.top = y;
-            pixel.relativeY = y + pixel.realMarginTop;
 
-            this.syncPosition();
-        },
-        moveTo: function(x, y) {
-            var pixel = this.pixel;
-            pixel.left = x;
-            pixel.relativeX = x + pixel.realMarginLeft;
-            pixel.top = y;
-            pixel.relativeY = y + pixel.realMarginTop;
-
-            this.syncPosition();
-        },
         moveBy: function(dx, dy) {
             var pixel = this.pixel;
-            var x = pixel.relativeX - pixel.realMarginLeft + dx;
-            pixel.left = x;
-            pixel.relativeX = x + pixel.realMarginLeft;
-            // this.left = x;
 
-            var y = pixel.relativeY - pixel.realMarginTop + dy;
-            pixel.top = y;
-            pixel.relativeY = y + pixel.realMarginTop;
-            // this.top = y;
+            // TODO
 
             this.syncPosition();
         },
@@ -750,34 +659,15 @@ var CUI = CUI || {};
         beforeUpdate: null,
         afterUpdate: null,
 
-        createCacheCanvas: function() {
-            if (!this.cacheCanvas) {
-                var canvas = Component.getCanvasFromPool(this.id);
-                canvas.width = this._absoluteWidth + 4;
-                canvas.height = this._absoluteHeight + 4;
-                this.cacheCanvas = canvas;
-            }
-            var cacheContext = this.cacheCanvas.getContext("2d");
-
-            var useCache = this.useCache;
-            var visible = this.visible;
-            this.useCache = false;
-            this.visible = true;
-
-            // TODO
-
-            this.useCache = useCache;
-            this.visible = visible;
-            this.cached = true;
-        },
-
-
         ////////////////////////////////////////////////////////////////////////
         ////////////////////////////////////////////////////////////////////////
         ////////////////////////////////////////////////////////////////////////
 
         computeMargin: function(parent) {
             parent = parent || this.parent;
+            if (!parent) {
+                return;
+            }
             var parentPixel = parent.pixel;
             var pixel = this.pixel;
             this.marginLeft = this.marginLeft === null ? this.margin : this.marginLeft;
@@ -794,6 +684,9 @@ var CUI = CUI || {};
         computeRealMargin: function(parent) {
             // parent.pixel.padding
             parent = parent || this.parent;
+            if (!parent) {
+                return;
+            }
             var parentPixel = parent.pixel;
             var pixel = this.pixel;
             pixel.realMarginLeft = Math.max(parentPixel.paddingLeft, pixel.marginLeft) || 0;
@@ -906,7 +799,7 @@ var CUI = CUI || {};
             }
             pixel.baseX = x + pixel.realMarginLeft;
 
-            pixel.relativeX = pixel.baseX + this._offsetX;
+            pixel.relativeX = pixel.baseX + this._offsetX - (parent ? parent.scrollX : 0);
             pixel.x = pixel.relativeX + (parent ? parent._absoluteX : 0);
             this.absoluteX = pixel.x;
         },
@@ -931,14 +824,9 @@ var CUI = CUI || {};
             }
             pixel.baseY = y + pixel.realMarginTop;
 
-            pixel.relativeY = pixel.baseY + this._offsetY;
+            pixel.relativeY = pixel.baseY + this._offsetY - (parent ? parent.scrollY : 0);
             pixel.y = pixel.relativeY + (parent ? parent._absoluteY : 0);
             this.absoluteY = pixel.y;
-        },
-
-        useCacheCanvas: function() {
-            // TOTO
-
         },
 
         ////////////////////////////////////////////////////////////////////////
@@ -966,6 +854,103 @@ var CUI = CUI || {};
             // TODO
         },
     });
+
+    //////////////////////////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////////////////////////
+
+    var properties = [
+
+        {
+            key: 'zIndex',
+            get: function() {
+                return this._zIndex;
+            },
+            set: function(value) {
+                this._zIndex = value;
+                this.displayObject && (this.displayObject.zIndex = value);
+                this.parent && (this.parent._toSortChildren = true);
+            }
+        },
+
+        {
+            key: 'anchor',
+            get: function() {
+                return this._anchor;
+            },
+            set: function(value) {
+                this._anchor = value;
+
+                this._anchorX = value;
+                this._pivotX = this._absoluteWidth * this._anchorX;
+                this._anchorY = value;
+                this._pivotY = this._absoluteHeight * this._anchorY;
+                this.displayObject && (this.displayObject.pivot.set(this._pivotX, this._pivotY));
+            }
+        },
+
+        {
+            key: 'anchorX',
+            get: function() {
+                return this._anchorX;
+            },
+            set: function(value) {
+                this._anchorX = value;
+                this._pivotX = this._absoluteWidth * this._anchorX;
+                this.displayObject && (this.displayObject.pivot.x = this._pivotX);
+            }
+        },
+
+        {
+            key: 'anchorY',
+            get: function() {
+                return this._anchorY;
+            },
+            set: function(value) {
+                this._anchorY = value;
+                this._pivotY = this._absoluteHeight * this._anchorY;
+                this.displayObject && (this.displayObject.pivot.y = this._pivotY);
+            }
+        },
+
+        {
+            key: 'offsetX',
+            get: function() {
+                return this._offsetX;
+            },
+            set: function(value) {
+                this._offsetX = value;
+                this.syncPositionX();
+            }
+        },
+
+        {
+            key: 'offsetY',
+            get: function() {
+                return this._offsetY;
+            },
+            set: function(value) {
+                this._offsetY = value;
+                this.syncPositionY();
+            }
+        },
+    ];
+
+    Class.defineProperties(Component.prototype, properties);
+
+    //////////////////////////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////////////////////////
 
     Component._SN = 0;
 
@@ -1002,6 +987,5 @@ var CUI = CUI || {};
     };
 
     exports.Component = Component;
-    exports.noop = noop;
 
 }(CUI));

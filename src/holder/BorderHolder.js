@@ -22,7 +22,7 @@ var CUI = CUI || {};
         },
 
         initDisplayObject: function() {
-            var displayObject = CUI.Utils.createRect(this.absoluteWidth, this.absoluteHeight, null, null, this.lineWidth, this.color, this.alpha);
+            var displayObject = this.parent.root.renderer.createRect(this.absoluteWidth, this.absoluteHeight, null, null, this.lineWidth, this.color, this.alpha);
             this.displayObject = displayObject;
             if (this.parent) {
                 this.parent.addChildDisplayObject(this);
@@ -31,7 +31,7 @@ var CUI = CUI || {};
 
         update: function() {
             if (this._sizeChanged || this._positionChanged) {
-                CUI.Utils.updateRect(this.displayObject, this.absoluteWidth, this.absoluteHeight, null, null, this.lineWidth, this.color, this.alpha);
+                this.parent.root.renderer.updateRect(this.displayObject, 0, 0, this.absoluteWidth, this.absoluteHeight, null, null, this.lineWidth, this.color, this.alpha);
                 this._sizeChanged = false;
                 this._positionChanged = false;
             }

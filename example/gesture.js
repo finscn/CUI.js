@@ -228,10 +228,10 @@ var initPanListener = function() {
             pan.y = y;
             pan.sx = wrapper.startPageX;
             pan.sy = wrapper.startPageY;
-            pan.dx += dx;
-            pan.dy += dy;
-            // pan.dx = dx;
-            // pan.dy = dy;
+            // pan.dx += dx;
+            // pan.dy += dy;
+            pan.dx = dx;
+            pan.dy = dy;
 
             if (TouchInfo.firstPan === null) {
                 TouchInfo.firstPan = TouchInfo.pan[wrapper.id];

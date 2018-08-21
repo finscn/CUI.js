@@ -559,7 +559,92 @@ var CUI = CUI || {};
             var bg = new CUI.ButtonBackground(options);
             bg.init();
             return bg.image;
-        }
+        },
+
+        ////////////////////////////////////////////////////////////////////
+        ////////////////////////////////////////////////////////////////////
+        ////////////////////////////////////////////////////////////////////
+        ////////////////////////////////////////////////////////////////////
+        ////////////////////////////////////////////////////////////////////
+
+
+        renderContent: function(context, textInfo, x, y) {
+            // var prevTextAlign = context.textAlign;
+            // var prevAlpha = context.globalAlpha;
+            // context.globalAlpha = this.alpha;
+            context.font = textInfo.fontStyle;
+            context.textAlign = textInfo.alignH;
+
+            if (textInfo.textBaseline === "top") {
+                context.textBaseline = 'alphabetic';
+                y += textInfo.fontSize;
+            } else {
+                context.textBaseline = textInfo.textBaseline;
+            }
+
+            var bakShadow;
+            if (textInfo.shadowColor !== null) {
+                bakShadow = {
+                    blur: context.shadowBlur,
+                    color: context.shadowColor,
+                    offsetX: context.shadowOffsetX,
+                    offsetY: context.shadowOffsetY,
+                };
+                context.shadowBlur = textInfo.shadowBlur;
+                context.shadowColor = textInfo.shadowColor;
+                context.shadowOffsetX = textInfo.shadowOffsetX;
+                context.shadowOffsetY = textInfo.shadowOffsetY;
+
+                // context.fillStyle = textInfo.shadowColor;
+                // textInfo.renderLines(context, x + textInfo.shadowOffsetX, y + textInfo.shadowOffsetY, true);
+            }
+
+            if (textInfo.color !== null) {
+                context.fillStyle = textInfo.color;
+            }
+
+            var stroke = textInfo.strokeColor !== null;
+            if (stroke) {
+                context.lineCap = textInfo.lineCap;
+                context.lineJoin = textInfo.lineJoin;
+                // TODO
+                context.lineWidth = textInfo.strokeWidth * 2;
+                context.strokeStyle = textInfo.strokeColor;
+            }
+
+            this.renderLines(context, textInfo.lines, textInfo.lineHeight, x, y, stroke);
+
+            if (bakShadow) {
+                context.shadowBlur = bakShadow.blur;
+                context.shadowColor = bakShadow.color;
+                context.shadowOffsetX = bakShadow.offsetX;
+                context.shadowOffsetY = bakShadow.offsetY;
+            }
+            // context.textAlign = prevTextAlign;
+            // context.globalAlpha = prevAlpha;
+        },
+
+        renderLines: function(context, lines, lineHeight, x, y, stroke) {
+            var Me = this;
+            if (lines.length > 1) {
+                lines.forEach(function(line) {
+                    Me.renderText(context, line, x, y, stroke);
+                    y += lineHeight;
+                });
+            } else {
+                Me.renderText(context, lines[0], x, y, stroke);
+            }
+        },
+
+        renderText: function(context, text, x, y, stroke) {
+            if (!text) {
+                return;
+            }
+            if (stroke) {
+                context.strokeText(text, x, y);
+            }
+            context.fillText(text, x, y);
+        },
 
     };
 

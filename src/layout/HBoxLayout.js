@@ -22,10 +22,12 @@ var CUI = CUI || {};
             var children = parent.children;
             var childCount = children.length;
             var idx = 0;
-            var currentX = parent.pixel.paddingLeft;
-            var margin = -Infinity;
+
+            var currentX = 0;
+            var margin = parent.pixel.paddingLeft;
             var totalHeight = 0;
             var size = this.size || (this.equalSize ? parent.pixel.innerWidth / childCount : this.size);
+
             var x;
             for (var i = 0; i < childCount; i++) {
                 var child = children[i];
@@ -51,12 +53,10 @@ var CUI = CUI || {};
                         }
                     }
 
-                    child.pixel.left = Utils.parseValue(child.left, child.pixel.realOuterWidth);
-                    child.pixel.relativeX = x + child.pixel.left;
-                    child.pixel.x = child.pixel.relativeX + parent._absoluteX;
-                    child.absoluteX = child.pixel.x;
-
                     child.hasLayoutX = true;
+                    child.pixel.realMarginLeft = x;
+
+                    child.computePositionX(parent);
                     child.computePositionY(parent);
                     child.computePadding();
                     child.updateAABB();
@@ -78,6 +78,7 @@ var CUI = CUI || {};
                             var child = children[i];
                             if (child.relative !== "parent" && child.relative !== "root") {
                                 child.pixel.left += deltaWidth;
+                                child.pixel.baseX += deltaWidth;
                                 child.pixel.relativeX += deltaWidth;
                                 child.pixel.x += deltaWidth;
                                 child.absoluteX = child.pixel.x;

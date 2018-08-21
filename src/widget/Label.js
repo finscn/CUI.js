@@ -32,6 +32,8 @@ var CUI = CUI || {};
         },
 
         init: function() {
+            this.id = this.id || "label_" + Component._SN++;
+
             if (this.beforeInit) {
                 this.beforeInit();
             }
@@ -41,10 +43,10 @@ var CUI = CUI || {};
             this._sizeChanged = true;
 
             if (this.iconInfo) {
-                this.setIconInfo(this.iconInfo);
+                this.addImageHolder(this.iconInfo);
             }
             if (this.flagInfo) {
-                this.setFlagInfo(this.flagInfo);
+                this.addImageHolder(this.flagInfo);
             }
             this.initTextInfo();
             this.setTextInfo(this.textInfo);
@@ -65,7 +67,7 @@ var CUI = CUI || {};
             } else {
                 if (!this[name]) {
                     this[name] = new ImageHolder(info);
-                    this[name].setParent(this);
+                    this[name].parent = this;
                     this[name].init();
                 } else {
                     this[name].setImgInfo(info);
@@ -74,13 +76,20 @@ var CUI = CUI || {};
             this._needToCompute = true;
         },
 
+        addImageHolder: function(holderInfo) {
+            var holder = new CUI.ImageHolder(holderInfo);
+            holder.parent = this;
+            holder.init();
+            this.holders.push(holder);
+        },
+
         setIconInfo: function(iconInfo) {
             if (!iconInfo) {
                 this.iconHolder = null;
             } else {
                 if (!this.iconHolder) {
                     this.iconHolder = new ImageHolder(iconInfo);
-                    this.iconHolder.setParent(this);
+                    this.iconHolder.parent = this;
                     this.iconHolder.init();
                 } else {
                     this.iconHolder.setImgInfo(iconInfo);
@@ -95,7 +104,7 @@ var CUI = CUI || {};
             } else {
                 if (!this.flagHolder) {
                     this.flagHolder = new ImageHolder(flagInfo);
-                    this.flagHolder.setParent(this);
+                    this.flagHolder.parent = this;
                     this.flagHolder.init();
                 } else {
                     this.flagHolder.setImgInfo(flagInfo);
@@ -107,7 +116,7 @@ var CUI = CUI || {};
         setTextInfo: function(textInfo) {
             if (!this.textHolder) {
                 this.textHolder = new TextHolder(textInfo);
-                this.textHolder.setParent(this);
+                this.textHolder.parent = this;
                 this.textHolder.init();
             } else {
                 this.textHolder.setTextInfo(textInfo);
@@ -165,7 +174,7 @@ var CUI = CUI || {};
 
             if (autoWidth) {
                 if (this.resizeWithText) {
-                    pixel.width = this.textWidth;
+                    pixel.width = this.textHolder ? this.textHolder.cacheWidth : this.textWidth;
                 } else if (bg && !bg.borderImage) {
                     pixel.width = bg.w;
                 } else {
@@ -192,7 +201,7 @@ var CUI = CUI || {};
 
             if (autoHeight) {
                 if (this.resizeWithText) {
-                    pixel.height = this.textHeight;
+                    pixel.height = this.textHolder ? this.textHolder.cacheHeight : this.textHeight;
                 } else if (bg && !bg.borderImage) {
                     pixel.height = bg.h;
                 } else {
@@ -226,64 +235,26 @@ var CUI = CUI || {};
         },
 
         computeLayout: function(forceCompute) {
-
             if (!this._needToCompute && !forceCompute) {
                 return;
             }
-
-            this.textHolder && this.textHolder.updatePosition();
-
-            if (this.backgroundHolder) {
-                this.backgroundHolder.updateSize();
-                this.backgroundHolder.updatePosition();
-            }
-
-            if (this.borderHolder) {
-                this.borderHolder.updateSize();
-                this.borderHolder.updatePosition();
-            }
-
-            if (this.iconHolder) {
-                this.iconHolder.updateSize();
-                this.iconHolder.updatePosition();
-            }
-
-            if (this.flagHolder) {
-                this.flagHolder.updateSize();
-                this.flagHolder.updatePosition();
-            }
-
             this._needToCompute = false;
-        },
 
-        updateHolders: function() {
-            if (this.backgroundHolder) {
-                this.backgroundHolder.updateSize();
-                this.backgroundHolder.updatePosition();
-            }
-            if (this.borderHolder) {
-                this.borderHolder.updateSize();
-                this.borderHolder.updatePosition();
-            }
-            if (this.iconHolder) {
-                this.iconHolder.updateSize();
-                this.iconHolder.updatePosition();
-            }
             if (this.textHolder) {
                 this.textHolder.updateSize();
                 this.textHolder.updatePosition();
+                this.textHolder.update();
             }
-            if (this.flagHolder) {
-                this.flagHolder.updateSize();
-                this.flagHolder.updatePosition();
-            }
+
+            this.updateHolders();
         },
+
 
         updateSizeWithText: function() {
             // if (this.textHolder._needToCompute) {
+
             this.textHolder.computeSize();
             // }
-
             this.computeTextSize();
 
             var bg = this.backgroundHolder;
@@ -307,7 +278,6 @@ var CUI = CUI || {};
             } else {
                 this.computeLayout();
             }
-
             this.afterUpdate && this.afterUpdate(timeStep, now);
         },
     });

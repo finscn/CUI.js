@@ -14,15 +14,14 @@ var CUI = CUI || {};
         superclass: Component,
 
         initialize: function() {
-            this.width = null;
-            this.height = null;
+            this.renderer = null;
+
+            this.resetSN = 1;
 
             this.left = null;
             this.top = null;
             this.originalX = 0;
             this.originalY = 0;
-
-            this.resetSN = 1;
         },
 
         updateSelf: noop,
@@ -34,6 +33,8 @@ var CUI = CUI || {};
             }
 
             this.id = this.id || "root_" + Component._SN++;
+            this.relative = "root";
+            this.root = this;
 
             if (this.left === null) {
                 this.left = this.originalX;
@@ -49,8 +50,6 @@ var CUI = CUI || {};
             this.left = this.left || 0;
             this.top = this.top || 0;
 
-            this.relative = "root";
-            this.root = this;
             this.aabb = [0, 0, 0, 0];
 
             Root.$super.init.call(this);
@@ -90,14 +89,12 @@ var CUI = CUI || {};
 
         setSize: function(width, height, force) {
             if (force || this.width !== width) {
-                this.viewportWidth = width;
                 this.width = width;
                 this.pixel.width = width;
                 this.absoluteWidth = width;
                 this.aabb[2] = width;
             }
             if (force || this.height !== height) {
-                this.viewportHeight = height;
                 this.height = height;
                 this.pixel.height = height;
                 this.absoluteHeight = height;

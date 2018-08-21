@@ -26,6 +26,8 @@ var CUI = CUI || {};
         },
 
         init: function() {
+             this.id = this.id || "picture_" + Component._SN++;
+
             if (this.beforeInit) {
                 this.beforeInit();
             }
@@ -118,35 +120,17 @@ var CUI = CUI || {};
             if (!this._needToCompute && !forceCompute) {
                 return;
             }
+            this._needToCompute = false;
 
             this.computeSelf();
+
+            if (this.imageHolder) {
+                this.imageHolder.updateSize();
+                this.imageHolder.updatePosition();
+                this.imageHolder.update();
+            }
+
             this.updateHolders();
-
-            this._needToCompute = false;
-        },
-
-        updateHolders: function() {
-            // TODO
-            // this.imageHolder.pixel.width = this._absoluteWidth;
-            // this.imageHolder.absoluteWidth = this._absoluteWidth;
-            // this.imageHolder.pixel.height = this._absoluteHeight;
-            // this.imageHolder.absoluteHeight = this._absoluteHeight;
-            this.imageHolder.updateSize();
-            this.imageHolder.updatePosition();
-            this.imageHolder.update();
-
-
-            if (this.borderImageHolder) {
-                this.borderImageHolder.updateSize();
-                this.borderImageHolder.updatePosition();
-                this.borderImageHolder.update();
-            }
-
-            if (this.borderHolder) {
-                this.borderHolder.updateSize();
-                this.borderHolder.updatePosition();
-                this.borderHolder.update();
-            }
         },
     });
 

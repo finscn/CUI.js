@@ -1,24 +1,20 @@
 var rootUI;
-var uiT;
-var uiX = 0;
 
-var tempUI;
-// scene.enter
 function initUI() {
 
     rootUI = new CUI.Root({
         width: game.width,
         height: game.height,
+        renderer:renderer,
     });
 
-
     var json = {
-        ui: CUI.Page,
+        ui: CUI.Panel,
         width: "100%",
         height: "100%",
-        backgroundColor: CUI.renderer.colorRgb(155, 155, 155),
+        backgroundColor: renderer.colorRgb(155, 155, 155),
         borderWidth: 8,
-        // borderColor: CUI.renderer.colorRgb(255, 50, 50),
+        // borderColor: renderer.colorRgb(255, 50, 50),
         // borderAlpha: 0.6,
         padding: 10,
         children: [{
@@ -27,7 +23,7 @@ function initUI() {
             scrollH: true,
             scrollV: !true,
 
-            backgroundColor: CUI.renderer.colorRgb(255, 240, 230),
+            backgroundColor: renderer.colorRgb(255, 240, 230),
             left: 0,
             top: 0,
             padding: 20,
@@ -38,7 +34,7 @@ function initUI() {
             layout: "hbox",
 
             borderWidth: 2,
-            borderColor: CUI.renderer.colorRgb(90, 200, 60),
+            borderColor: renderer.colorRgb(90, 200, 60),
 
             children: [
 
@@ -59,7 +55,7 @@ function initUI() {
                     width: 120,
                     height: 120,
 
-                    // backgroundColor: CUI.renderer.colorRgb(100,240,23),
+                    // backgroundColor: renderer.colorRgb(100,240,23),
                     // margin: 10,
                     // layout: new CUI.HBoxLayout(),
                 },
@@ -74,7 +70,7 @@ function initUI() {
 
                     relative: "parent",
                     // src: "res/btn-bg.png",
-                    backgroundColor: CUI.renderer.colorHex("#ffffff"),
+                    backgroundColor: renderer.colorHex("#ffffff"),
                     bgInfo: {
                         img: CUI.ImagePool["bg"]
                     },
@@ -85,7 +81,7 @@ function initUI() {
                     width: 200,
                     height: 120,
 
-                    // backgroundColor: CUI.renderer.colorRgb(100,240,23),
+                    // backgroundColor: renderer.colorRgb(100,240,23),
                     // margin: 10,
                     // layout: new CUI.HBoxLayout(),
                 },
@@ -100,7 +96,7 @@ function initUI() {
 
                     relative: "parent",
                     // src: "res/btn-bg.png",
-                    backgroundColor: CUI.renderer.colorHex("#ffffff"),
+                    backgroundColor: renderer.colorHex("#ffffff"),
                     borderImageInfo: {
                         img: CUI.ImagePool["bg"],
                         T: 20,
@@ -115,20 +111,20 @@ function initUI() {
                     width: 200,
                     height: 120,
 
-                    // backgroundColor: CUI.renderer.colorRgb(100,240,23),
+                    // backgroundColor: renderer.colorRgb(100,240,23),
                     // margin: 10,
                     // layout: new CUI.HBoxLayout(),
 
                     children: [{
                             ui: CUI.Label,
                             id: "label-1",
-                            backgroundColor: CUI.renderer.colorRgb(255, 240, 230),
+                            backgroundColor: renderer.colorRgb(255, 240, 230),
                             borderWidth: 2,
-                            borderColor: CUI.renderer.colorHex("#ff0000"),
+                            borderColor: renderer.colorHex("#ff0000"),
                             // text: "Text Test",
                             textInfo: {
                                 // useCache: true,
-                                // color: CUI.renderer.colorRgb(255, 0, 0),
+                                // color: renderer.colorRgb(255, 0, 0),
                                 color: "#ff0000",
                                 alpha: 1,
                                 // useCache: false,
@@ -141,9 +137,9 @@ function initUI() {
                 {
                     ui: CUI.Button,
 
-                    backgroundColor: CUI.renderer.colorRgb(255, 240, 230),
+                    backgroundColor: renderer.colorRgb(255, 240, 230),
                     borderWidth: 2,
-                    borderColor: CUI.renderer.colorHex("#ff0000"),
+                    borderColor: renderer.colorHex("#ff0000"),
                     width: "auto",
                     height: "auto",
                     backgroundImg: CUI.ImagePool["btn-bg"],
@@ -157,9 +153,9 @@ function initUI() {
                 {
                     ui: CUI.Button,
 
-                    backgroundColor: CUI.renderer.colorRgb(255, 240, 230),
+                    backgroundColor: renderer.colorRgb(255, 240, 230),
                     borderWidth: 2,
-                    borderColor: CUI.renderer.colorHex("#ff0000"),
+                    borderColor: renderer.colorHex("#ff0000"),
                     width: 100,
                     height: 60,
                     backgroundImg: null,
@@ -173,9 +169,9 @@ function initUI() {
                 {
                     ui: CUI.Button,
 
-                    backgroundColor: CUI.renderer.colorRgb(255, 240, 230),
+                    backgroundColor: renderer.colorRgb(255, 240, 230),
                     borderWidth: 2,
-                    // borderColor: CUI.renderer.colorHex("#ff0000"),
+                    // borderColor: renderer.colorHex("#ff0000"),
                     width: 100,
                     height: 90,
                     borderImageInfo: {

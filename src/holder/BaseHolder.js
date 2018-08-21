@@ -7,48 +7,16 @@ var CUI = CUI || {};
 
     var Class = exports.Class;
     var Utils = exports.Utils;
-    var Font = exports.Font;
+    var Core = exports.Core;
 
     var BaseHolder = Class.create({
+        superclass: Core,
 
         initialize: function() {
             this.DEG_TO_RAD = Math.PI / 180;
             this.RAD_TO_DEG = 180 / Math.PI;
             this.HALF_PI = Math.PI / 2;
             this.DOUBLE_PI = Math.PI * 2;
-
-            this.pixel = {
-                x: 0,
-                y: 0,
-                width: 0,
-                height: 0,
-                baseX: 0,
-                baseY: 0,
-                relativeX: 0,
-                relativeY: 0,
-            };
-
-            this._absoluteWidth = 0;
-            this._absoluteHeight = 0;
-            this._pivotX = 0;
-            this._pivotY = 0;
-            this._anchorX = 0;
-            this._anchorY = 0;
-
-            this.anchor = 0;
-            this.anchorX = 0;
-            this.anchorY = 0;
-
-            this.absoluteX = 0;
-            this.absoluteY = 0;
-            this.width = null;
-            this.height = null;
-
-
-            this.alpha = 1;
-            this.scale = 1;
-            this.rotation = 0;
-            this.tint = null;
 
             this.offsetX = 0;
             this.offsetY = 0;
@@ -57,36 +25,25 @@ var CUI = CUI || {};
             this.alignH = "center"; // left center righ;
             this.alignV = "middle"; // top middle botto;
 
-            this.visible = true;
             this.fillParent = false;
-
             this.ratio = null;
             this.lockScaleRatio = true;
 
-            this.parent = null;
-            this._needToCompute = true;
+            this.lazyInit = true;
         },
 
         init: function() {
-            this.setParent(this.parent);
-            this.updateSize();
-            this.updatePosition();
+            // this.updateSize();
+            // this.updatePosition();
             this.initDisplayObject();
         },
 
-        initDisplayObject: function() {
-            // do nothing.
+        computAutoWidth: function() {
+            this.pixel.width = 0;
         },
-        updateDisplayObject: function(img, x, y, w, h) {
-            // do nothing.
+        computAutoHeight: function() {
+            this.pixel.height = 0;
         },
-
-        setParent: function(parent) {
-            this.parent = parent;
-            this.root = parent ? parent.root : null;
-            this._needToCompute = true;
-        },
-
         updateSize: function() {
             var parent = this.parent;
 
@@ -114,14 +71,14 @@ var CUI = CUI || {};
             }
 
             if (this.width === 'auto') {
-
+                this.computAutoWidth();
             } else {
                 this.pixel.width = Utils.parseValue(this.width, parent._absoluteWidth, this.pixel.width) || 0;
             }
             this.absoluteWidth = this.pixel.width;
 
             if (this.height === 'auto') {
-
+                this.computAutoHeight();
             } else {
                 this.pixel.height = Utils.parseValue(this.height, parent._absoluteHeight, this.pixel.height) || 0;
             }
@@ -185,6 +142,15 @@ var CUI = CUI || {};
         },
 
     });
+
+    //////////////////////////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////////////////////////
 
 
     exports.BaseHolder = BaseHolder;

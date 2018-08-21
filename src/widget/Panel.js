@@ -15,6 +15,8 @@ var CUI = CUI || {};
         superclass: Component,
 
         init: function() {
+            this.id = this.id || "panel_" + Component._SN++;
+
             if (this.beforeInit) {
                 this.beforeInit();
             }
