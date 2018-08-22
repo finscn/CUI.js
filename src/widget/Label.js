@@ -246,6 +246,7 @@ var CUI = CUI || {};
                 bg.cacheCanvas = null;
             }
 
+            // this.tryToReflow(this.reflow);
             // if (resizeWithText) {
             //     // this.tryToReflow(this.reflow, true);
             //     this.tryToReflow(this.reflow);

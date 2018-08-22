@@ -17,6 +17,7 @@ var CUI = CUI || {};
             this.borderWidth = 0;
             this.textAlign = "center";
 
+            // this.resizeWithText = false;
             this.scaleBg = true;
 
             this.id = this.id || "button_" + Component._SN++;

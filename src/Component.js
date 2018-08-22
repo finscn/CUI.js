@@ -91,7 +91,7 @@ var CUI = CUI || {};
             this.backgroundImageAlpha = 1;
             this.backgroundInfo = null;
 
-            this.scaleBgImg = true;
+            this.scaleBg = true;
 
             // this.borderColor = "rgba(30,50,80,1)";
             this.borderColor = null;
@@ -154,6 +154,7 @@ var CUI = CUI || {};
             this.initBackgroundImage();
 
             this._toSortChildren = true;
+            this._updateCount = 0;
 
             // TODO
             // this._afterInit();
@@ -270,7 +271,7 @@ var CUI = CUI || {};
                 parent: this,
                 img: image,
                 alpha: this.backgroundImageAlpha,
-                fillParent: this.scaleBgImg,
+                fillParent: this.scaleBg,
                 lockScaleRatio: false,
             });
             holder.init();
@@ -697,6 +698,10 @@ var CUI = CUI || {};
             });
         },
         update: function(timeStep, now) {
+            this.computed = (this._updateCount++) > 1;
+            if (!this.computed) {
+                this._needToCompute = true;
+            }
             this.beforeUpdate && this.beforeUpdate(timeStep, now);
             this.computeLayout();
             this.updateSelf(timeStep, now);
