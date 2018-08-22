@@ -110,6 +110,7 @@ var CUI = CUI || {};
                 this.displayObject = this.parent.root.renderer.createTextObject();
                 this.displayObject.textInfo = this;
             }
+            this.syncDisplayObject();
 
             if (this.parent) {
                 this.parent.addChildDisplayObject(this);

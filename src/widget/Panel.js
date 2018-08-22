@@ -23,7 +23,9 @@ var CUI = CUI || {};
 
             Panel.$super.init.call(this);
 
-            // this.initHead();
+            this.initHead();
+
+            this.initChildren();
 
             if (this.afterInit) {
                 this.afterInit();

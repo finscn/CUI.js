@@ -54,6 +54,10 @@ var CUI = CUI || {};
 
             Root.$super.init.call(this);
 
+            this.initChildren();
+
+            this._toSortChildren = true;
+
             if (this.afterInit) {
                 this.afterInit();
             }

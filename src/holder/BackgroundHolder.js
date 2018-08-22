@@ -23,6 +23,8 @@ var CUI = CUI || {};
         initDisplayObject: function() {
             var displayObject = this.parent.root.renderer.createRect(this.absoluteWidth, this.absoluteHeight, this.color, this.alpha);
             this.displayObject = displayObject;
+            this.syncDisplayObject();
+
             if (this.parent) {
                 this.parent.addChildDisplayObject(this);
             }

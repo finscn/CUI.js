@@ -43,11 +43,9 @@ var CUI = CUI || {};
             this._sizeChanged = true;
 
             if (this.iconInfo) {
-                this.addImageHolder(this.iconInfo);
+                this.iconHolder = this.addImageHolder(this.iconInfo);
             }
-            if (this.flagInfo) {
-                this.addImageHolder(this.flagInfo);
-            }
+
             this.initTextInfo();
             this.setTextInfo(this.textInfo);
 
@@ -94,21 +92,6 @@ var CUI = CUI || {};
                     this.iconHolder.init();
                 } else {
                     this.iconHolder.setImgInfo(iconInfo);
-                }
-            }
-            this._needToCompute = true;
-        },
-
-        setFlagInfo: function(flagInfo) {
-            if (!flagInfo) {
-                this.flagHolder = null;
-            } else {
-                if (!this.flagHolder) {
-                    this.flagHolder = new ImageHolder(flagInfo);
-                    this.flagHolder.parent = this;
-                    this.flagHolder.init();
-                } else {
-                    this.flagHolder.setImgInfo(flagInfo);
                 }
             }
             this._needToCompute = true;
@@ -263,7 +246,8 @@ var CUI = CUI || {};
                 bg.cacheCanvas = null;
             }
 
-            this.setReflow("parent", true);
+            // this.setReflow("parent", true);
+            this.setReflow("parent");
 
             this._needToComputeSize = false;
             this._sizeChanged = false;

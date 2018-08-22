@@ -67,6 +67,12 @@ var CUI = CUI || {};
             return child;
         },
 
+        sortChildren: function(){
+            this.children.sort(function(a, b) {
+                return a.zIndex - b.zIndex || a.index - b.index;
+            });
+        },
+
         destory: function() {
             this.children.forEach(function(child) {
                 child.parent = null;

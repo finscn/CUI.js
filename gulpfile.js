@@ -93,6 +93,7 @@ var jsFileList = [
     "widget/Picture.js",
     "widget/ScrollView.js",
     "widget/ProgressBar.js",
+    "widget/SliderBar.js",
 
     "renderer/DisplayObject.js",
     "renderer/CanvasRenderer.js",

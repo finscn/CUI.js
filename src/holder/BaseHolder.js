@@ -18,8 +18,11 @@ var CUI = CUI || {};
             this.HALF_PI = Math.PI / 2;
             this.DOUBLE_PI = Math.PI * 2;
 
+            this.lazyInit = true;
+
             this.offsetX = 0;
             this.offsetY = 0;
+            // TODO
             this.offsetAlpha = 0;
 
             this.alignH = "center"; // left center righ;
@@ -29,13 +32,22 @@ var CUI = CUI || {};
             this.ratio = null;
             this.lockScaleRatio = true;
 
-            this.lazyInit = true;
         },
 
         init: function() {
+            this.initDisplayObject();
             // this.updateSize();
             // this.updatePosition();
-            this.initDisplayObject();
+        },
+
+        syncDisplayObject: function() {
+            this.visible = this._visible;
+            this.alpha = this._alpha;
+            this.tint = this._tint;
+            this.rotation = this._rotation;
+            this.scale = this._scale;
+            this.scaleX = this._scaleX;
+            this.scaleY = this._scaleY;
         },
 
         computAutoWidth: function() {
@@ -140,7 +152,6 @@ var CUI = CUI || {};
             this._sizeChanged = false;
             this._positionChanged = false;
         },
-
     });
 
     //////////////////////////////////////////////////////////////////////////////

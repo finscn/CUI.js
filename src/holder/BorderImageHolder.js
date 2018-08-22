@@ -51,12 +51,14 @@ var CUI = CUI || {};
             var sw = config.sw || img.width;
             var sh = config.sh || img.height;
 
+            var L = this.L;
             var T = this.T;
             var R = this.R;
             var B = this.B;
-            var L = this.L;
 
-            this.displayObject = this.parent.root.renderer.createNineSlicePlane(img, sx, sy, sw, sh, T, R, B, L);
+            this.displayObject = this.parent.root.renderer.createNineSlicePlane(img, sx, sy, sw, sh, L, T, R, B);
+            this.syncDisplayObject();
+
             this.displayObject.width = sw;
             this.displayObject.height = sh;
 

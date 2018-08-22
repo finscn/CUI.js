@@ -18,27 +18,28 @@ function initUI() {
     });
 
 
-    // var label = new CUI.Label({
-    //     testCmp:1,
-    //     id: "label-1",
-    //     parent: rootUI,
-    //     right:0,
-    //     backgroundColor: renderer.colorRgb(255, 240, 230),
-    //     borderWidth: 2,
-    //     borderColor: renderer.colorHex("#ff0000"),
-    //     // text: "Text Test",
-    //     textInfo: {
-    //         // useCache: true,
-    //         // color: renderer.colorRgb(255, 0, 0),
-    //         color: "#ff0000",
-    //         alpha: 1,
-    //         // useCache: false,
-    //         text: "Text Test - 1",
-    //     },
-    //     beforeUpdate: function() {
-    //         this.setText("test-" + (Math.random() * 1000 >> 0), false);
-    //     }
-    // });
+    var label = new CUI.Label({
+        testCmp: 1,
+        id: "label-1",
+        parent: rootUI,
+        right: 0,
+        zIndex: 999,
+        backgroundColor: renderer.colorRgb(255, 240, 230),
+        borderWidth: 2,
+        borderColor: renderer.colorHex("#ff0000"),
+        // text: "Text Test",
+        textInfo: {
+            // useCache: true,
+            // color: renderer.colorRgb(255, 0, 0),
+            color: "#ff0000",
+            alpha: 1,
+            // useCache: false,
+            text: "Text Test - 1",
+        },
+        beforeUpdate: function() {
+            this.setText("test-" + (Math.random() * 1000 >> 0), false);
+        }
+    });
 
 
     scrollView = new CUI.ScrollView({
@@ -55,9 +56,9 @@ function initUI() {
         left: 0,
         top: 0,
         padding: 20,
-        // width: "100% - 100",
-        width: 300,
-        height: "100% -40",
+        width: "100% - 20",
+        // width: 300,
+        height: "100% - 40",
         // height: 300,
         // scrollHeight: 400,
         layout: "hbox",

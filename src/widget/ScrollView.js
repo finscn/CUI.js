@@ -65,6 +65,8 @@ var CUI = CUI || {};
             this.scrollWidthOrigin = this.scrollWidth;
             this.scrollHeightOrigin = this.scrollHeight;
 
+            this.initChildren();
+
             this.resetScrollInfo();
 
             if (this.afterInit) {

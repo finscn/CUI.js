@@ -102,6 +102,8 @@ var CUI = CUI || {};
             this.composite = true;
             this.children = null;
             this.childrenMap = null;
+
+            this._toSortChildren = false;
         },
 
         init: function() {
@@ -149,6 +151,8 @@ var CUI = CUI || {};
             this.backgroundImage = this.backgroundImage || this.backgroundImg || this.bgImg;
             this.initBackgroundImage();
 
+            this._toSortChildren = true;
+
             // TODO
             // this._afterInit();
 
@@ -161,11 +165,33 @@ var CUI = CUI || {};
             var displayObject = this.root.renderer.createContainer();
             displayObject._ignoreResize = true;
             this.displayObject = displayObject;
+            this.syncDisplayObject();
+
             this.displayObject.pivot.set(this._pivotX, this._pivotY);
             if (this.parent) {
                 this.parent.addChildDisplayObject(this);
             }
         },
+
+        syncDisplayObject: function() {
+            this.visible = this._visible;
+            this.alpha = this._alpha;
+            this.tint = this._tint;
+            this.rotation = this._rotation;
+            this.scale = this._scale;
+            this.scaleX = this._scaleX;
+            this.scaleY = this._scaleY;
+
+            this.anchor = this._anchor;
+            this.anchorX = this._anchorX;
+            this.anchorY = this._anchorY;
+
+            this.zIndex = this._zIndex;
+            this.offsetX = this._offsetX;
+            this.offsetY = this._offsetY;
+        },
+
+        initChildren: noop,
 
         setDisabled: function(disabled) {
             this.disabled = disabled;
@@ -204,7 +230,15 @@ var CUI = CUI || {};
         },
 
         initBorderImage: function(info) {
-            var info = this.borderImageInfo;
+            this.setBorderImage(this.borderImageInfo)
+        },
+
+        setBorderImage: function(info) {
+            // TODO
+            // if (this.borderImageHolder) {
+            //     this.borderImageHolder.destory();
+            // }
+
             if (!info) {
                 this.borderImageHolder = null;
                 return;
@@ -217,13 +251,22 @@ var CUI = CUI || {};
         },
 
         initBackgroundImage: function() {
-            if (!this.backgroundImage) {
+            this.setBackgroundImage(this.backgroundImage);
+        },
+
+        setBackgroundImage: function(image) {
+            // TODO
+            // if (this.backgroundImageHolder) {
+            //     this.backgroundImageHolder.destory();
+            // }
+
+            if (!image) {
                 this.backgroundImageHolder = null;
                 return;
             }
             var holder = new CUI.ImageHolder({
                 parent: this,
-                img: this.backgroundImage,
+                img: image,
                 alpha: this.backgroundImageAlpha,
                 fillParent: this.scaleBgImg,
                 lockScaleRatio: false,
@@ -302,7 +345,8 @@ var CUI = CUI || {};
                     this.pixel.height = 0;
                 }
                 this._needToCompute = true;
-                this.sortChildren();
+                this._toSortChildren = true;
+                // this.sortChildren();
             }
         },
 
@@ -328,12 +372,15 @@ var CUI = CUI || {};
             this.children.sort(function(a, b) {
                 return a.zIndex - b.zIndex || a.index - b.index;
             });
+            this.displayObject.sortChildren();
+            this._toSortChildren = false;
         },
 
         setZIndex: function(zIndex) {
             this.zIndex = zIndex;
             var p = this.parent || this.root;
-            p.sortChildren();
+            p._toSortChildren = true;
+            // p.sortChildren();
         },
 
         setMargin: function(margin) {
@@ -653,6 +700,9 @@ var CUI = CUI || {};
             this.updateSelf(timeStep, now);
             if (this.composite && this.visible) {
                 this.updateChildren(timeStep, now);
+                if (this._toSortChildren) {
+                    this.sortChildren();
+                }
             }
             this.afterUpdate && this.afterUpdate(timeStep, now);
         },

@@ -26,6 +26,7 @@ var CUI = CUI || {};
                 relativeX: 0,
                 relativeY: 0,
 
+                // For Component
                 paddingLeft: 0,
                 paddingTop: 0,
                 paddingRight: 0,
@@ -62,10 +63,17 @@ var CUI = CUI || {};
 
             // 缩放只适合用来做瞬间的、纯视觉上的动画效果, 它不会改变UI的响应区域和行为
             // 如果要真正改变UI的大小, 请通过修改UI(以及内部元素的)width/height来实现
-            this._scale = 0;
-            this._scaleX = 0;
-            this._scaleY = 0;
+            this._scale = 1;
+            this._scaleX = 1;
+            this._scaleY = 1;
 
+            // 绝对定位和大小, 单位:像素
+            this._absoluteX = 0;
+            this._absoluteY = 0;
+            this._absoluteWidth = 0;
+            this._absoluteHeight = 0;
+
+            // For Component
             // 缩放/旋转 时才需要
             this._anchor = 0;
             this._anchorX = 0;
@@ -73,11 +81,8 @@ var CUI = CUI || {};
             this._pivotX = 0;
             this._pivotY = 0;
 
-            // 绝对定位和大小, 单位:像素
-            this._absoluteX = 0;
-            this._absoluteY = 0;
-            this._absoluteWidth = 0;
-            this._absoluteHeight = 0;
+            this._offsetX = 0;
+            this._offsetY = 0;
 
             this._needToCompute = true;
         },
@@ -126,9 +131,15 @@ var CUI = CUI || {};
 
         initDisplayObject: noop,
 
+        syncDisplayObject: noop,
+
         updateDisplayObject: function(img, x, y, w, h) {
             // do nothing.
         },
+
+        destory: function() {
+            // TODO
+        }
     });
 
     var properties = [

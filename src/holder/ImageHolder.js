@@ -187,6 +187,8 @@ var CUI = CUI || {};
         initDisplayObject: function() {
             var displayObject = this.parent.root.renderer.createSprite();
             this.displayObject = displayObject;
+            this.syncDisplayObject();
+
             if (this.parent) {
                 this.parent.addChildDisplayObject(this);
             }
