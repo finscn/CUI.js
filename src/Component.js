@@ -549,60 +549,50 @@ var CUI = CUI || {};
             this._needToCompute = true;
         },
 
-        moveToX: function(x, lazy) {
-            var parent = this.parent;
-            var pixel = this.pixel;
-            pixel.x = x;
-            pixel.relativeX = x - (parent ? parent._absoluteX : 0);
-            pixel.baseX = pixel.relativeX - this._offsetX + (parent ? parent.scrollX : 0);
-            this.absoluteX = x;
-
-            if (lazy !== true) {
-                this.updateAABB();
-
-                if (this.composite) {
-                    this.children.forEach(function(child) {
-                        child.syncPosition();
-                    });
-                }
-
-                this._needToCompute = true;
-            }
-        },
-
-        moveToY: function(y, lazy) {
-            var parent = this.parent;
-            var pixel = this.pixel;
-            pixel.y = y;
-            pixel.relativeY = y - (parent ? parent._absoluteY : 0);
-            pixel.baseY = pixel.relativeY - this._offsetY + (parent ? parent.scrollY : 0);
-            this.absoluteY = y;
-
-            if (lazy !== true) {
-                this.updateAABB();
-
-                if (this.composite) {
-                    this.children.forEach(function(child) {
-                        child.syncPosition();
-                    });
-                }
-
-                this._needToCompute = true;
-            }
-        },
-
+        // x, y 为 全局绝对位置
         moveTo: function(x, y) {
-            this.moveToX(x, true);
-            this.moveToY(y);
+            var parent = this.parent;
+            var pixel = this.pixel;
+
+            if (x !== null) {
+                pixel.x = x;
+                pixel.relativeX = x - (parent ? parent._absoluteX : 0);
+                pixel.baseX = pixel.relativeX - this._offsetX + (parent ? parent.scrollX : 0);
+                this.absoluteX = x;
+            }
+
+            if (y !== null) {
+                pixel.y = y;
+                pixel.relativeY = y - (parent ? parent._absoluteY : 0);
+                pixel.baseY = pixel.relativeY - this._offsetY + (parent ? parent.scrollY : 0);
+                this.absoluteY = y;
+            }
+
+            this.updateAABB();
+
+            if (this.composite) {
+                this.children.forEach(function(child) {
+                    child.syncPosition();
+                });
+            }
+
+            this._needToCompute = true;
+        },
+
+        moveToX: function(x) {
+            this.moveTo(x, null);
+        },
+
+        moveToY: function(y) {
+            this.moveTo(null, y);
         },
 
         moveBy: function(dx, dy) {
-            if (!dx) {
-                this.moveToY(this.pixel.y + dy);
-            } else if (!dy) {
+            if (dx && dy) {
+                this.moveTo(this.pixel.x + dx, this.pixel.y + dy);
+            } else if (dx) {
                 this.moveToX(this.pixel.x + dx);
-            } else if (dx && dy) {
-                this.moveToX(this.pixel.x + dx, true);
+            } else if (dy) {
                 this.moveToY(this.pixel.y + dy);
             }
         },
