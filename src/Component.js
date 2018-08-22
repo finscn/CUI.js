@@ -105,7 +105,8 @@ var CUI = CUI || {};
             this.children = null;
             this.childrenMap = null;
 
-            this._toSortChildren = false;
+            this._toSortChildren = true;
+            this.precomputedTimes = 2;
         },
 
         init: function() {
@@ -153,9 +154,6 @@ var CUI = CUI || {};
             this.backgroundImage = this.backgroundImage || this.backgroundImg || this.bgImg;
             this.initBackgroundImage();
 
-            this._toSortChildren = true;
-            this._updateCount = 0;
-
             // TODO
             // this._afterInit();
 
@@ -181,7 +179,7 @@ var CUI = CUI || {};
             this.alpha = this._alpha;
             this.tint = this._tint;
             this.rotation = this._rotation;
-            this.scale = this._scale;
+            // this.scale = this._scale;
             this.scaleX = this._scaleX;
             this.scaleY = this._scaleY;
 
@@ -239,7 +237,7 @@ var CUI = CUI || {};
         setBorderImage: function(info) {
             // TODO
             // if (this.borderImageHolder) {
-            //     this.borderImageHolder.destory();
+            //     this.borderImageHolder.destroy();
             // }
 
             if (!info) {
@@ -260,7 +258,7 @@ var CUI = CUI || {};
         setBackgroundImage: function(image) {
             // TODO
             // if (this.backgroundImageHolder) {
-            //     this.backgroundImageHolder.destory();
+            //     this.backgroundImageHolder.destroy();
             // }
 
             if (!image) {
@@ -520,16 +518,17 @@ var CUI = CUI || {};
             });
         },
 
-        syncPositionX: function() {
+        syncPositionX: function(parent) {
+            parent = parent || this.parent;
             var pixel = this.pixel;
-            var parent = this.parent;
             pixel.relativeX = pixel.baseX + this._offsetX - (parent ? parent.scrollX : 0);
             pixel.x = pixel.relativeX + (parent ? parent._absoluteX : 0);
             this.absoluteX = pixel.x;
         },
-        syncPositionY: function() {
+
+        syncPositionY: function(parent) {
+            parent = parent || this.parent;
             var pixel = this.pixel;
-            var parent = this.parent;
             pixel.relativeY = pixel.baseY + this._offsetY - (parent ? parent.scrollY : 0);
             pixel.y = pixel.relativeY + (parent ? parent._absoluteY : 0);
             this.absoluteY = pixel.y;
@@ -550,20 +549,62 @@ var CUI = CUI || {};
             this._needToCompute = true;
         },
 
-        moveTo: function(dx, dy) {
+        moveToX: function(x, lazy) {
+            var parent = this.parent;
             var pixel = this.pixel;
+            pixel.x = x;
+            pixel.relativeX = x - (parent ? parent._absoluteX : 0);
+            pixel.baseX = pixel.relativeX - this._offsetX + (parent ? parent.scrollX : 0);
+            this.absoluteX = x;
 
-            // TODO
+            if (lazy !== true) {
+                this.updateAABB();
 
-            this.syncPosition();
+                if (this.composite) {
+                    this.children.forEach(function(child) {
+                        child.syncPosition();
+                    });
+                }
+
+                this._needToCompute = true;
+            }
+        },
+
+        moveToY: function(y, lazy) {
+            var parent = this.parent;
+            var pixel = this.pixel;
+            pixel.y = y;
+            pixel.relativeY = y - (parent ? parent._absoluteY : 0);
+            pixel.baseY = pixel.relativeY - this._offsetY + (parent ? parent.scrollY : 0);
+            this.absoluteY = y;
+
+            if (lazy !== true) {
+                this.updateAABB();
+
+                if (this.composite) {
+                    this.children.forEach(function(child) {
+                        child.syncPosition();
+                    });
+                }
+
+                this._needToCompute = true;
+            }
+        },
+
+        moveTo: function(x, y) {
+            this.moveToX(x, true);
+            this.moveToY(y);
         },
 
         moveBy: function(dx, dy) {
-            var pixel = this.pixel;
-
-            // TODO
-
-            this.syncPosition();
+            if (!dx) {
+                this.moveToY(this.pixel.y + dy);
+            } else if (!dy) {
+                this.moveToX(this.pixel.x + dx);
+            } else if (dx && dy) {
+                this.moveToX(this.pixel.x + dx, true);
+                this.moveToY(this.pixel.y + dy);
+            }
         },
 
         show: function() {
@@ -698,8 +739,7 @@ var CUI = CUI || {};
             });
         },
         update: function(timeStep, now) {
-            this.computed = (this._updateCount++) > 1;
-            if (!this.computed) {
+            if ((this.precomputedTimes--) > 0) {
                 this._needToCompute = true;
             }
             this.beforeUpdate && this.beforeUpdate(timeStep, now);
@@ -839,8 +879,6 @@ var CUI = CUI || {};
 
         computePositionX: function(parent) {
             // parent.pixel.innerWidth/innerHeight ( size - Math.max(padding, margin) );
-            parent = parent || this.parent;
-
             var pixel = this.pixel;
             var relativeWidth = pixel.realOuterWidth;
 
@@ -856,15 +894,12 @@ var CUI = CUI || {};
             }
             pixel.baseX = x + pixel.realMarginLeft;
 
-            pixel.relativeX = pixel.baseX + this._offsetX - (parent ? parent.scrollX : 0);
-            pixel.x = pixel.relativeX + (parent ? parent._absoluteX : 0);
-            this.absoluteX = pixel.x;
+            this.syncPositionX(parent);
         },
 
 
         computePositionY: function(parent) {
             // parent.pixel.innerWidth/innerHeight ( size - Math.max(padding, margin) );
-            parent = parent || this.parent;
             var pixel = this.pixel;
             var relativeHeight = pixel.realOuterHeight;
 
@@ -881,22 +916,15 @@ var CUI = CUI || {};
             }
             pixel.baseY = y + pixel.realMarginTop;
 
-            pixel.relativeY = pixel.baseY + this._offsetY - (parent ? parent.scrollY : 0);
-            pixel.y = pixel.relativeY + (parent ? parent._absoluteY : 0);
-            this.absoluteY = pixel.y;
+            this.syncPositionY(parent);
         },
 
         ////////////////////////////////////////////////////////////////////////
         ////////////////////////////////////////////////////////////////////////
         ////////////////////////////////////////////////////////////////////////
 
-        destructor: function() {
-            if (this.root) {
-                delete this.root.all[this.id];
-                this.root = null;
-            }
-            this.parent = null;
-            this.layout = null;
+        destroy: function() {
+            // TODO
 
             // 不会自动显式的销毁子元素. (不会调用子元素的destructor)
             if (this.composite) {
@@ -908,7 +936,20 @@ var CUI = CUI || {};
                 this.childrenMap = null;
             }
 
-            // TODO
+            this.holders.forEach(function(holders) {
+                holders.destroy();
+                holders.parent = null;
+            });
+
+            if (this.root) {
+                delete this.root.all[this.id];
+                this.root = null;
+            }
+            this.parent = null;
+            this.layout = null;
+
+            this.displayObject.destroy()
+            this.displayObject = null;
         },
     });
 

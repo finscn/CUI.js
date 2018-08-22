@@ -45,7 +45,7 @@ var CUI = CUI || {};
             this.alpha = this._alpha;
             this.tint = this._tint;
             this.rotation = this._rotation;
-            this.scale = this._scale;
+            // this.scale = this._scale;
             this.scaleX = this._scaleX;
             this.scaleY = this._scaleY;
         },
@@ -152,6 +152,13 @@ var CUI = CUI || {};
             this._sizeChanged = false;
             this._positionChanged = false;
         },
+
+        destroy: function(){
+            // TODO
+            this.parent = null;
+            this.displayObject.destroy();
+            this.displayObject = null;
+        }
     });
 
     //////////////////////////////////////////////////////////////////////////////

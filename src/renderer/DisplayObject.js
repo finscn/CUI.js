@@ -73,11 +73,11 @@ var CUI = CUI || {};
             });
         },
 
-        destory: function() {
+        destroy: function() {
             this.children.forEach(function(child) {
                 child.parent = null;
-                if (typeof child.destory === 'function') {
-                    child.destory();
+                if (typeof child.destroy === 'function') {
+                    child.destroy();
                 }
             });
 

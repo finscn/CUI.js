@@ -137,9 +137,7 @@ var CUI = CUI || {};
             // do nothing.
         },
 
-        destory: function() {
-            // TODO
-        }
+        destroy: noop
     });
 
     var properties = [
@@ -213,6 +211,7 @@ var CUI = CUI || {};
             },
             set: function(value) {
                 this._scaleX = value;
+                this._scale = value;
                 this.displayObject && (this.displayObject.scale.x = value);
             }
         },
@@ -224,6 +223,7 @@ var CUI = CUI || {};
             },
             set: function(value) {
                 this._scaleY = value;
+                this._scale = value;
                 this.displayObject && (this.displayObject.scale.y = value);
             }
         },
