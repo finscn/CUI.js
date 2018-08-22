@@ -23,6 +23,8 @@ var CUI = CUI || {};
 
             this.anchor = 0.5;
 
+            this.reflow = 'parent';
+
             /////////////////////////////////////////////
             // 对象创建后, 以下属性可更改
 
@@ -407,7 +409,7 @@ var CUI = CUI || {};
         /////////////////////////////////////////////////////////////////////////
 
 
-        setReflow: function(deep, immediately) {
+        tryToReflow: function(deep, immediately) {
             if (!deep) {
                 this._needToCompute = false;
                 return false;
@@ -462,7 +464,7 @@ var CUI = CUI || {};
             if (this.top !== top && top !== null && top !== undefined) {
                 this.top = top;
             }
-            this.setReflow("parent");
+            this.tryToReflow(this.reflow);
         },
 
         setSize: function(width, height, force) {
@@ -602,25 +604,25 @@ var CUI = CUI || {};
         setLeft: function(left) {
             if (this.left !== left) {
                 this.left = left;
-                this.setReflow("parent");
+                this.tryToReflow(this.reflow);
             }
         },
         setRight: function(right) {
             if (this.right !== right) {
                 this.right = right;
-                this.setReflow("parent");
+                this.tryToReflow(this.reflow);
             }
         },
         setTop: function(top) {
             if (this.top !== top) {
                 this.top = top;
-                this.setReflow("parent");
+                this.tryToReflow(this.reflow);
             }
         },
         setBottom: function(bottom) {
             if (this.bottom !== bottom) {
                 this.bottom = bottom;
-                this.setReflow("parent");
+                this.tryToReflow(this.reflow);
             }
         },
 
@@ -848,7 +850,6 @@ var CUI = CUI || {};
                 x = pixel.left || 0;
             }
             pixel.baseX = x + pixel.realMarginLeft;
-
             pixel.relativeX = pixel.baseX + this._offsetX - (parent ? parent.scrollX : 0);
             pixel.x = pixel.relativeX + (parent ? parent._absoluteX : 0);
             this.absoluteX = pixel.x;

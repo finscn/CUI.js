@@ -26,7 +26,7 @@ var CUI = CUI || {};
         },
 
         init: function() {
-             this.id = this.id || "picture_" + Component._SN++;
+            this.id = this.id || "picture_" + Component._SN++;
 
             if (this.beforeInit) {
                 this.beforeInit();
@@ -76,9 +76,15 @@ var CUI = CUI || {};
         setSrc: function(src) {
             this.src = src;
             var Me = this;
+            var autoResize = this.width === "auto" || this.height === "auto";
             this.imageHolder.setSrc(src, function(img) {
                 if (img) {
-                    Me.setReflow(true);
+                    if (autoResize) {
+                        Me.tryToReflow(Me.reflow);
+                    } else {
+                        Me.computeSelf();
+                        Me.computeLayout(true);
+                    }
                 }
                 Me.hasImg = !!Me.imageHolder.img;
                 Me._needToCompute = true;
@@ -88,9 +94,15 @@ var CUI = CUI || {};
         setImg: function(img) {
             this.img = img;
             var Me = this;
+            var autoResize = this.width === "auto" || this.height === "auto";
             this.imageHolder.setImg(img, function(img) {
                 if (img) {
-                    Me.setReflow(true);
+                    if (autoResize) {
+                        Me.tryToReflow(Me.reflow);
+                    } else {
+                        Me.computeSelf();
+                        Me.computeLayout(true);
+                    }
                 }
                 Me.hasImg = !!Me.imageHolder.img;
                 Me._needToCompute = true;

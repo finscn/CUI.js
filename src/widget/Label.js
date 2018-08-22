@@ -153,7 +153,7 @@ var CUI = CUI || {};
 
         computeWidth: function() {
             var pixel = this.pixel;
-            var autoWidth = this.width === null || this.width === "auto";
+            var autoWidth = this.width === "auto";
             var bg = this.backgroundHolder;
 
             if (autoWidth) {
@@ -180,7 +180,7 @@ var CUI = CUI || {};
 
         computeHeight: function() {
             var pixel = this.pixel;
-            var autoHeight = this.height === null || this.height === "auto";
+            var autoHeight = this.height === "auto";
             var bg = this.backgroundHolder;
 
             if (autoHeight) {
@@ -246,8 +246,15 @@ var CUI = CUI || {};
                 bg.cacheCanvas = null;
             }
 
-            // this.setReflow("parent", true);
-            this.setReflow("parent");
+            // if (resizeWithText) {
+            //     // this.tryToReflow(this.reflow, true);
+            //     this.tryToReflow(this.reflow);
+            // } else {
+            //     this.computeSelf();
+            //     this.computeLayout(true);
+            // }
+            this.computeSelf();
+            this.computeLayout(true);
 
             this._needToComputeSize = false;
             this._sizeChanged = false;

@@ -28,6 +28,8 @@ function initUI() {
         borderWidth: 2,
         borderColor: renderer.colorHex("#ff0000"),
         // text: "Text Test",
+        width: 'auto',
+        height: 'auto',
         textInfo: {
             // useCache: true,
             // color: renderer.colorRgb(255, 0, 0),
@@ -37,7 +39,9 @@ function initUI() {
             text: "Text Test - 1",
         },
         beforeUpdate: function() {
-            this.setText("test-" + (Math.random() * 1000 >> 0), false);
+            if (Date.now() % 3 === 0) {
+                this.setText("test-" + (Math.random() * 1000 >> 0), false);
+            }
         }
     });
 

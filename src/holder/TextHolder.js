@@ -69,10 +69,10 @@ var CUI = CUI || {};
             this.useCachePool = true;
             this.shareCache = false;
 
-            this.resizeWithText = true;
             this.lineHeight = 0;
             this.width = "auto";
             this.height = "auto";
+            this.resizeWithText = true;
         },
 
         init: function() {
