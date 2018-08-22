@@ -850,6 +850,7 @@ var CUI = CUI || {};
                 x = pixel.left || 0;
             }
             pixel.baseX = x + pixel.realMarginLeft;
+
             pixel.relativeX = pixel.baseX + this._offsetX - (parent ? parent.scrollX : 0);
             pixel.x = pixel.relativeX + (parent ? parent._absoluteX : 0);
             this.absoluteX = pixel.x;
