@@ -18,32 +18,32 @@ function initUI() {
     });
 
 
-    var label = new CUI.Label({
-        testCmp: 1,
-        id: "label-1",
-        parent: rootUI,
-        right: 0,
-        zIndex: 999,
-        backgroundColor: renderer.colorRgb(255, 240, 230),
-        borderWidth: 2,
-        borderColor: renderer.colorHex("#ff0000"),
-        // text: "Text Test",
-        width: 'auto',
-        height: 'auto',
-        textInfo: {
-            // useCache: true,
-            // color: renderer.colorRgb(255, 0, 0),
-            color: "#ff0000",
-            alpha: 1,
-            // useCache: false,
-            text: "Text Test - 1",
-        },
-        beforeUpdate: function() {
-            if (Date.now() % 3 === 0) {
-                this.setText("test-" + (Math.random() * 1000 >> 0), false);
-            }
-        }
-    });
+    // var label = new CUI.Label({
+    //     testCmp: 1,
+    //     id: "label-1",
+    //     parent: rootUI,
+    //     right: 0,
+    //     zIndex: 999,
+    //     backgroundColor: renderer.colorRgb(255, 240, 230),
+    //     borderWidth: 2,
+    //     borderColor: renderer.colorHex("#ff0000"),
+    //     // text: "Text Test",
+    //     width: 'auto',
+    //     height: 'auto',
+    //     textInfo: {
+    //         // useCache: true,
+    //         // color: renderer.colorRgb(255, 0, 0),
+    //         color: "#ff0000",
+    //         alpha: 1,
+    //         // useCache: false,
+    //         text: "Text Test - 1",
+    //     },
+    //     beforeUpdate: function() {
+    //         if (Date.now() % 3 === 0) {
+    //             this.setText("test-" + (Math.random() * 1000 >> 0), false);
+    //         }
+    //     }
+    // });
 
 
     scrollView = new CUI.ScrollView({
@@ -56,6 +56,8 @@ function initUI() {
         parent: rootUI,
 
         backgroundColor: renderer.colorRgb(255, 240, 230),
+        borderWidth: 2,
+        borderColor: renderer.colorRgb(90, 200, 60),
 
         left: 0,
         top: 0,
@@ -66,46 +68,77 @@ function initUI() {
         // height: 300,
         // scrollHeight: 400,
 
-        borderWidth: 2,
-        borderColor: renderer.colorRgb(90, 200, 60),
-
         // layout: "hbox",
-        layout: "vbox",
-        // layout: new CUI.TableLayout({
-        //     cols: 4,
-        //     rows: 4,
-        //     cellWidth: 200,
-        //     cellHeight: 150,
-        //     cellSpace: 0,
-        // }),
+        // layout: "vbox",
+        layout: new CUI.TableLayout({
+            cols: 4,
+            rows: 4,
+            cellWidth: 200,
+            cellHeight: 150,
+            cellSpace: 0,
+        }),
     });
 
 
-    var comp = new CUI.Picture({
-        id: '1111',
-        // centerH: true,
-        // centerV: true,
-        // left: 20,
-        // top: 20,
-
-        root: rootUI,
-        // parent: scrollView,
-        // src: "res/btn-bg.png",
-        img: CUI.ImagePool["bg"],
-        borderWidth: 2,
-        // scaleX: 2,
-        // scaleY: 2,
-        scaleImg: false,
-        width: 120,
-        height: 120,
-        margin: 10,
-
-        backgroundColor: renderer.colorRgb(100, 240, 23),
-        // margin: 10,
-        // layout: new CUI.HBoxLayout(),
-    });
 
     var idx = 0;
+
+
+    // var comp = new CUI.Picture({
+    //     id: '1111',
+    //     // centerH: true,
+    //     // centerV: true,
+    //     // left: 20,
+    //     // top: 20,
+
+    //     // root: rootUI,
+    //     parent: rootUI,
+    //     // parent: scrollView,
+    //     // src: "res/btn-bg.png",
+    //     img: CUI.ImagePool["logo"],
+    //     borderWidth: 2,
+    //     left: 0,
+    //     scaleX: -1,
+    //     // scaleY: 2,
+    //     scaleImg: false,
+    //     // width: 120,
+    //     // height: 120,
+    //     margin: 10,
+
+    //     backgroundColor: renderer.colorRgb(100, 240, 23),
+    //     // margin: 10,
+    //     // layout: new CUI.HBoxLayout(),
+    // });
+
+    var comp = new CUI.Button({
+        test: true,
+        id: 'btn-test-' + idx,
+        backgroundColor: renderer.colorRgb(255, 240, 230),
+        backgroundImage: idx % 3 === 0 ? CUI.ImagePool["btn-bg"] : null,
+        borderWidth: 2,
+        borderColor: renderer.colorHex("#ff0000"),
+        parent: rootUI,
+        width: idx % 3 === 0 ? "auto" : 100,
+        height: idx % 3 === 0 ? "auto" : 60,
+        padding: 8,
+        margin: 10,
+
+        // anchor:0,
+        scale: 2,
+        flipX: true,
+        rotation:0.3,
+
+        disabled: idx % 2,
+        textInfo: {
+            text: "Button-" + idx,
+        },
+        left: 0,
+        col: c,
+        row: r,
+    });
+    window.testCmp = comp;
+    // return;
+
     for (var r = 0; r < 4; r++) {
         for (var c = 0; c < 4; c++) {
             var comp = new CUI.Button({

@@ -19,6 +19,7 @@ window.onload = function() {
             { id: "bg", src: "./res/bg.png" },
             { id: "btn-bg", src: "./res/btn-bg.png" },
             { id: "btn-icon", src: "./res/btn-icon.png" },
+            { id: "logo", src: "./res/HTML5_Logo_128.png" },
         ],
         function(imgPool) {
             for (var id in imgPool) {

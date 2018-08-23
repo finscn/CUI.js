@@ -19,28 +19,19 @@ var CUI = CUI || {};
 
         initialize: function() {
 
-            this._component = true;
+            this.reflow = 'parent';
 
             this.anchor = 0.5;
 
-            this.reflow = 'parent';
-
-            /////////////////////////////////////////////
-            // 对象创建后, 以下属性可更改
-
-            // 以下 6 个属性支持数字(代表像素), 和百分比
-            // 百分比时, 相对参照物为 父元素 的实际宽高(像素)
             this.left = null;
             this.top = null;
             this.right = null;
             this.bottom = null;
 
             this.inView = true;
-            this.zIndex = 0;
             this.index = 0;
 
-            this.offsetX = 0;
-            this.offsetY = 0;
+
             this.scrollX = 0;
             this.scrollY = 0;
 
@@ -169,29 +160,9 @@ var CUI = CUI || {};
             displayObject._ignoreResize = true;
             this.displayObject = displayObject;
             this.syncDisplayObject();
-
-            this.displayObject.pivot.set(this._pivotX, this._pivotY);
             if (this.parent) {
                 this.parent.addChildDisplayObject(this);
             }
-        },
-
-        syncDisplayObject: function() {
-            this.visible = this._visible;
-            this.alpha = this._alpha;
-            this.tint = this._tint;
-            this.rotation = this._rotation;
-            // this.scale = this._scale;
-            this.scaleX = this._scaleX;
-            this.scaleY = this._scaleY;
-
-            this.anchor = this._anchor;
-            this.anchorX = this._anchorX;
-            this.anchorY = this._anchorY;
-
-            this.zIndex = this._zIndex;
-            this.offsetX = this._offsetX;
-            this.offsetY = this._offsetY;
         },
 
         initHolders: noop,
@@ -832,6 +803,7 @@ var CUI = CUI || {};
             var pixel = this.pixel;
             if (this.width === "auto") {
                 this.computAutoWidth();
+                pixel.innerWidth = pixel.width - pixel.paddingLeft - pixel.paddingRight;
                 this.absoluteWidth = pixel.width;
                 return;
             }
@@ -856,6 +828,7 @@ var CUI = CUI || {};
 
             if (this.height === "auto") {
                 this.computAutoHeight();
+                pixel.innerHeight = pixel.height - pixel.paddingTop - pixel.paddingBottom;
                 this.absoluteHeight = pixel.height;
                 return;
             }
@@ -921,6 +894,23 @@ var CUI = CUI || {};
             this.syncPositionY(parent);
         },
 
+        syncDisplayWidth: function() {
+            this._pivotX = this._absoluteWidth * this._anchorX;
+            if (this.displayObject) {
+                this.displayObject.pivot.x = this._pivotX;
+                this.displayObject.position.x = this.pixel.relativeX + this._pivotX;
+                this.displayObject.scale.x = this._scaleX * (this._flipX ? -1 : 1);
+            }
+        },
+
+        syncDisplayHeight: function() {
+            this._pivotY = this._absoluteHeight * this._anchorY;
+            if (this.displayObject) {
+                this.displayObject.pivot.y = this._pivotY;
+                this.displayObject.position.y = this.pixel.relativeY + this._pivotY;
+                this.displayObject.scale.y = this._scaleY * (this._flipY ? -1 : 1);
+            }
+        },
 
         syncPositionX: function(parent) {
             parent = parent || this.parent;
@@ -1052,94 +1042,6 @@ var CUI = CUI || {};
             this.displayObject = null;
         },
     });
-
-    //////////////////////////////////////////////////////////////////////////////
-    //////////////////////////////////////////////////////////////////////////////
-    //////////////////////////////////////////////////////////////////////////////
-    //////////////////////////////////////////////////////////////////////////////
-    //////////////////////////////////////////////////////////////////////////////
-    //////////////////////////////////////////////////////////////////////////////
-    //////////////////////////////////////////////////////////////////////////////
-    //////////////////////////////////////////////////////////////////////////////
-
-    var properties = [
-
-        {
-            key: 'zIndex',
-            get: function() {
-                return this._zIndex;
-            },
-            set: function(value) {
-                this._zIndex = value;
-                this.displayObject && (this.displayObject.zIndex = value);
-                this.parent && (this.parent._toSortChildren = true);
-            }
-        },
-
-        {
-            key: 'anchor',
-            get: function() {
-                return this._anchor;
-            },
-            set: function(value) {
-                this._anchor = value;
-
-                this._anchorX = value;
-                this._pivotX = this._absoluteWidth * this._anchorX;
-                this._anchorY = value;
-                this._pivotY = this._absoluteHeight * this._anchorY;
-                this.displayObject && (this.displayObject.pivot.set(this._pivotX, this._pivotY));
-            }
-        },
-
-        {
-            key: 'anchorX',
-            get: function() {
-                return this._anchorX;
-            },
-            set: function(value) {
-                this._anchorX = value;
-                this._pivotX = this._absoluteWidth * this._anchorX;
-                this.displayObject && (this.displayObject.pivot.x = this._pivotX);
-            }
-        },
-
-        {
-            key: 'anchorY',
-            get: function() {
-                return this._anchorY;
-            },
-            set: function(value) {
-                this._anchorY = value;
-                this._pivotY = this._absoluteHeight * this._anchorY;
-                this.displayObject && (this.displayObject.pivot.y = this._pivotY);
-            }
-        },
-
-        {
-            key: 'offsetX',
-            get: function() {
-                return this._offsetX;
-            },
-            set: function(value) {
-                this._offsetX = value;
-                this.syncPositionX();
-            }
-        },
-
-        {
-            key: 'offsetY',
-            get: function() {
-                return this._offsetY;
-            },
-            set: function(value) {
-                this._offsetY = value;
-                this.syncPositionY();
-            }
-        },
-    ];
-
-    Class.defineProperties(Component.prototype, properties);
 
     //////////////////////////////////////////////////////////////////////////////
     //////////////////////////////////////////////////////////////////////////////

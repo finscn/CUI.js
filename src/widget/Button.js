@@ -28,12 +28,15 @@ var CUI = CUI || {};
         },
 
         onDown: function(x, y, id) {
-            this.offsetY = 2;
-            this.scale = 0.92;
+            this._normalOffsetY = this.offsetY;
+            this._normalScale = this.scale;
+
+            this.offsetY = this.offsetY + 2;
+            this.scale = this.scale * 0.92;
         },
         onUp: function(x, y, id) {
-            this.offsetY = 0;
-            this.scale = 1;
+            this.offsetY = this._normalOffsetY || 0;
+            this.scale = this._normalScale || 1;
         },
 
         setDisabled: function(disabled) {

@@ -56,6 +56,12 @@ var CUI = CUI || {};
             this.width = null;
             this.height = null;
 
+
+            this.zIndex = 0;
+            this.offsetX = 0;
+            this.offsetY = 0;
+
+
             this._visible = true;
             this._alpha = 1;
             this._tint = null;
@@ -66,6 +72,9 @@ var CUI = CUI || {};
             this._scale = 1;
             this._scaleX = 1;
             this._scaleY = 1;
+
+            this._flipX = false;
+            this._flipY = false;
 
             // 绝对定位和大小, 单位:像素
             this._absoluteX = 0;
@@ -131,7 +140,29 @@ var CUI = CUI || {};
 
         initDisplayObject: noop,
 
-        syncDisplayObject: noop,
+        syncDisplayObject: function() {
+            this.visible = this._visible;
+            this.alpha = this._alpha;
+            this.tint = this._tint;
+            this.rotation = this._rotation;
+            // this.scale = this._scale;
+            this.scaleX = this._scaleX;
+            this.scaleY = this._scaleY;
+
+            // this.anchor = this._anchor;
+            this.anchorX = this._anchorX;
+            this.anchorY = this._anchorY;
+
+            this.zIndex = this._zIndex;
+            this.offsetX = this._offsetX;
+            this.offsetY = this._offsetY;
+        },
+
+        syncPositionX: noop,
+        syncPositionY: noop,
+
+        syncDisplayWidth: noop,
+        syncDisplayHeight: noop,
 
         updateDisplayObject: function(img, x, y, w, h) {
             // do nothing.
@@ -192,15 +223,84 @@ var CUI = CUI || {};
         },
 
         {
+            key: 'zIndex',
+            get: function() {
+                return this._zIndex;
+            },
+            set: function(value) {
+                this._zIndex = value;
+                this.displayObject && (this.displayObject.zIndex = value);
+                this.parent && (this.parent._toSortChildren = true);
+            }
+        },
+
+        {
+            key: 'offsetX',
+            get: function() {
+                return this._offsetX;
+            },
+            set: function(value) {
+                this._offsetX = value;
+                this.syncPositionX();
+            }
+        },
+
+        {
+            key: 'offsetY',
+            get: function() {
+                return this._offsetY;
+            },
+            set: function(value) {
+                this._offsetY = value;
+                this.syncPositionY();
+            }
+        },
+
+        {
+            key: 'anchor',
+            get: function() {
+                return this._anchor;
+            },
+            set: function(value) {
+                this._anchor = value;
+                this.anchorX = value;
+                this.anchorY = value;
+            }
+        },
+
+        {
+            key: 'anchorX',
+            get: function() {
+                return this._anchorX;
+            },
+            set: function(value) {
+                this._anchorX = value;
+                this._anchor = value;
+                this.syncDisplayWidth();
+            }
+        },
+
+        {
+            key: 'anchorY',
+            get: function() {
+                return this._anchorY;
+            },
+            set: function(value) {
+                this._anchorY = value;
+                this._anchor = value;
+                this.syncDisplayHeight();
+            }
+        },
+
+        {
             key: 'scale',
             get: function() {
                 return this._scale;
             },
             set: function(value) {
                 this._scale = value;
-                this._scaleX = value;
-                this._scaleY = value;
-                this.displayObject && (this.displayObject.scale.set(value, value));
+                this.scaleX = value;
+                this.scaleY = value;
             }
         },
 
@@ -210,9 +310,10 @@ var CUI = CUI || {};
                 return this._scaleX;
             },
             set: function(value) {
+                value = Math.abs(value);
                 this._scaleX = value;
                 this._scale = value;
-                this.displayObject && (this.displayObject.scale.x = value);
+                this.syncDisplayWidth();
             }
         },
 
@@ -222,9 +323,32 @@ var CUI = CUI || {};
                 return this._scaleY;
             },
             set: function(value) {
+                value = Math.abs(value);
                 this._scaleY = value;
                 this._scale = value;
-                this.displayObject && (this.displayObject.scale.y = value);
+                this.syncDisplayHeight();
+            }
+        },
+
+        {
+            key: 'flipX',
+            get: function() {
+                return this._flipX;
+            },
+            set: function(value) {
+                this._flipX = value;
+                this.syncDisplayWidth();
+            }
+        },
+
+        {
+            key: 'flipY',
+            get: function() {
+                return this._flipY;
+            },
+            set: function(value) {
+                this._flipY = value;
+                this.syncDisplayHeight();
             }
         },
 
@@ -236,8 +360,7 @@ var CUI = CUI || {};
             set: function(value) {
                 this._absoluteX = value;
                 if (this.displayObject) {
-                    var x = this.pixel ? this.pixel.relativeX : value;
-                    this.displayObject.position.x = x + this._pivotX;
+                    this.displayObject.position.x = this.pixel.relativeX + Math.abs(this._pivotX);
                 }
             }
         },
@@ -250,8 +373,7 @@ var CUI = CUI || {};
             set: function(value) {
                 this._absoluteY = value;
                 if (this.displayObject) {
-                    var y = this.pixel ? this.pixel.relativeY : value;
-                    this.displayObject.position.y = y + this._pivotY;
+                    this.displayObject.position.y = this.pixel.relativeY + Math.abs(this._pivotY);
                 }
             }
         },
@@ -263,18 +385,7 @@ var CUI = CUI || {};
             },
             set: function(value) {
                 this._absoluteWidth = value;
-                this._pivotX = this._absoluteWidth * this._anchorX;
-
-                if (this.displayObject) {
-                    // console.log('absoluteWidth', value);
-                    !this.displayObject._ignoreResize && (this.displayObject.width = value);
-
-                    if (this._component) {
-                        var x = this.pixel ? this.pixel.relativeX : this._absoluteX;
-                        this.displayObject.position.x = x + this._pivotX;
-                        this.displayObject.pivot.x = this._pivotX;
-                    }
-                }
+                this.syncDisplayWidth();
             }
         },
 
@@ -285,16 +396,7 @@ var CUI = CUI || {};
             },
             set: function(value) {
                 this._absoluteHeight = value;
-                this._pivotY = this._absoluteHeight * this._anchorY;
-                if (this.displayObject) {
-                    !this.displayObject._ignoreResize && (this.displayObject.height = value);
-
-                    if (this._component) {
-                        var y = this.pixel ? this.pixel.relativeY : this._absoluteY;
-                        this.displayObject.position.y = y + this._pivotY;
-                        this.displayObject.pivot.y = this._pivotY;
-                    }
-                }
+                this.syncDisplayHeight();
             }
         },
     ];

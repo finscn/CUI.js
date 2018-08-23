@@ -20,15 +20,16 @@ var CUI = CUI || {};
 
             this.lazyInit = true;
 
-            this.offsetX = 0;
-            this.offsetY = 0;
             // TODO
             this.offsetAlpha = 0;
+            this.offsetWidth = 0;
+            this.offsetHeight = 0;
 
             this.alignH = "center"; // left center righ;
             this.alignV = "middle"; // top middle botto;
 
             this.fillParent = false;
+
             this.ratio = null;
             this.lockScaleRatio = true;
 
@@ -38,16 +39,6 @@ var CUI = CUI || {};
             this.initDisplayObject();
             // this.updateSize();
             // this.updatePosition();
-        },
-
-        syncDisplayObject: function() {
-            this.visible = this._visible;
-            this.alpha = this._alpha;
-            this.tint = this._tint;
-            this.rotation = this._rotation;
-            // this.scale = this._scale;
-            this.scaleX = this._scaleX;
-            this.scaleY = this._scaleY;
         },
 
         computAutoWidth: function() {
@@ -153,7 +144,23 @@ var CUI = CUI || {};
             this._positionChanged = false;
         },
 
-        destroy: function(){
+        syncDisplayWidth: function() {
+            this._pivotX = this._absoluteWidth * this._anchorX;
+            if (this.displayObject) {
+                this.displayObject.width = this._absoluteWidth * this._scaleX * (this._flipX ? -1 : 1);
+                this.displayObject.pivot.x = this._pivotX / this.displayObject.scale.x;
+                this.displayObject.position.x = this.pixel.relativeX + this._pivotX;
+            }
+        },
+        syncDisplayHeight: function() {
+            this._pivotY = this._absoluteHeight * this._anchorY;
+            if (this.displayObject) {
+                this.displayObject.height = this._absoluteHeight * this._scaleY * (this._flipY ? -1 : 1);
+                this.displayObject.pivot.y = this._pivotY / this.displayObject.scale.y;
+                this.displayObject.position.y = this.pixel.relativeY + this._pivotY;
+            }
+        },
+        destroy: function() {
             // TODO
             this.parent = null;
             this.displayObject.destroy();

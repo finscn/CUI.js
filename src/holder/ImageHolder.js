@@ -14,7 +14,8 @@ var CUI = CUI || {};
         superclass: BaseHolder,
 
         initialize: function() {
-            this.parent = null;
+
+            this.anchor = 0.5;
 
             this.src = null;
             this.img = null;
@@ -23,25 +24,10 @@ var CUI = CUI || {};
             this.sw = null;
             this.sh = null;
 
-            this.absoluteWidth = null;
-            this.absoluteHeight = null;
-
-            this.alpha = 1;
-            this.flipX = false;
-            this.flipY = false;
-            this.rotation = 0;
-
-            this.x = 0;
-            this.y = 0;
-            this.offsetX = 0;
-            this.offsetY = 0;
-            this.offsetW = 0;
-            this.offsetH = 0;
-            // this.offsetAlpha = 0;
-
             // auto: 显示大小等于 图片实际大小;
             this.width = "auto";
             this.height = "auto";
+
             this.fillParent = false;
 
             this.ratio = null;
@@ -193,7 +179,6 @@ var CUI = CUI || {};
             var displayObject = this.parent.root.renderer.createSprite();
             this.displayObject = displayObject;
             this.syncDisplayObject();
-
             if (this.parent) {
                 this.parent.addChildDisplayObject(this);
             }

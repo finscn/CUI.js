@@ -24,7 +24,6 @@ var CUI = CUI || {};
             var displayObject = this.parent.root.renderer.createRect(this.absoluteWidth, this.absoluteHeight, this.color, this.alpha);
             this.displayObject = displayObject;
             this.syncDisplayObject();
-
             if (this.parent) {
                 this.parent.addChildDisplayObject(this);
             }
