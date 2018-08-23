@@ -579,7 +579,7 @@ var CUI = CUI || {};
 
             if (textInfo.textBaseline === "top") {
                 context.textBaseline = 'alphabetic';
-                y += textInfo.fontSize + Math.ceil(strokeWidth / 2);
+                y += textInfo.fontSize + strokeWidth;
             } else {
                 context.textBaseline = textInfo.textBaseline;
             }
