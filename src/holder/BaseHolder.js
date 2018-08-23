@@ -92,25 +92,19 @@ var CUI = CUI || {};
 
         syncPositionX: function(parent) {
             parent = parent || this.parent;
-            if (!parent) {
-                return;
-            }
             var pixel = this.pixel;
 
             pixel.relativeX = pixel.baseX + this._offsetX;
-            pixel.x = pixel.relativeX + parent._absoluteX;
+            pixel.x = pixel.relativeX + (parent ? parent._absoluteX : 0);
             this.absoluteX = pixel.x;
         },
 
         syncPositionY: function(parent) {
             parent = parent || this.parent;
-            if (!parent) {
-                return;
-            }
             var pixel = this.pixel;
 
             pixel.relativeY = pixel.baseY + this._offsetY;
-            pixel.y = pixel.relativeY + parent._absoluteY;
+            pixel.y = pixel.relativeY + (parent ? parent._absoluteY : 0);
             this.absoluteY = pixel.y;
         },
 
