@@ -1,5 +1,6 @@
 var rootUI;
 var scrollView;
+var borderWidth = 4;
 // scene.enter
 function initUI() {
 
@@ -25,7 +26,7 @@ function initUI() {
     //     right: 0,
     //     zIndex: 999,
     //     backgroundColor: renderer.colorRgb(255, 240, 230),
-    //     borderWidth: 2,
+    //     borderWidth: borderWidth,
     //     borderColor: renderer.colorHex("#ff0000"),
     //     // text: "Text Test",
     //     width: 'auto',
@@ -56,7 +57,7 @@ function initUI() {
         parent: rootUI,
 
         backgroundColor: renderer.colorRgb(255, 240, 230),
-        borderWidth: 2,
+        borderWidth: borderWidth,
         borderColor: renderer.colorRgb(90, 200, 60),
 
         left: 0,
@@ -84,38 +85,45 @@ function initUI() {
     var idx = 0;
 
 
-    // var comp = new CUI.Picture({
-    //     id: '1111',
-    //     // centerH: true,
-    //     // centerV: true,
-    //     // left: 20,
-    //     // top: 20,
+    var comp = new CUI.Picture({
+        id: '1111',
+        // centerH: true,
+        // centerV: true,
+        // left: 20,
+        // top: 20,
 
-    //     // root: rootUI,
-    //     parent: rootUI,
-    //     // parent: scrollView,
-    //     // src: "res/btn-bg.png",
-    //     img: CUI.ImagePool["logo"],
-    //     borderWidth: 2,
-    //     left: 0,
-    //     scaleX: -1,
-    //     // scaleY: 2,
-    //     scaleImg: false,
-    //     // width: 120,
-    //     // height: 120,
-    //     margin: 10,
+        // root: rootUI,
+        parent: rootUI,
+        // parent: scrollView,
+        // src: "res/btn-bg.png",
+        imgInfo: {
+            img: CUI.ImagePool["logo"],
+            scaleX: 2,
+        },
+        borderWidth: borderWidth,
+        borderColor: renderer.colorRgb(255, 22, 33),
+        backgroundColor: renderer.colorRgb(100, 240, 23),
 
-    //     backgroundColor: renderer.colorRgb(100, 240, 23),
-    //     // margin: 10,
-    //     // layout: new CUI.HBoxLayout(),
-    // });
+        // width: 128*2,
+        // height: 128*2,
+        left: 150,
+        scaleX: 2,
+        // scaleY: 2,
+        scaleImg: false,
+        // width: 120,
+        // height: 120,
+        margin: 10,
+
+        // margin: 10,
+        // layout: new CUI.HBoxLayout(),
+    });
 
     var comp = new CUI.Button({
         test: true,
         id: 'btn-test-' + idx,
         backgroundColor: renderer.colorRgb(255, 240, 230),
         backgroundImage: idx % 3 === 0 ? CUI.ImagePool["btn-bg"] : null,
-        borderWidth: 2,
+        borderWidth: borderWidth,
         borderColor: renderer.colorHex("#ff0000"),
         parent: rootUI,
         width: idx % 3 === 0 ? "auto" : 100,
@@ -126,7 +134,7 @@ function initUI() {
         // anchor:0,
         scale: 2,
         flipX: true,
-        rotation:0.3,
+        rotation: 0.3,
 
         disabled: idx % 2,
         textInfo: {
@@ -145,7 +153,7 @@ function initUI() {
                 id: 'btn-test-' + idx,
                 backgroundColor: renderer.colorRgb(255, 240, 230),
                 backgroundImage: idx % 3 === 0 ? CUI.ImagePool["btn-bg"] : null,
-                borderWidth: 2,
+                borderWidth: borderWidth,
                 borderColor: renderer.colorHex("#ff0000"),
                 parent: scrollView,
                 width: idx % 3 === 0 ? "auto" : 100,
@@ -166,7 +174,7 @@ function initUI() {
     // var comp = new CUI.Button({
 
     //     backgroundColor: renderer.colorRgb(255, 240, 230),
-    //     borderWidth: 2,
+    //     borderWidth: borderWidth,
     //     // borderColor: renderer.colorHex("#ff0000"),
     //     // parent: scrollView,
     //     width: 100,
@@ -205,7 +213,7 @@ function initUI() {
     //     bgInfo: {
     //         img: CUI.ImagePool["bg"]
     //     },
-    //     // borderWidth: 2,
+    //     // borderWidth: borderWidth,
     //     paddingLeft: 0,
     //     paddingTop: 0,
 
@@ -235,7 +243,7 @@ function initUI() {
     //         B: 20,
     //         L: 20,
     //     },
-    //     // borderWidth: 2,
+    //     // borderWidth: borderWidth,
     //     paddingLeft: 10,
     //     paddingTop: 0,
 

@@ -122,15 +122,13 @@ var CUI = CUI || {};
         },
 
         computAutoWidth: function() {
-            var width = this.imageHolder ? this.imageHolder._absoluteWidth : 0;
+            var width = this.imageHolder ? this.imageHolder._displayWidth : 0;
             this.pixel.width = width;
-            this.absoluteWidth = width;
         },
 
         computAutoHeight: function() {
-            var height = this.imageHolder ? this.imageHolder._absoluteHeight : 0;
+            var height = this.imageHolder ? this.imageHolder._displayHeight : 0;
             this.pixel.height = height;
-            this.absoluteHeight = height;
         },
 
         computeLayout: function(forceCompute) {

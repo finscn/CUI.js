@@ -98,7 +98,8 @@ var CUI = CUI || {};
             this._movedX = false;
             this._movedY = false;
             this._toSortChildren = true;
-            this.precomputedTimes = 2;
+
+            this.precomputedTimes = 0;
         },
 
         initBase: function() {
@@ -137,6 +138,8 @@ var CUI = CUI || {};
             this.initBackgroundImage();
 
             this.initHolders();
+
+            this.flush();
         },
 
         init: function() {
@@ -167,6 +170,10 @@ var CUI = CUI || {};
 
         initHolders: noop,
         initChildren: noop,
+
+        flush: function() {
+            this.precomputedTimes = 2;
+        },
 
         setDisabled: function(disabled) {
             this.disabled = disabled;
@@ -562,11 +569,9 @@ var CUI = CUI || {};
                 return false;
             }
             this.visible = true;
-
-            // TODO
-            this.precomputedTimes = 2;
-
             this.onShow();
+            this.flush();
+
             return true;
         },
         onShow: noop,
@@ -577,6 +582,7 @@ var CUI = CUI || {};
             }
             this.visible = false;
             this.onHide();
+            this.flush();
             return true;
         },
         onHide: noop,
@@ -895,6 +901,7 @@ var CUI = CUI || {};
         },
 
         syncDisplayWidth: function() {
+            this._displayWidth = this._absoluteWidth * this._scaleX;
             this._pivotX = this._absoluteWidth * this._anchorX;
             if (this.displayObject) {
                 this.displayObject.pivot.x = this._pivotX;
@@ -904,6 +911,7 @@ var CUI = CUI || {};
         },
 
         syncDisplayHeight: function() {
+            this._displayHeight = this._absoluteHeight * this._scaleY;
             this._pivotY = this._absoluteHeight * this._anchorY;
             if (this.displayObject) {
                 this.displayObject.pivot.y = this._pivotY;

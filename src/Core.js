@@ -82,6 +82,9 @@ var CUI = CUI || {};
             this._absoluteWidth = 0;
             this._absoluteHeight = 0;
 
+            this._displayWidth = 0;
+            this._displayHeight = 0;
+
             // For Component
             // 缩放/旋转 时才需要
             this._anchor = 0;
