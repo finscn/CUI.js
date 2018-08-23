@@ -34,8 +34,6 @@ var CUI = CUI || {};
                 child.hasLayoutX = false;
                 if (child.relative === "parent") {
                     this.computeChild(child, child.parent)
-                } else if (child.relative === "root") {
-                    this.computeChild(child, child.root)
                 } else {
                     child.computeMargin(parent);
                     child.computeRealMargin(parent);
@@ -76,7 +74,7 @@ var CUI = CUI || {};
                     if (deltaWidth > 0) {
                         for (var i = 0; i < childCount; i++) {
                             var child = children[i];
-                            if (child.relative !== "parent" && child.relative !== "root") {
+                            if (child.relative !== "parent") {
                                 child.pixel.left += deltaWidth;
                                 child.pixel.baseX += deltaWidth;
                                 child.pixel.relativeX += deltaWidth;

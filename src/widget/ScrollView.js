@@ -54,7 +54,7 @@ var CUI = CUI || {};
                 this.beforeInit();
             }
 
-            ScrollView.$super.init.call(this);
+            this.initBase();
 
             this.visibleChildren = [];
 
@@ -358,8 +358,14 @@ var CUI = CUI || {};
             }
         },
         updateMask: function() {
-            this.maskShape = this.root.renderer.updateRect(this.maskShape, this._absoluteX, this._absoluteY, this._absoluteWidth, this._absoluteHeight, 0x000000, 1);
+            var maskShape = this.maskShape;
+            // this.maskShape = this.root.renderer.updateRect(maskShape, this._absoluteX, this._absoluteY, this._absoluteWidth, this._absoluteHeight, 0x000000, 1);
+            this.maskShape = this.root.renderer.updateRect(maskShape, 0, 0, this._absoluteWidth, this._absoluteHeight, 0x000000, 1);
             this.displayObject.mask = this.maskShape;
+            if (!maskShape) {
+                // TODO
+                this.displayObject.addChild(this.maskShape);
+            }
         },
         updateSelf: function(timeStep, now) {
 
@@ -394,10 +400,9 @@ var CUI = CUI || {};
                 // console.log("scrolling : ", this.id, this.scrollDX, this.scrollDY, vc.length);
                 vc.length = 0;
             }
-
             this.children.forEach(function(child, idx) {
                 if (scrollChanged) {
-                //     // child.moveBy(-Me.scrollDX, -Me.scrollDY);
+                    //     // child.moveBy(-Me.scrollDX, -Me.scrollDY);
                     child.syncPosition();
 
                     child.visible = Me.checkCollideAABB(child.aabb);
@@ -405,7 +410,7 @@ var CUI = CUI || {};
                         vc.push(child);
                     }
                 }
-                // child.update(timeStep, now);
+                child.update(timeStep, now);
             });
 
             // console.log(frame, vc.length)

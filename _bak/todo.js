@@ -1,10 +1,12 @@
+v 添加 moveToX moveToY  moveBy moveTo
+
+
+
 优化 布局 和 reflow 的流程
 
 支持遮罩
 
 修复bug
-
-添加 moveToX moveToY  moveBy moveTo
 
 Picture 支持:  以缩放后的img大小为自己的实际大小
 

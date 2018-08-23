@@ -19,13 +19,13 @@ var CUI = CUI || {};
 
             // this.resizeWithText = false;
             this.scaleBg = true;
-
-            this.id = this.id || "button_" + Component._SN++;
         },
 
-        // init: function() {
-        //     Button.$super.init.call(this);
-        // },
+        init: function() {
+            this.id = this.id || "button_" + Component._SN++;
+
+            Button.$super.init.call(this);
+        },
 
         onDown: function(x, y, id) {
             this.offsetY = 2;

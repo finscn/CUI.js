@@ -35,7 +35,7 @@ var CUI = CUI || {};
                 this.beforeInit();
             }
 
-            ProgressBar.$super.init.call(this);
+            this.initBase();
 
             if (this.valueInfo) {
                 this.this.valueHolder = this.addImageHolder(this.valueInfo);

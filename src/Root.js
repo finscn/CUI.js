@@ -33,7 +33,6 @@ var CUI = CUI || {};
             }
 
             this.id = this.id || "root_" + Component._SN++;
-            this.relative = "root";
             this.root = this;
 
             if (this.left === null) {
@@ -50,9 +49,7 @@ var CUI = CUI || {};
             this.left = this.left || 0;
             this.top = this.top || 0;
 
-            this.aabb = [0, 0, 0, 0];
-
-            Root.$super.init.call(this);
+            this.initBase();
 
             this.initChildren();
 

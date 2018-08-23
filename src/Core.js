@@ -269,7 +269,7 @@ var CUI = CUI || {};
                     // console.log('absoluteWidth', value);
                     !this.displayObject._ignoreResize && (this.displayObject.width = value);
 
-                    if (this.component) {
+                    if (this._component) {
                         var x = this.pixel ? this.pixel.relativeX : this._absoluteX;
                         this.displayObject.position.x = x + this._pivotX;
                         this.displayObject.pivot.x = this._pivotX;
@@ -289,7 +289,7 @@ var CUI = CUI || {};
                 if (this.displayObject) {
                     !this.displayObject._ignoreResize && (this.displayObject.height = value);
 
-                    if (this.component) {
+                    if (this._component) {
                         var y = this.pixel ? this.pixel.relativeY : this._absoluteY;
                         this.displayObject.position.y = y + this._pivotY;
                         this.displayObject.pivot.y = this._pivotY;

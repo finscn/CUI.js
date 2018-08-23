@@ -34,8 +34,6 @@ var CUI = CUI || {};
                 var child = children[i];
                 if (child.relative === "parent") {
                     this.computeChild(child, child.parent)
-                } else if (child.relative === "root") {
-                    this.computeChild(child, child.root)
                 } else {
                     this.computeChild(child, parent);
                 }

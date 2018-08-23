@@ -38,7 +38,7 @@ var CUI = CUI || {};
                 this.beforeInit();
             }
 
-            Label.$super.init.call(this);
+            this.initBase();
 
             this._sizeChanged = true;
 
@@ -68,18 +68,10 @@ var CUI = CUI || {};
                     this[name].parent = this;
                     this[name].init();
                 } else {
-                    this[name].setImgInfo(info);
+                    this[name].setImageInfo(info);
                 }
             }
             this._needToCompute = true;
-        },
-
-        addImageHolder: function(holderInfo) {
-            var holder = new CUI.ImageHolder(holderInfo);
-            holder.parent = this;
-            holder.init();
-            this.holders.push(holder);
-            return holder;
         },
 
         setIconInfo: function(iconInfo) {
@@ -91,7 +83,7 @@ var CUI = CUI || {};
                     this.iconHolder.parent = this;
                     this.iconHolder.init();
                 } else {
-                    this.iconHolder.setImgInfo(iconInfo);
+                    this.iconHolder.setImageInfo(iconInfo);
                 }
             }
             this._needToCompute = true;
@@ -263,7 +255,9 @@ var CUI = CUI || {};
 
         update: function(timeStep, now) {
             this.beforeUpdate && this.beforeUpdate(timeStep, now);
-
+            // if (this._needToCompute) {
+            //     console.log(this.id, "label needToCompute");
+            // }
             this.updateSelf(timeStep, now);
 
             if (this.textHolder && (this.resizeWithText || this._sizeChanged) && this._needToComputeSize) {

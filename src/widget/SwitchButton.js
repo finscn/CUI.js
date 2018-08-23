@@ -6,9 +6,10 @@ var CUI = CUI || {};
 
     var Class = exports.Class;
     var Utils = exports.Utils;
+    var Component = exports.Component;
     var Button = exports.Button;
 
-    var TabButton = Class.create({
+    var SwitchButton = Class.create({
         superclass: Button,
 
         initialize: function() {
@@ -16,29 +17,46 @@ var CUI = CUI || {};
             this.group = null;
             this.linkComp = null;
 
-            this.normalBg = "btn-normal";
-            this.activeBg = "btn-active";
+            this.active = false;
+
+            this.bgImgNormal = null;
+            this.bgImgActive = null;
+            this.bgInfoNormal = null;
+            this.bgInfoActive = null;
         },
 
-        beforeInit: function() {
-            if (typeof this.normalBg === "string") {
-                this.bgNormal = Utils.getImageInfo(this.normalBg);
-            } else {
-                this.bgNormal = this.normalBg;
-            }
-            if (typeof this.activeBg === "string") {
-                this.bgActive = Utils.getImageInfo(this.activeBg);
-            } else {
-                this.bgActive = this.activeBg;
-            }
+        init: function() {
+            this.id = this.id || "button_" + Component._SN++;
 
-            this.bgInfo = this.active ? this.bgActive : this.bgNormal;
+            var img = this.bgImgActive;
+            var info = this.bgInfoActive;
+            if (img && !info) {
+                info = {
+                    img: img
+                };
+            }
+            this.bgInfoActive = info;
+
+            var img = this.bgImgNormal;
+            var info = this.bgInfoNormal;
+            if (img && !info) {
+                info = {
+                    img: img
+                };
+            }
+            this.bgInfoNormal = info;
+
+            this.backgroundInfo = this.active ? this.bgInfoActive : this.bgInfoNormal;
+
+            SwitchButton.$super.init.call(this);
+
         },
 
         activate: function(link) {
             if (this.active) {
                 return;
             }
+
             if (this.linkComp) {
                 var comp = this.linkComp;
                 if (typeof comp === "string") {
@@ -48,6 +66,7 @@ var CUI = CUI || {};
                     comp.show();
                 }
             }
+
             if (this.group) {
                 var Me = this;
                 this.group.forEach(function(tab) {
@@ -59,9 +78,12 @@ var CUI = CUI || {};
                     }
                 });
             }
+
             this.active = true;
-            this.setBackgroundInfo(this.bgActive);
             this.onActivate(link);
+            if (this.backgroundImageHolder) {
+                this.backgroundImageHolder.setImageInfo(this.bgInfoActive);
+            }
         },
 
         inactivate: function() {
@@ -78,8 +100,10 @@ var CUI = CUI || {};
                 }
             }
             this.active = false;
-            this.setBackgroundInfo(this.bgNormal);
             this.onInactivate();
+            if (this.backgroundImageHolder) {
+                this.backgroundImageHolder.setImageInfo(this.bgInfoNormal);
+            }
         },
 
         onTap: function(x, y, id) {
@@ -94,10 +118,10 @@ var CUI = CUI || {};
 
     });
 
-    exports.TabButton = TabButton;
+    exports.SwitchButton = SwitchButton;
 
     if (typeof module !== "undefined") {
-        module.exports = TabButton;
+        module.exports = SwitchButton;
     }
 
 }(CUI));

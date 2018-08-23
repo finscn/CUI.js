@@ -59,7 +59,12 @@ var CUI = CUI || {};
 
             this.initDisplayObject();
 
-            if (this.src) {
+            if (this.imageInfo) {
+                var info = this.imageInfo;
+                info.img = info.img || this.img;
+                info.src = info.src || this.src;
+                this.setImageInfo(info);
+            } else if (this.src) {
                 this.load(this.src);
             } else if (this.img) {
                 this.setImg(this.img);
@@ -89,7 +94,15 @@ var CUI = CUI || {};
             return img;
         },
 
-        setImgInfo: function(info) {
+        setImg: function(img, callback) {
+            this.img = img;
+            this.updateImageInfo();
+            if (callback) {
+                callback(img);
+            }
+        },
+
+        setImageInfo: function(info) {
             if (info) {
                 for (var p in info) {
                     if (p !== 'src' && p !== 'img') {
@@ -104,15 +117,7 @@ var CUI = CUI || {};
             }
         },
 
-        setImg: function(img, callback) {
-            this.img = img;
-            this.updateImgInfo();
-            if (callback) {
-                callback(img);
-            }
-        },
-
-        updateImgInfo: function(info) {
+        updateImageInfo: function(info) {
             info = info || this;
 
             var sx = info.sx;
