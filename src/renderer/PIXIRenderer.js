@@ -132,7 +132,7 @@ var CUI = CUI || {};
                 var canvas = context.canvas;
                 var texture = PIXI.Texture.fromCanvas(canvas);
 
-                texture.orig = new PIXI.Rectangle();
+                // texture.orig = new PIXI.Rectangle();
                 texture.trim = new PIXI.Rectangle();
                 sprite = new PIXI.Sprite(texture);
 
