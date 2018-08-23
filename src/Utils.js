@@ -575,9 +575,11 @@ var CUI = CUI || {};
             context.font = textInfo.fontStyle;
             context.textAlign = textInfo.alignH;
 
+            var strokeWidth = textInfo.strokeWidth || 1;
+
             if (textInfo.textBaseline === "top") {
                 context.textBaseline = 'alphabetic';
-                y += textInfo.fontSize;
+                y += textInfo.fontSize + Math.ceil(strokeWidth / 2);
             } else {
                 context.textBaseline = textInfo.textBaseline;
             }
@@ -608,7 +610,7 @@ var CUI = CUI || {};
                 context.lineCap = textInfo.lineCap;
                 context.lineJoin = textInfo.lineJoin;
                 // TODO
-                context.lineWidth = textInfo.strokeWidth * 2;
+                context.lineWidth = strokeWidth * 2;
                 context.strokeStyle = textInfo.strokeColor;
             }
 
