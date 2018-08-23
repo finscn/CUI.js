@@ -7,7 +7,7 @@ var CUI = CUI || {};
 
     var Class = exports.Class;
     var Utils = exports.Utils;
-    var Component = exports.Component;
+    var Core = exports.Core;
     var BaseHolder = exports.BaseHolder;
     var Font = exports.Font;
 
@@ -93,7 +93,7 @@ var CUI = CUI || {};
                 if (this.shareCache) {
                     this.cacheCanvas = TextHolder.cacheCanvas;
                 } else if (this.useCachePool) {
-                    this.cacheCanvas = Component.getCanvasFromPool(this.id);
+                    this.cacheCanvas = Core.getCanvasFromPool(this.id);
                 } else {
                     this.cacheCanvas = document.createElement("canvas");
                 }

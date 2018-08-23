@@ -140,7 +140,7 @@ var CUI = CUI || {};
         },
 
         init: function() {
-            this.id = this.id || "cmp_" + Component._SN++;
+            this.id = this.id || "comp_" + Core._SN++;
 
             if (this.beforeInit) {
                 this.beforeInit();
@@ -564,7 +564,7 @@ var CUI = CUI || {};
             this.visible = true;
 
             // TODO
-            this.update(0);
+            this.precomputedTimes = 2;
 
             this.onShow();
             return true;
@@ -1051,22 +1051,6 @@ var CUI = CUI || {};
     //////////////////////////////////////////////////////////////////////////////
     //////////////////////////////////////////////////////////////////////////////
     //////////////////////////////////////////////////////////////////////////////
-
-    Component._SN = 0;
-
-    Component.canvasPool = {};
-    Component.getCanvasFromPool = function(id) {
-        var canvas = Component.canvasPool[id];
-        if (!canvas) {
-            canvas = document.createElement('canvas');
-            canvas.id = id;
-            canvas.width = 3;
-            canvas.height = 3;
-            // canvas.holderId = id;
-            Component.canvasPool[id] = canvas;
-        }
-        return canvas;
-    };
 
     Component.create = function(options, parent) {
         var ui = options.ui;

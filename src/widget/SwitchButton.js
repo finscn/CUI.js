@@ -6,6 +6,8 @@ var CUI = CUI || {};
 
     var Class = exports.Class;
     var Utils = exports.Utils;
+    var Core = exports.Core;
+
     var Component = exports.Component;
     var Button = exports.Button;
 
@@ -26,7 +28,7 @@ var CUI = CUI || {};
         },
 
         init: function() {
-            this.id = this.id || "button_" + Component._SN++;
+            this.id = this.id || "switchbutton_" + Core._SN++;
 
             var img = this.bgImgActive;
             var info = this.bgInfoActive;

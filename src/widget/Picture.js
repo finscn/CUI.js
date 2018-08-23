@@ -6,6 +6,8 @@ var CUI = CUI || {};
 
     var Class = exports.Class;
     var Utils = exports.Utils;
+    var Core = exports.Core;
+
     var Component = exports.Component;
     var ImageHolder = exports.ImageHolder;
     var TextHolder = exports.TextHolder;
@@ -29,7 +31,7 @@ var CUI = CUI || {};
         },
 
         init: function() {
-            this.id = this.id || "picture_" + Component._SN++;
+            this.id = this.id || "picture_" + Core._SN++;
 
             if (this.beforeInit) {
                 this.beforeInit();

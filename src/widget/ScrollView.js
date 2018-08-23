@@ -6,6 +6,8 @@ var CUI = CUI || {};
 
     var Class = exports.Class;
     var Utils = exports.Utils;
+    var Core = exports.Core;
+
     var Component = exports.Component;
     // var Panel = exports.Panel;
     var Slider = exports.Slider;
@@ -48,7 +50,7 @@ var CUI = CUI || {};
         },
 
         init: function() {
-            this.id = this.id || "scrollview_" + Component._SN++;
+            this.id = this.id || "scrollview_" + Core._SN++;
 
             if (this.beforeInit) {
                 this.beforeInit();

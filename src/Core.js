@@ -126,7 +126,7 @@ var CUI = CUI || {};
             width = width || this._absoluteWidth;
             height = height || this._absoluteHeight;
 
-            var canvas = Component.getCanvasFromPool(this.id);
+            var canvas = Core.getCanvasFromPool(this.id);
             canvas.width = width;
             canvas.height = height;
             var context = canvas.getContext("2d");
@@ -402,6 +402,22 @@ var CUI = CUI || {};
     ];
 
     Class.defineProperties(Core.prototype, properties);
+
+    Core._SN = 0;
+
+    Core.canvasPool = {};
+    Core.getCanvasFromPool = function(id) {
+        var canvas = Core.canvasPool[id];
+        if (!canvas) {
+            canvas = document.createElement('canvas');
+            canvas.id = id;
+            canvas.width = 3;
+            canvas.height = 3;
+            // canvas.holderId = id;
+            Core.canvasPool[id] = canvas;
+        }
+        return canvas;
+    };
 
     exports.Core = Core;
     exports.noop = noop;

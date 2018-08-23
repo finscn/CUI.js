@@ -6,6 +6,8 @@ var CUI = CUI || {};
 
     var Class = exports.Class;
     var Utils = exports.Utils;
+    var Core = exports.Core;
+
     var Composite = exports.Composite;
     var Component = exports.Component;
     var noop = exports.noop;
@@ -15,8 +17,6 @@ var CUI = CUI || {};
 
         initialize: function() {
             this.renderer = null;
-
-            this.resetSN = 1;
 
             this.left = null;
             this.top = null;
@@ -28,11 +28,8 @@ var CUI = CUI || {};
         checkTouchSelf: noop,
 
         init: function() {
-            if (this.resetSN || this.resetSN === 0) {
-                Component._SN = Number(this.resetSN) || 1;
-            }
+            this.id = this.id || "root_" + Core._SN++;
 
-            this.id = this.id || "root_" + Component._SN++;
             this.root = this;
 
             if (this.left === null) {

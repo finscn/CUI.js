@@ -6,6 +6,8 @@ var CUI = CUI || {};
 
     var Class = exports.Class;
     var Utils = exports.Utils;
+    var Core = exports.Core;
+
     var Component = exports.Component;
     var Label = exports.Label;
     var Button = exports.Button;
@@ -15,7 +17,7 @@ var CUI = CUI || {};
         superclass: Component,
 
         init: function() {
-            this.id = this.id || "panel_" + Component._SN++;
+            this.id = this.id || "panel_" + Core._SN++;
 
             if (this.beforeInit) {
                 this.beforeInit();

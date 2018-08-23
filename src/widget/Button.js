@@ -6,7 +6,8 @@ var CUI = CUI || {};
 
     var Class = exports.Class;
     var Utils = exports.Utils;
-    var Component = exports.Component;
+    var Core = exports.Core;
+
     var Label = exports.Label;
     var ButtonComponent = exports.ButtonComponent;
 
@@ -22,7 +23,7 @@ var CUI = CUI || {};
         },
 
         init: function() {
-            this.id = this.id || "button_" + Component._SN++;
+            this.id = this.id || "button_" + Core._SN++;
 
             Button.$super.init.call(this);
         },
