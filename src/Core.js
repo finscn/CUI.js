@@ -96,6 +96,8 @@ var CUI = CUI || {};
             this._offsetX = 0;
             this._offsetY = 0;
 
+            this._sizeChanged = true;
+            this._positionChanged = true;
             this._needToCompute = true;
         },
 
@@ -143,6 +145,7 @@ var CUI = CUI || {};
 
         initDisplayObject: noop,
 
+        // TODO
         syncDisplayObject: function() {
             this.visible = this._visible;
             this.alpha = this._alpha;
@@ -161,6 +164,13 @@ var CUI = CUI || {};
             this.offsetY = this._offsetY;
         },
 
+        savePreviousState: function() {
+            this._prevX = this._absoluteX;
+            this._prevY = this._absoluteY;
+            this._prevWidth = this._absoluteWidth;
+            this._prevHeight = this._absoluteHeight;
+        },
+
         syncPositionX: noop,
         syncPositionY: noop,
 
@@ -174,7 +184,76 @@ var CUI = CUI || {};
         destroy: noop
     });
 
+    //////////////////////////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////////////////////////
+
     var properties = [
+
+        {
+            key: 'left',
+            get: function() {
+                return this._left;
+            },
+            set: function(value) {
+                this._left = value;
+            }
+        },
+
+        {
+            key: 'right',
+            get: function() {
+                return this._right;
+            },
+            set: function(value) {
+                this._right = value;
+            }
+        },
+
+        {
+            key: 'top',
+            get: function() {
+                return this._top;
+            },
+            set: function(value) {
+                this._top = value;
+            }
+        },
+
+        {
+            key: 'bottom',
+            get: function() {
+                return this._bottom;
+            },
+            set: function(value) {
+                this._bottom = value;
+            }
+        },
+
+        {
+            key: 'width',
+            get: function() {
+                return this._width;
+            },
+            set: function(value) {
+                this._width = value;
+            }
+        },
+
+        {
+            key: 'height',
+            get: function() {
+                return this._height;
+            },
+            set: function(value) {
+                this._height = value;
+            }
+        },
 
         {
             key: 'visible',
@@ -232,8 +311,8 @@ var CUI = CUI || {};
             },
             set: function(value) {
                 this._zIndex = value;
-                this.displayObject && (this.displayObject.zIndex = value);
                 this.parent && (this.parent._toSortChildren = true);
+                this.displayObject && (this.displayObject.zIndex = value);
             }
         },
 
@@ -361,6 +440,10 @@ var CUI = CUI || {};
                 return this._absoluteX;
             },
             set: function(value) {
+                if (this._absoluteX === value) {
+                    return;
+                }
+                this._positionChanged = true;
                 this._absoluteX = value;
                 if (this.displayObject) {
                     this.displayObject.position.x = this.pixel.relativeX + Math.abs(this._pivotX);
@@ -374,6 +457,10 @@ var CUI = CUI || {};
                 return this._absoluteY;
             },
             set: function(value) {
+                if (this._absoluteY === value) {
+                    return;
+                }
+                this._positionChanged = true;
                 this._absoluteY = value;
                 if (this.displayObject) {
                     this.displayObject.position.y = this.pixel.relativeY + Math.abs(this._pivotY);
@@ -387,6 +474,10 @@ var CUI = CUI || {};
                 return this._absoluteWidth;
             },
             set: function(value) {
+                if (this._absoluteWidth === value) {
+                    return;
+                }
+                this._sizeChanged = true;
                 this._absoluteWidth = value;
                 this.syncDisplayWidth();
             }
@@ -398,6 +489,10 @@ var CUI = CUI || {};
                 return this._absoluteHeight;
             },
             set: function(value) {
+                if (this._absoluteHeight === value) {
+                    return;
+                }
+                this._sizeChanged = true;
                 this._absoluteHeight = value;
                 this.syncDisplayHeight();
             }
@@ -405,6 +500,15 @@ var CUI = CUI || {};
     ];
 
     Class.defineProperties(Core.prototype, properties);
+
+    //////////////////////////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////////////////////////
 
     Core._SN = 0;
 
@@ -423,6 +527,12 @@ var CUI = CUI || {};
     };
 
     exports.Core = Core;
+
+    exports.DEG_TO_RAD = Math.PI / 180;
+    exports.RAD_TO_DEG = 180 / Math.PI;
+    exports.HALF_PI = Math.PI / 2;
+    exports.DOUBLE_PI = Math.PI * 2;
+
     exports.noop = noop;
 
 }(CUI));

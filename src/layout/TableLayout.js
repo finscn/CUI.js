@@ -12,6 +12,8 @@ var CUI = CUI || {};
         superclass: BaseLayout,
 
         initialize: function() {
+            this.flexible = false;
+
             this.cellWidth = null;
             this.cellHeight = null;
 
@@ -51,11 +53,11 @@ var CUI = CUI || {};
 
             var parentPixel = parent.pixel;
 
-            if (parent.width === "auto") {
+            if (parent._width === "auto") {
                 parentPixel.width = (this.cellWidth + this.cellSpace) * this.cols + this.cellSpace;
                 parentPixel.width += (parentPixel.paddingLeft || 0) + (parentPixel.paddingRight || 0);
             }
-            if (parent.height === "auto") {
+            if (parent._height === "auto") {
                 parentPixel.height = (this.cellHeight + this.cellSpace) * this.rows + this.cellSpace;
                 parentPixel.height += (parentPixel.paddingTop || 0) + (parentPixel.paddingBottom || 0);
             }
@@ -129,8 +131,8 @@ var CUI = CUI || {};
             var row = child.row = child.row || 0;
             child.colspan = child.colspan || 1;
             child.rowspan = child.rowspan || 1;
-            child.width = child.width === null ? "100%" : child.width;
-            child.height = child.height === null ? "100%" : child.height;
+            // child.width = child.width === null ? "100%" : child.width;
+            // child.height = child.height === null ? "100%" : child.height;
 
             var pixel = child.pixel;
 

@@ -20,8 +20,6 @@ var CUI = CUI || {};
             this.disabled = false;
 
             // 不指定宽高, 大小由 backgroundHolder 的实际大小决定
-            this.width = null;
-            this.height = null;
             this.scaleBg = false;
 
             this.progress = 0;

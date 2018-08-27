@@ -13,10 +13,6 @@ var CUI = CUI || {};
         superclass: Core,
 
         initialize: function() {
-            this.DEG_TO_RAD = Math.PI / 180;
-            this.RAD_TO_DEG = 180 / Math.PI;
-            this.HALF_PI = Math.PI / 2;
-            this.DOUBLE_PI = Math.PI * 2;
 
             this.lazyInit = true;
 
@@ -32,7 +28,6 @@ var CUI = CUI || {};
 
             this.ratio = null;
             this.lockScaleRatio = true;
-
         },
 
         init: function() {
@@ -73,14 +68,14 @@ var CUI = CUI || {};
                 return;
             }
 
-            if (this.width === 'auto') {
+            if (this._width === "auto") {
                 this.computAutoWidth();
             } else {
                 this.pixel.width = Utils.parseValue(this.width, parent._absoluteWidth, this.pixel.width) || 0;
             }
             this.absoluteWidth = this.pixel.width;
 
-            if (this.height === 'auto') {
+            if (this._height === "auto") {
                 this.computAutoHeight();
             } else {
                 this.pixel.height = Utils.parseValue(this.height, parent._absoluteHeight, this.pixel.height) || 0;
@@ -154,6 +149,7 @@ var CUI = CUI || {};
         update: function() {
             this._sizeChanged = false;
             this._positionChanged = false;
+            this._needToCompute = false;
         },
 
         syncDisplayWidth: function() {

@@ -22,6 +22,8 @@ var CUI = CUI || {};
             this.textAlign = "start";
             this.verticalAlign = "middle";
 
+            this.width = "auto";
+            this.height = "auto";
             this.alignH = null;
             this.alignV = null;
 
@@ -70,9 +72,6 @@ var CUI = CUI || {};
             this.shareCache = false;
 
             this.lineHeight = 0;
-            this.width = "auto";
-            this.height = "auto";
-            this.resizeWithText = true;
         },
 
         init: function() {
@@ -189,15 +188,15 @@ var CUI = CUI || {};
                 return;
             }
 
-            if (force || this.resizeWithText) {
+            if (force || (this._width === "auto" || this._height === "auto")) {
                 var ctx = textContext;
                 ctx.font = this.fontStyle;
                 var measure = ctx.measureText(this.lines[0]);
                 measure.height = Math.ceil(this.fontSize * 1.5) + (this.strokeWidth || 1) + 2;
                 this.lineHeight = this.lineHeight || measure.height;
                 // measure.height = this.lineHeight;
-                this.measure = measure;
                 this.textWidth = measure.width;
+                this.measure = measure;
             } else {
                 this.lineHeight = this.lineHeight || this.height;
                 this.measure = {
@@ -255,8 +254,11 @@ var CUI = CUI || {};
         },
 
         update: function() {
-            if (this._needToCompute) {
+            if (this._sizeChanged || this._positionChanged || this._needToCompute) {
                 // this.computeSize();
+                this._sizeChanged = false;
+                this._positionChanged = false;
+                this._needToCompute = false;
             }
         },
     });

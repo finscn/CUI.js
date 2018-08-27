@@ -18,7 +18,6 @@ var CUI = CUI || {};
             this.borderWidth = 0;
             this.textAlign = "center";
 
-            // this.resizeWithText = false;
             this.scaleBg = true;
         },
 

@@ -10,6 +10,8 @@ var CUI = CUI || {};
     var BaseLayout = Class.create({
 
         initialize: function() {
+            this.flexible = false;
+
             this.pixel = {
                 x: 0,
                 y: 0,
@@ -47,12 +49,12 @@ var CUI = CUI || {};
 
         tryToResizeParent: function(parent, width, height, immediately) {
             var resize = false;
-            if (parent.width === "auto" && parent._absoluteWidth !== width) {
+            if (parent._width === "auto" && parent._absoluteWidth !== width) {
                 parent.pixel.width = width;
                 parent.absoluteWidth = width;
                 resize = true;
             }
-            if (parent.height === "auto" && parent._absoluteHeight !== height) {
+            if (parent._height === "auto" && parent._absoluteHeight !== height) {
                 parent.pixel.height = height;
                 parent.absoluteHeight = height;
                 resize = true;

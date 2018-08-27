@@ -81,10 +81,10 @@ var CUI = CUI || {};
         setSrc: function(src) {
             this.src = src;
             var Me = this;
-            var autoResize = this.width === "auto" || this.height === "auto";
+            var flexible = this._width === "auto" || this._height === "auto";
             this.imageHolder.setSrc(src, function(img) {
                 if (img) {
-                    if (autoResize) {
+                    if (flexible) {
                         Me.tryToReflow(Me.reflow);
                     } else {
                         Me.computeSelf();
@@ -99,10 +99,10 @@ var CUI = CUI || {};
         setImg: function(img) {
             this.img = img;
             var Me = this;
-            var autoResize = this.width === "auto" || this.height === "auto";
+            var flexible = this._width === "auto" || this._height === "auto";
             this.imageHolder.setImg(img, function(img) {
                 if (img) {
-                    if (autoResize) {
+                    if (flexible) {
                         Me.tryToReflow(Me.reflow);
                     } else {
                         Me.computeSelf();

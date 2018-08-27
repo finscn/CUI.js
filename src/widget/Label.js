@@ -19,15 +19,10 @@ var CUI = CUI || {};
             this.composite = false;
             this.disabled = false;
 
-            // 不指定宽高, 大小由 backgroundHolder 的实际大小决定
-            this.width = null;
-            this.height = null;
             this.scaleBg = false;
 
             this.backgroundColor = null;
             this.borderWidth = 0;
-
-            this.resizeWithText = true;
 
             this.sizeHolder = 0.0001;
             this.sizePadding = 2;
@@ -147,18 +142,9 @@ var CUI = CUI || {};
 
         computeWidth: function() {
             var pixel = this.pixel;
-            var autoWidth = this.width === "auto";
-            var bg = this.backgroundHolder;
 
-            if (autoWidth) {
-                if (this.resizeWithText) {
-                    pixel.width = this.textHolder ? this.textHolder.cacheWidth : this.textWidth;
-                } else if (bg && !bg.borderImage) {
-                    pixel.width = bg.w;
-                } else {
-                    pixel.width = pixel.width || 0;
-                    this._sizeChanged = true;
-                }
+            if (this._width === "auto") {
+                pixel.width = this.textHolder ? this.textHolder.cacheWidth : this.textWidth;
             } else {
                 pixel.width = Utils.parseValue(this.width, pixel.realOuterWidth);
             }
@@ -166,6 +152,7 @@ var CUI = CUI || {};
             pixel.innerWidth = pixel.width - pixel.paddingLeft - pixel.paddingRight;
             this.absoluteWidth = pixel.width;
 
+            var bg = this.backgroundHolder;
             if (bg && this.scaleBg) {
                 bg.pixel.width = this._absoluteWidth;
                 bg.absoluteWidth = this._absoluteWidth;
@@ -174,18 +161,9 @@ var CUI = CUI || {};
 
         computeHeight: function() {
             var pixel = this.pixel;
-            var autoHeight = this.height === "auto";
-            var bg = this.backgroundHolder;
 
-            if (autoHeight) {
-                if (this.resizeWithText) {
-                    pixel.height = this.textHolder ? this.textHolder.cacheHeight : this.textHeight;
-                } else if (bg && !bg.borderImage) {
-                    pixel.height = bg.h;
-                } else {
-                    pixel.height = pixel.height || 0;
-                    this._sizeChanged = true;
-                }
+            if (this._height === "auto") {
+                pixel.height = this.textHolder ? this.textHolder.cacheHeight : this.textHeight;
             } else {
                 pixel.height = Utils.parseValue(this.height, pixel.realOuterHeight);
             }
@@ -193,6 +171,7 @@ var CUI = CUI || {};
             pixel.innerHeight = pixel.height - pixel.paddingTop - pixel.paddingBottom;
             this.absoluteHeight = pixel.height;
 
+            var bg = this.backgroundHolder;
             if (bg && this.scaleBg) {
                 bg.pixel.height = this._absoluteHeight;
                 bg.absoluteHeight = this._absoluteHeight;
@@ -241,7 +220,7 @@ var CUI = CUI || {};
             }
 
             // this.tryToReflow(this.reflow);
-            // if (resizeWithText) {
+            // if (this._width === "auto" || this._height === "auto") {
             //     // this.tryToReflow(this.reflow, true);
             //     this.tryToReflow(this.reflow);
             // } else {
@@ -262,7 +241,8 @@ var CUI = CUI || {};
             // }
             this.updateSelf(timeStep, now);
 
-            if (this.textHolder && (this.resizeWithText || this._sizeChanged) && this._needToComputeSize) {
+            if (this.textHolder && this._needToComputeSize &&
+                (this._width === "auto" || this._height === "auto" || this._sizeChanged)) {
                 this.updateSizeWithText();
             } else {
                 this.computeLayout();

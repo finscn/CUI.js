@@ -74,9 +74,9 @@ var CUI = CUI || {};
         computeSelf: function(parent) {
             parent = parent || {};
 
-            this.pixel.realOuterWidth = this.width;
-            this.pixel.realOuterHeight = this.height;
-            this.setSize(this.width, this.height, true);
+            this.pixel.realOuterWidth = this._width;
+            this.pixel.realOuterHeight = this._height;
+            this.setSize(this._width, this._height, true);
 
             this.computePositionX();
             this.computePositionY();

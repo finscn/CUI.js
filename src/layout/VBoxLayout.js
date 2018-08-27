@@ -12,6 +12,8 @@ var CUI = CUI || {};
         superclass: BaseLayout,
 
         initialize: function() {
+            this.flexible = true;
+
             this.align = "top";
             this.size = null;
             this.equalSize = false;

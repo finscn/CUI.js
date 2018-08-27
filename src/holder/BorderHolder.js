@@ -32,10 +32,11 @@ var CUI = CUI || {};
         },
 
         update: function() {
-            if (this._sizeChanged || this._positionChanged) {
+            if (this._sizeChanged || this._positionChanged || this._needToCompute) {
                 this.parent.root.renderer.updateRect(this.displayObject, 0, 0, this.absoluteWidth, this.absoluteHeight, null, null, this.lineWidth, this.color, this.alpha);
                 this._sizeChanged = false;
                 this._positionChanged = false;
+                this._needToCompute = false;
             }
         },
     });

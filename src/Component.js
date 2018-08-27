@@ -139,6 +139,8 @@ var CUI = CUI || {};
 
             this.initHolders();
 
+            this.savePreviousState();
+
             this.flush();
         },
 
@@ -381,11 +383,16 @@ var CUI = CUI || {};
                 child.index = this.childSN++;
 
                 child.setRoot(this.root);
-                if (this.width === "auto") {
+
+                // TODO
+                if (this._width === "auto") {
                     this.pixel.width = 0;
                 }
-                if (this.height === "auto") {
+                if (this._height === "auto") {
                     this.pixel.height = 0;
+                }
+                if (this.layout.flexible) {
+
                 }
                 this._needToCompute = true;
                 this._toSortChildren = true;
@@ -399,10 +406,10 @@ var CUI = CUI || {};
                 removed = Composite.prototype.removeChild.call(this, child);
                 if (removed) {
                     child.setRoot(null);
-                    if (this.width === "auto") {
+                    if (this._width === "auto") {
                         this.pixel.width = 0;
                     }
-                    if (this.height === "auto") {
+                    if (this._height === "auto") {
                         this.pixel.height = 0;
                     }
                     this._needToCompute = true;
@@ -417,13 +424,6 @@ var CUI = CUI || {};
             });
             this.displayObject.sortChildren();
             this._toSortChildren = false;
-        },
-
-        setZIndex: function(zIndex) {
-            this.zIndex = zIndex;
-            var p = this.parent || this.root;
-            p._toSortChildren = true;
-            // p.sortChildren();
         },
 
         setMargin: function(margin) {
@@ -598,32 +598,6 @@ var CUI = CUI || {};
         /////////////////////////////////////////////////////////////////////////////
         /////////////////////////////////////////////////////////////////////////////
 
-
-        setLeft: function(left) {
-            if (this.left !== left) {
-                this.left = left;
-                this.tryToReflow(this.reflow);
-            }
-        },
-        setRight: function(right) {
-            if (this.right !== right) {
-                this.right = right;
-                this.tryToReflow(this.reflow);
-            }
-        },
-        setTop: function(top) {
-            if (this.top !== top) {
-                this.top = top;
-                this.tryToReflow(this.reflow);
-            }
-        },
-        setBottom: function(bottom) {
-            if (this.bottom !== bottom) {
-                this.bottom = bottom;
-                this.tryToReflow(this.reflow);
-            }
-        },
-
         resize: function() {
             // console.log('Component.resize');
             this.computeWidth();
@@ -653,12 +627,12 @@ var CUI = CUI || {};
 
         computeLayout: function(forceCompute) {
             if (this._needToCompute || forceCompute) {
-                this._needToCompute = false;
                 if (this.composite) {
                     this.layout.compute(this);
                 }
 
                 this.updateHolders();
+                this._needToCompute = false;
             }
         },
 
@@ -711,7 +685,12 @@ var CUI = CUI || {};
                 }
             }
             this.afterUpdate && this.afterUpdate(timeStep, now);
+
+            this._sizeChanged = false;
+            this._positionChanged = false;
+            this._needToCompute = false;
         },
+
         beforeUpdate: null,
         afterUpdate: null,
 
@@ -807,19 +786,17 @@ var CUI = CUI || {};
         },
         computeWidth: function() {
             var pixel = this.pixel;
-            if (this.width === "auto") {
+            if (this._width === "auto") {
                 this.computAutoWidth();
-                pixel.innerWidth = pixel.width - pixel.paddingLeft - pixel.paddingRight;
-                this.absoluteWidth = pixel.width;
-                return;
-            }
-            var relativeWidth = pixel.realOuterWidth;
-
-            var fillWidth = this.getFillWidth(relativeWidth);
-            if (fillWidth !== null) {
-                pixel.width = fillWidth;
             } else {
-                pixel.width = Utils.parseValue(this.width, relativeWidth);
+                var relativeWidth = pixel.realOuterWidth;
+
+                var fillWidth = this.getFillWidth(relativeWidth);
+                if (fillWidth !== null) {
+                    pixel.width = fillWidth;
+                } else {
+                    pixel.width = Utils.parseValue(this.width, relativeWidth);
+                }
             }
 
             pixel.innerWidth = pixel.width - pixel.paddingLeft - pixel.paddingRight;
@@ -832,20 +809,16 @@ var CUI = CUI || {};
         computeHeight: function() {
             var pixel = this.pixel;
 
-            if (this.height === "auto") {
+            if (this._height === "auto") {
                 this.computAutoHeight();
-                pixel.innerHeight = pixel.height - pixel.paddingTop - pixel.paddingBottom;
-                this.absoluteHeight = pixel.height;
-                return;
-            }
-
-            var relativeHeight = pixel.realOuterHeight;
-
-            var fillHeight = this.getFillHeight(relativeHeight);
-            if (fillHeight !== null) {
-                pixel.height = fillHeight;
             } else {
-                pixel.height = Utils.parseValue(this.height, relativeHeight);
+                var relativeHeight = pixel.realOuterHeight;
+                var fillHeight = this.getFillHeight(relativeHeight);
+                if (fillHeight !== null) {
+                    pixel.height = fillHeight;
+                } else {
+                    pixel.height = Utils.parseValue(this.height, relativeHeight);
+                }
             }
 
             pixel.innerHeight = pixel.height - pixel.paddingTop - pixel.paddingBottom;
@@ -1017,6 +990,17 @@ var CUI = CUI || {};
             }
         },
 
+        resizeBy: function(dx, dy) {
+            var pixel = this.pixel;
+            pixel.width += dx;
+            pixel.innerWidth = pixel.width - pixel.paddingLeft - pixel.paddingRight;
+            this.absoluteWidth = pixel.width;
+
+            pixel.height += dy;
+            pixel.innerHeight = pixel.height - pixel.paddingTop - pixel.paddingBottom;
+            this.absoluteHeight = pixel.height;
+        },
+
         ////////////////////////////////////////////////////////////////////////
         ////////////////////////////////////////////////////////////////////////
         ////////////////////////////////////////////////////////////////////////
@@ -1050,6 +1034,21 @@ var CUI = CUI || {};
             this.displayObject = null;
         },
     });
+
+    //////////////////////////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////////////////////////
+
+    var properties = [
+        // TODO
+    ];
+
+    Class.defineProperties(Component.prototype, properties);
 
     //////////////////////////////////////////////////////////////////////////////
     //////////////////////////////////////////////////////////////////////////////
