@@ -11,8 +11,8 @@ var CUI = CUI || {};
         superclass: BaseHolder,
 
         initialize: function() {
-            // this.width = "100%";
-            // this.height = "100%";
+            this.width = "100%";
+            this.height = "100%";
 
             this.fillParent = true;
 
@@ -33,6 +33,9 @@ var CUI = CUI || {};
 
         update: function() {
             if (this._sizeChanged || this._positionChanged || this._needToCompute) {
+                this.updateSize();
+                this.updatePosition();
+
                 this.parent.root.renderer.updateRect(this.displayObject, 0, 0, this.absoluteWidth, this.absoluteHeight, null, null, this.lineWidth, this.color, this.alpha);
                 this._sizeChanged = false;
                 this._positionChanged = false;

@@ -35,7 +35,7 @@ var CUI = CUI || {};
                 var child = children[i];
                 child.hasLayoutX = false;
                 if (child.relative === "parent") {
-                    this.computeChild(child, child.parent)
+                    child.computeSelf(parent)
                 } else {
                     child.computeMargin(parent);
                     child.computeRealMargin(parent);

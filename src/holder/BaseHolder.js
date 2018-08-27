@@ -36,52 +36,35 @@ var CUI = CUI || {};
             // this.updatePosition();
         },
 
-        computAutoWidth: function() {
+        computeAutoWidth: function() {
             this.pixel.width = 0;
         },
-        computAutoHeight: function() {
-            this.pixel.height = 0;
-        },
-        updateSize: function() {
+        computeWidth: function() {
             var parent = this.parent;
-
-            if (this.fillParent) {
-                var width = parent._absoluteWidth;
-                var height = parent._absoluteHeight;
-
-                if (this.ratio !== null && this.lockScaleRatio) {
-                    // debugger;
-                    var _r = width / height;
-                    if (_r >= this.ratio) {
-                        width = height * this.ratio;
-                    } else {
-                        height = width / this.ratio;
-                    }
-                }
-
-                this.pixel.width = width;
-                this.pixel.height = height;
-                this.absoluteWidth = width;
-                this.absoluteHeight = height;
-
-                this._sizeChanged = true;
-                return;
-            }
-
             if (this._width === "auto") {
-                this.computAutoWidth();
+                this.computeAutoWidth();
             } else {
                 this.pixel.width = Utils.parseValue(this.width, parent._absoluteWidth, this.pixel.width) || 0;
             }
             this.absoluteWidth = this.pixel.width;
+        },
 
+        computeAutoHeight: function() {
+            this.pixel.height = 0;
+        },
+        computeHeight: function() {
+            var parent = this.parent;
             if (this._height === "auto") {
-                this.computAutoHeight();
+                this.computeAutoHeight();
             } else {
                 this.pixel.height = Utils.parseValue(this.height, parent._absoluteHeight, this.pixel.height) || 0;
             }
             this.absoluteHeight = this.pixel.height;
+        },
 
+        updateSize: function() {
+            this.computeWidth();
+            this.computeHeight();
             this._sizeChanged = true;
         },
 
@@ -103,60 +86,63 @@ var CUI = CUI || {};
             this.absoluteY = pixel.y;
         },
 
+        computePositionX: function(parent) {
+            parent = parent || this.parent;
+
+            var x = 0;
+            if (this.alignH === "center") {
+                x = (parent._absoluteWidth - this._displayWidth) >> 1;
+            } else if (this.alignH === "right") {
+                x = parent._absoluteWidth - parent.pixel.paddingRight - this._displayWidth;
+            } else {
+                x = parent.pixel.paddingLeft;
+            }
+            this.pixel.baseX = x;
+
+            this.syncPositionX();
+        },
+
+        computePositionY: function(parent) {
+            parent = parent || this.parent;
+
+            var y = 0;
+            if (this.alignV === "middle" || this.alignV === "center") {
+                y = (parent._absoluteHeight - this._displayHeight) >> 1;
+            } else if (this.alignV === "bottom") {
+                y = parent._absoluteHeight - parent.pixel.paddingBottom - this._displayHeight;
+            } else {
+                y = parent.pixel.paddingTop;
+            }
+            this.pixel.baseY = y;
+
+            this.syncPositionY();
+        },
+
         updatePosition: function() {
             var parent = this.parent;
             if (!parent) {
                 return;
             }
-            var pixel = this.pixel;
-
-            if (this.fillParent) {
-                if (this.ratio !== null && this.lockScaleRatio) {
-                    pixel.baseX = (parent._absoluteWidth - this._absoluteWidth) / 2;
-                    pixel.baseY = (parent._absoluteHeight - this._absoluteHeight) / 2;
-                } else {
-                    pixel.baseX = 0;
-                    pixel.baseY = 0;
-                }
-            } else {
-                var x = 0;
-                if (this.alignH === "center") {
-                    x = (parent._absoluteWidth - this._displayWidth) >> 1;
-                } else if (this.alignH === "right") {
-                    x = parent._absoluteWidth - parent.pixel.paddingRight - this._displayWidth;
-                } else {
-                    x = parent.pixel.paddingLeft;
-                }
-                pixel.baseX = x;
-
-                var y = 0;
-                if (this.alignV === "middle" || this.alignV === "center") {
-                    y = (parent._absoluteHeight - this._displayHeight) >> 1;
-                } else if (this.alignV === "bottom") {
-                    y = parent._absoluteHeight - parent.pixel.paddingBottom - this._displayHeight;
-                } else {
-                    y = parent.pixel.paddingTop;
-                }
-                pixel.baseY = y;
-            }
-
-            this.syncPositionX(parent);
-            this.syncPositionY(parent);
-
-            this._positionChanged = true;
+            this.computePositionX(parent);
+            this.computePositionY(parent);
         },
 
         update: function() {
-            this._sizeChanged = false;
-            this._positionChanged = false;
-            this._needToCompute = false;
+            if (this._sizeChanged || this._positionChanged || this._needToCompute) {
+                this.updateSize();
+                this.updatePosition();
+
+                this._sizeChanged = false;
+                this._positionChanged = false;
+                this._needToCompute = false;
+            }
         },
 
         syncDisplayWidth: function() {
             this._displayWidth = this._absoluteWidth * this._scaleX;
             this._pivotX = this._absoluteWidth * this._anchorX;
             if (this.displayObject) {
-                if (!this.displayObject._ignoreResize){
+                if (!this.displayObject._ignoreResize) {
                     this.displayObject.width = this._absoluteWidth * this._scaleX * (this._flipX ? -1 : 1);
                 }
                 this.displayObject.pivot.x = this._pivotX / this.displayObject.scale.x;
@@ -167,7 +153,7 @@ var CUI = CUI || {};
             this._displayHeight = this._absoluteHeight * this._scaleY;
             this._pivotY = this._absoluteHeight * this._anchorY;
             if (this.displayObject) {
-                if (!this.displayObject._ignoreResize){
+                if (!this.displayObject._ignoreResize) {
                     this.displayObject.height = this._absoluteHeight * this._scaleY * (this._flipY ? -1 : 1);
                 }
                 this.displayObject.pivot.y = this._pivotY / this.displayObject.scale.y;

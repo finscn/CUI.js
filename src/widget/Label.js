@@ -198,8 +198,6 @@ var CUI = CUI || {};
             this._needToCompute = false;
 
             if (this.textHolder) {
-                this.textHolder.updateSize();
-                this.textHolder.updatePosition();
                 this.textHolder.update();
             }
 

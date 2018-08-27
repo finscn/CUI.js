@@ -31,7 +31,11 @@ var CUI = CUI || {};
 
         update: function() {
             if (this._sizeChanged || this._positionChanged || this._needToCompute) {
+                this.updateSize();
+                this.updatePosition();
+
                 this.parent.root.renderer.updateRect(this.displayObject, 0, 0, this.absoluteWidth, this.absoluteHeight, this.color, this.alpha);
+
                 this._sizeChanged = false;
                 this._positionChanged = false;
                 this._needToCompute = false;

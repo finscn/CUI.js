@@ -22,6 +22,9 @@ var CUI = CUI || {};
             this.width = "auto";
             this.height = "auto";
 
+            this.imgWidth = "auto";
+            this.imgHeight = "auto";
+
             // 如果不指定宽高 且 scaleImg = false, 大小由 imageHolder 的实际大小决定.
             // TODO: 多种方式缩放
             this.scaleImg = true;
@@ -43,8 +46,8 @@ var CUI = CUI || {};
                 parent: this,
                 fillParent: this.scaleImg,
                 lockScaleRatio: this.lockScaleRatio,
-                width: this.scaleImg ? "100%" : "auto",
-                height: this.scaleImg ? "100%" : "auto",
+                width: this.imgWidth || "auto",
+                height: this.imgHeight || "auto",
                 alignH: "center",
                 alignV: "center",
                 crossOrigin: this.crossOrigin,
@@ -121,12 +124,12 @@ var CUI = CUI || {};
             this._needToCompute = true;
         },
 
-        computAutoWidth: function() {
+        computeAutoWidth: function() {
             var width = this.imageHolder ? this.imageHolder._displayWidth : 0;
             this.pixel.width = width;
         },
 
-        computAutoHeight: function() {
+        computeAutoHeight: function() {
             var height = this.imageHolder ? this.imageHolder._displayHeight : 0;
             this.pixel.height = height;
         },
@@ -142,8 +145,6 @@ var CUI = CUI || {};
             this.updateHolders();
 
             if (this.imageHolder) {
-                this.imageHolder.updateSize();
-                this.imageHolder.updatePosition();
                 this.imageHolder.update();
             }
         },

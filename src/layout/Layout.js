@@ -4,6 +4,7 @@ var CUI = CUI || {};
 
     var Class = exports.Class;
     var Utils = exports.Utils;
+    var NoneLayout = exports.NoneLayout;
     var BaseLayout = exports.BaseLayout;
     var VBoxLayout = exports.VBoxLayout;
     var HBoxLayout = exports.HBoxLayout;
@@ -17,6 +18,7 @@ var CUI = CUI || {};
 
     });
 
+    Layout.noneLayout = new NoneLayout();
     Layout.commonLayout = new BaseLayout();
     // Layout.vBox = new VBoxLayout();
     // Layout.hBox = new HBoxLayout();

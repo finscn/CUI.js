@@ -40,7 +40,7 @@ var CUI = CUI || {};
             this.extTop = 0;
             this.extBottom = 0;
 
-            this.layout = null;
+            this.layout = Layout.noneLayout;
 
             this.modal = false;
             this.maskColor = null;
@@ -49,8 +49,8 @@ var CUI = CUI || {};
             /////////////////////////////////////////////
             // 对象创建后, 以下属性不可更改
 
-            this.centerH = false;
-            this.centerV = false;
+            this.alignH = 'left';
+            this.alignV = 'top';
 
             // 子元素的默认对齐方式.  是否有必要? 子元素上定义自己的对齐方式真的很麻烦吗?
             // this.contentAlignH = "auto", //  "left" "center" "right;
@@ -176,6 +176,74 @@ var CUI = CUI || {};
         flush: function() {
             this.precomputedTimes = 2;
         },
+
+        tryToReflow: function(deep, immediately) {
+            if (!deep) {
+                this._needToCompute = false;
+                return false;
+            }
+            if (deep === "root") {
+                var root = this.root || this.parent;
+                if (root) {
+                    root._needToCompute = true;
+                    if (immediately) {
+                        root.computeLayout(true);
+                    }
+                }
+            } else if (deep === "parent") {
+                var parent = this.parent || this.root;
+                if (parent) {
+                    parent._needToCompute = true;
+                    if (immediately) {
+                        parent.computeLayout(true);
+                    }
+                }
+            } else if (deep === true) {
+                var stop = false;
+                var ui = this;
+                var top;
+                while (ui) {
+                    top = ui;
+                    ui._needToCompute = true;
+                    if (ui.relative === "parent") {
+                        stop = true;
+                    }
+                    ui = ui.parent;
+                }
+                if (immediately) {
+                    top.computeLayout(true);
+                }
+            } else {
+                this._needToCompute = true;
+                if (immediately) {
+                    this.computeLayout();
+                }
+            }
+
+            return true;
+        },
+
+        // resizeParent: function(dx, dy) {
+        //     var parent = this.parent || null;
+        //     while (parent) {
+        //         if (parent.layout.flexible) {
+        //             parent._needToLayout = true;
+        //         }
+        //         if (parent.width === "auto" || parent.height === "auto") {
+        //             parent._needToResize = true;
+        //             parent = parent.parent;
+        //         } else {
+        //             break;
+        //         }
+        //     }
+        // },
+
+        // tryToLayout: function() {
+        //     if (this._sizeChanged) {
+        //         this._needToLayout = true;
+        //         this.resizeParent();
+        //     }
+        // },
 
         setDisabled: function(disabled) {
             this.disabled = disabled;
@@ -449,61 +517,15 @@ var CUI = CUI || {};
         /////////////////////////////////////////////////////////////////////////
         /////////////////////////////////////////////////////////////////////////
 
-
-        tryToReflow: function(deep, immediately) {
-            if (!deep) {
-                this._needToCompute = false;
-                return false;
-            }
-            if (deep === "root") {
-                var root = this.root || this.parent;
-                if (root) {
-                    root._needToCompute = true;
-                    if (immediately) {
-                        root.computeLayout(true);
-                    }
-                }
-            } else if (deep === "parent") {
-                var parent = this.parent || this.root;
-                if (parent) {
-                    parent._needToCompute = true;
-                    if (immediately) {
-                        parent.computeLayout(true);
-                    }
-                }
-            } else if (deep === true) {
-                var stop = false;
-                var ui = this;
-                var top;
-                while (ui) {
-                    top = ui;
-                    ui._needToCompute = true;
-                    if (ui.relative === "parent") {
-                        stop = true;
-                    }
-                    ui = ui.parent;
-                }
-                if (immediately) {
-                    top.computeLayout(true);
-                }
-            } else {
-                this._needToCompute = true;
-                if (immediately) {
-                    this.computeLayout();
-                }
-            }
-
-            return true;
-        },
-
         setPosition: function(left, top) {
             if (this.left !== left && left !== null) {
                 this.left = left;
+                this.computePositionX();
             }
             if (this.top !== top && top !== null && top !== undefined) {
                 this.top = top;
+                this.computePositionY();
             }
-            this.tryToReflow(this.reflow);
         },
 
         setSize: function(width, height, force) {
@@ -526,39 +548,27 @@ var CUI = CUI || {};
 
         updateHolders: function() {
             if (this.modalMaskHolder) {
-                this.modalMaskHolder.updateSize();
-                this.modalMaskHolder.updatePosition();
                 this.modalMaskHolder.update();
             }
 
             if (this.backgroundHolder) {
-                this.backgroundHolder.updateSize();
-                this.backgroundHolder.updatePosition();
                 this.backgroundHolder.update();
             }
 
             if (this.borderHolder) {
-                this.borderHolder.updateSize();
-                this.borderHolder.updatePosition();
                 this.borderHolder.update();
             }
 
             if (this.borderImageHolder) {
-                this.borderImageHolder.updateSize();
-                this.borderImageHolder.updatePosition();
                 this.borderImageHolder.update();
             }
 
             if (this.backgroundImageHolder) {
-                this.backgroundImageHolder.updateSize();
-                this.backgroundImageHolder.updatePosition();
                 this.backgroundImageHolder.update();
             }
 
             this.holders.forEach(function(holder) {
                 if (holder) {
-                    holder.updateSize();
-                    holder.updatePosition();
                     holder.update();
                 }
             });
@@ -672,11 +682,11 @@ var CUI = CUI || {};
             if ((this.precomputedTimes--) > 0) {
                 this._needToCompute = true;
             }
+
             this.beforeUpdate && this.beforeUpdate(timeStep, now);
             // if (this._needToCompute) {
             //     console.log(this.id, "component needToCompute");
             // }
-            this.computeLayout();
             this.updateSelf(timeStep, now);
             if (this.composite && this.visible) {
                 this.updateChildren(timeStep, now);
@@ -684,6 +694,8 @@ var CUI = CUI || {};
                     this.sortChildren();
                 }
             }
+            this.computeLayout();
+
             this.afterUpdate && this.afterUpdate(timeStep, now);
 
             this._sizeChanged = false;
@@ -781,13 +793,13 @@ var CUI = CUI || {};
             return null;
         },
 
-        computAutoWidth: function() {
+        computeAutoWidth: function() {
             this.pixel.width = 0;
         },
         computeWidth: function() {
             var pixel = this.pixel;
             if (this._width === "auto") {
-                this.computAutoWidth();
+                this.computeAutoWidth();
             } else {
                 var relativeWidth = pixel.realOuterWidth;
 
@@ -803,14 +815,14 @@ var CUI = CUI || {};
             this.absoluteWidth = pixel.width;
         },
 
-        computAutoHeight: function() {
+        computeAutoHeight: function() {
             this.pixel.height = 0;
         },
         computeHeight: function() {
             var pixel = this.pixel;
 
             if (this._height === "auto") {
-                this.computAutoHeight();
+                this.computeAutoHeight();
             } else {
                 var relativeHeight = pixel.realOuterHeight;
                 var fillHeight = this.getFillHeight(relativeHeight);
@@ -836,7 +848,7 @@ var CUI = CUI || {};
             } else {
                 pixel.left = Utils.parseValue(this.left, relativeWidth);
                 pixel.right = Utils.parseValue(this.right, relativeWidth);
-                if (this.centerH === true) {
+                if (this.alignH === "center") {
                     x = (relativeWidth - pixel.width) / 2 + (pixel.left || 0);
                 } else if (pixel.left === null && pixel.right !== null) {
                     x = relativeWidth - pixel.width - pixel.right;
@@ -860,7 +872,7 @@ var CUI = CUI || {};
             } else {
                 pixel.top = Utils.parseValue(this.top, relativeHeight);
                 pixel.bottom = Utils.parseValue(this.bottom, relativeHeight);
-                if (this.centerV === true) {
+                if (this.alignV === "center") {
                     y = (relativeHeight - pixel.height) / 2 + (pixel.top || 0);
                 } else if (pixel.top === null && pixel.bottom !== null) {
                     y = relativeHeight - pixel.height - pixel.bottom;

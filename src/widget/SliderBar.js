@@ -55,8 +55,8 @@ var CUI = CUI || {};
 
                 width: "100%",
                 height: "70%",
-                centerH: true,
-                centerV: true,
+                alignH: "center",
+                alignV: "center",
 
                 // borderWidth: 2,
 
@@ -90,8 +90,8 @@ var CUI = CUI || {};
 
                 // width: 60,
                 // height: "100%",
-                centerH: true,
-                centerV: true,
+                alignH: "center",
+                alignV: "center",
 
                 // borderWidth: 2,
 

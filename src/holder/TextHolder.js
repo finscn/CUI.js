@@ -193,10 +193,9 @@ var CUI = CUI || {};
                 ctx.font = this.fontStyle;
                 var measure = ctx.measureText(this.lines[0]);
                 measure.height = Math.ceil(this.fontSize * 1.5) + (this.strokeWidth || 1) + 2;
-                this.lineHeight = this.lineHeight || measure.height;
-                // measure.height = this.lineHeight;
-                this.textWidth = measure.width;
                 this.measure = measure;
+                this.lineHeight = this.lineHeight || measure.height;
+                this.textWidth = measure.width;
             } else {
                 this.lineHeight = this.lineHeight || this.height;
                 this.measure = {
@@ -210,7 +209,7 @@ var CUI = CUI || {};
             // TODO
             // this.updatePosition();
 
-            this._needToCompute = false;
+            // this._needToCompute = false;
 
             if (this.useCache) {
                 if (this.alignH === "center") {
@@ -234,10 +233,10 @@ var CUI = CUI || {};
             // this.pixel.height = this.cacheHeight;
 
         },
-        computAutoWidth: function() {
+        computeAutoWidth: function() {
             this.pixel.width = this.cacheWidth;
         },
-        computAutoHeight: function() {
+        computeAutoHeight: function() {
             this.pixel.height = this.cacheHeight;
         },
         updateCache: function() {
@@ -247,7 +246,7 @@ var CUI = CUI || {};
             CUI.Utils.renderContent(this.cacheContext, this, this.cacheOffsetX, this.cacheOffsetY);
 
             this.textChanged = false;
-            this._needToCompute = false;
+            // this._needToCompute = false;
 
             // this.cacheContext.lineWidth = 4;
             // this.cacheContext.strokeRect(0, 0, this.cacheCanvas.width, this.cacheCanvas.height);
@@ -255,7 +254,9 @@ var CUI = CUI || {};
 
         update: function() {
             if (this._sizeChanged || this._positionChanged || this._needToCompute) {
-                // this.computeSize();
+                this.updateSize();
+                this.updatePosition();
+
                 this._sizeChanged = false;
                 this._positionChanged = false;
                 this._needToCompute = false;

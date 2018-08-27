@@ -35,7 +35,7 @@ var CUI = CUI || {};
                 child.hasLayoutY = false;
 
                 if (child.relative === "parent") {
-                    this.computeChild(child, child.parent)
+                    child.computeSelf(parent)
                 } else {
 
                     child.computeMargin(parent);

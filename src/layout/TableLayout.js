@@ -34,7 +34,7 @@ var CUI = CUI || {};
             for (var i = 0; i < childCount; i++) {
                 var child = children[i];
                 if (child.relative === "parent") {
-                    this.computeChild(child, child.parent)
+                    child.computeSelf(parent);
                 } else {
                     this.parseChild(child, parent, idx);
                     idx++;

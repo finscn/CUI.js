@@ -194,12 +194,69 @@ var CUI = CUI || {};
             this.displayObject.tint = this.tint === null ? 0xFFFFFF : this.tint;
         },
 
-        computAutoWidth: function() {
+        computeAutoWidth: function() {
             this.pixel.width = this.config.w;
         },
 
-        computAutoHeight: function() {
+        computeAutoHeight: function() {
             this.pixel.height = this.config.h;
+        },
+
+        updatePosition: function() {
+            var parent = this.parent;
+            if (!parent) {
+                return;
+            }
+            var pixel = this.pixel;
+
+            if (this.fillParent) {
+                if (this.ratio !== null && this.lockScaleRatio) {
+                    pixel.baseX = (parent._absoluteWidth - this._absoluteWidth) / 2;
+                    pixel.baseY = (parent._absoluteHeight - this._absoluteHeight) / 2;
+                } else {
+                    pixel.baseX = 0;
+                    pixel.baseY = 0;
+                }
+                this.syncPositionX(parent);
+                this.syncPositionY(parent);
+                return;
+            }
+
+            this.computePositionX(parent);
+            this.computePositionY(parent);
+        },
+
+        updateSize: function() {
+
+            if (this.fillParent) {
+                var parent = this.parent;
+
+                var width = parent._absoluteWidth;
+                var height = parent._absoluteHeight;
+
+                if (this.ratio !== null && this.lockScaleRatio) {
+                    // debugger;
+                    var _r = width / height;
+                    if (_r >= this.ratio) {
+                        width = height * this.ratio;
+                    } else {
+                        height = width / this.ratio;
+                    }
+                }
+
+                this.pixel.width = width;
+                this.pixel.height = height;
+                this.absoluteWidth = width;
+                this.absoluteHeight = height;
+
+                this._sizeChanged = true;
+                return;
+            }
+
+            this.computeWidth();
+            this.computeHeight();
+
+            this._sizeChanged = true;
         },
 
         removeImg: function() {

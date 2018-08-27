@@ -35,16 +35,12 @@ var CUI = CUI || {};
             for (var i = 0, len = children.length; i < len; i++) {
                 var child = children[i];
                 if (child.relative === "parent") {
-                    this.computeChild(child, child.parent)
+                    child.computeSelf(parent);
                 } else {
-                    this.computeChild(child, parent);
+                    child.computeSelf(parent);
                 }
                 child.computeLayout(true);
             }
-        },
-
-        computeChild: function(child, parent) {
-            child.computeSelf(parent);
         },
 
         tryToResizeParent: function(parent, width, height, immediately) {
