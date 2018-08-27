@@ -19,32 +19,32 @@ function initUI() {
     });
 
 
-    // var label = new CUI.Label({
-    //     testCmp: 1,
-    //     id: "label-1",
-    //     parent: rootUI,
-    //     right: 0,
-    //     zIndex: 999,
-    //     backgroundColor: renderer.colorRgb(255, 240, 230),
-    //     borderWidth: borderWidth,
-    //     borderColor: renderer.colorHex("#ff0000"),
-    //     // text: "Text Test",
-    //     width: 'auto',
-    //     height: 'auto',
-    //     textInfo: {
-    //         // useCache: true,
-    //         // color: renderer.colorRgb(255, 0, 0),
-    //         color: "#ff0000",
-    //         alpha: 1,
-    //         // useCache: false,
-    //         text: "Text Test - 1",
-    //     },
-    //     beforeUpdate: function() {
-    //         if (Date.now() % 3 === 0) {
-    //             this.setText("test-" + (Math.random() * 1000 >> 0), false);
-    //         }
-    //     }
-    // });
+    var label = new CUI.Label({
+        testCmp: 1,
+        id: "label-1",
+        parent: rootUI,
+        right: 0,
+        zIndex: 999,
+        backgroundColor: renderer.colorRgb(255, 240, 230),
+        borderWidth: borderWidth,
+        borderColor: renderer.colorHex("#ff0000"),
+        // text: "Text Test",
+        width: 'auto',
+        height: 'auto',
+        textInfo: {
+            // useCache: true,
+            // color: renderer.colorRgb(255, 0, 0),
+            color: "#ff0000",
+            alpha: 1,
+            // useCache: false,
+            text: "Text Test - 1",
+        },
+        beforeUpdate: function() {
+            if (Date.now() % 3 === 0) {
+                this.setText("test-" + (Math.random() * 1000 >> 0), false);
+            }
+        }
+    });
 
 
     scrollView = new CUI.ScrollView({
@@ -120,7 +120,6 @@ function initUI() {
 
     var comp = new CUI.Button({
         test: true,
-        id: 'btn-test-' + idx,
         backgroundColor: renderer.colorRgb(255, 240, 230),
         backgroundImage: idx % 3 === 0 ? CUI.ImagePool["btn-bg"] : null,
         borderWidth: borderWidth,
