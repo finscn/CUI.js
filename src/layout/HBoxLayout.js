@@ -20,7 +20,7 @@ var CUI = CUI || {};
         },
 
         compute: function(parent) {
-            console.log('HBoxLayout.compute');
+            // console.log('HBoxLayout.compute');
             var children = parent.children;
             var childCount = children.length;
             var idx = 0;

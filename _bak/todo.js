@@ -1,17 +1,22 @@
+=======================================
+
+
 v 添加 moveToX moveToY  moveBy moveTo
 v 支持遮罩
 v Picture 支持:  以缩放后的img大小为自己的实际大小
+v 何时用 realOuterWidth ???
+v 何时用 absolutWidth ???
+v 优化 布局 和 reflow 的流程
+
 
 优化/简化 scaleImg scaleBg 等属性
 
 优化 设置text 和 更新文本 的流程
 
-优化 布局 和 reflow 的流程
+优化 computeSelf / computLayout , 以及何时调用
 
 修复bug
 
-何时用 realOuterWidth ???
-何时用 absolutWidth ???
 
 =======================================
 改变 组件大小 时

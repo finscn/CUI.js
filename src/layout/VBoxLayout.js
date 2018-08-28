@@ -20,6 +20,7 @@ var CUI = CUI || {};
         },
 
         compute: function(parent) {
+            // console.log('VBoxLayout.compute');
             var children = parent.children;
             var childCount = children.length;
             var idx = 0;
