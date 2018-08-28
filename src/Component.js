@@ -18,9 +18,6 @@ var CUI = CUI || {};
         superclass: Core,
 
         initialize: function() {
-
-            this.reflow = 'parent';
-
             this.anchor = 0.5;
 
             this.left = null;
@@ -175,53 +172,6 @@ var CUI = CUI || {};
 
         flush: function() {
             this.precomputedTimes = 1;
-        },
-
-        tryToReflow: function(deep, immediately) {
-            // console.log('tryToReflow', deep, immediately);
-            if (!deep) {
-                this._needToCompute = false;
-                return false;
-            }
-            if (deep === "root") {
-                var root = this.root || this.parent;
-                if (root) {
-                    root._needToCompute = true;
-                    if (immediately) {
-                        root.computeLayout(true);
-                    }
-                }
-            } else if (deep === "parent") {
-                var parent = this.parent || this.root;
-                if (parent) {
-                    parent._needToCompute = true;
-                    if (immediately) {
-                        parent.computeLayout(true);
-                    }
-                }
-            } else if (deep === true) {
-                var stop = false;
-                var ui = this;
-                var top;
-                while (ui) {
-                    top = ui;
-                    ui._needToCompute = true;
-                    if (ui.relative === "parent") {
-                        stop = true;
-                    }
-                    ui = ui.parent;
-                }
-                if (immediately) {
-                    top.computeLayout(true);
-                }
-            } else {
-                this._needToCompute = true;
-                if (immediately) {
-                    this.computeLayout();
-                }
-            }
-
-            return true;
         },
 
         resizeParents: function() {
@@ -681,9 +631,12 @@ var CUI = CUI || {};
                 child.updateAABB();
             });
         },
+
         update: function(timeStep, now) {
+            var visible = this.visible;
             if ((this.precomputedTimes--) > 0) {
                 this._needToCompute = true;
+                visible = true;
             }
 
             this.beforeUpdate && this.beforeUpdate(timeStep, now);
@@ -691,7 +644,7 @@ var CUI = CUI || {};
             //     console.log(this.id, "component needToCompute");
             // }
             this.updateSelf(timeStep, now);
-            if (this.composite && this.visible) {
+            if (this.composite && visible) {
                 this.updateChildren(timeStep, now);
                 if (this._toSortChildren) {
                     this.sortChildren();

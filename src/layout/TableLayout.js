@@ -24,15 +24,13 @@ var CUI = CUI || {};
             this.rows = 1;
         },
 
-        init: function() {
-            var pixel = this.pixel;
-            var tableWidth = (this.cellWidth + this.cellSpace) * this.cols + this.cellSpace;
-            var tableHeight = (this.cellHeight + this.cellSpace) * this.rows + this.cellSpace;
-            // tableWidth += pixel.cellSpaceH;
-            // tableHeight += pixel.cellSpaceV;
+        initTable: function(parent) {
+            var pixel = this.pixel = {};
+            var parentPixel = parent.pixel;
 
-            pixel.tableWidth = tableWidth;
-            pixel.tableHeight = tableHeight;
+            var tableWidth = parentPixel.innerWidth;
+            var tableHeight = parentPixel.innerHeight;
+
             pixel.cellSpace = Utils.parseValue(this.cellSpace, tableWidth) || 0;
             pixel.cellSpaceH = Utils.parseValue(this.cellSpaceH, tableWidth);
             pixel.cellSpaceV = Utils.parseValue(this.cellSpaceV, tableHeight);
@@ -44,59 +42,22 @@ var CUI = CUI || {};
                 pixel.cellSpaceV = pixel.cellSpace;
             }
 
-            var cellInnerWidth = (tableWidth + pixel.cellSpaceH) / (this.cols || 1) - pixel.cellSpaceH >> 0;
-            var cellInnerHeight = (tableHeight + pixel.cellSpaceV) / (this.rows || 1) - pixel.cellSpaceV >> 0;
-            pixel.cellInnerWidth = cellInnerWidth;
-            pixel.cellInnerHeight = cellInnerHeight;
-
-            if (!this.cellWidth) {
-                pixel.cellWidth = cellInnerWidth;
+            if (this.cellWidth) {
+                pixel.cellWidth = Utils.parseValue(this.cellWidth, tableWidth);
+                tableWidth = (pixel.cellWidth + pixel.cellSpaceH) * this.cols + pixel.cellSpaceH;
             } else {
-                pixel.cellWidth = Utils.parseValue(this.cellWidth, cellInnerWidth) || cellInnerWidth;
+                pixel.cellWidth = (tableWidth + pixel.cellSpaceH) / (this.cols || 1) - pixel.cellSpaceH >> 0;
             }
-            if (!this.cols) {
-                this.cols = (tableWidth + pixel.cellSpaceH) / pixel.cellWidth >> 0;
-            }
-
-            if (!this.cellHeight) {
-                pixel.cellHeight = cellInnerHeight;
+            if (this.cellHeight) {
+                pixel.cellHeight = Utils.parseValue(this.cellHeight, tableHeight);
+                tableHeight = (this.cellHeight + this.cellSpace) * this.rows + this.cellSpace;
             } else {
-                pixel.cellHeight = Utils.parseValue(this.cellHeight, cellInnerHeight) || cellInnerHeight;
+                pixel.cellHeight = (tableHeight + pixel.cellSpaceV) / (this.rows || 1) - pixel.cellSpaceV >> 0;
             }
-            if (!this.rows) {
-                this.rows = (tableHeight + pixel.cellSpaceV) / pixel.cellHeight >> 0;
-            }
-        },
-
-        compute: function(parent) {
-            console.log('TableLayout.compute');
-            var children = parent.children;
-            var childCount = children.length;
-            var idx = 0;
-
-            if (childCount === 0) {
-                return idx;
-            }
-
-            this.initParentCell();
-
-            for (var i = 0; i < childCount; i++) {
-                var child = children[i];
-                if (child.relative === "parent") {
-                    // child.computeSelf(parent);
-                } else {
-                    this.parseChild(child, parent, idx);
-                    idx++;
-                }
-            }
-
-            if (childCount > 0) {
-                this.tryToResizeParent(parent, parent._absoluteWidth, parent._absoluteHeight);
-            }
-            return idx;
-        },
-
-        initParentCell: function() {
+            // tableWidth += pixel.cellSpaceH;
+            // tableHeight += pixel.cellSpaceV;
+            pixel.tableWidth = tableWidth;
+            pixel.tableHeight = tableHeight;
 
             this.parentCell = {
                 _absoluteX: 0,
@@ -122,6 +83,34 @@ var CUI = CUI || {};
                     paddingBottom: 0,
                 }
             };
+        },
+
+        compute: function(parent) {
+            console.log('TableLayout.compute');
+            var children = parent.children;
+            var childCount = children.length;
+            var idx = 0;
+
+            if (childCount === 0) {
+                return idx;
+            }
+
+            this.initTable(parent);
+
+            for (var i = 0; i < childCount; i++) {
+                var child = children[i];
+                if (child.relative === "parent") {
+                    // child.computeSelf(parent);
+                } else {
+                    this.parseChild(child, parent, idx);
+                    idx++;
+                }
+            }
+
+            if (childCount > 0) {
+                this.tryToResizeParent(parent, parent._absoluteWidth, parent._absoluteHeight);
+            }
+            return idx;
         },
 
         parseChild: function(child, parent, index) {

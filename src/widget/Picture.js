@@ -87,12 +87,7 @@ var CUI = CUI || {};
             var flexible = this._width === "auto" || this._height === "auto";
             this.imageHolder.setSrc(src, function(img) {
                 if (img) {
-                    if (flexible) {
-                        Me.tryToReflow(Me.reflow);
-                    } else {
-                        Me.computeSelf();
-                        Me.computeLayout(true);
-                    }
+                    Me._sizeChanged = true;
                 }
                 Me.hasImg = !!Me.imageHolder.img;
                 Me._needToCompute = true;
@@ -105,12 +100,7 @@ var CUI = CUI || {};
             var flexible = this._width === "auto" || this._height === "auto";
             this.imageHolder.setImg(img, function(img) {
                 if (img) {
-                    if (flexible) {
-                        Me.tryToReflow(Me.reflow);
-                    } else {
-                        Me.computeSelf();
-                        Me.computeLayout(true);
-                    }
+                    Me._sizeChanged = true;
                 }
                 Me.hasImg = !!Me.imageHolder.img;
                 Me._needToCompute = true;
@@ -140,13 +130,37 @@ var CUI = CUI || {};
             }
             // this._needToCompute = false;
 
-            this.computeSelf();
 
             this.updateHolders();
 
             if (this.imageHolder) {
                 this.imageHolder.update();
             }
+        },
+
+        update: function(timeStep, now) {
+            this.beforeUpdate && this.beforeUpdate(timeStep, now);
+
+            var resized = (this._width === "auto" || this._height === "auto") && this._sizeChanged;
+
+            this.updateSelf(timeStep, now);
+
+            if (this._needToCompute) {
+                this.computeSelf();
+                this.computeLayout();
+            }
+
+            if (resized){
+                this.resizeParents();
+            }
+
+            this.afterUpdate && this.afterUpdate(timeStep, now);
+
+            this._sizeChanged = false;
+            this._positionChanged = false;
+            this._needToCompute = false;
+
+            this._sizeChanged = false;
         },
     });
 

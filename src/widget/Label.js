@@ -211,24 +211,15 @@ var CUI = CUI || {};
 
         updateSizeWithText: function() {
             // if (this.textHolder._needToCompute) {
-
             this.textHolder.updateText();
             // }
             this.computeTextSize();
 
-            var bg = this.backgroundImageHolder;
+            var bg = this.borderImageHolder;
             if (bg && bg.borderImage) {
                 bg.cacheCanvas = null;
             }
 
-            // this.tryToReflow(this.reflow);
-            // if (this._width === "auto" || this._height === "auto") {
-            //     // this.tryToReflow(this.reflow, true);
-            //     this.tryToReflow(this.reflow);
-            // } else {
-            //     this.computeSelf();
-            //     this.computeLayout(true);
-            // }
             this.computeSelf();
             this.computeLayout(true);
         },
