@@ -55,7 +55,6 @@ var CUI = CUI || {};
                 // child.computeLayout(true);
             }
 
-            console.log(totalWidth, totalHeight);
             this.tryToResizeParent(parent, totalWidth, totalHeight);
         },
 
@@ -76,7 +75,11 @@ var CUI = CUI || {};
                 parent.computePositionY();
                 parent.computePadding();
                 parent.updateAABB();
-                parent._needToCompute = true;
+                if (parent.composite) {
+                    parent.children.forEach(function(child) {
+                        child.syncPosition();
+                    });
+                }
             }
         },
 

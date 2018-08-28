@@ -527,6 +527,7 @@ var CUI = CUI || {};
                 this.top = top;
                 this.computePositionY();
             }
+            this.updateAABB();
         },
 
         setSize: function(width, height, force) {
@@ -1000,15 +1001,18 @@ var CUI = CUI || {};
             this.absoluteHeight = pixel.height;
 
             this.updateAABB();
+
+            if (this.composite) {
+                this.children.forEach(function(child) {
+                    child.syncPosition();
+                });
+            }
+
+            this._needToCompute = true;
         },
 
         resizeBy: function(dx, dy) {
-            var pixel = this.pixel;
-            pixel.width += dx;
-            this.absoluteWidth = pixel.width;
-
-            pixel.height += dy;
-            this.absoluteHeight = pixel.height;
+            this.resizeTo(this.pixel.x + dx, this.pixel.y + dy);
         },
 
         ////////////////////////////////////////////////////////////////////////

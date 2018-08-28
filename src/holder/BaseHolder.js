@@ -22,7 +22,7 @@ var CUI = CUI || {};
             this.offsetHeight = 0;
 
             this.alignH = "center"; // left center righ;
-            this.alignV = "middle"; // top middle botto;
+            this.alignV = "middle"; // top center/middle bottom;
 
             this.fillParent = false;
 
