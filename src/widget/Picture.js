@@ -130,7 +130,6 @@ var CUI = CUI || {};
             }
             // this._needToCompute = false;
 
-
             this.updateHolders();
 
             if (this.imageHolder) {
