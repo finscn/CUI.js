@@ -922,7 +922,7 @@ var CUI = CUI || {};
                 });
             }
 
-            this._needToCompute = true;
+            // this._needToCompute = true;
         },
 
         moveToX: function(x, absolute) {
