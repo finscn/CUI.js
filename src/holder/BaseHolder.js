@@ -138,23 +138,33 @@ var CUI = CUI || {};
             }
         },
 
+        // syncDisplayWidth: function() {
+        //     this._displayWidth = this._absoluteWidth * this._scaleX;
+        //     this._pivotX = this._absoluteWidth * this._anchorX;
+        //     if (this.displayObject) {
+        //         this.displayObject.pivot.x = this._pivotX;
+        //         this.displayObject.position.x = this.pixel.relativeX + this._pivotX;
+        //         this.displayObject.scale.x = this._scaleX * (this._flipX ? -1 : 1);
+        //     }
+        // },
+
         syncDisplayWidth: function() {
             this._displayWidth = this._absoluteWidth * this._scaleX;
-            this._pivotX = this._absoluteWidth * this._anchorX;
+            this._pivotX = this._displayWidth * this._anchorX;
             if (this.displayObject) {
                 if (!this.displayObject._ignoreResize) {
-                    this.displayObject.width = this._absoluteWidth * this._scaleX * (this._flipX ? -1 : 1);
+                    this.displayObject.width = this._displayWidth * (this._flipX ? -1 : 1);
                 }
-                this.displayObject.pivot.x = this._pivotX / this.displayObject.scale.x;
+                this.displayObject.pivot.x = this._pivotX / Math.abs(this.displayObject.scale.x);
                 this.displayObject.position.x = this.pixel.relativeX + this._pivotX;
             }
         },
         syncDisplayHeight: function() {
             this._displayHeight = this._absoluteHeight * this._scaleY;
-            this._pivotY = this._absoluteHeight * this._anchorY;
+            this._pivotY = this._displayHeight * this._anchorY;
             if (this.displayObject) {
                 if (!this.displayObject._ignoreResize) {
-                    this.displayObject.height = this._absoluteHeight * this._scaleY * (this._flipY ? -1 : 1);
+                    this.displayObject.height = this._displayHeight * (this._flipY ? -1 : 1);
                 }
                 this.displayObject.pivot.y = this._pivotY / this.displayObject.scale.y;
                 this.displayObject.position.y = this.pixel.relativeY + this._pivotY;

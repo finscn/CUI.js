@@ -24,47 +24,18 @@ var CUI = CUI || {};
             this.rows = 1;
         },
 
-        compute: function(parent) {
-            var children = parent.children;
-            var childCount = children.length;
-
-            var idx = 0;
-            this.initTable(parent);
-
-            for (var i = 0; i < childCount; i++) {
-                var child = children[i];
-                if (child.relative === "parent") {
-                    child.computeSelf(parent);
-                } else {
-                    this.parseChild(child, parent, idx);
-                    idx++;
-                }
-                child.computeLayout(true);
-            }
-
-            if (childCount > 0) {
-                this.tryToResizeParent(parent, parent._absoluteWidth, parent._absoluteHeight);
-            }
-            return idx;
-        },
-
-        initTable: function(parent) {
+        init: function() {
             var pixel = this.pixel;
+            var tableWidth = (this.cellWidth + this.cellSpace) * this.cols + this.cellSpace;
+            var tableHeight = (this.cellHeight + this.cellSpace) * this.rows + this.cellSpace;
+            // tableWidth += pixel.cellSpaceH;
+            // tableHeight += pixel.cellSpaceV;
 
-            var parentPixel = parent.pixel;
-
-            if (parent._width === "auto") {
-                parentPixel.width = (this.cellWidth + this.cellSpace) * this.cols + this.cellSpace;
-                parentPixel.width += (parentPixel.paddingLeft || 0) + (parentPixel.paddingRight || 0);
-            }
-            if (parent._height === "auto") {
-                parentPixel.height = (this.cellHeight + this.cellSpace) * this.rows + this.cellSpace;
-                parentPixel.height += (parentPixel.paddingTop || 0) + (parentPixel.paddingBottom || 0);
-            }
-
-            pixel.cellSpace = Utils.parseValue(this.cellSpace, parentPixel.width) || 0;
-            pixel.cellSpaceH = Utils.parseValue(this.cellSpaceH, parentPixel.width);
-            pixel.cellSpaceV = Utils.parseValue(this.cellSpaceV, parentPixel.height);
+            pixel.tableWidth = tableWidth;
+            pixel.tableHeight = tableHeight;
+            pixel.cellSpace = Utils.parseValue(this.cellSpace, tableWidth) || 0;
+            pixel.cellSpaceH = Utils.parseValue(this.cellSpaceH, tableWidth);
+            pixel.cellSpaceV = Utils.parseValue(this.cellSpaceV, tableHeight);
 
             if (pixel.cellSpaceH === null) {
                 pixel.cellSpaceH = pixel.cellSpace;
@@ -73,14 +44,10 @@ var CUI = CUI || {};
                 pixel.cellSpaceV = pixel.cellSpace;
             }
 
-            var innerWidth = parentPixel.width - parentPixel.paddingLeft - parentPixel.paddingRight;
-            var innerHeight = parentPixel.height - parentPixel.paddingTop - parentPixel.paddingBottom;
-
-            // innerWidth += pixel.cellSpaceH;
-            // innerHeight += pixel.cellSpaceV;
-
-            var cellInnerWidth = (innerWidth + pixel.cellSpaceH) / (this.cols || 1) - pixel.cellSpaceH >> 0;
-            var cellInnerHeight = (innerHeight + pixel.cellSpaceV) / (this.rows || 1) - pixel.cellSpaceV >> 0;
+            var cellInnerWidth = (tableWidth + pixel.cellSpaceH) / (this.cols || 1) - pixel.cellSpaceH >> 0;
+            var cellInnerHeight = (tableHeight + pixel.cellSpaceV) / (this.rows || 1) - pixel.cellSpaceV >> 0;
+            pixel.cellInnerWidth = cellInnerWidth;
+            pixel.cellInnerHeight = cellInnerHeight;
 
             if (!this.cellWidth) {
                 pixel.cellWidth = cellInnerWidth;
@@ -88,7 +55,7 @@ var CUI = CUI || {};
                 pixel.cellWidth = Utils.parseValue(this.cellWidth, cellInnerWidth) || cellInnerWidth;
             }
             if (!this.cols) {
-                this.cols = (innerWidth + pixel.cellSpaceH) / pixel.cellWidth >> 0;
+                this.cols = (tableWidth + pixel.cellSpaceH) / pixel.cellWidth >> 0;
             }
 
             if (!this.cellHeight) {
@@ -97,8 +64,39 @@ var CUI = CUI || {};
                 pixel.cellHeight = Utils.parseValue(this.cellHeight, cellInnerHeight) || cellInnerHeight;
             }
             if (!this.rows) {
-                this.rows = (innerHeight + pixel.cellSpaceV) / pixel.cellHeight >> 0;
+                this.rows = (tableHeight + pixel.cellSpaceV) / pixel.cellHeight >> 0;
             }
+        },
+
+        compute: function(parent) {
+            console.log('TableLayout.compute');
+            var children = parent.children;
+            var childCount = children.length;
+            var idx = 0;
+
+            if (childCount === 0) {
+                return idx;
+            }
+
+            this.initParentCell();
+
+            for (var i = 0; i < childCount; i++) {
+                var child = children[i];
+                if (child.relative === "parent") {
+                    // child.computeSelf(parent);
+                } else {
+                    this.parseChild(child, parent, idx);
+                    idx++;
+                }
+            }
+
+            if (childCount > 0) {
+                this.tryToResizeParent(parent, parent._absoluteWidth, parent._absoluteHeight);
+            }
+            return idx;
+        },
+
+        initParentCell: function() {
 
             this.parentCell = {
                 _absoluteX: 0,
@@ -164,19 +162,17 @@ var CUI = CUI || {};
             parentCell.absoluteHeight = parentCell._absoluteHeight;
 
             child.computeMargin(parentCell);
-            child.computeRealMargin(parentCell);
-
-            child.pixel.realMarginLeft = Math.max(child.marginLeft, parent.paddingLeft) + col * (w + cellSpaceH);
-            child.pixel.realMarginTop = Math.max(child.marginTop, parent.paddingTop) + row * (h + cellSpaceV);
-
             child.computeWidth();
             child.computeHeight();
-            child.computePositionX(parentCell);
-            child.computePositionY(parentCell);
-            child.computePadding();
-            child.updateAABB();
-        }
 
+            child._movedX = true;
+            child.pixel.baseX = Math.max(child.marginLeft, parent.paddingLeft) + col * (w + cellSpaceH);
+
+            child._movedY = true;
+            child.pixel.baseY = Math.max(child.marginTop, parent.paddingTop) + row * (h + cellSpaceV);
+
+            child.syncPosition(parentCell);
+        },
     });
 
 

@@ -53,6 +53,7 @@ var CUI = CUI || {};
             if (!this._needToCompute && !forceCompute) {
                 return;
             }
+            // this._needToCompute = false;
 
             this.updateHolders();
 
@@ -66,7 +67,6 @@ var CUI = CUI || {};
                 // TODO
             }
 
-            this._needToCompute = false;
         },
     });
 

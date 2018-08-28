@@ -42,6 +42,8 @@ var CUI = CUI || {};
                 realMarginRight: 0,
                 realMarginBottom: 0,
 
+                innerWidth: 0,
+                innerHeight: 0,
                 realOuterWidth: 0,
                 realOuterHeight: 0,
             };
@@ -479,6 +481,8 @@ var CUI = CUI || {};
                 }
                 this._sizeChanged = true;
                 this._absoluteWidth = value;
+                var pixel = this.pixel;
+                pixel.innerWidth = value - pixel.paddingLeft - pixel.paddingRight;
                 this.syncDisplayWidth();
             }
         },
@@ -494,6 +498,8 @@ var CUI = CUI || {};
                 }
                 this._sizeChanged = true;
                 this._absoluteHeight = value;
+                var pixel = this.pixel;
+                pixel.innerHeight = value - pixel.paddingTop - pixel.paddingBottom;
                 this.syncDisplayHeight();
             }
         },

@@ -10,6 +10,61 @@ v Picture 支持:  以缩放后的img大小为自己的实际大小
 
 修复bug
 
+何时用 realOuterWidth ???
+何时用 absolutWidth ???
+
+=======================================
+改变 组件大小 时
+    马上改变
+    if (父组件是 自适应组件){
+        父组件.needToCompute=true
+    }
+    computePadding();
+
+    sizeChanged = true
+    needToCompute = true
+
+
+改变 组件位置 时
+    马上改变
+    positionChanged = true
+    needToCompute = true
+
+
+改变 padding 时
+    马上改变
+    computePadding()
+    needToCompute = true
+
+改变 margin 时
+    马上改变
+    computeMargin()
+    needToCompute = true
+
+
+=======================================
+updateChildren:
+
+computeSelf:
+        computeRealMargin();
+        computeSize();
+        computePosition();
+
+
+update:
+    computeSelf();
+    updateChildren();
+    layout.compute();
+
+
+layout.compute:
+    if (自适应组件){
+        resizeParent
+    }
+    // do layout
+
+
+
 =======================================
 重构布局系统
 

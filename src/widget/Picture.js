@@ -138,7 +138,7 @@ var CUI = CUI || {};
             if (!this._needToCompute && !forceCompute) {
                 return;
             }
-            this._needToCompute = false;
+            // this._needToCompute = false;
 
             this.computeSelf();
 

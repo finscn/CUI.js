@@ -59,7 +59,7 @@ var CUI = CUI || {};
 
         computeLayout: function(forceCompute) {
             if (this._needToCompute || forceCompute) {
-                this._needToCompute = false;
+                // this._needToCompute = false;
 
                 this.computeSelf();
 

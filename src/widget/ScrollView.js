@@ -88,12 +88,12 @@ var CUI = CUI || {};
             if (firstChild) {
                 var lastChild = this.children[this.children.length - 1];
 
-                var innerWdith = lastChild.absoluteX + lastChild.absoluteWidth + lastChild.marginRight - firstChild.absoluteX + firstChild.marginLeft;
-                innerWdith += this.paddingLeft + this.paddingRight;
+                var innerWidth = lastChild.absoluteX + lastChild.absoluteWidth + lastChild.marginRight - firstChild.absoluteX + firstChild.marginLeft;
+                innerWidth += this.paddingLeft + this.paddingRight;
                 var innerHeight = lastChild.absoluteY + lastChild.absoluteHeight + lastChild.marginBottom - firstChild.absoluteY + firstChild.marginTop;
                 innerHeight += this.paddingTop + this.paddingBottom;
 
-                this.scrollWidth = this.scrollWidthOrigin || innerWdith;
+                this.scrollWidth = this.scrollWidthOrigin || innerWidth;
                 this.scrollHeight = this.scrollHeightOrigin || innerHeight;
             } else {
                 this.scrollWidth = this.scrollWidthOrigin || 0;
@@ -347,7 +347,7 @@ var CUI = CUI || {};
 
         computeLayout: function(forceCompute) {
             if (this._needToCompute || forceCompute) {
-                this._needToCompute = false;
+                // this._needToCompute = false;
 
                 this.layout.compute(this);
 
@@ -361,7 +361,8 @@ var CUI = CUI || {};
         },
         updateMask: function() {
             var maskShape = this.maskShape;
-            // this.maskShape = this.root.renderer.updateRect(maskShape, this._absoluteX, this._absoluteY, this._absoluteWidth, this._absoluteHeight, 0x000000, 1);
+            // var pixel = this.pixel;
+            // this.maskShape = this.root.renderer.updateRect(maskShape, 0, 0, pixel.innerWidth, pixel.innerHeight, 0x000000, 1);
             this.maskShape = this.root.renderer.updateRect(maskShape, 0, 0, this._absoluteWidth, this._absoluteHeight, 0x000000, 1);
             this.displayObject.mask = this.maskShape;
             if (!maskShape) {

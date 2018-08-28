@@ -82,7 +82,7 @@ var CUI = CUI || {};
 
             this.initDisplayObject();
 
-            this.computeSize();
+            this.updateText();
             // this.updateSize();
             // this.updatePosition();
         },
@@ -167,10 +167,10 @@ var CUI = CUI || {};
         },
 
         setText: function(text) {
-            if (this._text === text) {
+            this.textChanged = this._text !== text;
+            if (!this.textChanged) {
                 return;
             }
-            this.textChanged = true;
             this._text = text;
             text = this.text = text === null || text === undefined ? "" : text;
             if (Array.isArray(text)) {
@@ -182,9 +182,9 @@ var CUI = CUI || {};
             this._needToCompute = true;
         },
 
-        computeSize: function(force) {
+        updateText: function(force) {
             if (!this.lines) {
-                this._needToCompute = false;
+                // this._needToCompute = false;
                 return;
             }
 
@@ -206,50 +206,46 @@ var CUI = CUI || {};
 
             this.textHeight = this.lineHeight * this.lineCount;
 
+            if (this.useCache) {
+                this.updateCache();
+            }
             // TODO
             // this.updatePosition();
 
-            // this._needToCompute = false;
-
-            if (this.useCache) {
-                if (this.alignH === "center") {
-                    this.cacheOffsetX = Math.ceil(this.textWidth / 2 + this.strokeWidth + this.cachePadding);
-                } else if (this.alignH === "right" || this.alignH === "end") {
-                    this.cacheOffsetX = this.textWidth + this.strokeWidth + this.cachePadding;
-                } else {
-                    this.cacheOffsetX = this.strokeWidth + this.cachePadding;
-                }
-                this.cacheOffsetY = this.strokeWidth + this.cachePadding;
-
-                this.cacheWidth = this.textWidth + (this.strokeWidth + this.cachePadding) * 2;
-                this.cacheHeight = this.textHeight + (this.strokeWidth + this.cachePadding) * 2;
-                // debugger
-                this.updateCache();
-                this.displayObject.updateSize();
-                // this.displayObject.updateContent();
-            }
+            this._needToCompute = true;
 
             // this.pixel.width = this.cacheWidth;
             // this.pixel.height = this.cacheHeight;
 
         },
-        computeAutoWidth: function() {
-            this.pixel.width = this.cacheWidth;
-        },
-        computeAutoHeight: function() {
-            this.pixel.height = this.cacheHeight;
-        },
+
         updateCache: function() {
+            if (this.alignH === "center") {
+                this.cacheOffsetX = Math.ceil(this.textWidth / 2 + this.strokeWidth + this.cachePadding);
+            } else if (this.alignH === "right" || this.alignH === "end") {
+                this.cacheOffsetX = this.textWidth + this.strokeWidth + this.cachePadding;
+            } else {
+                this.cacheOffsetX = this.strokeWidth + this.cachePadding;
+            }
+            this.cacheOffsetY = this.strokeWidth + this.cachePadding;
+
+            this.cacheWidth = this.textWidth + (this.strokeWidth + this.cachePadding) * 2;
+            this.cacheHeight = this.textHeight + (this.strokeWidth + this.cachePadding) * 2;
+            // debugger
             this.cacheCanvas.width = this.cacheWidth;
             this.cacheCanvas.height = this.cacheHeight;
 
             CUI.Utils.renderContent(this.cacheContext, this, this.cacheOffsetX, this.cacheOffsetY);
 
-            this.textChanged = false;
-            // this._needToCompute = false;
+            this.displayObject.updateSize();
+            // this.displayObject.updateContent();
+        },
 
-            // this.cacheContext.lineWidth = 4;
-            // this.cacheContext.strokeRect(0, 0, this.cacheCanvas.width, this.cacheCanvas.height);
+        computeAutoWidth: function() {
+            this.pixel.width = this.cacheWidth;
+        },
+        computeAutoHeight: function() {
+            this.pixel.height = this.cacheHeight;
         },
 
         update: function() {

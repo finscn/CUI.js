@@ -32,7 +32,7 @@ var CUI = CUI || {};
         },
 
         update: function() {
-            if (this._sizeChanged || this._positionChanged || this._needToCompute) {
+            if (this.parent._sizeChanged || this._sizeChanged || this._positionChanged || this._needToCompute) {
                 this.updateSize();
                 this.updatePosition();
 

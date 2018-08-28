@@ -1,6 +1,6 @@
 var Config = {
-    width: 640,
-    height: 400,
+    width: 720,
+    height: 720,
     FPS: 60,
 };
 

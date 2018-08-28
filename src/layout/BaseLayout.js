@@ -10,6 +10,7 @@ var CUI = CUI || {};
     var BaseLayout = Class.create({
 
         initialize: function() {
+            this.lazyInit = false;
             this.flexible = false;
 
             this.pixel = {
@@ -29,21 +30,36 @@ var CUI = CUI || {};
         },
 
         compute: function(parent) {
+            console.log('BaseLayout.compute');
             var children = parent.children;
-
+            var childCount = children.length;
             var idx = 0;
+
+            if (childCount === 0) {
+                return idx;
+            }
+
+            var parentPixel = parent.pixel;
+            var totalWidth = 0;
+            var totalHeight = 0;
             for (var i = 0, len = children.length; i < len; i++) {
                 var child = children[i];
-                if (child.relative === "parent") {
-                    child.computeSelf(parent);
-                } else {
-                    child.computeSelf(parent);
-                }
-                child.computeLayout(true);
+                // child.computeSelf(parent);
+
+                var rightSpace = Math.max(parent.pixel.paddingRight, child.pixel.marginRight);
+                totalWidth = Math.max(totalWidth, child.pixel.relativeX + child._absoluteWidth + rightSpace);
+
+                var bottomSpace = Math.max(parentPixel.paddingBottom, child.pixel.marginBottom);
+                totalHeight = Math.max(totalHeight, child.pixel.relativeY + child._absoluteHeight + bottomSpace);
+
+                // child.computeLayout(true);
             }
+
+            console.log(totalWidth, totalHeight);
+            this.tryToResizeParent(parent, totalWidth, totalHeight);
         },
 
-        tryToResizeParent: function(parent, width, height, immediately) {
+        tryToResizeParent: function(parent, width, height) {
             var resize = false;
             if (parent._width === "auto" && parent._absoluteWidth !== width) {
                 parent.pixel.width = width;
@@ -56,18 +72,11 @@ var CUI = CUI || {};
                 resize = true;
             }
             if (resize) {
-                if (!parent.hasLayoutX) {
-                    parent.computePositionX(parent.parent);
-                }
-                if (!parent.hasLayoutY) {
-                    parent.computePositionY(parent.parent);
-                }
+                parent.computePositionX();
+                parent.computePositionY();
                 parent.computePadding();
                 parent.updateAABB();
                 parent._needToCompute = true;
-                if (immediately) {
-                    parent.computeLayout();
-                }
             }
         },
 

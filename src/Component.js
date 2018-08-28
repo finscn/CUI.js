@@ -40,7 +40,7 @@ var CUI = CUI || {};
             this.extTop = 0;
             this.extBottom = 0;
 
-            this.layout = Layout.noneLayout;
+            this.layout = null;
 
             this.modal = false;
             this.maskColor = null;
@@ -174,10 +174,11 @@ var CUI = CUI || {};
         initChildren: noop,
 
         flush: function() {
-            this.precomputedTimes = 2;
+            this.precomputedTimes = 1;
         },
 
         tryToReflow: function(deep, immediately) {
+            // console.log('tryToReflow', deep, immediately);
             if (!deep) {
                 this._needToCompute = false;
                 return false;
@@ -223,20 +224,20 @@ var CUI = CUI || {};
             return true;
         },
 
-        // resizeParent: function(dx, dy) {
-        //     var parent = this.parent || null;
-        //     while (parent) {
-        //         if (parent.layout.flexible) {
-        //             parent._needToLayout = true;
-        //         }
-        //         if (parent.width === "auto" || parent.height === "auto") {
-        //             parent._needToResize = true;
-        //             parent = parent.parent;
-        //         } else {
-        //             break;
-        //         }
-        //     }
-        // },
+        resizeParents: function() {
+            var parent = this.parent || null;
+            while (parent) {
+                if (parent.layout.flexible) {
+                    parent._needToCompute = true;
+                }
+                if (parent.width === "auto" || parent.height === "auto") {
+                    parent._needToCompute = true;
+                    parent = parent.parent;
+                } else {
+                    break;
+                }
+            }
+        },
 
         // tryToLayout: function() {
         //     if (this._sizeChanged) {
@@ -626,7 +627,6 @@ var CUI = CUI || {};
             parent = parent || this.parent;
 
             this.computeMargin(parent);
-            this.computeRealMargin(parent);
             this.computeWidth();
             this.computeHeight();
             this.computePositionX(parent);
@@ -637,12 +637,13 @@ var CUI = CUI || {};
 
         computeLayout: function(forceCompute) {
             if (this._needToCompute || forceCompute) {
+                // this._needToCompute = false;
+
                 if (this.composite) {
                     this.layout.compute(this);
                 }
 
                 this.updateHolders();
-                this._needToCompute = false;
             }
         },
 
@@ -676,6 +677,7 @@ var CUI = CUI || {};
         updateChildren: function(timeStep, now) {
             this.children.forEach(function(child) {
                 child.update(timeStep, now);
+                child.updateAABB();
             });
         },
         update: function(timeStep, now) {
@@ -694,7 +696,11 @@ var CUI = CUI || {};
                     this.sortChildren();
                 }
             }
-            this.computeLayout();
+
+            if (this._needToCompute) {
+                this.computeLayout();
+            }
+            this.updateAABB();
 
             this.afterUpdate && this.afterUpdate(timeStep, now);
 
@@ -726,20 +732,12 @@ var CUI = CUI || {};
             pixel.marginRight = Utils.parseValue(this.marginRight, parentPixel.width) || 0;
             pixel.marginTop = Utils.parseValue(this.marginTop, parentPixel.height) || 0;
             pixel.marginBottom = Utils.parseValue(this.marginBottom, parentPixel.height) || 0;
-        },
 
-        computeRealMargin: function(parent) {
-            // parent.pixel.padding
-            parent = parent || this.parent;
-            if (!parent) {
-                return;
-            }
-            var parentPixel = parent.pixel;
-            var pixel = this.pixel;
             pixel.realMarginLeft = Math.max(parentPixel.paddingLeft, pixel.marginLeft) || 0;
             pixel.realMarginTop = Math.max(parentPixel.paddingTop, pixel.marginTop) || 0;
             pixel.realMarginRight = Math.max(parentPixel.paddingRight, pixel.marginRight) || 0;
             pixel.realMarginBottom = Math.max(parentPixel.paddingBottom, pixel.marginBottom) || 0;
+
             pixel.realOuterWidth = parentPixel.width - pixel.realMarginLeft - pixel.realMarginRight;
             pixel.realOuterHeight = parentPixel.height - pixel.realMarginTop - pixel.realMarginBottom;
         },
@@ -811,7 +809,6 @@ var CUI = CUI || {};
                 }
             }
 
-            pixel.innerWidth = pixel.width - pixel.paddingLeft - pixel.paddingRight;
             this.absoluteWidth = pixel.width;
         },
 
@@ -833,28 +830,25 @@ var CUI = CUI || {};
                 }
             }
 
-            pixel.innerHeight = pixel.height - pixel.paddingTop - pixel.paddingBottom;
             this.absoluteHeight = pixel.height;
         },
 
         computePositionX: function(parent) {
-            // parent.pixel.innerWidth/innerHeight ( size - Math.max(padding, margin) );
+            if (this._movedX) {
+                return;
+            }
             var pixel = this.pixel;
             var relativeWidth = pixel.realOuterWidth;
 
             var x = 0;
-            if (this._movedX) {
-                x = pixel.left;
+            pixel.left = Utils.parseValue(this.left, relativeWidth);
+            pixel.right = Utils.parseValue(this.right, relativeWidth);
+            if (this.alignH === "center") {
+                x = (relativeWidth - pixel.width) / 2 + (pixel.left || 0);
+            } else if (pixel.left === null && pixel.right !== null) {
+                x = relativeWidth - pixel.width - pixel.right;
             } else {
-                pixel.left = Utils.parseValue(this.left, relativeWidth);
-                pixel.right = Utils.parseValue(this.right, relativeWidth);
-                if (this.alignH === "center") {
-                    x = (relativeWidth - pixel.width) / 2 + (pixel.left || 0);
-                } else if (pixel.left === null && pixel.right !== null) {
-                    x = relativeWidth - pixel.width - pixel.right;
-                } else {
-                    x = pixel.left || 0;
-                }
+                x = pixel.left || 0;
             }
             pixel.baseX = x + pixel.realMarginLeft;
 
@@ -862,23 +856,20 @@ var CUI = CUI || {};
         },
 
         computePositionY: function(parent) {
-            // parent.pixel.innerWidth/innerHeight ( size - Math.max(padding, margin) );
+            if (this._movedY) {
+                return;
+            }
             var pixel = this.pixel;
             var relativeHeight = pixel.realOuterHeight;
-
             var y = 0;
-            if (this._movedY) {
-                y = pixel.top;
+            pixel.top = Utils.parseValue(this.top, relativeHeight);
+            pixel.bottom = Utils.parseValue(this.bottom, relativeHeight);
+            if (this.alignV === "center") {
+                y = (relativeHeight - pixel.height) / 2 + (pixel.top || 0);
+            } else if (pixel.top === null && pixel.bottom !== null) {
+                y = relativeHeight - pixel.height - pixel.bottom;
             } else {
-                pixel.top = Utils.parseValue(this.top, relativeHeight);
-                pixel.bottom = Utils.parseValue(this.bottom, relativeHeight);
-                if (this.alignV === "center") {
-                    y = (relativeHeight - pixel.height) / 2 + (pixel.top || 0);
-                } else if (pixel.top === null && pixel.bottom !== null) {
-                    y = relativeHeight - pixel.height - pixel.bottom;
-                } else {
-                    y = pixel.top || 0;
-                }
+                y = pixel.top || 0;
             }
             pixel.baseY = y + pixel.realMarginTop;
 
@@ -921,9 +912,10 @@ var CUI = CUI || {};
             this.absoluteY = pixel.y;
         },
 
-        syncPosition: function() {
-            this.syncPositionX();
-            this.syncPositionY();
+        syncPosition: function(parent) {
+            parent = parent || this.parent;
+            this.syncPositionX(parent);
+            this.syncPositionY(parent);
 
             this.updateAABB();
 
@@ -932,15 +924,12 @@ var CUI = CUI || {};
                     child.syncPosition();
                 });
             }
-
-            this._needToCompute = true;
         },
 
         // absolute == true 时, x/y 为 全局绝对位置
         moveTo: function(x, y, absolute) {
             var parent = this.parent;
             var pixel = this.pixel;
-
             if (x !== null) {
                 if (absolute === true) {
                     pixel.x = x;
@@ -1002,14 +991,23 @@ var CUI = CUI || {};
             }
         },
 
+        resizeTo: function(x, y) {
+            var pixel = this.pixel;
+            pixel.width = x;
+            this.absoluteWidth = pixel.width;
+
+            pixel.height = y;
+            this.absoluteHeight = pixel.height;
+
+            this.updateAABB();
+        },
+
         resizeBy: function(dx, dy) {
             var pixel = this.pixel;
             pixel.width += dx;
-            pixel.innerWidth = pixel.width - pixel.paddingLeft - pixel.paddingRight;
             this.absoluteWidth = pixel.width;
 
             pixel.height += dy;
-            pixel.innerHeight = pixel.height - pixel.paddingTop - pixel.paddingBottom;
             this.absoluteHeight = pixel.height;
         },
 

@@ -24,26 +24,28 @@ var CUI = CUI || {};
             var childCount = children.length;
             var idx = 0;
 
-            var currentY = 0;
-            var margin = parent.pixel.paddingTop;
-            var totalWidth = 0;
-            var size = this.equalSize ? parent.pixel.innerHeight / childCount : this.size;
+            if (childCount === 0) {
+                return idx;
+            }
 
-            var y;
+            var parentPixel = parent.pixel;
+            var margin = parentPixel.paddingTop;
+            var totalWidth = 0;
+            var size = this.equalSize ? parentPixel.realOuterHeight / childCount : this.size;
+
+            var alignBottom = !size && this.align === "bottom";
+
+            var y = 0;
+            var currentY = 0;
             for (var i = 0; i < childCount; i++) {
                 var child = children[i];
-                child.hasLayoutY = false;
 
                 if (child.relative === "parent") {
-                    child.computeSelf(parent)
+                    // child.computeSelf(parent)
                 } else {
-
-                    child.computeMargin(parent);
-                    child.computeRealMargin(parent);
-                    child.computeWidth();
-                    child.computeHeight();
-
-                    if (!child.follow) {
+                    if (child.follow) {
+                        // y is same to previous
+                    } else {
                         y = currentY;
                         if (size) {
                             y += child.pixel.marginTop;
@@ -54,44 +56,49 @@ var CUI = CUI || {};
                         }
                     }
 
-                    child.hasLayoutY = true;
-                    child.pixel.realMarginTop = y;
-
-                    child.computePositionX(parent);
-                    child.computePositionY(parent);
-                    child.computePadding();
-                    child.updateAABB();
+                    child._movedY = true;
+                    child.pixel.baseY = y;
+                    if (!alignBottom) {
+                        this.computeChild(child);
+                    }
 
                     margin = child.pixel.marginBottom;
-                    totalWidth = Math.max(totalWidth, child.pixel.marginLeft + child.pixel.width + child.pixel.marginRight)
                     idx++;
+
+                    var rightSpace = Math.max(parentPixel.paddingRight, child.pixel.marginRight);
+                    totalWidth = Math.max(totalWidth, child.pixel.relativeX + child._absoluteWidth + rightSpace);
+                    if (i + 1 === childCount) {
+                        margin = Math.max(margin, parentPixel.paddingBottom)
+                    }
                 }
-                child.computeLayout(true);
             }
 
-            if (childCount > 0) {
-                var totalHeight = size ? parent._absoluteHeight : currentY + margin;
-                this.tryToResizeParent(parent, totalWidth, totalHeight, true);
-                if (!size && this.align === "bottom") {
-                    var deltaHeight = parent._absoluteHeight - totalHeight;
-                    if (deltaHeight > 0) {
-                        for (var i = 0; i < childCount; i++) {
-                            var child = children[i];
-                            if (child.relative !== "parent") {
-                                child.pixel.top += deltaHeight;
-                                child.pixel.relativeY += deltaHeight;
-                                child.pixel.y += deltaHeight;
-                                child.absoluteY = child.pixel.y;
-                                child.updateAABB();
-                                child.computeLayout(true);
-                            }
-                        }
+            var totalHeight = size ? parent._absoluteHeight : currentY + margin;
+
+            this.tryToResizeParent(parent, totalWidth, totalHeight);
+
+            if (alignBottom) {
+                var topSpace = parentPixel.height - totalHeight;
+                for (var i = 0; i < childCount; i++) {
+                    var child = children[i];
+                    if (child.relative !== "parent") {
+                        child.pixel.baseY += topSpace;
+                        this.computeChild(child);
                     }
                 }
             }
             return idx;
         },
 
+        computeChild: function(child) {
+            child.syncPositionY();
+            child.updateAABB();
+            if (child.composite) {
+                child.children.forEach(function(child) {
+                    child.syncPosition();
+                });
+            }
+        }
     });
 
 

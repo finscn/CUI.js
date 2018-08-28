@@ -131,28 +131,33 @@ var CUI = CUI || {};
                 this.textInfo.text = text;
             }
             this.textHolder.setText(text);
+            this.textHolder.updateText();
             this._needToComputeSize = this.textHolder.textChanged;
             this._needToCompute = needToCompute !== false;
         },
 
-        updateText: function(text) {
-            this.setText(text, true);
-            this.updateSizeWithText();
+        computeAutoWidth: function() {
+            var width = this.textHolder ? this.textHolder.cacheWidth : this.textWidth;
+            this.pixel.width = width;
+        },
+
+        computeAutoHeight: function() {
+            var height = this.textHolder ? this.textHolder.cacheHeight : this.textHeight;
+            this.pixel.height = height;
         },
 
         computeWidth: function() {
             var pixel = this.pixel;
 
             if (this._width === "auto") {
-                pixel.width = this.textHolder ? this.textHolder.cacheWidth : this.textWidth;
+                this.computeAutoWidth();
             } else {
                 pixel.width = Utils.parseValue(this.width, pixel.realOuterWidth);
             }
             pixel.width = pixel.width || this.sizeHolder;
-            pixel.innerWidth = pixel.width - pixel.paddingLeft - pixel.paddingRight;
             this.absoluteWidth = pixel.width;
 
-            var bg = this.backgroundHolder;
+            var bg = this.backgroundImageHolder;
             if (bg && this.scaleBg) {
                 bg.pixel.width = this._absoluteWidth;
                 bg.absoluteWidth = this._absoluteWidth;
@@ -163,15 +168,14 @@ var CUI = CUI || {};
             var pixel = this.pixel;
 
             if (this._height === "auto") {
-                pixel.height = this.textHolder ? this.textHolder.cacheHeight : this.textHeight;
+                this.computeAutoHeight();
             } else {
                 pixel.height = Utils.parseValue(this.height, pixel.realOuterHeight);
             }
             pixel.height = pixel.height || this.sizeHolder;
-            pixel.innerHeight = pixel.height - pixel.paddingTop - pixel.paddingBottom;
             this.absoluteHeight = pixel.height;
 
-            var bg = this.backgroundHolder;
+            var bg = this.backgroundImageHolder;
             if (bg && this.scaleBg) {
                 bg.pixel.height = this._absoluteHeight;
                 bg.absoluteHeight = this._absoluteHeight;
@@ -195,7 +199,7 @@ var CUI = CUI || {};
             if (!this._needToCompute && !forceCompute) {
                 return;
             }
-            this._needToCompute = false;
+            // this._needToCompute = false;
 
             if (this.textHolder) {
                 this.textHolder.update();
@@ -208,11 +212,11 @@ var CUI = CUI || {};
         updateSizeWithText: function() {
             // if (this.textHolder._needToCompute) {
 
-            this.textHolder.computeSize();
+            this.textHolder.updateText();
             // }
             this.computeTextSize();
 
-            var bg = this.backgroundHolder;
+            var bg = this.backgroundImageHolder;
             if (bg && bg.borderImage) {
                 bg.cacheCanvas = null;
             }
@@ -227,25 +231,34 @@ var CUI = CUI || {};
             // }
             this.computeSelf();
             this.computeLayout(true);
-
-            this._needToComputeSize = false;
-            this._sizeChanged = false;
         },
 
         update: function(timeStep, now) {
             this.beforeUpdate && this.beforeUpdate(timeStep, now);
-            // if (this._needToCompute) {
-            //     console.log(this.id, "label needToCompute");
-            // }
+
+            var resized = (this._width === "auto" || this._height === "auto") && this._sizeChanged;
+
             this.updateSelf(timeStep, now);
 
-            if (this.textHolder && this._needToComputeSize &&
-                (this._width === "auto" || this._height === "auto" || this._sizeChanged)) {
+            if (this._needToComputeSize) {
                 this.updateSizeWithText();
-            } else {
+                resized = true;
+            } else if (this._needToCompute) {
+                this.computeSelf();
                 this.computeLayout();
             }
+
+            if (resized){
+                this.resizeParents();
+            }
+
             this.afterUpdate && this.afterUpdate(timeStep, now);
+
+            this._sizeChanged = false;
+            this._positionChanged = false;
+            this._needToCompute = false;
+
+            this._needToComputeSize = false;
         },
     });
 

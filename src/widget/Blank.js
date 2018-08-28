@@ -18,7 +18,7 @@ var CUI = CUI || {};
         },
 
         computeLayout: function(forceCompute) {
-            this._needToCompute = false;
+            // this._needToCompute = false;
         },
     });
 

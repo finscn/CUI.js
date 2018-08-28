@@ -70,14 +70,14 @@ function initUI() {
         // scrollHeight: 400,
 
         // layout: "hbox",
-        // layout: "vbox",
-        layout: new CUI.TableLayout({
-            cols: 4,
-            rows: 4,
-            cellWidth: 200,
-            cellHeight: 150,
-            cellSpace: 0,
-        }),
+        layout: "vbox",
+        // layout: new CUI.TableLayout({
+        //     cols: 4,
+        //     rows: 4,
+        //     cellWidth: 200,
+        //     cellHeight: 150,
+        //     cellSpace: 0,
+        // }),
     });
 
 
@@ -86,6 +86,7 @@ function initUI() {
 
 
     var comp = new CUI.Picture({
+        visible: false,
         id: '1111',
         // centerH: true,
         // centerV: true,
