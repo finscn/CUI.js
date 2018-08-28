@@ -148,6 +148,7 @@ var CUI = CUI || {};
             if (this._needToCompute) {
                 this.computeSelf();
                 this.computeLayout();
+                this.updateAABB();
             }
 
             if (resized){

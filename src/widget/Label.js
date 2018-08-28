@@ -222,6 +222,7 @@ var CUI = CUI || {};
 
             this.computeSelf();
             this.computeLayout(true);
+            this.updateAABB();
         },
 
         update: function(timeStep, now) {
@@ -237,6 +238,7 @@ var CUI = CUI || {};
             } else if (this._needToCompute) {
                 this.computeSelf();
                 this.computeLayout();
+                this.updateAABB();
             }
 
             if (resized){

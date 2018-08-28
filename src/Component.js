@@ -628,7 +628,6 @@ var CUI = CUI || {};
         updateChildren: function(timeStep, now) {
             this.children.forEach(function(child) {
                 child.update(timeStep, now);
-                child.updateAABB();
             });
         },
 
