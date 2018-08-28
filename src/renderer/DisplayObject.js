@@ -67,7 +67,7 @@ var CUI = CUI || {};
             return child;
         },
 
-        sortChildren: function(){
+        sortChildren: function() {
             this.children.sort(function(a, b) {
                 return a.zIndex - b.zIndex || a.index - b.index;
             });
@@ -90,6 +90,40 @@ var CUI = CUI || {};
         }
 
     });
+
+    var properties = [
+
+        {
+            key: 'width',
+            get: function() {
+                return this._width;
+            },
+            set: function(value) {
+                this._width = Math.abs(value);
+                if (this.imageInfo) {
+                    this.scale.x = Math.abs(this.scale.x) * (value < 0 ? -1 : 1);
+                    // this.scale.x = (value / this.imageInfo.sw) || 1;
+                }
+            }
+        },
+
+        {
+            key: 'height',
+            get: function() {
+                return this._height;
+            },
+            set: function(value) {
+                this._height = Math.abs(value);
+                if (this.imageInfo) {
+                    this.scale.y = Math.abs(this.scale.y) * (value < 0 ? -1 : 1);
+                    // this.scale.y = (value / this.imageInfo.sh) || 1;
+                }
+            }
+        },
+    ];
+
+    Class.defineProperties(DisplayObject.prototype, properties);
+
 
     exports.Point = Point;
     exports.DisplayObject = DisplayObject;

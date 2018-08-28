@@ -79,8 +79,10 @@ function initUI() {
         // src: "res/btn-bg.png",
         imgInfo: {
             img: CUI.ImagePool["logo"],
-            scaleX: 2,
-            // flipX: true,
+            scaleX: 1,
+            scaleY: 2,
+            flipX: true,
+            flipY: true,
         },
         borderWidth: borderWidth,
         borderColor: renderer.colorRgb(255, 22, 33),
@@ -88,8 +90,9 @@ function initUI() {
 
         // width: 128*2,
         // height: 128*2,
-        // flipX:true,
         left: 150,
+        // flipX: true,
+        // flipY: true,
         // scaleX: 2,
         // scaleY: 2,
         scaleImg: false,
