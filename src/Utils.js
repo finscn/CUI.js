@@ -569,11 +569,10 @@ var CUI = CUI || {};
 
 
         renderContent: function(context, textInfo, x, y) {
-            // var prevTextAlign = context.textAlign;
-            // var prevAlpha = context.globalAlpha;
-            // context.globalAlpha = this.alpha;
+            // context.globalAlpha = textInfo.alpha;
             context.font = textInfo.fontStyle;
-            context.textAlign = textInfo.alignH;
+            // context.textAlign = textInfo.textAlign || "left";
+            context.textAlign = "left";
 
             var strokeWidth = textInfo.strokeWidth || 1;
 
@@ -583,6 +582,8 @@ var CUI = CUI || {};
             } else {
                 context.textBaseline = textInfo.textBaseline;
             }
+
+            var stroke = textInfo.strokeColor !== null;
 
             var bakShadow;
             if (textInfo.shadowColor !== null) {
@@ -598,20 +599,22 @@ var CUI = CUI || {};
                 context.shadowOffsetY = textInfo.shadowOffsetY;
 
                 // context.fillStyle = textInfo.shadowColor;
-                // textInfo.renderLines(context, x + textInfo.shadowOffsetX, y + textInfo.shadowOffsetY, true);
+                // if (stroke) {
+                //     context.strokeStyle = textInfo.strokeColor;
+                // }
+                // this.renderLines(context, textInfo.lines, textInfo.lineHeight, x + textInfo.shadowOffsetX, y + textInfo.shadowOffsetY, stroke);
             }
 
-            if (textInfo.color !== null) {
-                context.fillStyle = textInfo.color;
-            }
-
-            var stroke = textInfo.strokeColor !== null;
             if (stroke) {
                 context.lineCap = textInfo.lineCap;
                 context.lineJoin = textInfo.lineJoin;
                 // TODO
                 context.lineWidth = strokeWidth * 2;
                 context.strokeStyle = textInfo.strokeColor;
+            }
+
+            if (textInfo.color !== null) {
+                context.fillStyle = textInfo.color;
             }
 
             this.renderLines(context, textInfo.lines, textInfo.lineHeight, x, y, stroke);

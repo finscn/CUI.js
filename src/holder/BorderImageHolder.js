@@ -26,8 +26,6 @@ var CUI = CUI || {};
 
             this.alpha = 1;
             this.fillParent = true;
-
-            this.useCache = false;
         },
 
         init: function() {

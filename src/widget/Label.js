@@ -151,13 +151,17 @@ var CUI = CUI || {};
         },
 
         computeAutoWidth: function() {
-            var width = this.textHolder ? this.textHolder.cacheWidth : this.textWidth;
-            this.pixel.width = width;
+            var pixel = this.pixel;
+            var width = this.textHolder ? this.textHolder.areaWidth : this.textWidth;
+            width += pixel.paddingLeft + pixel.paddingRight;
+            pixel.width = width;
         },
 
         computeAutoHeight: function() {
-            var height = this.textHolder ? this.textHolder.cacheHeight : this.textHeight;
-            this.pixel.height = height;
+            var pixel = this.pixel;
+            var height = this.textHolder ? this.textHolder.areaHeight : this.textHeight;
+            height += pixel.paddingTop + pixel.paddingBottom;
+            pixel.height = height;
         },
 
         computeWidth: function() {

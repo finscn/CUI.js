@@ -135,7 +135,7 @@ function initUI() {
                 parent: panelV,
                 width: idx % 3 === 0 ? "auto" : 60,
                 height: idx % 3 === 0 ? "auto" : 60,
-                padding: 8,
+                padding: 2,
                 margin: 10,
                 disabled: idx % 2,
                 textInfo: {
@@ -196,7 +196,7 @@ function initUI() {
                 borderColor: renderer.colorHex("#ff0000"),
                 width: idx % 3 === 0 ? "auto" : 100,
                 height: idx % 3 === 0 ? "auto" : 60,
-                padding: 8,
+                padding: 2,
                 margin: 10,
                 disabled: idx % 2,
                 textInfo: {
@@ -224,11 +224,9 @@ function initUI() {
         width: 'auto',
         height: 'auto',
         textInfo: {
-            // useCache: true,
             // color: renderer.colorRgb(255, 0, 0),
             color: "#ff0000",
             alpha: 1,
-            // useCache: false,
             text: "Text Test - 1",
         },
         beforeUpdate: function() {
@@ -288,7 +286,7 @@ function initUI() {
         parent: rootUI,
         width: idx % 3 === 0 ? "auto" : 100,
         height: idx % 3 === 0 ? "auto" : 60,
-        padding: 8,
+        padding: 2,
         margin: 10,
 
         // anchor:0,

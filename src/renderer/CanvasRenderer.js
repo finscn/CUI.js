@@ -243,8 +243,8 @@ var CUI = CUI || {};
             var ctx = this.context;
 
             var info = displayObject.textInfo;
-            x += info._absoluteX;
-            y += info._absoluteY;
+            // x += info._absoluteX;
+            // y += info._absoluteY;
             CUI.Utils.renderContent(ctx, info, x, y);
         },
 

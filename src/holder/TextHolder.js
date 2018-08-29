@@ -62,12 +62,13 @@ var CUI = CUI || {};
             this.textWidth = 0;
             this.textHeight = 0;
 
-            this.useCache = true;
-            this.cacheWidth = 0;
-            this.cacheHeight = 0;
-            this.cacheOffsetX = 0;
-            this.cacheOffsetY = 0;
-            this.cachePadding = 4;
+            this.areaWidth = 0;
+            this.areaHeight = 0;
+            this.areaOffsetX = 0;
+            this.areaOffsetY = 0;
+
+            this.cachePadding = 2;
+            this.useCache = null;
             this.useCachePool = true;
             this.shareCache = false;
 
@@ -83,8 +84,6 @@ var CUI = CUI || {};
             this.initDisplayObject();
 
             this.updateText();
-            // this.updateSize();
-            // this.updatePosition();
         },
 
         createCache: function() {
@@ -102,7 +101,7 @@ var CUI = CUI || {};
         },
 
         initDisplayObject: function() {
-            if (this.useCache) {
+            if (this.useCache === true || !this.parent.root.renderer.canvas2d) {
                 this.createCache();
                 this.displayObject = this.parent.root.renderer.createTextObject(this.cacheContext);
             } else {
@@ -206,49 +205,53 @@ var CUI = CUI || {};
 
             this.textHeight = this.lineHeight * this.lineCount;
 
-            if (this.useCache) {
-                this.updateCache();
-            }
-            // TODO
-            // this.updatePosition();
+            this.updateArea();
 
             this._needToCompute = true;
-
-            // this.pixel.width = this.cacheWidth;
-            // this.pixel.height = this.cacheHeight;
-
         },
 
-        updateCache: function() {
-            if (this.alignH === "center") {
-                this.cacheOffsetX = Math.ceil(this.textWidth / 2 + this.strokeWidth + this.cachePadding);
-            } else if (this.alignH === "right" || this.alignH === "end") {
-                this.cacheOffsetX = this.textWidth + this.strokeWidth + this.cachePadding;
-            } else {
-                this.cacheOffsetX = this.strokeWidth + this.cachePadding;
-            }
-            this.cacheOffsetY = this.strokeWidth + this.cachePadding;
+        updateArea: function() {
+            this.areaWidth = this.textWidth + this.strokeWidth * 2;
+            this.areaHeight = this.textHeight + this.strokeWidth * 2;
 
-            this.cacheWidth = this.textWidth + (this.strokeWidth + this.cachePadding) * 2;
-            this.cacheHeight = this.textHeight + (this.strokeWidth + this.cachePadding) * 2;
             // debugger
-            this.cacheCanvas.width = this.cacheWidth;
-            this.cacheCanvas.height = this.cacheHeight;
+            if (this.useCache === true || !this.parent.root.renderer.canvas2d) {
+                this.areaWidth += this.cachePadding * 2;
+                this.areaHeight += this.cachePadding * 2;
 
-            CUI.Utils.renderContent(this.cacheContext, this, this.cacheOffsetX, this.cacheOffsetY);
+                this.areaOffsetX = 0;
+                this.areaOffsetY = 0;
 
-            // this.cacheContext.lineWidth = 8;
-            // this.cacheContext.strokeRect(0, 0, this.cacheWidth, this.cacheHeight);
+                // if (this.alignH === "center") {
+                //     this.areaOffsetX = Math.ceil(this.textWidth / 2);
+                // } else if (this.alignH === "right" || this.alignH === "end") {
+                //     this.areaOffsetX = this.textWidth;
+                // } else {
+                //     this.areaOffsetX = 0;
+                // }
+
+                this.areaOffsetX += this.strokeWidth + this.cachePadding;
+                this.areaOffsetY += this.strokeWidth + this.cachePadding;
+
+                this.cacheCanvas.width = this.areaWidth;
+                this.cacheCanvas.height = this.areaHeight;
+
+                CUI.Utils.renderContent(this.cacheContext, this, this.areaOffsetX, this.areaOffsetY, true);
+
+                // TEST
+                // this.cacheContext.lineWidth = 8;
+                // this.cacheContext.strokeRect(0, 0, this.areaWidth, this.areaHeight);
+            }
 
             this.displayObject.updateSize();
             // this.displayObject.updateContent();
         },
 
         computeAutoWidth: function() {
-            this.pixel.width = this.cacheWidth;
+            this.pixel.width = this.areaWidth;
         },
         computeAutoHeight: function() {
-            this.pixel.height = this.cacheHeight;
+            this.pixel.height = this.areaHeight;
         },
 
         update: function() {
