@@ -616,15 +616,15 @@ var CUI = CUI || {};
         updateSelf: function(timeStep, now) {
 
         },
-        updateChildren: function(timeStep, now) {
+        updateChildren: function(timeStep, now, forceCompute) {
             this.children.forEach(function(child) {
-                child.update(timeStep, now);
+                child.update(timeStep, now, forceCompute);
             });
         },
 
-        update: function(timeStep, now) {
+        update: function(timeStep, now, forceCompute) {
             var visible = this.visible;
-            if ((this.precomputedTimes--) > 0) {
+            if ((this.precomputedTimes--) > 0 || forceCompute) {
                 this._needToCompute = true;
                 visible = true;
             }
@@ -633,7 +633,7 @@ var CUI = CUI || {};
             this.updateSelf(timeStep, now);
 
             if (this.composite && visible) {
-                this.updateChildren(timeStep, now);
+                this.updateChildren(timeStep, now, forceCompute);
                 if (this._toSortChildren) {
                     this.sortChildren();
                 }
