@@ -17,8 +17,9 @@ var CUI = CUI || {};
             this.backgroundColor = null;
         },
 
-        computeLayout: function(forceCompute) {
-            // this._needToCompute = false;
+        compute: function() {
+            this.computeSelf();
+            this.updateAABB();
         },
     });
 

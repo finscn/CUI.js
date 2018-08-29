@@ -49,25 +49,6 @@ var CUI = CUI || {};
         computeWidth: Label.prototype.computeWidth,
         computeHeight: Label.prototype.computeHeight,
 
-        computeLayout: function(forceCompute) {
-            if (!this._needToCompute && !forceCompute) {
-                return;
-            }
-            // this._needToCompute = false;
-
-            this.updateHolders();
-
-            if (this.valueHolder) {
-                if (!this.valueHolder.orignSW) {
-                    this.valueHolder.orignSW = this.valueHolder.sw;
-                    this.valueHolder.orignSH = this.valueHolder.sh;
-                    this.valueHolder.orignWidth = this.valueHolder.pixel.width;
-                    this.valueHolder.orignHeight = this.valueHolder.pixel.height;
-                }
-                // TODO
-            }
-
-        },
     });
 
 

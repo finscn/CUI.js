@@ -126,6 +126,8 @@ var CUI = CUI || {};
             this.setPadding(this.padding || 0);
 
             this.computeSelf();
+            this.updateAABB();
+
             this.initDisplayObject();
 
             this.initModalMask();
@@ -188,13 +190,6 @@ var CUI = CUI || {};
                 }
             }
         },
-
-        // tryToLayout: function() {
-        //     if (this._sizeChanged) {
-        //         this._needToLayout = true;
-        //         this.resizeParent();
-        //     }
-        // },
 
         setDisabled: function(disabled) {
             this.disabled = disabled;
@@ -583,19 +578,15 @@ var CUI = CUI || {};
             this.computePositionX(parent);
             this.computePositionY(parent);
             this.computePadding();
-            this.updateAABB();
         },
 
-        computeLayout: function(forceCompute) {
-            if (this._needToCompute || forceCompute) {
-                // this._needToCompute = false;
-
-                if (this.composite) {
-                    this.layout.compute(this);
-                }
-
-                this.updateHolders();
+        compute: function() {
+            this.computeSelf();
+            if (this.layout) {
+                this.layout.compute(this);
             }
+            this.updateHolders();
+            this.updateAABB();
         },
 
         getChildrenCount: function() {
@@ -639,10 +630,8 @@ var CUI = CUI || {};
             }
 
             this.beforeUpdate && this.beforeUpdate(timeStep, now);
-            // if (this._needToCompute) {
-            //     console.log(this.id, "component needToCompute");
-            // }
             this.updateSelf(timeStep, now);
+
             if (this.composite && visible) {
                 this.updateChildren(timeStep, now);
                 if (this._toSortChildren) {
@@ -651,9 +640,8 @@ var CUI = CUI || {};
             }
 
             if (this._needToCompute) {
-                this.computeLayout();
+                this.compute();
             }
-            this.updateAABB();
 
             this.afterUpdate && this.afterUpdate(timeStep, now);
 

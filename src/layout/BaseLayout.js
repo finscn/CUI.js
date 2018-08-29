@@ -44,15 +44,12 @@ var CUI = CUI || {};
             var totalHeight = 0;
             for (var i = 0, len = children.length; i < len; i++) {
                 var child = children[i];
-                // child.computeSelf(parent);
 
                 var rightSpace = Math.max(parent.pixel.paddingRight, child.pixel.marginRight);
                 totalWidth = Math.max(totalWidth, child.pixel.relativeX + child._absoluteWidth + rightSpace);
 
                 var bottomSpace = Math.max(parentPixel.paddingBottom, child.pixel.marginBottom);
                 totalHeight = Math.max(totalHeight, child.pixel.relativeY + child._absoluteHeight + bottomSpace);
-
-                // child.computeLayout(true);
             }
 
             this.tryToResizeParent(parent, totalWidth, totalHeight);

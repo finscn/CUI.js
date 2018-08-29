@@ -57,18 +57,11 @@ var CUI = CUI || {};
             }
         },
 
-        computeLayout: function(forceCompute) {
-            if (this._needToCompute || forceCompute) {
-                // this._needToCompute = false;
-
-                this.computeSelf();
-
-                if (this.composite) {
-                    this.layout.compute(this);
-                }
-
-                this.updateHolders();
-            }
+        compute: function() {
+            this.computeSelf();
+            this.layout.compute(this);
+            this.updateHolders();
+            this.updateAABB();
         },
 
         computeSelf: function(parent) {
@@ -81,8 +74,6 @@ var CUI = CUI || {};
             this.computePositionX();
             this.computePositionY();
             this.computePadding();
-
-            this.updateAABB();
         },
 
         setSize: function(width, height, force) {

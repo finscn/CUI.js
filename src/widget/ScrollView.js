@@ -114,19 +114,7 @@ var CUI = CUI || {};
             this.thumbY = this.scrollY * this.rateHeight >> 0;
 
             this.stopTween();
-        },
 
-        reset: function() {
-            var Me = this;
-            this.scrollX = 0;
-            this.scrollY = 0;
-            this.children.forEach(function(child) {
-                child.syncPosition();
-                // child.computeLayout();
-                // child.update(timeStep, now);
-                // c.moveBy(Me.scrollX, Me.scrollY);
-            });
-            this.resetScrollInfo();
             this.onReset();
         },
         onReset: noop,
@@ -345,20 +333,16 @@ var CUI = CUI || {};
             return false;
         },
 
-        computeLayout: function(forceCompute) {
-            if (this._needToCompute || forceCompute) {
-                // this._needToCompute = false;
 
-                this.layout.compute(this);
-
-                this.resetScrollInfo();
-                // this.reset();
-
-                this.updateMask();
-
-                this.updateHolders();
-            }
+        compute: function() {
+            this.computeSelf();
+            this.layout.compute(this);
+            this.resetScrollInfo();
+            this.updateMask();
+            this.updateHolders();
+            this.updateAABB();
         },
+
         updateMask: function() {
             var maskShape = this.maskShape;
             // var pixel = this.pixel;

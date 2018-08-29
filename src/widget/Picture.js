@@ -124,17 +124,15 @@ var CUI = CUI || {};
             this.pixel.height = height;
         },
 
-        computeLayout: function(forceCompute) {
-            if (!this._needToCompute && !forceCompute) {
-                return;
-            }
-            // this._needToCompute = false;
+        compute: function() {
+            this.computeSelf();
 
             this.updateHolders();
-
             if (this.imageHolder) {
                 this.imageHolder.update();
             }
+
+            this.updateAABB();
         },
 
         update: function(timeStep, now) {
@@ -145,12 +143,10 @@ var CUI = CUI || {};
             this.updateSelf(timeStep, now);
 
             if (this._needToCompute) {
-                this.computeSelf();
-                this.computeLayout();
-                this.updateAABB();
+                this.compute();
             }
 
-            if (resized){
+            if (resized) {
                 this.resizeParents();
             }
 
@@ -159,8 +155,6 @@ var CUI = CUI || {};
             this._sizeChanged = false;
             this._positionChanged = false;
             this._needToCompute = false;
-
-            this._sizeChanged = false;
         },
     });
 

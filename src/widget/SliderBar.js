@@ -144,7 +144,8 @@ var CUI = CUI || {};
             this.first = true;
 
         },
-        update: function() {
+
+        updateSelf: function() {
             if (this.first) {
                 this.first = false;
                 this.updateTrack();

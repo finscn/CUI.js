@@ -100,7 +100,7 @@ var CUI = CUI || {};
             for (var i = 0; i < childCount; i++) {
                 var child = children[i];
                 if (child.relative === "parent") {
-                    // child.computeSelf(parent);
+                    // do nothing
                 } else {
                     this.parseChild(child, parent, idx);
                     idx++;

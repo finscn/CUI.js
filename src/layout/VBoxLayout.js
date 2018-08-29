@@ -42,7 +42,7 @@ var CUI = CUI || {};
                 var child = children[i];
 
                 if (child.relative === "parent") {
-                    // child.computeSelf(parent)
+                    // do nothing
                 } else {
                     if (child.follow) {
                         // y is same to previous

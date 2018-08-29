@@ -48,6 +48,7 @@ var CUI = CUI || {};
 
             this.computeTextSize();
             this.computeSelf();
+            this.updateAABB();
 
             this.setDisabled(this.disabled);
 
@@ -195,19 +196,14 @@ var CUI = CUI || {};
             this.textHeight = measure.height * this.textHolder.lineCount + extY;
         },
 
-        computeLayout: function(forceCompute) {
-            if (!this._needToCompute && !forceCompute) {
-                return;
-            }
-            // this._needToCompute = false;
-
+        compute: function() {
+            this.computeSelf();
+            this.updateHolders();
             if (this.textHolder) {
                 this.textHolder.update();
             }
-
-            this.updateHolders();
+            this.updateAABB();
         },
-
 
         updateSizeWithText: function() {
             // if (this.textHolder._needToCompute) {
@@ -220,9 +216,7 @@ var CUI = CUI || {};
                 bg.cacheCanvas = null;
             }
 
-            this.computeSelf();
-            this.computeLayout(true);
-            this.updateAABB();
+            this._needToCompute = true;
         },
 
         update: function(timeStep, now) {
@@ -235,13 +229,13 @@ var CUI = CUI || {};
             if (this._needToComputeSize) {
                 this.updateSizeWithText();
                 resized = true;
-            } else if (this._needToCompute) {
-                this.computeSelf();
-                this.computeLayout();
-                this.updateAABB();
             }
 
-            if (resized){
+            if (this._needToCompute) {
+                this.compute();
+            }
+
+            if (resized) {
                 this.resizeParents();
             }
 
