@@ -557,12 +557,7 @@ var CUI = CUI || {};
 
         resize: function() {
             // console.log('Component.resize');
-            this.computeWidth();
-            this.computeHeight();
-            this.computePositionX();
-            this.computePositionY();
-            this.computePadding();
-            this.updateAABB();
+            this.compute();
             this._needToCompute = true;
             this.onResize();
         },
@@ -624,9 +619,10 @@ var CUI = CUI || {};
 
         update: function(timeStep, now, forceCompute) {
             var visible = this.visible;
-            if ((this.precomputedTimes--) > 0 || forceCompute) {
+            if ((this.precomputedTimes--) > 0) {
                 this._needToCompute = true;
                 visible = true;
+                forceCompute = true;
             }
 
             this.beforeUpdate && this.beforeUpdate(timeStep, now);
