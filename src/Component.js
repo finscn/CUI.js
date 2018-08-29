@@ -557,8 +557,8 @@ var CUI = CUI || {};
 
         resize: function() {
             // console.log('Component.resize');
+            this.flush();
             this.compute();
-            this._needToCompute = true;
             this.onResize();
         },
         onResize: noop,
