@@ -43,7 +43,6 @@ var CUI = CUI || {};
                 this.iconHolder = this.addImageHolder(this.iconInfo);
             }
 
-            this.initTextInfo();
             this.setTextInfo(this.textInfo);
 
             this.computeTextSize();
@@ -88,6 +87,12 @@ var CUI = CUI || {};
         },
 
         setTextInfo: function(textInfo) {
+            if (!textInfo) {
+                return;
+            }
+
+            this.initTextInfo(textInfo);
+
             if (!this.textHolder) {
                 this.textHolder = new TextHolder(textInfo);
                 this.textHolder.parent = this;
@@ -100,12 +105,16 @@ var CUI = CUI || {};
         },
 
         setTextColor: function(color) {
-            this.textHolder.setColor(color);
+            if (this.textHolder) {
+                this.textHolder.setColor(color);
+            }
         },
 
-        initTextInfo: function() {
+        initTextInfo: function(textInfo) {
+            if (!textInfo) {
+                return;
+            }
             var Me = this;
-            Me.textInfo = Me.textInfo || {};
 
             var property = [
                 "text",
@@ -121,13 +130,17 @@ var CUI = CUI || {};
                 "lineHeight",
             ];
             property.forEach(function(p) {
-                if (!(p in Me.textInfo) && (p in Me)) {
-                    Me.textInfo[p] = Me[p];
+                if (!(p in textInfo) && (p in Me)) {
+                    textInfo[p] = Me[p];
                 }
             });
         },
 
         setText: function(text, needToCompute) {
+            if (!this.textHolder) {
+                return;
+            }
+
             if (this.textInfo) {
                 this.textInfo.text = text;
             }
@@ -184,10 +197,10 @@ var CUI = CUI || {};
         },
 
         computeTextSize: function(immediately) {
-            var measure = this.textHolder.measure;
-            if (!measure) {
+            if (!this.textHolder || !this.textHolder.measure) {
                 return;
             }
+            var measure = this.textHolder.measure;
 
             // var ext = this.sizePadding * 2 + this.borderWidth;
             var extX = this.borderWidth + this.paddingLeft + this.paddingRight + this.textHolder.offsetX;
@@ -206,9 +219,9 @@ var CUI = CUI || {};
         },
 
         updateSizeWithText: function() {
-            // if (this.textHolder._needToCompute) {
-            this.textHolder.updateText();
-            // }
+            if (this.textHolder) {
+                this.textHolder.updateText();
+            }
             this.computeTextSize();
 
             var bg = this.borderImageHolder;

@@ -237,6 +237,9 @@ var CUI = CUI || {};
 
             CUI.Utils.renderContent(this.cacheContext, this, this.cacheOffsetX, this.cacheOffsetY);
 
+            // this.cacheContext.lineWidth = 8;
+            // this.cacheContext.strokeRect(0, 0, this.cacheWidth, this.cacheHeight);
+
             this.displayObject.updateSize();
             // this.displayObject.updateContent();
         },
