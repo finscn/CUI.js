@@ -30,7 +30,7 @@ var CUI = CUI || {};
         },
 
         compute: function(parent) {
-            // console.log('BaseLayout.compute');
+            // console.log('BaseLayout.compute', parent.id, parent.name);
             var children = parent.children;
             var childCount = children.length;
             var idx = 0;
