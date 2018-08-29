@@ -10,41 +10,30 @@ var CUI = CUI || {};
     var Utils = exports.Utils;
     var Panel = exports.Panel;
     var Button = exports.Button;
-    var Picture = exports.Picture;
-
 
     var SliderBar = Class.create({
         superclass: Panel,
-
-        // track
-        // handle
-
-        // min
-        // max
-        // step
-        // value
 
         initialize: function() {
             this.visible = true;
             this.disabled = false;
 
             this.vertical = false;
-            this.inverted = false;
 
             this.min = 0;
-            this.max = 100;
-            this.step = 1;
-            this.value = 50;
+            this.max = 1;
+            this.value = 0.5;
+
+            this.step = 0.2;
 
             this.handleInfo = null;
             this.trackInfo = null;
-            this.trackLength = null;
 
             this.handle = null;
             this.track = null;
         },
 
-        afterInit: function() {
+        initChildren: function() {
 
             var Me = this;
             var trackInfo = this.trackInfo || {};
@@ -70,13 +59,16 @@ var CUI = CUI || {};
                 //     // this.scale = 1;
                 // },
                 onTap: function(x, y, id) {
-                    var dx = x < Me.handle.x ? -1 : 1;
-                    var dy = y < Me.handle.y ? -1 : 1;
-                    console.log(dx, dy);
-                    if (dx < 0) {
-                        Me.scrollBy(-Me.stepPixel, 0);
-                    } else if (dx > 0) {
-                        Me.scrollBy(Me.stepPixel, 0);
+                    if (Me.vertical) {
+                        var distance = Me.handle.pixel.relativeY + Me.handle._absoluteHeight / 2;
+                        var sign = y < Me.handle._absoluteY ? -1 : 1;
+                        var stepPixel = distance * Me.step * sign;
+                        Me.scrollBy(0, stepPixel);
+                    } else {
+                        var distance = Me.handle.pixel.relativeX + Me.handle._absoluteWidth / 2;
+                        var sign = x < Me.handle._absoluteX ? -1 : 1;
+                        var stepPixel = distance * Me.step * sign;
+                        Me.scrollBy(stepPixel, 0);
                     }
                 }
             };
@@ -88,8 +80,8 @@ var CUI = CUI || {};
             var options = {
                 parent: Me,
 
-                // width: 60,
-                // height: "100%",
+                width: 60,
+                height: "100%",
                 alignH: "center",
                 alignV: "center",
 
@@ -97,10 +89,12 @@ var CUI = CUI || {};
 
                 pressX: null,
                 pressY: null,
+                value: 0,
                 touchStart: function(x, y, id) {
                     if (this.disabled) {
                         return false;
                     }
+                    Me.canHandle = true;
                     this.touchId = id;
                     this.pressX = x;
                     this.pressY = y;
@@ -110,6 +104,7 @@ var CUI = CUI || {};
                     if (this.disabled) {
                         return false;
                     }
+                    Me.canHandle = false;
                     if (this.touchId === id) {
                         this.touchId = this.pressX = this.pressY = null;
                         this.scale = 1.0;
@@ -120,27 +115,12 @@ var CUI = CUI || {};
                 onTap: function(x, y, id) {
                     return true;
                 },
-                moveBy: function(dx, dy) {
-                    var x = this.pixel.relativeX + dx;
-                    var y = this.pixel.relativeY + dy;
-                    x = Math.min(Math.max(Me.minX, x), Me.maxX);
-                    y = Math.min(Math.max(Me.minY, y), Me.maxY);
-                    // x = Math.round(x / Me.step) * Me.step;
-                    // y = Math.round(y / Me.step) * Me.step;
-                    this.pixel.relativeX = x;
-                    this.pixel.relativeY = y;
-                    // this.left = this.pixel.relativeX;
-                    // this.top = this.pixel.relativeY;
-                    this.syncPosition();
-                },
             };
             for (var p in handleInfo) {
                 options[p] = handleInfo[p];
             }
             this.handle = new Button(options);
 
-
-            this.stepPixel = this.step;
             this.first = true;
 
         },
@@ -157,8 +137,30 @@ var CUI = CUI || {};
             this.updateTrack();
 
             if (this.vertical) {
+                if (dy < 0) {
+                    var ny = this.handle.pixel.relativeY + dy;
+                    if (ny < 0) {
+                        dy = 0 - this.handle.pixel.relativeY;
+                    }
+                } else if (dy > 0) {
+                    var ny = this.handle.pixel.relativeY + this.handle._absoluteHeight + dy;
+                    if (ny > this._absoluteHeight) {
+                        dy = this._absoluteHeight - this.handle._absoluteHeight - this.handle.pixel.baseY;
+                    }
+                }
                 this.handle.moveBy(0, dy);
             } else {
+                if (dx < 0) {
+                    var nx = this.handle.pixel.relativeX + dx;
+                    if (nx < 0) {
+                        dx = 0 - this.handle.pixel.relativeX;
+                    }
+                } else if (dx > 0) {
+                    var nx = this.handle.pixel.relativeX + this.handle._absoluteWidth + dx;
+                    if (nx > this._absoluteWidth) {
+                        dx = this._absoluteWidth - this.handle._absoluteWidth - this.handle.pixel.baseX;
+                    }
+                }
                 this.handle.moveBy(dx, 0);
             }
             var p = this.handle.pixel.relativeX / this.trackRealSize;
@@ -182,13 +184,13 @@ var CUI = CUI || {};
         updateTrack: function() {
             this.minX = 0;
             this.minY = 0;
-            this.maxX = this._absoluteWidth - this.handle.w;
-            this.maxY = this._absoluteHeight - this.handle.h;
+            this.maxX = this._absoluteWidth - this.handle._absoluteWidth;
+            this.maxY = this._absoluteHeight - this.handle._absoluteHeight;
             this.trackRealSize = this.vertical ? this.maxY : this.maxX;
         },
 
         pan: function(x, y, dx, dy, sx, sy, id) {
-            if (!this.visible || !this.containPoint(x, y)) {
+            if (!this.visible || !this.canHandle || !this.containPoint(x, y)) {
                 return false;
             }
             if (this.disabled) {
@@ -200,27 +202,8 @@ var CUI = CUI || {};
         },
 
         onChanged: function(value) {
-            console.log(value)
+            // console.log(value)
         },
-        // onTouchStart: function(x, y, id) {
-        //     if (this.containPoint(x, y)) {
-        //         this.stopScroll();
-        //     }
-        //     return false;
-        // },
-
-        // onTouchEnd: function(x, y, id) {
-        //     this.startTween();
-        //     return false;
-        // },
-
-        // onPan: function(x, y, dx, dy, startX, startY, id) {
-        //     if (this.containPoint(startX, startY)) {
-        //         this.scrollBy(-dx, -dy);
-        //         return;
-        //     }
-        //     return false;
-        // },
     });
 
     exports.SliderBar = SliderBar;

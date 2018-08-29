@@ -209,6 +209,25 @@ function initUI() {
         }
     }
 
+
+    var comp = new CUI.SliderBar({
+        parent: rootUI,
+        left: 20,
+        top: 320,
+        width: 600,
+        height: 60,
+        backgroundColor: renderer.colorRgb(250, 250, 250),
+        trackInfo: {
+            backgroundColor: renderer.colorRgb(250, 0, 0),
+        },
+        handleInfo: {
+            backgroundColor: renderer.colorRgb(0, 0, 0),
+        },
+        onChanged: function(value) {
+            console.log("SliderBar : ", value.toFixed(3))
+        },
+    });
+
     return;
 
     var label = new CUI.Label({
