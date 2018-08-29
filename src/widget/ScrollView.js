@@ -69,6 +69,8 @@ var CUI = CUI || {};
 
             this.initChildren();
 
+            this._toSortChildren = true;
+
             this.resetScrollInfo();
 
             if (this.afterInit) {

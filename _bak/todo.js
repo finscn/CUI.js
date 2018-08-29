@@ -1,4 +1,7 @@
 =======================================
+root.resize
+reset
+    _movedX/Y = false
 
 
 v 添加 moveToX moveToY  moveBy moveTo

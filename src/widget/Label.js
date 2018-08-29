@@ -236,8 +236,12 @@ var CUI = CUI || {};
             this._needToCompute = true;
         },
 
-        update: function(timeStep, now) {
+        update: function(timeStep, now, forceCompute) {
             this.beforeUpdate && this.beforeUpdate(timeStep, now);
+
+            if (forceCompute) {
+                this._needToCompute = true;
+            }
 
             var resized = (this._width === "auto" || this._height === "auto") && this._sizeChanged;
 

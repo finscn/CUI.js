@@ -64,31 +64,13 @@ var CUI = CUI || {};
             this.updateAABB();
         },
 
-        computeSelf: function(parent) {
-            parent = parent || {};
-
-            this.pixel.realOuterWidth = this._width;
-            this.pixel.realOuterHeight = this._height;
-            this.setSize(this._width, this._height, true);
-
+        computeSelf: function() {
+            this.computeMargin();
+            this.computeWidth();
+            this.computeHeight();
             this.computePositionX();
             this.computePositionY();
             this.computePadding();
-        },
-
-        setSize: function(width, height, force) {
-            if (force || this.width !== width) {
-                this.width = width;
-                this.pixel.width = width;
-                this.absoluteWidth = width;
-                this.aabb[2] = width;
-            }
-            if (force || this.height !== height) {
-                this.height = height;
-                this.pixel.height = height;
-                this.absoluteHeight = height;
-                this.aabb[3] = height;
-            }
         },
 
         checkTouch: function(type, args) {

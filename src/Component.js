@@ -618,14 +618,17 @@ var CUI = CUI || {};
         },
 
         update: function(timeStep, now, forceCompute) {
+            this.beforeUpdate && this.beforeUpdate(timeStep, now);
+
             var visible = this.visible;
             if ((this.precomputedTimes--) > 0) {
                 this._needToCompute = true;
                 visible = true;
                 forceCompute = true;
+            } else if (forceCompute) {
+                this._needToCompute = true;
             }
 
-            this.beforeUpdate && this.beforeUpdate(timeStep, now);
             this.updateSelf(timeStep, now);
 
             if (this.composite && visible) {
@@ -732,6 +735,9 @@ var CUI = CUI || {};
             this.pixel.width = 0;
         },
         computeWidth: function() {
+            if (this._resizedX) {
+                return;
+            }
             var pixel = this.pixel;
             if (this._width === "auto") {
                 this.computeAutoWidth();
@@ -753,6 +759,9 @@ var CUI = CUI || {};
             this.pixel.height = 0;
         },
         computeHeight: function() {
+            if (this._resizedY) {
+                return;
+            }
             var pixel = this.pixel;
 
             if (this._height === "auto") {
@@ -930,11 +939,18 @@ var CUI = CUI || {};
 
         resizeTo: function(x, y) {
             var pixel = this.pixel;
-            pixel.width = x;
-            this.absoluteWidth = pixel.width;
 
-            pixel.height = y;
-            this.absoluteHeight = pixel.height;
+            if (x !== null) {
+                pixel.width = x;
+                this.absoluteWidth = pixel.width;
+                this._resizedX = true;
+            }
+
+            if (y !== null) {
+                pixel.height = y;
+                this.absoluteHeight = pixel.height;
+                this._resizedY = true;
+            }
 
             this.updateAABB();
 

@@ -29,6 +29,8 @@ var CUI = CUI || {};
 
             this.initChildren();
 
+            this._toSortChildren = true;
+
             if (this.afterInit) {
                 this.afterInit();
             }
