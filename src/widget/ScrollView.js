@@ -47,6 +47,9 @@ var CUI = CUI || {};
             // TODO
             this.snapWidth = null;
             this.snapHeight = null;
+
+            this.maskWidth = 0;
+            this.maskHeight = 0;
         },
 
         init: function() {
@@ -349,7 +352,11 @@ var CUI = CUI || {};
             var maskShape = this.maskShape;
             // var pixel = this.pixel;
             // this.maskShape = this.root.renderer.updateRect(maskShape, 0, 0, pixel.innerWidth, pixel.innerHeight, 0x000000, 1);
-            this.maskShape = this.root.renderer.updateRect(maskShape, 0, 0, this._absoluteWidth, this._absoluteHeight, 0x000000, 1);
+            if (!maskShape || this.maskWidth !== this._absoluteWidth || this.maskHeight !== this._absoluteHeight) {
+                this.maskWidth = this._absoluteWidth;
+                this.maskHeight = this._absoluteHeight;
+                this.maskShape = this.root.renderer.updateRect(maskShape, 0, 0, this.maskWidth, this.maskHeight, 0x000000, 1);
+            }
             this.displayObject.mask = this.maskShape;
             if (!maskShape) {
                 // TODO
@@ -357,7 +364,6 @@ var CUI = CUI || {};
             }
         },
         updateSelf: function(timeStep, now) {
-
             this.updateTween(timeStep);
 
             if (this.scorllOver) {

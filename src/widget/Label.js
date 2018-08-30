@@ -239,9 +239,8 @@ var CUI = CUI || {};
         update: function(timeStep, now, forceCompute) {
             this.beforeUpdate && this.beforeUpdate(timeStep, now);
 
-            if (forceCompute) {
-                this._needToCompute = true;
-            }
+            forceCompute = ((this.precomputedTimes--) > 0) || forceCompute;
+            this._needToCompute = this._needToCompute || forceCompute;
 
             var resized = (this._width === "auto" || this._height === "auto") && this._sizeChanged;
 
@@ -262,11 +261,12 @@ var CUI = CUI || {};
 
             this.afterUpdate && this.afterUpdate(timeStep, now);
 
+            this._needToComputeSize = false;
+
             this._sizeChanged = false;
             this._positionChanged = false;
             this._needToCompute = false;
-
-            this._needToComputeSize = false;
+            this._needToComputeChildren = false;
         },
     });
 

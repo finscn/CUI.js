@@ -99,7 +99,7 @@ var CUI = CUI || {};
 
             for (var i = 0; i < childCount; i++) {
                 var child = children[i];
-                if (child.relative === "parent") {
+                if (child.relative === "parent" || child.relative === "root") {
                     // do nothing
                 } else {
                     this.parseChild(child, parent, idx);

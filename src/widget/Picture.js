@@ -135,8 +135,11 @@ var CUI = CUI || {};
             this.updateAABB();
         },
 
-        update: function(timeStep, now) {
+        update: function(timeStep, now, forceCompute) {
             this.beforeUpdate && this.beforeUpdate(timeStep, now);
+
+            forceCompute = ((this.precomputedTimes--) > 0) || forceCompute;
+            this._needToCompute = this._needToCompute || forceCompute;
 
             var resized = (this._width === "auto" || this._height === "auto") && this._sizeChanged;
 
@@ -155,6 +158,7 @@ var CUI = CUI || {};
             this._sizeChanged = false;
             this._positionChanged = false;
             this._needToCompute = false;
+            this._needToComputeChildren = false;
         },
     });
 

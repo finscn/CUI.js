@@ -41,7 +41,7 @@ var CUI = CUI || {};
             for (var i = 0; i < childCount; i++) {
                 var child = children[i];
 
-                if (child.relative === "parent") {
+                if (child.relative === "parent" || child.relative === "root") {
                     // do nothing
                 } else {
                     if (child.follow) {
@@ -83,7 +83,9 @@ var CUI = CUI || {};
                 var leftSpace = parentPixel.width - totalWidth;
                 for (var i = 0; i < childCount; i++) {
                     var child = children[i];
-                    if (child.relative !== "parent") {
+                    if (child.relative === "parent" || child.relative === "root") {
+                        // do nothing
+                    } else {
                         child.pixel.baseX += leftSpace;
                         this.computeChild(child);
                     }

@@ -23,7 +23,7 @@ function initUI() {
             var y = Math.cos(now / 600) * 10;
             this.moveTo(10 + x, 10 + y);
             this.resizeTo(400 + x * 4, 400 + y * 4);
-            this.flush();
+            // this.flush();
         }
     });
 

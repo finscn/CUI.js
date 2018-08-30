@@ -203,6 +203,10 @@ var CUI = CUI || {};
                 return this._left;
             },
             set: function(value) {
+                if (this._left === value) {
+                    return;
+                }
+                this._positionChanged = true;
                 this._left = value;
             }
         },
@@ -213,6 +217,10 @@ var CUI = CUI || {};
                 return this._right;
             },
             set: function(value) {
+                if (this._right === value) {
+                    return;
+                }
+                this._positionChanged = true;
                 this._right = value;
             }
         },
@@ -223,6 +231,10 @@ var CUI = CUI || {};
                 return this._top;
             },
             set: function(value) {
+                if (this._top === value) {
+                    return;
+                }
+                this._positionChanged = true;
                 this._top = value;
             }
         },
@@ -233,6 +245,10 @@ var CUI = CUI || {};
                 return this._bottom;
             },
             set: function(value) {
+                if (this._bottom === value) {
+                    return;
+                }
+                this._positionChanged = true;
                 this._bottom = value;
             }
         },
@@ -243,6 +259,10 @@ var CUI = CUI || {};
                 return this._width;
             },
             set: function(value) {
+                if (this._width === value) {
+                    return;
+                }
+                this._sizeChanged = true;
                 this._width = value;
             }
         },
@@ -253,6 +273,10 @@ var CUI = CUI || {};
                 return this._height;
             },
             set: function(value) {
+                if (this._height === value) {
+                    return;
+                }
+                this._sizeChanged = true;
                 this._height = value;
             }
         },

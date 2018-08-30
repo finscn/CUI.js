@@ -96,6 +96,7 @@ var CUI = CUI || {};
             this._movedY = false;
             this._toSortChildren = true;
 
+            this._needToComputeChildren = true;
             this.precomputedTimes = 0;
         },
 
@@ -202,15 +203,17 @@ var CUI = CUI || {};
             if (!this.modal || maskColor === null || maskAlpha <= 0) {
                 return;
             }
+
             var holder = new CUI.BackgroundHolder({
                 parent: this,
                 color: maskColor,
                 alpha: maskAlpha,
                 fillParent: false,
-                width: this.root._absoluteWidth + 100,
-                height: this.root._absoluteHeight + 100,
+                width: this.root._absoluteWidth,
+                height: this.root._absoluteHeight,
             });
             holder.init();
+
             this.modalMaskHolder = holder;
             this._needToCompute = true;
         },
@@ -495,7 +498,14 @@ var CUI = CUI || {};
 
         updateHolders: function() {
             if (this.modalMaskHolder) {
-                this.modalMaskHolder.update();
+                var maskWidth = this.root._absoluteWidth + 100;
+                var maskHeight = this.root._absoluteHeight + 100;
+                var holder = this.modalMaskHolder;
+                if (holder._width !== maskWidth || holder._height !== maskHeight) {
+                    holder.width = maskWidth;
+                    holder.height = maskHeight;
+                }
+                holder.update();
             }
 
             if (this.backgroundHolder) {
@@ -620,19 +630,14 @@ var CUI = CUI || {};
         update: function(timeStep, now, forceCompute) {
             this.beforeUpdate && this.beforeUpdate(timeStep, now);
 
-            var visible = this.visible;
-            if ((this.precomputedTimes--) > 0) {
-                this._needToCompute = true;
-                visible = true;
-                forceCompute = true;
-            } else if (forceCompute) {
-                this._needToCompute = true;
-            }
+            forceCompute = ((this.precomputedTimes--) > 0) || forceCompute;
+            this._needToCompute = this._needToCompute || forceCompute;
 
             this.updateSelf(timeStep, now);
 
-            if (this.composite && visible) {
-                this.updateChildren(timeStep, now, forceCompute);
+            var forceComputeChildren = this._needToComputeChildren || forceCompute;
+            if (this.composite && (this.visible || forceComputeChildren)) {
+                this.updateChildren(timeStep, now, forceComputeChildren);
                 if (this._toSortChildren) {
                     this.sortChildren();
                 }
@@ -647,6 +652,7 @@ var CUI = CUI || {};
             this._sizeChanged = false;
             this._positionChanged = false;
             this._needToCompute = false;
+            this._needToComputeChildren = false;
         },
 
         beforeUpdate: null,
@@ -907,15 +913,16 @@ var CUI = CUI || {};
                 this.absoluteY = y;
             }
 
-            this.updateAABB();
+            // this.updateAABB();
 
-            if (this.composite) {
-                this.children.forEach(function(child) {
-                    child.syncPosition();
-                });
-            }
+            // if (this.composite) {
+            //     this.children.forEach(function(child) {
+            //         child.syncPosition();
+            //     });
+            // }
 
-            // this._needToCompute = true;
+            this._needToCompute = true;
+            this._needToComputeChildren = true;
         },
 
         moveToX: function(x, absolute) {
@@ -952,15 +959,16 @@ var CUI = CUI || {};
                 this._resizedY = true;
             }
 
-            this.updateAABB();
+            // this.updateAABB();
 
-            if (this.composite) {
-                this.children.forEach(function(child) {
-                    child.syncPosition();
-                });
-            }
+            // if (this.composite) {
+            //     this.children.forEach(function(child) {
+            //         child.syncPosition();
+            //     });
+            // }
 
             this._needToCompute = true;
+            this._needToComputeChildren = true;
         },
 
         resizeBy: function(dx, dy) {
