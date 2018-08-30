@@ -29,8 +29,8 @@ var CUI = CUI || {};
             }
         },
 
-        update: function() {
-            if (this.parent._sizeChanged || this._sizeChanged || this._positionChanged || this._needToCompute) {
+        update: function(forceCompute) {
+            if (this.parent._sizeChanged || this._sizeChanged || this._positionChanged || this._needToCompute || forceCompute) {
                 this.updateSize();
                 this.updatePosition();
 

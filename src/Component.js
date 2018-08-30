@@ -509,19 +509,19 @@ var CUI = CUI || {};
             }
 
             if (this.backgroundHolder) {
-                this.backgroundHolder.update();
+                this.backgroundHolder.update(this._sizeChanged);
             }
 
             if (this.borderHolder) {
-                this.borderHolder.update();
+                this.borderHolder.update(this._sizeChanged);
             }
 
             if (this.borderImageHolder) {
-                this.borderImageHolder.update();
+                this.borderImageHolder.update(this._sizeChanged);
             }
 
             if (this.backgroundImageHolder) {
-                this.backgroundImageHolder.update();
+                this.backgroundImageHolder.update(this._sizeChanged);
             }
 
             this.holders.forEach(function(holder) {

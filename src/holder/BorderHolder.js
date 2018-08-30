@@ -31,12 +31,13 @@ var CUI = CUI || {};
             }
         },
 
-        update: function() {
-            if (this.parent._sizeChanged || this._sizeChanged || this._positionChanged || this._needToCompute) {
+        update: function(forceCompute) {
+            if (this.parent._sizeChanged || this._sizeChanged || this._positionChanged || this._needToCompute || forceCompute) {
                 this.updateSize();
                 this.updatePosition();
 
                 this.parent.root.renderer.updateRect(this.displayObject, 0, 0, this.absoluteWidth, this.absoluteHeight, null, null, this.lineWidth, this.color, this.alpha);
+
                 this._sizeChanged = false;
                 this._positionChanged = false;
                 this._needToCompute = false;

@@ -59,21 +59,6 @@ var CUI = CUI || {};
             }
         },
 
-        setImageHolder: function(name, info) {
-            if (!info) {
-                this[name] = null;
-            } else {
-                if (!this[name]) {
-                    this[name] = new ImageHolder(info);
-                    this[name].parent = this;
-                    this[name].init();
-                } else {
-                    this[name].setImageInfo(info);
-                }
-            }
-            this._needToCompute = true;
-        },
-
         setIconInfo: function(iconInfo) {
             if (!iconInfo) {
                 this.iconHolder = null;
@@ -220,7 +205,7 @@ var CUI = CUI || {};
             this.computeSelf();
             this.updateHolders();
             if (this.textHolder) {
-                this.textHolder.update();
+                this.textHolder.update(true);
             }
             this.updateAABB();
         },

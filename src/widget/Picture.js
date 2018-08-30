@@ -129,7 +129,7 @@ var CUI = CUI || {};
 
             this.updateHolders();
             if (this.imageHolder) {
-                this.imageHolder.update();
+                this.imageHolder.update(true);
             }
 
             this.updateAABB();

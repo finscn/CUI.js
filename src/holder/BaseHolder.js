@@ -127,8 +127,8 @@ var CUI = CUI || {};
             this.computePositionY(parent);
         },
 
-        update: function() {
-            if (this._sizeChanged || this._positionChanged || this._needToCompute) {
+        update: function(forceCompute) {
+            if (this._sizeChanged || this._positionChanged || this._needToCompute || forceCompute) {
                 this.updateSize();
                 this.updatePosition();
 
