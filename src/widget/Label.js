@@ -19,6 +19,9 @@ var CUI = CUI || {};
             this.composite = false;
             this.disabled = false;
 
+            this.width = "auto";
+            this.height = "auto";
+
             this.scaleBg = false;
 
             this.backgroundColor = null;
