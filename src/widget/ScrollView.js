@@ -81,14 +81,7 @@ var CUI = CUI || {};
             }
         },
 
-        resetScrollInfo: function() {
-            this.slider.reset();
-            this.scrolling = 0;
-            this.scrollX = this.scrollDX = 0;
-            this.scrollY = this.scrollDY = 0;
-            this.lastScrollX = this.lastScrollY = 0;
-            this.visibleChildren.length = 0;
-
+        computeScrollInfo: function() {
             var firstChild = this.children[0];
             if (firstChild) {
                 var lastChild = this.children[this.children.length - 1];
@@ -114,6 +107,17 @@ var CUI = CUI || {};
 
             this.thumbHSize = (this._absoluteWidth - this.paddingLeft - this.paddingRight) * this.rateWidth >> 0;
             this.thumbVSize = (this._absoluteHeight - this.paddingTop - this.paddingBottom) * this.rateHeight >> 0;
+        },
+
+        resetScrollInfo: function() {
+            this.computeScrollInfo();
+
+            this.slider.reset();
+            this.scrolling = 0;
+            this.scrollX = this.scrollDX = 0;
+            this.scrollY = this.scrollDY = 0;
+            this.lastScrollX = this.lastScrollY = 0;
+            this.visibleChildren.length = 0;
 
             this.thumbX = this.scrollX * this.rateWidth >> 0;
             this.thumbY = this.scrollY * this.rateHeight >> 0;
@@ -342,7 +346,8 @@ var CUI = CUI || {};
         compute: function() {
             this.computeSelf();
             this.layout.compute(this);
-            this.resetScrollInfo();
+            this.computeScrollInfo();
+            // this.resetScrollInfo();
             this.updateMask();
             this.updateHolders();
             this.updateAABB();
@@ -399,7 +404,6 @@ var CUI = CUI || {};
                 if (scrollChanged) {
                     //     // child.moveBy(-Me.scrollDX, -Me.scrollDY);
                     child.syncPosition();
-
                     child.visible = Me.checkCollideAABB(child.aabb);
                     if (child.visible) {
                         vc.push(child);

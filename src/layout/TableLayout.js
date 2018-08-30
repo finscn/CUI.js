@@ -60,14 +60,14 @@ var CUI = CUI || {};
             pixel.tableHeight = tableHeight;
 
             this.parentCell = {
+                scrollX: parent.scrollX,
+                scrollY: parent.scrollY,
                 _absoluteX: 0,
                 _absoluteY: 0,
                 _absoluteWidth: 0,
                 _absoluteHeight: 0,
                 _offsetX: 0,
                 _offsetY: 0,
-                scrollX: 0,
-                scrollY: 0,
                 pixel: {
                     x: 0,
                     y: 0,
