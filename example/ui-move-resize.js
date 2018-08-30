@@ -22,8 +22,7 @@ function initUI() {
             var x = Math.sin(now / 600) * 10;
             var y = Math.cos(now / 600) * 10;
             this.moveTo(10 + x, 10 + y);
-            this.resizeTo(400 + x * 4, 400 + y * 4);
-            // this.flush();
+            this.resizeTo(400 + x * 4, 500 + y * 4);
         }
     });
 
@@ -80,15 +79,45 @@ function initUI() {
         },
     });
 
+    var comp = new CUI.Picture({
+        // visible: false,
+        parent: panel0,
+        left: 100,
+        // relative: "parent",
+        // alignH: "center",
+        // parent: scrollView,
+        // src: "res/btn-bg.png",
+        width: "50%",
+        height: "50%",
+        scaleImg: false,
+        imgInfo: {
+            alignH: "center",
+            img: CUI.ImagePool["logo"],
+            scaleX: 2,
+            scaleY: 1,
+            flipX: true,
+            flipY: true,
+        },
+        borderWidth: borderWidth,
+        borderColor: renderer.colorRgb(255, 22, 33),
+        backgroundColor: renderer.colorRgb(100, 240, 23),
+
+
+        margin: 10,
+    });
+
     var panel1 = new CUI.Panel({
         parent: panel0,
         width: "50%",
-        height: "50%",
+        height: "40%",
         alignH: "center",
         alignV: "center",
         // width: '100%',
         // height: '100%',
+        top: 90,
         backgroundColor: renderer.colorRgb(220, 220, 220),
+        backgroundImage: CUI.ImagePool["bg"],
+
         borderWidth: borderWidth,
         borderColor: renderer.colorRgb(90, 20, 255),
         // layout: {
@@ -133,51 +162,54 @@ function initUI() {
         },
     });
 
-    return;
 
-    var comp = new CUI.Picture({
-        // visible: false,
-        // centerH: true,
-        // centerV: true,
-        // left: 20,
-        // top: 20,
-
-        // root: rootUI,
-        parent: panelH,
-        relative: "parent",
-        // parent: scrollView,
-        // src: "res/btn-bg.png",
-        imgInfo: {
-            img: CUI.ImagePool["logo"],
-            scaleX: 1,
-            scaleY: 2,
-            flipX: true,
-            flipY: true,
-        },
+    var panel2 = new CUI.ScrollView({
+        parent: rootUI,
+        bottom: 10,
+        width: 300,
+        height: 200,
+        // width: '100%',
+        // height: '100%',
+        backgroundColor: renderer.colorRgb(220, 220, 220),
         borderWidth: borderWidth,
-        borderColor: renderer.colorRgb(255, 22, 33),
-        backgroundColor: renderer.colorRgb(100, 240, 23),
-
-        // width: 128*2,
-        // height: 128*2,
-        left: 150,
-        // flipX: true,
-        // flipY: true,
-        // scaleX: 2,
-        // scaleY: 2,
-        scaleImg: false,
-        // width: 120,
-        // height: 120,
-        margin: 10,
-
-        // margin: 10,
-        // layout: new CUI.HBoxLayout(),
-        beforeUpdate: function(timeStep, now) {
-            var x = Math.sin(now / 600) * 10;
-            var y = Math.cos(now / 600) * 10;
-            this.moveTo(x, y)
-        }
+        borderColor: renderer.colorRgb(90, 255, 60),
+        layout: {
+            name: 'table',
+            cols: 4,
+            rows: 4,
+            cellWidth: 120,
+            cellHeight: 120,
+            cellSpace: 0,
+        },
+        padding: 10
     });
+
+    var idx = 0;
+    for (var r = 0; r < 4; r++) {
+        for (var c = 0; c < 2; c++) {
+            var comp = new CUI.Button({
+                parent: panel2,
+                backgroundColor: renderer.colorRgb(255, 240, 230),
+                backgroundImage: idx % 3 === 0 ? CUI.ImagePool["btn-bg"] : null,
+                borderWidth: borderWidth,
+                borderColor: renderer.colorHex("#ff0000"),
+                width: idx % 3 === 0 ? "auto" : 100,
+                height: idx % 3 === 0 ? "auto" : 60,
+                padding: 2,
+                margin: 10,
+                disabled: idx % 2,
+                textInfo: {
+                    text: "Button-" + idx,
+                },
+                col: c,
+                row: r,
+            });
+            idx++;
+        }
+    }
+
+
+    return;
 
     var idx = 0;
     for (var i = 0; i < 4; i++) {
@@ -234,50 +266,6 @@ function initUI() {
         }
     }
 
-
-    var panel2 = new CUI.ScrollView({
-        parent: rootUI,
-        bottom: 10,
-        width: 550,
-        height: 300,
-        // width: '100%',
-        // height: '100%',
-        backgroundColor: renderer.colorRgb(220, 220, 220),
-        borderWidth: borderWidth,
-        borderColor: renderer.colorRgb(90, 255, 60),
-        layout: {
-            name: 'table',
-            cols: 4,
-            rows: 4,
-            cellWidth: 120,
-            cellHeight: 120,
-            cellSpace: 0,
-        },
-        padding: 10
-    });
-
-    for (var r = 0; r < 4; r++) {
-        for (var c = 0; c < 4; c++) {
-            var comp = new CUI.Button({
-                parent: panel2,
-                backgroundColor: renderer.colorRgb(255, 240, 230),
-                backgroundImage: idx % 3 === 0 ? CUI.ImagePool["btn-bg"] : null,
-                borderWidth: borderWidth,
-                borderColor: renderer.colorHex("#ff0000"),
-                width: idx % 3 === 0 ? "auto" : 100,
-                height: idx % 3 === 0 ? "auto" : 60,
-                padding: 2,
-                margin: 10,
-                disabled: idx % 2,
-                textInfo: {
-                    text: "Button-" + idx,
-                },
-                col: c,
-                row: r,
-            });
-            idx++;
-        }
-    }
 
 
     var comp = new CUI.SliderBar({

@@ -117,7 +117,7 @@ function initUI() {
 
                     children: [{
                             ui: CUI.Label,
-                            id: "label-1",
+                            // id: "label-1",
                             backgroundColor: renderer.colorRgb(255, 240, 230),
                             borderWidth: 2,
                             borderColor: renderer.colorHex("#ff0000"),
@@ -128,7 +128,7 @@ function initUI() {
                                 color: "#ff0000",
                                 alpha: 1,
                                 // useCache: false,
-                                text: "Text Test - 1",
+                                text: "Text Test - 112233",
                             }
                         },
                     ]

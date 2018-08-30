@@ -10,21 +10,23 @@ function initUI() {
     initTexture();
 
     rootUI = new CUI.Root({
+        renderer: renderer,
         width: game.width,
         height: game.height,
-    });
-
-    var page = new CUI.Page({
-        parent: rootUI,
-        width: "100%",
-        height: "100%",
-        // backgroundColor: CUI.renderer.colorRgb(155, 155, 155),
-        backgroundColor: CUI.renderer.colorRgb(0, 0, 0),
-        borderWidth: 8,
-        // borderColor: CUI.renderer.colorRgb(255, 50, 50),
-        // borderAlpha: 0.6,
         padding: 10,
     });
+
+    // var rootUI = new CUI.Page({
+    //     parent: rootUI,
+    //     width: "100%",
+    //     height: "100%",
+    //     // backgroundColor: renderer.colorRgb(155, 155, 155),
+    //     backgroundColor: renderer.colorRgb(0, 0, 0),
+    //     borderWidth: 8,
+    //     // borderColor: renderer.colorRgb(255, 50, 50),
+    //     // borderAlpha: 0.6,
+    //     padding: 10,
+    // });
 
 
     var panel = new CUI.Panel({
@@ -33,10 +35,10 @@ function initUI() {
         // left: 20,
         // top: 20,
 
-        parent: page,
+        parent: rootUI,
         relative: "parent",
         // src: "res/btn-bg.png",
-        // backgroundColor: CUI.renderer.colorHex("#ffffff"),
+        // backgroundColor: renderer.colorHex("#ffffff"),
 
         borderImageInfo: panelBorderImageInfo,
 
@@ -47,18 +49,18 @@ function initUI() {
         width: 400,
         height: 320,
 
-        // backgroundColor: CUI.renderer.colorRgb(100,240,23),
+        // backgroundColor: renderer.colorRgb(100,240,23),
         // margin: 10,
         // layout: new CUI.HBoxLayout(),
     });
 
 
     var comp = new CUI.Button({
-        // backgroundColor: CUI.renderer.colorRgb(255, 240, 230),
+        // backgroundColor: renderer.colorRgb(255, 240, 230),
         borderWidth: 2,
         top: 50,
         left: 50,
-        // borderColor: CUI.renderer.colorHex("#ff0000"),
+        // borderColor: renderer.colorHex("#ff0000"),
         parent: panel,
         width: 160,
         height: 80,

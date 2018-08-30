@@ -69,6 +69,17 @@
         "../src/renderer/CanvasRenderer.js",
         "../src/renderer/PIXIRenderer.js",
 
+        "../src/helper/ButtonBackground.js",
+        "../src/helper/PanelBackground.js",
+
+        "./GT-Toucher/src/Controller.js",
+        "./GT-Toucher/src/TouchWrapper.js",
+        "./GT-Toucher/src/Listener.js",
+        "./GT-Toucher/src/gesture/Any.js",
+        "./GT-Toucher/src/gesture/Tap.js",
+        "./GT-Toucher/src/gesture/Pan.js",
+        "./GT-Toucher/src/gesture/Swipe.js",
+
         "./GT-Toucher/src/Controller.js",
         "./GT-Toucher/src/TouchWrapper.js",
         "./GT-Toucher/src/Listener.js",
@@ -81,12 +92,9 @@
         "main.js",
 
         "test-pixi.js",
-        // "test-canvas.js",
 
-        "ui-layout.js",
-        // "ui-move-resize.js",
-        // "ui.js",
-        // "ui-json.js",
+        "helper-ui-texture.js",
+        "helper-ui.js",
     ];
 
     jsFiles.forEach(function(js) {
@@ -105,7 +113,7 @@
         <canvas id="canvas"></canvas>
     </div>
     <script type="text/javascript">
-    document.title = 'CUI pixi';
+    document.title = 123456;
     window.addEventListener('touchmove', function(event) {
         event.stopPropagation();
         event.preventDefault();

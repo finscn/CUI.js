@@ -121,7 +121,7 @@ function initUI() {
             borderColor: renderer.colorRgb(90, 0, 60),
             layout: 'vbox',
         });
-        for (var j = 0; j < 4; j++) {
+        for (var j = 0; j < 5; j++) {
             var comp = new CUI.Button({
                 id: 'btn-' + idx,
                 // backgroundColor: renderer.colorRgb(255, 240, 230),
