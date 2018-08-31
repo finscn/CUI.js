@@ -102,6 +102,9 @@ var CUI = CUI || {};
             this.maxScrollX = Math.max(0, this.scrollWidth - this._absoluteWidth);
             this.maxScrollY = Math.max(0, this.scrollHeight - this._absoluteHeight);
 
+            this.scrollX = Math.min(Math.max(this.scrollX, this.minScrollX), this.maxScrollX);
+            this.scrollY = Math.min(Math.max(this.scrollY, this.minScrollY), this.maxScrollY);
+
             this.rateWidth = this._absoluteWidth / this.scrollWidth;
             this.rateHeight = this._absoluteHeight / this.scrollHeight;
 

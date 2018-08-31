@@ -18,11 +18,30 @@ function initUI() {
         padding: 10,
     });
 
+    var panel = new CUI.Panel({
+        top: 150,
+        right: 150,
+        zIndex:999,
+
+        parent: rootUI,
+        backgroundColor: renderer.colorHex("#ffffff"),
+        bgInfo: {
+            img: CUI.ImagePool["bg"]
+        },
+        paddingLeft: 0,
+        paddingTop: 0,
+
+        width: 200,
+        height: 120,
+    });
+
 
     var label = new CUI.Label({
         testCmp: 1,
         id: "label-1",
-        parent: rootUI,
+        parent: panel,
+        relative: "root",
+
         right: 0,
         zIndex: 999,
         backgroundColor: renderer.colorRgb(255, 240, 230),
