@@ -177,8 +177,8 @@ var CUI = CUI || {};
             this.precomputedTimes = 1;
         },
 
-        resizeParents: function() {
-            var parent = this.parent || null;
+        resizeParents: function(parent) {
+            var parent = parent || this.parent;
             while (parent) {
                 if (parent.layout.flexible) {
                     parent._needToCompute = true;
