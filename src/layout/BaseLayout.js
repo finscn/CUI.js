@@ -31,25 +31,30 @@ var CUI = CUI || {};
 
         compute: function(parent) {
             // console.log('BaseLayout.compute', parent.id, parent.name);
-            var children = parent.children;
-            var childCount = children.length;
-            var idx = 0;
-
-            if (childCount === 0) {
-                return idx;
+            if (parent._width !== "auto" && parent._height !== "auto") {
+                return;
             }
 
+            var children = parent.children;
+            var childCount = children.length;
+            if (childCount === 0) {
+                return;
+            }
+
+            var idx = 0;
             var parentPixel = parent.pixel;
             var totalWidth = 0;
             var totalHeight = 0;
             for (var i = 0, len = children.length; i < len; i++) {
                 var child = children[i];
 
-                var rightSpace = Math.max(parent.pixel.paddingRight, child.pixel.marginRight);
-                totalWidth = Math.max(totalWidth, child.pixel.relativeX + child._absoluteWidth + rightSpace);
+                if (child.ignoreLayout !== true) {
+                    var rightSpace = Math.max(parent.pixel.paddingRight, child.pixel.marginRight);
+                    totalWidth = Math.max(totalWidth, child.pixel.relativeX + child._absoluteWidth + rightSpace);
 
-                var bottomSpace = Math.max(parentPixel.paddingBottom, child.pixel.marginBottom);
-                totalHeight = Math.max(totalHeight, child.pixel.relativeY + child._absoluteHeight + bottomSpace);
+                    var bottomSpace = Math.max(parentPixel.paddingBottom, child.pixel.marginBottom);
+                    totalHeight = Math.max(totalHeight, child.pixel.relativeY + child._absoluteHeight + bottomSpace);
+                }
             }
 
             this.tryToResizeParent(parent, totalWidth, totalHeight);

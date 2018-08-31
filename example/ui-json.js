@@ -5,7 +5,7 @@ function initUI() {
     rootUI = new CUI.Root({
         width: game.width,
         height: game.height,
-        renderer:renderer,
+        renderer: renderer,
     });
 
     var json = {
@@ -68,7 +68,7 @@ function initUI() {
                     // left: 20,
                     top: 150,
 
-                    relative: "parent",
+                    ignoreLayout: true,
                     // src: "res/btn-bg.png",
                     backgroundColor: renderer.colorHex("#ffffff"),
                     bgInfo: {
@@ -94,7 +94,7 @@ function initUI() {
                     left: 250,
                     top: 150,
 
-                    relative: "parent",
+                    ignoreLayout: true,
                     // src: "res/btn-bg.png",
                     backgroundColor: renderer.colorHex("#ffffff"),
                     borderImageInfo: {
@@ -116,22 +116,21 @@ function initUI() {
                     // layout: new CUI.HBoxLayout(),
 
                     children: [{
-                            ui: CUI.Label,
-                            // id: "label-1",
-                            backgroundColor: renderer.colorRgb(255, 240, 230),
-                            borderWidth: 2,
-                            borderColor: renderer.colorHex("#ff0000"),
-                            // text: "Text Test",
-                            textInfo: {
-                                // useCache: true,
-                                // color: renderer.colorRgb(255, 0, 0),
-                                color: "#ff0000",
-                                alpha: 1,
-                                // useCache: false,
-                                text: "Text Test - 112233",
-                            }
-                        },
-                    ]
+                        ui: CUI.Label,
+                        // id: "label-1",
+                        backgroundColor: renderer.colorRgb(255, 240, 230),
+                        borderWidth: 2,
+                        borderColor: renderer.colorHex("#ff0000"),
+                        // text: "Text Test",
+                        textInfo: {
+                            // useCache: true,
+                            // color: renderer.colorRgb(255, 0, 0),
+                            color: "#ff0000",
+                            alpha: 1,
+                            // useCache: false,
+                            text: "Text Test - 112233",
+                        }
+                    }, ]
                 },
 
                 {

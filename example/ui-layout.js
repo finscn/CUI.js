@@ -74,7 +74,7 @@ function initUI() {
 
         // root: rootUI,
         parent: panelH,
-        relative: "parent",
+        ignoreLayout: true,
         // parent: scrollView,
         // src: "res/btn-bg.png",
         imgInfo: {
@@ -362,7 +362,7 @@ function initUI() {
     //     top: 150,
 
     //     parent: scrollView,
-    //     relative: "parent",
+    //     ignoreLayout: true,
     //     // src: "res/btn-bg.png",
     //     backgroundColor: renderer.colorHex("#ffffff"),
     //     bgInfo: {
@@ -388,7 +388,7 @@ function initUI() {
     //     top: 150,
 
     //     parent: scrollView,
-    //     relative: "parent",
+    //     ignoreLayout: true,
     //     // src: "res/btn-bg.png",
     //     backgroundColor: renderer.colorHex("#ffffff"),
     //     borderImageInfo: {

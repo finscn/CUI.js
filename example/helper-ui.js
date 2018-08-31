@@ -36,7 +36,7 @@ function initUI() {
         // top: 20,
 
         parent: rootUI,
-        relative: "parent",
+        ignoreLayout: true,
         // src: "res/btn-bg.png",
         // backgroundColor: renderer.colorHex("#ffffff"),
 

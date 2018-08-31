@@ -23,12 +23,11 @@ var CUI = CUI || {};
             // console.log('VBoxLayout.compute', parent.id, parent.name);
             var children = parent.children;
             var childCount = children.length;
-            var idx = 0;
-
             if (childCount === 0) {
-                return idx;
+                return;
             }
 
+            var idx = 0;
             var parentPixel = parent.pixel;
             var margin = parentPixel.paddingTop;
             var totalWidth = 0;
@@ -41,9 +40,7 @@ var CUI = CUI || {};
             for (var i = 0; i < childCount; i++) {
                 var child = children[i];
 
-                if (child.relative === "parent" || child.relative === "root") {
-                    // do nothing
-                } else {
+                if (child.ignoreLayout !== true) {
                     if (child.follow) {
                         // y is same to previous
                     } else {
@@ -82,9 +79,7 @@ var CUI = CUI || {};
                 var topSpace = parentPixel.height - totalHeight;
                 for (var i = 0; i < childCount; i++) {
                     var child = children[i];
-                    if (child.relative === "parent" || child.relative === "root") {
-                        // do nothing
-                    } else {
+                    if (child.ignoreLayout !== true) {
                         child.pixel.baseY += topSpace;
                         this.computeChild(child);
                     }

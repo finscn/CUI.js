@@ -21,8 +21,8 @@ function initUI() {
     var panel = new CUI.Panel({
         top: 150,
         right: 150,
-        zIndex:999,
-
+        extLeft: 200,
+        zIndex: 999,
         parent: rootUI,
         backgroundColor: renderer.colorHex("#ffffff"),
         bgInfo: {
@@ -35,12 +35,29 @@ function initUI() {
         height: 120,
     });
 
+    var comp = new CUI.Button({
+        parent: panel,
+        ignoreLayout: true,
+        left: -150,
+        backgroundColor: renderer.colorRgb(255, 240, 230),
+        backgroundImage: CUI.ImagePool["btn-bg"],
+        borderWidth: borderWidth,
+        borderColor: renderer.colorHex("#ff0000"),
+        width: "35%",
+        height: "25%",
+        padding: 8,
+        margin: 10,
+        alignH: "center",
+        textInfo: {
+            text: "btn-root",
+        },
+    });
 
     var label = new CUI.Label({
-        testCmp: 1,
+        // testCmp: 1,
         id: "label-1",
-        parent: panel,
-        relative: "root",
+        parent: rootUI,
+        ignoreLayout: true,
 
         right: 0,
         zIndex: 999,
@@ -107,8 +124,8 @@ function initUI() {
     var comp = new CUI.Picture({
         visible: false,
         id: '1111',
-        // centerH: true,
-        // centerV: true,
+        // alignH: "center",
+        // alignV: "center",
         // left: 20,
         // top: 20,
 
@@ -220,13 +237,13 @@ function initUI() {
 
 
     // var panel = new CUI.Panel({
-    //     // centerH: true,
-    //     // centerV: true,
+    //     // alignH: "center",
+    //     // alignV: "center",
     //     // left: 20,
     //     top: 150,
 
     //     parent: scrollView,
-    //     relative: "parent",
+    //     ignoreLayout: true,
     //     // src: "res/btn-bg.png",
     //     backgroundColor: renderer.colorHex("#ffffff"),
     //     bgInfo: {
@@ -246,13 +263,13 @@ function initUI() {
 
     // var panel = new CUI.Panel({
     //     id: 'panel-1111',
-    //     // centerH: true,
-    //     // centerV: true,
+    //     // alignH: "center",
+    //     // alignV: "center",
     //     left: 250,
     //     top: 150,
 
     //     parent: scrollView,
-    //     relative: "parent",
+    //     ignoreLayout: true,
     //     // src: "res/btn-bg.png",
     //     backgroundColor: renderer.colorHex("#ffffff"),
     //     borderImageInfo: {

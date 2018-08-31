@@ -89,19 +89,17 @@ var CUI = CUI || {};
             // console.log('TableLayout.compute', parent.id, parent.name);
             var children = parent.children;
             var childCount = children.length;
-            var idx = 0;
-
             if (childCount === 0) {
-                return idx;
+                return;
             }
+
+            var idx = 0;
 
             this.initTable(parent);
 
             for (var i = 0; i < childCount; i++) {
                 var child = children[i];
-                if (child.relative === "parent" || child.relative === "root") {
-                    // do nothing
-                } else {
+                if (child.ignoreLayout !== true) {
                     this.parseChild(child, parent, idx);
                     idx++;
                 }

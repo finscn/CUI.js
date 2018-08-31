@@ -23,12 +23,11 @@ var CUI = CUI || {};
             // console.log('HBoxLayout.compute', parent.id, parent.name);
             var children = parent.children;
             var childCount = children.length;
-            var idx = 0;
-
             if (childCount === 0) {
-                return idx;
+                return;
             }
 
+            var idx = 0;
             var parentPixel = parent.pixel;
             var margin = parentPixel.paddingLeft;
             var totalHeight = 0;
@@ -41,9 +40,7 @@ var CUI = CUI || {};
             for (var i = 0; i < childCount; i++) {
                 var child = children[i];
 
-                if (child.relative === "parent" || child.relative === "root") {
-                    // do nothing
-                } else {
+                if (child.ignoreLayout !== true) {
                     if (child.follow) {
                         // x is same to previous
                     } else {
@@ -83,9 +80,7 @@ var CUI = CUI || {};
                 var leftSpace = parentPixel.width - totalWidth;
                 for (var i = 0; i < childCount; i++) {
                     var child = children[i];
-                    if (child.relative === "parent" || child.relative === "root") {
-                        // do nothing
-                    } else {
+                    if (child.ignoreLayout !== true) {
                         child.pixel.baseX += leftSpace;
                         this.computeChild(child);
                     }
