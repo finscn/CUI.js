@@ -57,6 +57,8 @@ var CUI = CUI || {};
             if (this.afterInit) {
                 this.afterInit();
             }
+
+            this._needToComputeSize = true;
         },
 
         setIconInfo: function(iconInfo) {
