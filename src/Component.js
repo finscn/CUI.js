@@ -218,7 +218,8 @@ var CUI = CUI || {};
         },
 
         initBackgroundColor: function() {
-            if (this.backgroundColor === null) {
+            this.backgroundColor = this.backgroundColor || this.bgColor;
+            if (this.backgroundColor === null || this.backgroundColor === undefined || this.backgroundColor === false) {
                 this.backgroundHolder = null;
                 return;
             }
