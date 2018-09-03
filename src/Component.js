@@ -633,8 +633,8 @@ var CUI = CUI || {};
             var forceComputeChildren = this._needToComputeChildren;
 
 
-            var notFlexible = this._width !== "auto" || this._height !== "auto";
-            var flexible = this._width === "auto" || this._height === "auto";
+            var notFlexible = this._width !== "auto" || this._height !== "auto" || (this.layout && !this.layout.flexible);
+            var flexible = this._width === "auto" || this._height === "auto" || (this.layout && this.layout.flexible);
 
             if (this._needToCompute && notFlexible) {
                 this.compute();

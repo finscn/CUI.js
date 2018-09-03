@@ -421,7 +421,8 @@ var CUI = CUI || {};
             this.lastScrollX = this.scrollX;
             this.lastScrollY = this.scrollY;
 
-            if (this._needToCompute) {
+            var flexible = this._width !== "auto" || this._height !== "auto" || (this.layout && !this.layout.flexible)
+            if (this._needToCompute && !flexible) {
                 this.computeScrollInfo();
             }
         },
