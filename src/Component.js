@@ -569,13 +569,12 @@ var CUI = CUI || {};
         computeSelf: function() {
             // console.log('Component.computeSelf', this.id);
             // parent = parent || this.parent;
-
             this.computeMargin();
             this.computeWidth();
             this.computeHeight();
+            this.computePadding();
             this.computePositionX();
             this.computePositionY();
-            this.computePadding();
         },
 
         compute: function() {
@@ -633,11 +632,8 @@ var CUI = CUI || {};
             var forceComputeChildren = this._needToComputeChildren;
 
 
-            var notFlexible = this._width !== "auto" || this._height !== "auto" || (this.layout && !this.layout.flexible);
-            var flexible = this._width === "auto" || this._height === "auto" || (this.layout && this.layout.flexible);
-
-            if (this._needToCompute && notFlexible) {
-                this.compute();
+            if (this._needToCompute && this._width !== "auto" || this._height !== "auto") {
+                this.computeSelf();
             }
 
             if (this.composite && (this.visible || forceComputeChildren)) {
@@ -647,7 +643,7 @@ var CUI = CUI || {};
                 }
             }
 
-            if (this._needToCompute && flexible) {
+            if (this._needToCompute) {
                 this.compute();
             }
 

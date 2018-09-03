@@ -30,7 +30,7 @@ var CUI = CUI || {};
         },
 
         compute: function(parent) {
-            // console.log('BaseLayout.compute', parent.id, parent.name || "");
+            // console.log("compute.BaseLayout", parent.id, parent.name || "");
             if (parent._width !== "auto" && parent._height !== "auto") {
                 return;
             }
@@ -73,9 +73,9 @@ var CUI = CUI || {};
                 resize = true;
             }
             if (resize) {
+                parent.computePadding();
                 parent.computePositionX();
                 parent.computePositionY();
-                parent.computePadding();
                 parent.updateAABB();
                 if (parent.composite) {
                     parent.children.forEach(function(child) {

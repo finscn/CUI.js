@@ -64,15 +64,6 @@ var CUI = CUI || {};
             this.updateAABB();
         },
 
-        computeSelf: function() {
-            this.computeMargin();
-            this.computeWidth();
-            this.computeHeight();
-            this.computePositionX();
-            this.computePositionY();
-            this.computePadding();
-        },
-
         checkTouch: function(type, args) {
             if (this.disabled || !this.visible || this.alpha <= 0) {
                 return false;
