@@ -173,7 +173,7 @@ var CUI = CUI || {};
         initChildren: noop,
 
         reflow: function() {
-            this.reflowComputeTimes = this.composite ? 2 : 1;
+            this.reflowComputeTimes = 1;
         },
 
         resizeParents: function(parent) {
@@ -218,8 +218,9 @@ var CUI = CUI || {};
         },
 
         initBackgroundColor: function() {
-            this.backgroundColor = this.backgroundColor || this.bgColor;
-            if (this.backgroundColor === null || this.backgroundColor === undefined || this.backgroundColor === false) {
+            var color = this.backgroundColor;
+            color = color === null || color === undefined ? this.bgColor : color;
+            if (color === null || color === undefined || color === false) {
                 this.backgroundHolder = null;
                 return;
             }
@@ -624,25 +625,31 @@ var CUI = CUI || {};
 
             this.updateSelf(timeStep, now, forceCompute);
 
-            do {
-                forceCompute = (this.reflowComputeTimes > 0) || forceCompute;
-                // this._sizeChanged = this._sizeChanged || forceCompute;
-                // this._positionChanged = this._positionChanged || forceCompute;
-                this._needToCompute = this._needToCompute || forceCompute;
-                this._needToComputeChildren = this._needToComputeChildren || forceCompute;
-                var forceComputeChildren = this._needToComputeChildren;
+            forceCompute = ((this.reflowComputeTimes--) > 0) || forceCompute;
+            // this._sizeChanged = this._sizeChanged || forceCompute;
+            // this._positionChanged = this._positionChanged || forceCompute;
+            this._needToCompute = this._needToCompute || forceCompute;
+            this._needToComputeChildren = this._needToComputeChildren || forceCompute;
+            var forceComputeChildren = this._needToComputeChildren;
 
-                if (this.composite && (this.visible || forceComputeChildren)) {
-                    this.updateChildren(timeStep, now, forceComputeChildren);
-                    if (this._toSortChildren) {
-                        this.sortChildren();
-                    }
-                }
 
-                if (this._needToCompute) {
-                    this.compute();
+            var notFlexible = this._width !== "auto" || this._height !== "auto";
+            var flexible = this._width === "auto" || this._height === "auto";
+
+            if (this._needToCompute && notFlexible) {
+                this.compute();
+            }
+
+            if (this.composite && (this.visible || forceComputeChildren)) {
+                this.updateChildren(timeStep, now, forceComputeChildren);
+                if (this._toSortChildren) {
+                    this.sortChildren();
                 }
-            } while ((--this.reflowComputeTimes) > 0);
+            }
+
+            if (this._needToCompute && flexible) {
+                this.compute();
+            }
 
             this.afterUpdate && this.afterUpdate(timeStep, now);
 
