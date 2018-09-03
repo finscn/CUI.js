@@ -86,7 +86,7 @@ var CUI = CUI || {};
         },
 
         compute: function(parent) {
-            // console.log('TableLayout.compute', parent.id, parent.name);
+            // console.log('TableLayout.compute', parent.id, parent.name || "");
             var children = parent.children;
             var childCount = children.length;
             if (childCount === 0) {

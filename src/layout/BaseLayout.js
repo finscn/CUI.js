@@ -30,7 +30,7 @@ var CUI = CUI || {};
         },
 
         compute: function(parent) {
-            // console.log('BaseLayout.compute', parent.id, parent.name);
+            // console.log('BaseLayout.compute', parent.id, parent.name || "");
             if (parent._width !== "auto" && parent._height !== "auto") {
                 return;
             }

@@ -564,14 +564,6 @@ var CUI = CUI || {};
         /////////////////////////////////////////////////////////////////////////////
         /////////////////////////////////////////////////////////////////////////////
 
-        resize: function() {
-            // console.log('Component.resize');
-            this.flush();
-            this.compute();
-            this.onResize();
-        },
-        onResize: noop,
-
         computeSelf: function() {
             // console.log('Component.computeSelf', this.id);
             // parent = parent || this.parent;
