@@ -628,18 +628,20 @@ var CUI = CUI || {};
             // this._sizeChanged = this._sizeChanged || forceCompute;
             // this._positionChanged = this._positionChanged || forceCompute;
             this._needToCompute = this._needToCompute || forceCompute;
-            this._needToComputeChildren = this._needToComputeChildren || forceCompute;
-            var forceComputeChildren = this._needToComputeChildren;
 
+            if (this.composite) {
+                if (this._needToCompute && this._width !== "auto" || this._height !== "auto") {
+                    this.computeSelf();
+                }
 
-            if (this._needToCompute && this._width !== "auto" || this._height !== "auto") {
-                this.computeSelf();
-            }
+                this._needToComputeChildren = this._needToComputeChildren || forceCompute;
+                var forceComputeChildren = this._needToComputeChildren;
 
-            if (this.composite && (this.visible || forceComputeChildren)) {
-                this.updateChildren(timeStep, now, forceComputeChildren);
-                if (this._toSortChildren) {
-                    this.sortChildren();
+                if (this.visible || forceComputeChildren) {
+                    this.updateChildren(timeStep, now, forceComputeChildren);
+                    if (this._toSortChildren) {
+                        this.sortChildren();
+                    }
                 }
             }
 
