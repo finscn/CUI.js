@@ -96,7 +96,7 @@ var CUI = CUI || {};
             this._toSortChildren = true;
 
             this._needToComputeChildren = true;
-            this.precomputedTimes = 0;
+            this.reflowComputeTimes = 0;
         },
 
         initBase: function() {
@@ -140,7 +140,7 @@ var CUI = CUI || {};
 
             this.savePreviousState();
 
-            this.flush();
+            this.reflow();
         },
 
         init: function() {
@@ -172,8 +172,8 @@ var CUI = CUI || {};
         initHolders: noop,
         initChildren: noop,
 
-        flush: function() {
-            this.precomputedTimes = 1;
+        reflow: function() {
+            this.reflowComputeTimes = this.composite ? 2 : 1;
         },
 
         resizeParents: function(parent) {
@@ -537,7 +537,7 @@ var CUI = CUI || {};
             }
             this.visible = true;
             this.onShow();
-            this.flush();
+            this.reflow();
 
             return true;
         },
@@ -549,7 +549,7 @@ var CUI = CUI || {};
             }
             this.visible = false;
             this.onHide();
-            this.flush();
+            this.reflow();
             return true;
         },
         onHide: noop,
@@ -610,8 +610,8 @@ var CUI = CUI || {};
             return aabb[0] < aabb2[2] && aabb[2] > aabb2[0] && aabb[1] < aabb2[3] && aabb[3] > aabb2[1];
         },
 
-        updateSelf: function(timeStep, now) {
-
+        updateSelf: function(timeStep, now, forceCompute) {
+            // do something
         },
         updateChildren: function(timeStep, now, forceCompute) {
             this.children.forEach(function(child) {
@@ -622,22 +622,27 @@ var CUI = CUI || {};
         update: function(timeStep, now, forceCompute) {
             this.beforeUpdate && this.beforeUpdate(timeStep, now);
 
-            forceCompute = ((this.precomputedTimes--) > 0) || forceCompute;
-            this._needToCompute = this._needToCompute || forceCompute;
+            this.updateSelf(timeStep, now, forceCompute);
 
-            this.updateSelf(timeStep, now);
+            do {
+                forceCompute = (this.reflowComputeTimes > 0) || forceCompute;
+                // this._sizeChanged = this._sizeChanged || forceCompute;
+                // this._positionChanged = this._positionChanged || forceCompute;
+                this._needToCompute = this._needToCompute || forceCompute;
+                this._needToComputeChildren = this._needToComputeChildren || forceCompute;
+                var forceComputeChildren = this._needToComputeChildren;
 
-            var forceComputeChildren = this._needToComputeChildren || forceCompute;
-            if (this.composite && (this.visible || forceComputeChildren)) {
-                this.updateChildren(timeStep, now, forceComputeChildren);
-                if (this._toSortChildren) {
-                    this.sortChildren();
+                if (this.composite && (this.visible || forceComputeChildren)) {
+                    this.updateChildren(timeStep, now, forceComputeChildren);
+                    if (this._toSortChildren) {
+                        this.sortChildren();
+                    }
                 }
-            }
 
-            if (this._needToCompute) {
-                this.compute();
-            }
+                if (this._needToCompute) {
+                    this.compute();
+                }
+            } while ((--this.reflowComputeTimes) > 0);
 
             this.afterUpdate && this.afterUpdate(timeStep, now);
 

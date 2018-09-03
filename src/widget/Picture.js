@@ -138,7 +138,7 @@ var CUI = CUI || {};
         update: function(timeStep, now, forceCompute) {
             this.beforeUpdate && this.beforeUpdate(timeStep, now);
 
-            forceCompute = ((this.precomputedTimes--) > 0) || forceCompute;
+            forceCompute = ((this.reflowComputeTimes--) > 0) || forceCompute;
             this._needToCompute = this._needToCompute || forceCompute;
 
             var resized = (this._width === "auto" || this._height === "auto") && this._sizeChanged;

@@ -466,13 +466,13 @@ var CUI = CUI || {};
                 return this._absoluteX;
             },
             set: function(value) {
-                if (this._absoluteX === value) {
-                    return;
-                }
+                // if (this._absoluteX === value) {
+                //     return;
+                // }
                 this._positionChanged = true;
                 this._absoluteX = value;
                 if (this.displayObject) {
-                    this.displayObject.position.x = this.pixel.relativeX + Math.abs(this._pivotX);
+                    this.displayObject.position.x = this.pixel.relativeX + this._pivotX;
                 }
             }
         },
@@ -483,13 +483,13 @@ var CUI = CUI || {};
                 return this._absoluteY;
             },
             set: function(value) {
-                if (this._absoluteY === value) {
-                    return;
-                }
+                // if (this._absoluteY === value) {
+                //     return;
+                // }
                 this._positionChanged = true;
                 this._absoluteY = value;
                 if (this.displayObject) {
-                    this.displayObject.position.y = this.pixel.relativeY + Math.abs(this._pivotY);
+                    this.displayObject.position.y = this.pixel.relativeY + this._pivotY;
                 }
             }
         },

@@ -22,7 +22,7 @@ var CUI = CUI || {};
             this.offsetHeight = 0;
 
             this.alignH = "center"; // left center righ;
-            this.alignV = "middle"; // top center/middle bottom;
+            this.alignV = "center"; // top center/middle bottom;
 
             this.fillParent = false;
 
@@ -106,7 +106,7 @@ var CUI = CUI || {};
             parent = parent || this.parent;
 
             var y = 0;
-            if (this.alignV === "middle" || this.alignV === "center") {
+            if (this.alignV === "center" || this.alignV === "middle") {
                 y = (parent._absoluteHeight - this._displayHeight) >> 1;
             } else if (this.alignV === "bottom") {
                 y = parent._absoluteHeight - parent.pixel.paddingBottom - this._displayHeight;
