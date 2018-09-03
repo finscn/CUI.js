@@ -630,7 +630,7 @@ var CUI = CUI || {};
             this._needToCompute = this._needToCompute || forceCompute;
 
             if (this.composite) {
-                if (this._needToCompute && this._width !== "auto" || this._height !== "auto") {
+                if (this._needToCompute && (this._width !== "auto" || this._height !== "auto")) {
                     this.computeSelf();
                 }
 
