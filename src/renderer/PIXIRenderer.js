@@ -74,6 +74,7 @@ var CUI = CUI || {};
             frame.y = sy;
             frame.width = sw;
             frame.height = sh;
+
             texture._updateUvs();
 
             sprite._onTextureUpdate();

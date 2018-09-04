@@ -191,7 +191,7 @@ var CUI = CUI || {};
                 var ctx = textContext;
                 ctx.font = this.fontStyle;
                 var measure = ctx.measureText(this.lines[0]);
-                measure.height = Math.ceil(this.fontSize * 1.5) + (this.strokeWidth || 1) + 2;
+                measure.height = Math.ceil(this.fontSize * 1.4) + (this.strokeWidth || 1) + 2;
                 this.measure = measure;
                 this.lineHeight = this.lineHeight || measure.height;
                 this.textWidth = measure.width;
@@ -211,8 +211,8 @@ var CUI = CUI || {};
         },
 
         updateArea: function() {
-            this.areaWidth = this.textWidth + this.strokeWidth * 2;
-            this.areaHeight = this.textHeight + this.strokeWidth * 2;
+            this.areaWidth = this.textWidth + this.strokeWidth * 2 + this.offsetX;
+            this.areaHeight = this.textHeight + this.strokeWidth * 2 + this.offsetY;
 
             // debugger
             if (this.useCache === true || !this.parent.root.renderer.canvas2d) {

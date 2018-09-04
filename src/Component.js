@@ -220,6 +220,7 @@ var CUI = CUI || {};
         initBackgroundColor: function() {
             var color = this.backgroundColor;
             color = color === null || color === undefined ? this.bgColor : color;
+            this.backgroundColor = color;
             if (color === null || color === undefined || color === false) {
                 this.backgroundHolder = null;
                 return;
