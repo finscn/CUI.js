@@ -16,6 +16,9 @@ var CUI = CUI || {};
 
             this.lazyInit = true;
 
+            this.alignH = "center";
+            this.alignV = "center";
+
             // TODO
             this.offsetAlpha = 0;
             this.offsetWidth = 0;
