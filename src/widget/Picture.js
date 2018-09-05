@@ -146,6 +146,7 @@ var CUI = CUI || {};
             this.updateSelf(timeStep, now);
 
             if (this._needToCompute) {
+                // console.log("compute of Picture.", this.id);
                 this.compute();
             }
 

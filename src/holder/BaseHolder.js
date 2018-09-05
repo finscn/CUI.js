@@ -68,10 +68,55 @@ var CUI = CUI || {};
             this._sizeChanged = true;
         },
 
+        computePositionX: function(parent) {
+            parent = parent || this.parent;
+
+            var pixel = this.pixel;
+            var relativeWidth = parent._absoluteWidth;
+
+            var x = 0;
+            pixel.left = Utils.parseValue(this.left, relativeWidth);
+            pixel.right = Utils.parseValue(this.right, relativeWidth);
+            if (this.alignH === "center") {
+                x = (relativeWidth - this._displayWidth) / 2 + (pixel.left || 0);
+            } else if (this.alignH === "right") {
+                x = (relativeWidth - parent.pixel.paddingRight - this._displayWidth) + (pixel.left || 0);
+            } else if (pixel.left === null && pixel.right !== null) {
+                x = (relativeWidth - parent.pixel.paddingRight - this._displayWidth) - (pixel.right || 0);
+            } else {
+                x = parent.pixel.paddingLeft + (pixel.left || 0);
+            }
+            pixel.baseX = x;
+
+            this.syncPositionX(parent);
+        },
+
+        computePositionY: function(parent) {
+            parent = parent || this.parent;
+
+            var pixel = this.pixel;
+            var relativeHeight = parent._absoluteHeight;
+
+            var y = 0;
+            pixel.top = Utils.parseValue(this.top, relativeHeight);
+            pixel.bottom = Utils.parseValue(this.bottom, relativeHeight);
+            if (this.alignV === "center") {
+                y = (relativeHeight - this._displayHeight) / 2 + (pixel.top || 0);
+            } else if (this.alignV === "bottom") {
+                y = (relativeHeight - parent.pixel.paddingBottom - this._displayHeight) + (pixel.top || 0);
+            } else if (pixel.top === null && pixel.bottom !== null) {
+                y = (relativeHeight - parent.pixel.paddingBottom - this._displayHeight) - (pixel.bottom || 0);
+            } else {
+                y = parent.pixel.paddingTop + (pixel.top || 0);
+            }
+            pixel.baseY = y;
+
+            this.syncPositionY(parent);
+        },
+
         syncPositionX: function(parent) {
             parent = parent || this.parent;
             var pixel = this.pixel;
-
             pixel.relativeX = pixel.baseX + this._offsetX;
             pixel.x = pixel.relativeX + (parent ? parent._absoluteX : 0);
             this.absoluteX = pixel.x;
@@ -80,42 +125,9 @@ var CUI = CUI || {};
         syncPositionY: function(parent) {
             parent = parent || this.parent;
             var pixel = this.pixel;
-
             pixel.relativeY = pixel.baseY + this._offsetY;
             pixel.y = pixel.relativeY + (parent ? parent._absoluteY : 0);
             this.absoluteY = pixel.y;
-        },
-
-        computePositionX: function(parent) {
-            parent = parent || this.parent;
-
-            var x = 0;
-            if (this.alignH === "center") {
-                x = (parent._absoluteWidth - this._displayWidth) >> 1;
-            } else if (this.alignH === "right") {
-                x = parent._absoluteWidth - parent.pixel.paddingRight - this._displayWidth;
-            } else {
-                x = parent.pixel.paddingLeft;
-            }
-            this.pixel.baseX = x;
-
-            this.syncPositionX();
-        },
-
-        computePositionY: function(parent) {
-            parent = parent || this.parent;
-
-            var y = 0;
-            if (this.alignV === "center" || this.alignV === "middle") {
-                y = (parent._absoluteHeight - this._displayHeight) >> 1;
-            } else if (this.alignV === "bottom") {
-                y = parent._absoluteHeight - parent.pixel.paddingBottom - this._displayHeight;
-            } else {
-                y = parent.pixel.paddingTop;
-            }
-            this.pixel.baseY = y;
-
-            this.syncPositionY();
         },
 
         updatePosition: function() {

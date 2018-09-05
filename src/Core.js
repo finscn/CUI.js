@@ -198,6 +198,26 @@ var CUI = CUI || {};
     var properties = [
 
         {
+            key: 'x',
+            get: function() {
+                return this._left;
+            },
+            set: function(value) {
+                this.left = value;
+            }
+        },
+
+        {
+            key: 'y',
+            get: function() {
+                return this._top;
+            },
+            set: function(value) {
+                this.top = value;
+            }
+        },
+
+        {
             key: 'left',
             get: function() {
                 return this._left;

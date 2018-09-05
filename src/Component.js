@@ -647,6 +647,7 @@ var CUI = CUI || {};
             }
 
             if (this._needToCompute) {
+                // console.log("compute of Component.", this.id);
                 this.compute();
             }
 
@@ -801,8 +802,10 @@ var CUI = CUI || {};
             pixel.right = Utils.parseValue(this.right, relativeWidth);
             if (this.alignH === "center") {
                 x = (relativeWidth - pixel.width) / 2 + (pixel.left || 0);
+            } else if (this.alignH === "right") {
+                x = (relativeWidth - pixel.width) + (pixel.left || 0);
             } else if (pixel.left === null && pixel.right !== null) {
-                x = relativeWidth - pixel.width - pixel.right;
+                x = (relativeWidth - pixel.width) - (pixel.right || 0);
             } else {
                 x = pixel.left || 0;
             }
@@ -822,8 +825,10 @@ var CUI = CUI || {};
             pixel.bottom = Utils.parseValue(this.bottom, relativeHeight);
             if (this.alignV === "center") {
                 y = (relativeHeight - pixel.height) / 2 + (pixel.top || 0);
+            } else if (this.alignV === "bottom") {
+                y = (relativeHeight - pixel.height) + (pixel.top || 0);
             } else if (pixel.top === null && pixel.bottom !== null) {
-                y = relativeHeight - pixel.height - pixel.bottom;
+                y = (relativeHeight - pixel.height) - (pixel.bottom || 0);
             } else {
                 y = pixel.top || 0;
             }

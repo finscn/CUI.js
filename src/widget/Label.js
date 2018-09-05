@@ -242,6 +242,7 @@ var CUI = CUI || {};
             }
 
             if (this._needToCompute) {
+                // console.log("compute of Label.", this.id);
                 this.compute();
             }
 
