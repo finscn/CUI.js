@@ -44,14 +44,6 @@ var CUI = CUI || {};
             this.maskAlpha = 0;
 
             /////////////////////////////////////////////
-            // 对象创建后, 以下属性不可更改
-
-            this.alignH = 'left';
-            this.alignV = 'top';
-
-            // 子元素的默认对齐方式.  是否有必要? 子元素上定义自己的对齐方式真的很麻烦吗?
-            // this.contentAlignH = "auto", //  "left" "center" "right;
-            // this.contentAlignV = "auto", //  "top" "middle" "bottom;
 
             // 以下 5 个属性支持数字(代表像素), 和百分比
             // 百分比时, 相对参照物为 自身 的实际宽高(像素)
@@ -823,7 +815,7 @@ var CUI = CUI || {};
             var y = 0;
             pixel.top = Utils.parseValue(this.top, relativeHeight);
             pixel.bottom = Utils.parseValue(this.bottom, relativeHeight);
-            if (this.alignV === "center") {
+            if (this.alignV === "center" || this.alignV === "middle") {
                 y = (relativeHeight - pixel.height) / 2 + (pixel.top || 0);
             } else if (this.alignV === "bottom") {
                 y = (relativeHeight - pixel.height) + (pixel.top || 0);

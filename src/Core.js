@@ -63,6 +63,8 @@ var CUI = CUI || {};
             this.offsetX = 0;
             this.offsetY = 0;
 
+            this.alignH = "left"; //  "left" "center" "right";
+            this.alignV = "top";  //  "top" "center/middle" "bottom";
 
             this._visible = true;
             this._alpha = 1;

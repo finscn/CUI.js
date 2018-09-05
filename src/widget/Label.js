@@ -142,14 +142,26 @@ var CUI = CUI || {};
 
         computeAutoWidth: function() {
             var pixel = this.pixel;
-            var width = this.textHolder ? this.textHolder.areaWidth : this.textWidth;
+            var width;
+            if (this.textHolder) {
+                var extX = (this.textHolder.pixel.left || 0) + (this.textHolder.pixel.right || 0);
+                width = this.textHolder.areaWidth + extX;
+            } else {
+                width = this.textWidth;
+            }
             width += pixel.paddingLeft + pixel.paddingRight;
             pixel.width = width;
         },
 
         computeAutoHeight: function() {
             var pixel = this.pixel;
-            var height = this.textHolder ? this.textHolder.areaHeight : this.textHeight;
+            var height;
+            if (this.textHolder) {
+                var extY = (this.textHolder.pixel.top || 0) + (this.textHolder.pixel.bottom || 0);
+                height = this.textHolder.areaHeight + extY;
+            } else {
+                height = this.textHeight;
+            }
             height += pixel.paddingTop + pixel.paddingBottom;
             pixel.height = height;
         },
@@ -195,10 +207,11 @@ var CUI = CUI || {};
                 return;
             }
             var measure = this.textHolder.measure;
+            var pixel = this.textHolder.pixel;
 
             // var ext = this.sizePadding * 2 + this.borderWidth;
-            var extX = this.borderWidth + this.paddingLeft + this.paddingRight + this.textHolder.offsetX;
-            var extY = this.borderWidth + this.paddingTop + this.paddingBottom + this.textHolder.offsetY;
+            var extX = this.borderWidth + this.paddingLeft + this.paddingRight + (pixel.left || 0) + (pixel.right || 0);
+            var extY = this.borderWidth + this.paddingTop + this.paddingBottom + (pixel.top || 0) + (pixel.bottom || 0);
             this.textWidth = measure.width + extX;
             this.textHeight = measure.height * this.textHolder.lineCount + extY;
         },
@@ -215,6 +228,8 @@ var CUI = CUI || {};
         updateSizeWithText: function() {
             if (this.textHolder) {
                 this.textHolder.updateText();
+                this.textHolder.updateSize();
+                this.textHolder.updatePosition();
             }
             this.computeTextSize();
 

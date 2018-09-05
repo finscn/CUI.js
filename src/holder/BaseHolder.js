@@ -21,9 +21,6 @@ var CUI = CUI || {};
             this.offsetWidth = 0;
             this.offsetHeight = 0;
 
-            this.alignH = "center"; // left center righ;
-            this.alignV = "center"; // top center/middle bottom;
-
             this.fillParent = false;
 
             this.ratio = null;
@@ -100,7 +97,7 @@ var CUI = CUI || {};
             var y = 0;
             pixel.top = Utils.parseValue(this.top, relativeHeight);
             pixel.bottom = Utils.parseValue(this.bottom, relativeHeight);
-            if (this.alignV === "center") {
+            if (this.alignV === "center" || this.alignV === "middle") {
                 y = (relativeHeight - this._displayHeight) / 2 + (pixel.top || 0);
             } else if (this.alignV === "bottom") {
                 y = (relativeHeight - parent.pixel.paddingBottom - this._displayHeight) + (pixel.top || 0);

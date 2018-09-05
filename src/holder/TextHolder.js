@@ -84,6 +84,8 @@ var CUI = CUI || {};
             this.initDisplayObject();
 
             this.updateText();
+            // this.updateSize();
+            // this.updatePosition();
         },
 
         createCache: function() {
@@ -211,8 +213,8 @@ var CUI = CUI || {};
         },
 
         updateArea: function() {
-            this.areaWidth = this.textWidth + this.strokeWidth * 2 + this.offsetX;
-            this.areaHeight = this.textHeight + this.strokeWidth * 2 + this.offsetY;
+            this.areaWidth = this.textWidth + this.strokeWidth * 2;
+            this.areaHeight = this.textHeight + this.strokeWidth * 2;
 
             // debugger
             if (this.useCache === true || !this.parent.root.renderer.canvas2d) {
@@ -239,6 +241,7 @@ var CUI = CUI || {};
                 CUI.Utils.renderContent(this.cacheContext, this, this.areaOffsetX, this.areaOffsetY, true);
 
                 // TEST
+                // this.cacheContext.strokeStyle = "#ff00ff";
                 // this.cacheContext.lineWidth = 8;
                 // this.cacheContext.strokeRect(0, 0, this.areaWidth, this.areaHeight);
             }
