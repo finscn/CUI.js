@@ -26,11 +26,11 @@ var CUI = CUI || {};
 
             this.step = 0.2;
 
-            this.handleInfo = null;
             this.trackInfo = null;
+            this.handleInfo = null;
 
-            this.handle = null;
             this.track = null;
+            this.handle = null;
         },
 
         initChildren: function() {

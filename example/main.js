@@ -20,6 +20,8 @@ window.onload = function() {
             { id: "btn-bg", src: "./res/btn-bg.png" },
             { id: "btn-icon", src: "./res/btn-icon.png" },
             { id: "logo", src: "./res/HTML5_Logo_128.png" },
+            { id: "loading-bg", src: "./res/loading-bg.png" },
+            { id: "loading-value", src: "./res/loading-value.png" },
         ],
         function(imgPool) {
             for (var id in imgPool) {

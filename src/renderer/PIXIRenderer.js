@@ -70,10 +70,18 @@ var CUI = CUI || {};
             texture = sprite._texture;
             var frame = texture._frame;
 
-            frame.x = sx;
-            frame.y = sy;
-            frame.width = sw;
-            frame.height = sh;
+            if (sx !== null) {
+                frame.x = sx;
+            }
+            if (sy !== null) {
+                frame.y = sy;
+            }
+            if (sw !== null) {
+                frame.width = sw;
+            }
+            if (sh !== null) {
+                frame.height = sh;
+            }
 
             texture._updateUvs();
 

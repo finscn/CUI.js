@@ -209,7 +209,6 @@ function initUI() {
         }
     }
 
-
     var comp = new CUI.SliderBar({
         parent: rootUI,
         left: 20,
@@ -225,6 +224,26 @@ function initUI() {
         },
         onChanged: function(value) {
             console.log("SliderBar : ", value.toFixed(3))
+        },
+    });
+
+    var comp = new CUI.ProgressBar({
+        parent: rootUI,
+        left: 20,
+        top: 320 + 70,
+        width: 600,
+        height: 60,
+        backgroundImg: CUI.ImagePool['loading-bg'],
+        progressInfo: {
+            x: 15,
+            img: CUI.ImagePool['loading-value']
+        },
+        beforeUpdate: function() {
+            this.setValue(0.5 + Math.sin(Date.now() / 1000) * 0.5);
+            // this.setValue(0.5);
+        },
+        onChanged: function(value) {
+            console.log("ProgressBar : ", value.toFixed(3))
         },
     });
 

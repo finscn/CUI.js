@@ -112,7 +112,6 @@ var CUI = CUI || {};
                 this.drawBorderImage(displayObject, x, y);
 
             } else if (displayObject.rectInfo) {
-                // debugger;
                 this.drawRect(displayObject, x, y);
 
             } else if (displayObject.textInfo) {
@@ -273,6 +272,8 @@ var CUI = CUI || {};
                 sw: sw || (image ? image.width : 0),
                 sh: sh || (image ? image.height : 0),
             };
+            sprite.textureWidth = sprite.imageInfo.sw;
+            sprite.textureHeight = sprite.imageInfo.sh;
 
             return sprite;
         },
@@ -280,11 +281,21 @@ var CUI = CUI || {};
         updateSprite: function(sprite, sx, sy, sw, sh, image) {
             var info = sprite.imageInfo || {};
             info.img = image || info.img;
-            info.sx = sx || 0;
-            info.sy = sy || 0;
-            info.sw = sw || sw === 0 ? sw : (image ? image.width : 0);
-            info.sh = sh || sh === 0 ? sh : (image ? image.height : 0);
+            if (sx !== null) {
+                info.sx = sx || 0;
+            }
+            if (sy !== null) {
+                info.sy = sy || 0;
+            }
+            if (sw !== null) {
+                info.sw = sw || sw === 0 ? sw : (image ? image.width : 0);
+            }
+            if (sh !== null) {
+                info.sh = sh || sh === 0 ? sh : (image ? image.height : 0);
+            }
             sprite.imageInfo = info;
+            sprite.textureWidth = info.sw;
+            sprite.textureHeight = info.sh;
         },
 
         createRect: function(width, height, backgroundColor, backgroundAlpha, borderWidth, borderColor, borderAlpha) {
