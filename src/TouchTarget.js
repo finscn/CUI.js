@@ -10,6 +10,7 @@ var CUI = CUI || {};
 
         modalFlag: -0x100000,
 
+        // return: boolean, component,  string(id)
         checkTouch: function(type, args) {
             if (!this.visible || this.alpha <= 0 || this.disabled) {
                 return false;
@@ -61,8 +62,13 @@ var CUI = CUI || {};
             if (rs === false && (this.modal || this.mask)) {
                 return this.modalFlag;
             }
-            return rs;
 
+            if (type === "touchEnd") {
+                return rs;
+            }
+
+            // return rs;
+            return this.id || true;
         },
 
         checkTouchSelf: function(type, args) {

@@ -19,6 +19,9 @@ var CUI = CUI || {};
 
         compute: function() {
             this.computeSelf();
+            if (this.backgroundHolder) {
+                this.backgroundHolder.update(this._sizeChanged);
+            }
             this.updateAABB();
         },
     });
