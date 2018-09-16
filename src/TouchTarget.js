@@ -63,7 +63,7 @@ var CUI = CUI || {};
                 return this.modalFlag;
             }
 
-            if (type === "touchEnd") {
+            if (type === "touchEnd" ||　this.hollow) {
                 return rs;
             }
 

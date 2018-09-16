@@ -39,6 +39,9 @@ var CUI = CUI || {};
 
             this.layout = null;
 
+            // true 为 空洞的, 不会阻挡后面组件响应触控事件
+            this.hollow = false;
+
             this.modal = false;
             this.maskColor = null;
             this.maskAlpha = 0;
