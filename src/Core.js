@@ -64,7 +64,7 @@ var CUI = CUI || {};
             this.offsetY = 0;
 
             this.alignH = "left"; //  "left" "center" "right";
-            this.alignV = "top";  //  "top" "center/middle" "bottom";
+            this.alignV = "top"; //  "top" "center/middle" "bottom";
 
             this._visible = true;
             this._alpha = 1;
@@ -300,6 +300,26 @@ var CUI = CUI || {};
                 }
                 this._sizeChanged = true;
                 this._height = value;
+            }
+        },
+
+        {
+            key: 'align',
+            get: function() {
+                return this.alignH;
+            },
+            set: function(value) {
+                this.alignH = value;
+            }
+        },
+
+        {
+            key: 'valign',
+            get: function() {
+                return this.alignV;
+            },
+            set: function(value) {
+                this.alignV = value;
             }
         },
 

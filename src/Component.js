@@ -28,7 +28,6 @@ var CUI = CUI || {};
             this.inView = true;
             this.index = 0;
 
-
             this.scrollX = 0;
             this.scrollY = 0;
 

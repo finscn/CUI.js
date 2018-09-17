@@ -99,6 +99,21 @@ var CUI = CUI || {};
         }
     });
 
+    var properties = [
+
+        {
+            key: 'valign',
+            get: function() {
+                return this.align;
+            },
+            set: function(value) {
+                this.align = value;
+            }
+        }
+
+    ];
+
+    Class.defineProperties(VBoxLayout.prototype, properties);
 
     exports.VBoxLayout = VBoxLayout;
 
