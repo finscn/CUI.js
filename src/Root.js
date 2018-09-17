@@ -68,7 +68,7 @@ var CUI = CUI || {};
             if (this.disabled || !this.visible || this.alpha <= 0) {
                 return false;
             }
-            var rs = this.checkTouchChildren(type, arguments);
+            var rs = this.checkTouchChildren(arguments);
             if (rs !== false) {
                 return rs;
             }

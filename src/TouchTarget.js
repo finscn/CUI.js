@@ -8,14 +8,17 @@ var CUI = CUI || {};
 
     var TouchTarget = Class.create({
 
-        modalFlag: -0x100000,
+        modalFlag: -0x10000,
+        catchFlag: -0x10001,
 
         // return: boolean, component,  string(id)
-        checkTouch: function(type, args) {
-            if (!this.visible || this.alpha <= 0 || this.disabled) {
+        checkTouch: function(type /* , args... */ ) {
+            if (!this.visible || this.alpha <= 0) {
                 return false;
             }
+
             var argsList = Array.prototype.slice.call(arguments, 1);
+
             // if (type !== "swipe") {
             //     var x = argsList[0],
             //         y = argsList[1];
@@ -32,16 +35,16 @@ var CUI = CUI || {};
 
             var x = argsList[0],
                 y = argsList[1];
+
             if (!this.containPoint(x, y)) {
-                if (this.modal || this.mask) {
+                if (this.modal) {
                     if (type === "tap") {
                         this.onTapOut.apply(this, argsList);
                     } else if (type === "touchEnd") {
                         if (this.composite) {
-                            this.checkTouchChildren(type, arguments);
-                        } else {
-                            this[type].apply(this, argsList);
+                            this.checkTouchChildren(arguments);
                         }
+                        this[type].apply(this, argsList);
                     }
                     return this.modalFlag;
                 }
@@ -52,39 +55,34 @@ var CUI = CUI || {};
             }
 
             if (this.composite) {
-                var rs = this.checkTouchChildren(type, arguments);
+                var rs = this.checkTouchChildren(arguments);
                 if (rs !== false) {
                     return rs;
                 }
             }
 
-            var rs = this.checkTouchSelf(type, argsList);
-            if (rs === false && (this.modal || this.mask)) {
-                return this.modalFlag;
-            }
-
-            if (type === "touchEnd" ||　this.hollow) {
-                return rs;
-            }
-
-            // return rs;
-            return this.id || true;
-        },
-
-        checkTouchSelf: function(type, args) {
-            if (this.visible && this[type]) {
-                var rs = this[type].apply(this, args);
+            var rs = false;
+            if (this[type]) {
+                rs = this[type].apply(this, argsList);
                 if (rs !== false) {
-                    return this;
+                    rs = this;
                 }
             }
-            return false;
+
+            if (rs === false) {
+                if (this.modal) {
+                    return this.modalFlag;
+                }
+
+                if (type === "tap" || type === "touchStart") {
+                    return this.catchFlag;
+                }
+            }
+
+            return rs;
         },
 
-        getTouchableChildren: function() {
-            return this.children;
-        },
-        checkTouchChildren: function(type, args) {
+        checkTouchChildren: function(args) {
             var list = this.getTouchableChildren();
             if (list) {
                 for (var i = list.length - 1; i >= 0; i--) {
@@ -92,15 +90,20 @@ var CUI = CUI || {};
                     if (!ui.visible || ui.alpha <= 0) {
                         continue;
                     }
-                    // rs = ui[type].apply(ui, args);
                     var rs = ui.checkTouch.apply(ui, args);
-                    if (rs !== false) {
+                    if (!ui.hollow && rs !== false) {
                         // return ui;
                         return rs;
                     }
                 }
             }
             return false;
+        },
+
+        ///////////////////////////////////////////////////////
+
+        getTouchableChildren: function() {
+            return this.children;
         },
 
         ///////////////////////////////////////////////////////
