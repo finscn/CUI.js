@@ -119,6 +119,7 @@ var CUI = CUI || {};
             var pixel = this.pixel;
             pixel.relativeX = pixel.baseX + this._offsetX;
             pixel.x = pixel.relativeX + (parent ? parent._absoluteX : 0);
+            this.relativeX = pixel.relativeX;
             this.absoluteX = pixel.x;
         },
 
@@ -127,6 +128,7 @@ var CUI = CUI || {};
             var pixel = this.pixel;
             pixel.relativeY = pixel.baseY + this._offsetY;
             pixel.y = pixel.relativeY + (parent ? parent._absoluteY : 0);
+            this.relativeY = pixel.relativeY;
             this.absoluteY = pixel.y;
         },
 
@@ -159,7 +161,7 @@ var CUI = CUI || {};
                 }
                 this.displayObject._flipX = this._flipX;
                 this.displayObject.pivot.x = this._pivotX / Math.abs(this.displayObject.scale.x);
-                this.displayObject.position.x = this.pixel.relativeX + this._pivotX;
+                this.displayObject.position.x = this.relativeX + this._pivotX;
             }
         },
         syncDisplayHeight: function() {
@@ -171,7 +173,7 @@ var CUI = CUI || {};
                 }
                 this.displayObject._flipY = this._flipY;
                 this.displayObject.pivot.y = this._pivotY / Math.abs(this.displayObject.scale.y);
-                this.displayObject.position.y = this.pixel.relativeY + this._pivotY;
+                this.displayObject.position.y = this.relativeY + this._pivotY;
             }
         },
         destroy: function() {

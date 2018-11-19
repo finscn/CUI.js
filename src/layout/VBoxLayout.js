@@ -64,7 +64,7 @@ var CUI = CUI || {};
                     idx++;
 
                     var rightSpace = Math.max(parentPixel.paddingRight, child.pixel.marginRight);
-                    totalWidth = Math.max(totalWidth, child.pixel.relativeX + child._absoluteWidth + rightSpace);
+                    totalWidth = Math.max(totalWidth, child.relativeX + child._absoluteWidth + rightSpace);
                     if (i + 1 === childCount) {
                         margin = Math.max(margin, parentPixel.paddingBottom)
                     }

@@ -42,8 +42,17 @@ var CUI = CUI || {};
             this.hollow = false;
 
             this.modal = false;
-            this.maskColor = null;
-            this.maskAlpha = 0;
+            this.modalMaskColor = null;
+            this.modalMaskAlpha = 0;
+            this.modalMaskX = null;
+            this.modalMaskY = null;
+            this.modalMaskWidth = null;
+            this.modalMaskHeight = null;
+
+            this.maskX = 0;
+            this.maskY = 0;
+            this.maskWidth = 0;
+            this.maskHeight = 0;
 
             /////////////////////////////////////////////
 
@@ -157,6 +166,13 @@ var CUI = CUI || {};
             var displayObject = this.root.renderer.createContainer();
             displayObject._ignoreResize = true;
             this.displayObject = displayObject;
+
+            if (this.maskWidth > 0 && this.maskHeight > 0) {
+                var mh = this.maskHeight;
+                this.maskHeight = 0;
+                this.setMask(this.maskX, this.maskY, this.maskWidth, mh);
+            }
+
             this.syncDisplayObject();
             if (this.parent) {
                 this.parent.addChildDisplayObject(this);
@@ -190,20 +206,24 @@ var CUI = CUI || {};
         },
 
         initModalMask: function() {
-            var maskColor = this.maskColor || this.root.maskColor;
-            var maskAlpha = this.maskAlpha || this.root.maskAlpha;
+            var modalMaskColor = this.modalMaskColor || this.root.modalMaskColor;
+            var modalMaskAlpha = this.modalMaskAlpha || this.root.modalMaskAlpha;
 
-            if (!this.modal || maskColor === null || maskAlpha <= 0) {
+            if (!this.modal || modalMaskColor === null || modalMaskAlpha <= 0) {
                 return;
             }
 
             var holder = new CUI.BackgroundHolder({
                 parent: this,
-                color: maskColor,
-                alpha: maskAlpha,
+                color: modalMaskColor,
+                alpha: modalMaskAlpha,
                 fillParent: false,
-                width: this.root._absoluteWidth,
-                height: this.root._absoluteHeight,
+                left: 0,
+                top: 0,
+                width: this.modalMaskWidth || (this.root._absoluteWidth + 100),
+                height: this.modalMaskHeight || (this.root._absoluteHeight + 100),
+                alignH: "left",
+                alignV: "top",
             });
             holder.init();
 
@@ -261,15 +281,20 @@ var CUI = CUI || {};
 
         setBorderImage: function(info) {
             // TODO
-            // if (this.borderImageHolder) {
-            //     this.borderImageHolder.destroy();
-            // }
-
-            if (!info) {
+            var insertIndex = null;
+            if (this.borderImageHolder) {
+                var displayObj = this.borderImageHolder.displayObject;
+                insertIndex = displayObj.parent.getChildIndex(displayObj);
+                displayObj.parent.removeChild(displayObj);
+                // this.borderImageHolder.destroy();
                 this.borderImageHolder = null;
+                this._needToCompute = true;
+            }
+            if (!info) {
                 return;
             }
             var holder = new CUI.BorderImageHolder(info);
+            holder.insertIndex = insertIndex;
             holder.parent = this;
             holder.init();
             this.borderImageHolder = holder;
@@ -278,7 +303,7 @@ var CUI = CUI || {};
 
         initBackgroundImage: function() {
             this.backgroundImage = this.backgroundImage || this.backgroundImg || this.bgImg;
-            this.backgroundInfo = this.backgroundInfo || this.bgInfo;
+            this.backgroundInfo = this.backgroundInfo || this.bgInfo || this.backgroundImageInfo || this.bgImgInfo;
             if (this.backgroundInfo) {
                 var info = this.backgroundInfo;
                 info.img = info.img || this.backgroundImage;
@@ -455,6 +480,34 @@ var CUI = CUI || {};
             this.paddingBottom = this.paddingBottom === null ? this.padding : this.paddingBottom;
         },
 
+        setMask: function(x, y, width, height) {
+            var maskShape = this.maskShape;
+            // var pixel = this.pixel;
+            // this.maskShape = this.root.renderer.updateRect(maskShape, 0, 0, pixel.innerWidth, pixel.innerHeight, 0x000000, 1);
+            if (!maskShape || x !== this.maskX || y !== this.maskY || width !== this.maskWidth || height !== this.maskHeight) {
+                this.maskX = x;
+                this.maskY = y;
+                this.maskWidth = width;
+                this.maskHeight = height;
+                this.maskShape = this.root.renderer.updateRect(maskShape, x, y, width, height, 0x000000, 1);
+            }
+            this.displayObject.mask = this.maskShape;
+            if (!maskShape) {
+                // TODO
+                this.displayObject.addChild(this.maskShape);
+            }
+        },
+
+        removeMask: function() {
+            this.maskX = 0;
+            this.maskY = 0;
+            this.maskWidth = 0;
+            this.maskHeight = 0;
+            this.displayObject.mask = null;
+            if (this.maskShape) {
+                this.displayObject.removeChild(this.maskShape);
+            }
+        },
 
         /////////////////////////////////////////////////////////////////////////
         /////////////////////////////////////////////////////////////////////////
@@ -494,13 +547,29 @@ var CUI = CUI || {};
 
         updateHolders: function() {
             if (this.modalMaskHolder) {
-                var maskWidth = this.root._absoluteWidth + 100;
-                var maskHeight = this.root._absoluteHeight + 100;
                 var holder = this.modalMaskHolder;
-                if (holder._width !== maskWidth || holder._height !== maskHeight) {
-                    holder.width = maskWidth;
-                    holder.height = maskHeight;
+
+                var mX = this.modalMaskX;
+                if (!this.modalMaskX && this.modalMaskX !== 0) {
+                    mX = -this._absoluteX + this.root._absoluteX - 50;
                 }
+                var mY = this.modalMaskY;
+                if (!this.modalMaskY && this.modalMaskY !== 0) {
+                    mY = -this._absoluteY + this.root._absoluteY - 50;
+                }
+
+                var modalMaskWidth = this.modalMaskWidth || (this.root._absoluteWidth + 100);
+                var modalMaskHeight = this.modalMaskHeight || (this.root._absoluteHeight + 100);
+
+                if (holder._left !== mX || holder._top !== mY) {
+                    holder.left = mX;
+                    holder.top = mY;
+                }
+                if (holder._width !== modalMaskWidth || holder._height !== modalMaskHeight) {
+                    holder.width = modalMaskWidth;
+                    holder.height = modalMaskHeight;
+                }
+
                 holder.update();
             }
 
@@ -527,8 +596,8 @@ var CUI = CUI || {};
             });
         },
 
-        show: function() {
-            if (this.visible) {
+        show: function(force) {
+            if (this.visible && !force) {
                 return false;
             }
             this.visible = true;
@@ -836,6 +905,7 @@ var CUI = CUI || {};
             var pixel = this.pixel;
             pixel.relativeX = pixel.baseX + this._offsetX - (parent ? parent.scrollX : 0);
             pixel.x = pixel.relativeX + (parent ? parent._absoluteX : 0);
+            this.relativeX = pixel.relativeX;
             this.absoluteX = pixel.x;
         },
 
@@ -844,6 +914,7 @@ var CUI = CUI || {};
             var pixel = this.pixel;
             pixel.relativeY = pixel.baseY + this._offsetY - (parent ? parent.scrollY : 0);
             pixel.y = pixel.relativeY + (parent ? parent._absoluteY : 0);
+            this.relativeY = pixel.relativeY;
             this.absoluteY = pixel.y;
         },
 
@@ -866,7 +937,7 @@ var CUI = CUI || {};
             this._pivotX = this._absoluteWidth * this._anchorX;
             if (this.displayObject) {
                 this.displayObject.pivot.x = this._pivotX;
-                this.displayObject.position.x = this.pixel.relativeX + this._pivotX;
+                this.displayObject.position.x = this.relativeX + this._pivotX;
                 this.displayObject.scale.x = this._scaleX * (this._flipX ? -1 : 1);
             }
         },
@@ -876,9 +947,16 @@ var CUI = CUI || {};
             this._pivotY = this._absoluteHeight * this._anchorY;
             if (this.displayObject) {
                 this.displayObject.pivot.y = this._pivotY;
-                this.displayObject.position.y = this.pixel.relativeY + this._pivotY;
+                this.displayObject.position.y = this.relativeY + this._pivotY;
                 this.displayObject.scale.y = this._scaleY * (this._flipY ? -1 : 1);
             }
+        },
+
+        resetPosition: function() {
+            this._movedX = false;
+            this._movedY = false;
+            this.computePositionX();
+            this.computePositionY();
         },
 
         // absolute == true 时, x/y 为 全局绝对位置
@@ -903,6 +981,7 @@ var CUI = CUI || {};
                     pixel.left = pixel.relativeX;
                     pixel.right = pixel.relativeX + pixel.width;
                     this._movedX = true;
+                    this.relativeX = pixel.relativeX;
                     this.absoluteX = x;
                 }
             }
@@ -924,6 +1003,7 @@ var CUI = CUI || {};
                     pixel.top = pixel.relativeY;
                     pixel.bottom = pixel.top + pixel.height;
                     this._movedY = true;
+                    this.relativeY = pixel.relativeY;
                     this.absoluteY = y;
                 }
             }

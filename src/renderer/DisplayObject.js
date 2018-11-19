@@ -55,6 +55,20 @@ var CUI = CUI || {};
             this.children.push(child);
         },
 
+        addChildAt: function(child, index) {
+            if (index < 0 || index > this.children.length) {
+                throw new Error('child.addChildAt: The index ' + index + ' supplied is out of bounds ' + this.children.length);
+            }
+
+            if (child.parent) {
+                child.parent.removeChild(child);
+            }
+
+            child.parent = this;
+
+            this.children.splice(index, 0, child);
+        },
+
         removeChild: function(child) {
             var index = this.children.indexOf(child);
 
@@ -65,6 +79,16 @@ var CUI = CUI || {};
             this.children.splice(index, 1);
             child.parent = null;
             return child;
+        },
+
+        getChildIndex: function(child) {
+            var index = this.children.indexOf(child);
+
+            if (index === -1) {
+                throw new Error('The supplied DisplayObject must be a child of the caller');
+            }
+
+            return index;
         },
 
         sortChildren: function() {

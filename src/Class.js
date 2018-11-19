@@ -16,10 +16,10 @@ var CUI = CUI || {};
 
             constructor = function(options) {
                 if (this._superInitialize) {
-                    this._superInitialize();
+                    this._superInitialize(options);
                 }
                 if (this.initialize) {
-                    this.initialize();
+                    this.initialize(options);
                 }
 
                 for (var key in options) {
@@ -39,14 +39,14 @@ var CUI = CUI || {};
         for (var p in proto) {
             _proto[p] = proto[p];
         }
-        _proto._superInitialize = function() {
+        _proto._superInitialize = function(options) {
             var $super = constructor.$super;
             if ($super) {
                 if ($super._superInitialize) {
-                    $super._superInitialize.call(this);
+                    $super._superInitialize.call(this, options);
                 }
                 if ($super.initialize) {
-                    $super.initialize.call(this);
+                    $super.initialize.call(this, options);
                 }
             }
         };

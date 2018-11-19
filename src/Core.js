@@ -23,6 +23,7 @@ var CUI = CUI || {};
                 height: 0,
                 baseX: 0,
                 baseY: 0,
+
                 relativeX: 0,
                 relativeY: 0,
 
@@ -58,6 +59,8 @@ var CUI = CUI || {};
             this.width = null;
             this.height = null;
 
+            this.relativeX = 0;
+            this.relativeY = 0;
 
             this.zIndex = 0;
             this.offsetX = 0;
@@ -114,7 +117,11 @@ var CUI = CUI || {};
             }
 
             if (child.displayObject) {
-                this.displayObject.addChild(child.displayObject);
+                if (child.insertIndex || child.insertIndex === 0) {
+                    this.displayObject.addChildAt(child.displayObject, child.insertIndex);
+                } else {
+                    this.displayObject.addChild(child.displayObject);
+                }
             }
         },
 
@@ -228,6 +235,7 @@ var CUI = CUI || {};
                 if (this._left === value) {
                     return;
                 }
+                this._movedX = false;
                 this._positionChanged = true;
                 this._left = value;
             }
@@ -242,6 +250,7 @@ var CUI = CUI || {};
                 if (this._right === value) {
                     return;
                 }
+                this._movedX = false;
                 this._positionChanged = true;
                 this._right = value;
             }
@@ -256,6 +265,7 @@ var CUI = CUI || {};
                 if (this._top === value) {
                     return;
                 }
+                this._movedY = false;
                 this._positionChanged = true;
                 this._top = value;
             }
@@ -270,6 +280,7 @@ var CUI = CUI || {};
                 if (this._bottom === value) {
                     return;
                 }
+                this._movedY = false;
                 this._positionChanged = true;
                 this._bottom = value;
             }
@@ -514,7 +525,7 @@ var CUI = CUI || {};
                 this._positionChanged = true;
                 this._absoluteX = value;
                 if (this.displayObject) {
-                    this.displayObject.position.x = this.pixel.relativeX + this._pivotX;
+                    this.displayObject.position.x = this.relativeX + this._pivotX;
                 }
             }
         },
@@ -531,7 +542,7 @@ var CUI = CUI || {};
                 this._positionChanged = true;
                 this._absoluteY = value;
                 if (this.displayObject) {
-                    this.displayObject.position.y = this.pixel.relativeY + this._pivotY;
+                    this.displayObject.position.y = this.relativeY + this._pivotY;
                 }
             }
         },

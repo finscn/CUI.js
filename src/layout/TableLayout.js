@@ -62,6 +62,8 @@ var CUI = CUI || {};
             this.parentCell = {
                 scrollX: parent.scrollX,
                 scrollY: parent.scrollY,
+                relativeX: 0,
+                relativeY: 0,
                 _absoluteX: 0,
                 _absoluteY: 0,
                 _absoluteWidth: 0,

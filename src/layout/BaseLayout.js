@@ -13,6 +13,8 @@ var CUI = CUI || {};
             this.lazyInit = false;
             this.flexible = false;
 
+            this.relativeX = 0;
+            this.relativeY = 0;
             this.pixel = {
                 x: 0,
                 y: 0,
@@ -50,10 +52,10 @@ var CUI = CUI || {};
 
                 if (child.ignoreLayout !== true) {
                     var rightSpace = Math.max(parent.pixel.paddingRight, child.pixel.marginRight);
-                    totalWidth = Math.max(totalWidth, child.pixel.relativeX + child._absoluteWidth + rightSpace);
+                    totalWidth = Math.max(totalWidth, child.relativeX + child._absoluteWidth + rightSpace);
 
                     var bottomSpace = Math.max(parentPixel.paddingBottom, child.pixel.marginBottom);
-                    totalHeight = Math.max(totalHeight, child.pixel.relativeY + child._absoluteHeight + bottomSpace);
+                    totalHeight = Math.max(totalHeight, child.relativeY + child._absoluteHeight + bottomSpace);
                 }
             }
 

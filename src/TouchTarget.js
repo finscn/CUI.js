@@ -83,6 +83,9 @@ var CUI = CUI || {};
         },
 
         checkTouchChildren: function(args) {
+            if (this.disabled) {
+                return false;
+            }
             var list = this.getTouchableChildren();
             if (list) {
                 for (var i = list.length - 1; i >= 0; i--) {

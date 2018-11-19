@@ -60,12 +60,12 @@ var CUI = CUI || {};
                 // },
                 onTap: function(x, y, id) {
                     if (Me.vertical) {
-                        var distance = Me.handle.pixel.relativeY + Me.handle._absoluteHeight / 2;
+                        var distance = Me.handle.relativeY + Me.handle._absoluteHeight / 2;
                         var sign = y < Me.handle._absoluteY ? -1 : 1;
                         var stepPixel = distance * Me.step * sign;
                         Me.scrollBy(0, stepPixel);
                     } else {
-                        var distance = Me.handle.pixel.relativeX + Me.handle._absoluteWidth / 2;
+                        var distance = Me.handle.relativeX + Me.handle._absoluteWidth / 2;
                         var sign = x < Me.handle._absoluteX ? -1 : 1;
                         var stepPixel = distance * Me.step * sign;
                         Me.scrollBy(stepPixel, 0);
@@ -138,12 +138,12 @@ var CUI = CUI || {};
 
             if (this.vertical) {
                 if (dy < 0) {
-                    var ny = this.handle.pixel.relativeY + dy;
+                    var ny = this.handle.relativeY + dy;
                     if (ny < 0) {
-                        dy = 0 - this.handle.pixel.relativeY;
+                        dy = 0 - this.handle.relativeY;
                     }
                 } else if (dy > 0) {
-                    var ny = this.handle.pixel.relativeY + this.handle._absoluteHeight + dy;
+                    var ny = this.handle.relativeY + this.handle._absoluteHeight + dy;
                     if (ny > this._absoluteHeight) {
                         dy = this._absoluteHeight - this.handle._absoluteHeight - this.handle.pixel.baseY;
                     }
@@ -151,19 +151,19 @@ var CUI = CUI || {};
                 this.handle.moveBy(0, dy);
             } else {
                 if (dx < 0) {
-                    var nx = this.handle.pixel.relativeX + dx;
+                    var nx = this.handle.relativeX + dx;
                     if (nx < 0) {
-                        dx = 0 - this.handle.pixel.relativeX;
+                        dx = 0 - this.handle.relativeX;
                     }
                 } else if (dx > 0) {
-                    var nx = this.handle.pixel.relativeX + this.handle._absoluteWidth + dx;
+                    var nx = this.handle.relativeX + this.handle._absoluteWidth + dx;
                     if (nx > this._absoluteWidth) {
                         dx = this._absoluteWidth - this.handle._absoluteWidth - this.handle.pixel.baseX;
                     }
                 }
                 this.handle.moveBy(dx, 0);
             }
-            var p = this.handle.pixel.relativeX / this.trackRealSize;
+            var p = this.handle.relativeX / this.trackRealSize;
             this.value = p * (this.max - this.min) + this.min;
             this.onChanged(this.value);
         },
@@ -175,8 +175,10 @@ var CUI = CUI || {};
             var dis = p * this.trackRealSize;
             if (this.vertical) {
                 this.handle.pixel.relativeY = dis;
+                this.handle.relativeY = dis;
             } else {
                 this.handle.pixel.relativeX = dis;
+                this.handle.relativeX = dis;
             }
             this.handle.syncPosition();
         },
