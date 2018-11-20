@@ -91,8 +91,12 @@ var CUI = CUI || {};
                 }
                 Me.hasImg = !!Me.imageHolder.img;
                 Me._needToCompute = true;
+                if (Me.onImageLoad) {
+                    Me.onImageLoad(img);
+                }
             });
         },
+        onImageLoad: null,
 
         setImg: function(img) {
             this.img = img;
