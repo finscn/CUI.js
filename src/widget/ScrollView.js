@@ -129,6 +129,10 @@ var CUI = CUI || {};
         },
         onReset: noop,
 
+        reset: function() {
+            this.resetScrollInfo();
+        },
+
         startScroll: function(vx, vy) {
             if (!this.scrollH) {
                 vx = 0;
