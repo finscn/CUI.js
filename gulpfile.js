@@ -130,7 +130,7 @@ gulp.task('pack', function(cb) {
 gulp.task('minify', function(cb) {
     pump([
             gulp.src(allInOneFileName, {
-                cwd: baseDir,
+                cwd: distPath,
                 base: baseDir
             }),
             concat(minFileName),
