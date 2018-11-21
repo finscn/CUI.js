@@ -39,7 +39,10 @@ var CUI = CUI || {};
             this.scale = this._normalScale || 1;
         },
 
-        setDisabled: function(disabled) {
+        setDisabled: function(disabled, force) {
+            if (this.disabled === disabled && !force){
+                return;
+            }
             this.disabled = disabled;
             if (disabled) {
                 this.alpha = 0.6;

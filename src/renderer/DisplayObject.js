@@ -50,6 +50,10 @@ var CUI = CUI || {};
 
         },
 
+        updateTexture: function(){
+            // do nothing
+        },
+
         addChild: function(child) {
             child.parent = this;
             this.children.push(child);

@@ -56,7 +56,7 @@ var CUI = CUI || {};
             this.imageHolder.init();
 
             if (this.borderImageInfo) {
-                this.setBorderImageInfo(this.borderImageInfo);
+                this.setBorderImage(this.borderImageInfo);
             }
 
             if (this.src) {
@@ -137,6 +137,13 @@ var CUI = CUI || {};
             }
 
             this.updateAABB();
+        },
+
+        refreshImage: function(){
+            var displayObject = this.imageHolder.displayObject;
+            if (displayObject){
+                displayObject.updateTexture();
+            }
         },
 
         update: function(timeStep, now, forceCompute) {

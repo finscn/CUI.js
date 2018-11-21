@@ -57,6 +57,8 @@ var buildTime;
 var baseDir = '.'
 var srcPath = './src';
 var distPath = './dist';
+var allInOneFileName = 'cui.js';
+var minFileName = 'cui.min.js';
 
 var jsFileList = [
     "Class.js",
@@ -106,17 +108,32 @@ jsFileList = jsFileList.map(function(value) {
 });
 
 
-gulp.task('minify', function(cb) {
+gulp.task('pack', function(cb) {
     var files = ([]).concat(jsFileList);
     pump([
             gulp.src(files, {
                 cwd: baseDir,
                 base: baseDir
             }),
-            concat('cui-min.js'),
-            inject.append('if(typeof module !== "undefined"){module.exports = CUI;}'),
+            concat(allInOneFileName),
+            inject.append('\nif(typeof module !== "undefined"&&module){module.exports = CUI;}\n'),
             eslint('.eslintrc.js'),
             eslint.format(),
+            gulp.dest(distPath),
+        ],
+        function() {
+            cb && cb();
+        }
+    );
+});
+
+gulp.task('minify', function(cb) {
+    pump([
+            gulp.src(allInOneFileName, {
+                cwd: baseDir,
+                base: baseDir
+            }),
+            concat(minFileName),
             uglify(),
             gulp.dest(distPath),
         ],
@@ -128,7 +145,7 @@ gulp.task('minify', function(cb) {
 
 
 gulp.task('build', function(cb) {
-    runSequence('minify');
+    runSequence('pack', 'minify');
 });
 
 

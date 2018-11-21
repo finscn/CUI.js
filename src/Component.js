@@ -603,13 +603,12 @@ var CUI = CUI || {};
             this.visible = true;
             this.onShow();
             this.reflow();
-
             return true;
         },
         onShow: noop,
 
-        hide: function() {
-            if (!this.visible) {
+        hide: function(force) {
+            if (!this.visible && !force) {
                 return false;
             }
             this.visible = false;
