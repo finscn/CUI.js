@@ -4417,6 +4417,10 @@ var CUI = CUI || {};
         },
 
         setSrc: function(src, callback) {
+            if (!src) {
+                Me.setImg(null, callback);
+                return;
+            }
             this.src = src;
             var Me = this;
             this.img = null;
