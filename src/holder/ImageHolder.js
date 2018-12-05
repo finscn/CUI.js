@@ -66,7 +66,7 @@ var CUI = CUI || {};
 
         setSrc: function(src, callback) {
             if (!src) {
-                Me.setImg(null, callback);
+                this.setImg(null, callback);
                 return;
             }
             this.src = src;
