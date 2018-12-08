@@ -894,6 +894,9 @@ var CUI = CUI || {};
             this._offsetX = 0;
             this._offsetY = 0;
 
+            this._displayOffsetX = 0;
+            this._displayOffsetY = 0;
+
             this._sizeChanged = true;
             this._positionChanged = true;
             this._needToCompute = true;
@@ -1316,7 +1319,7 @@ var CUI = CUI || {};
                 this._positionChanged = true;
                 this._absoluteX = value;
                 if (this.displayObject) {
-                    this.displayObject.position.x = this.relativeX + this._pivotX;
+                    this.displayObject.position.x = this.relativeX + this._pivotX + this._displayOffsetX;
                 }
             }
         },
@@ -1333,7 +1336,7 @@ var CUI = CUI || {};
                 this._positionChanged = true;
                 this._absoluteY = value;
                 if (this.displayObject) {
-                    this.displayObject.position.y = this.relativeY + this._pivotY;
+                    this.displayObject.position.y = this.relativeY + this._pivotY + this._displayOffsetY;
                 }
             }
         },
@@ -4177,6 +4180,9 @@ var CUI = CUI || {};
 
         initDisplayObject: function() {
             if (this.useCache === true || !this.parent.root.renderer.canvas2d) {
+                this._displayOffsetX = -this.cachePadding;
+                this._displayOffsetY = -this.cachePadding;
+
                 this.createCache();
                 this.displayObject = this.parent.root.renderer.createTextObject(this.cacheContext);
             } else {
@@ -4293,9 +4299,8 @@ var CUI = CUI || {};
         },
 
         updateArea: function() {
-            this.areaWidth = this.textWidth + this.strokeWidth * 2;
-            this.areaHeight = this.textHeight + this.strokeWidth * 2;
-
+            this.areaWidth = this.textWidth + this.strokeWidth // * 2;
+            this.areaHeight = this.textHeight + this.strokeWidth // * 2;
             // debugger
             if (this.useCache === true || !this.parent.root.renderer.canvas2d) {
                 this.areaWidth += this.cachePadding * 2;
@@ -4312,8 +4317,8 @@ var CUI = CUI || {};
                 //     this.areaOffsetX = 0;
                 // }
 
-                this.areaOffsetX += this.strokeWidth + this.cachePadding;
-                this.areaOffsetY += this.strokeWidth + this.cachePadding;
+                this.areaOffsetX += this.strokeWidth / 2 + this.cachePadding;
+                this.areaOffsetY += this.strokeWidth / 2 + this.cachePadding;
 
                 this.cacheCanvas.width = this.areaWidth;
                 this.cacheCanvas.height = this.areaHeight;
@@ -4330,11 +4335,13 @@ var CUI = CUI || {};
             // this.displayObject.updateContent();
         },
 
-        computeAutoWidth: function() {
+        computeWidth: function() {
             this.pixel.width = this.areaWidth;
+            this.absoluteWidth = this.areaWidth;
         },
-        computeAutoHeight: function() {
+        computeHeight: function() {
             this.pixel.height = this.areaHeight;
+            this.absoluteHeight = this.areaHeight;
         },
 
         update: function(forceCompute) {
@@ -5091,8 +5098,8 @@ var CUI = CUI || {};
             var pixel = this.pixel;
             var width;
             if (this.textHolder) {
-                var extX = (this.textHolder.pixel.left || 0) + (this.textHolder.pixel.right || 0);
-                width = this.textHolder.areaWidth + extX;
+                var extWidth = (this.textHolder.pixel.left || 0) + (this.textHolder.pixel.right || 0);
+                width = this.textHolder.areaWidth + extWidth;
             } else {
                 width = this.textWidth;
             }
@@ -5104,8 +5111,8 @@ var CUI = CUI || {};
             var pixel = this.pixel;
             var height;
             if (this.textHolder) {
-                var extY = (this.textHolder.pixel.top || 0) + (this.textHolder.pixel.bottom || 0);
-                height = this.textHolder.areaHeight + extY;
+                var extHeight = (this.textHolder.pixel.top || 0) + (this.textHolder.pixel.bottom || 0);
+                height = this.textHolder.areaHeight + extHeight;
             } else {
                 height = this.textHeight;
             }
@@ -5156,10 +5163,10 @@ var CUI = CUI || {};
             var pixel = this.textHolder.pixel;
 
             // var ext = this.sizePadding * 2 + this.borderWidth;
-            var extX = this.borderWidth + this.paddingLeft + this.paddingRight + (pixel.left || 0) + (pixel.right || 0);
-            var extY = this.borderWidth + this.paddingTop + this.paddingBottom + (pixel.top || 0) + (pixel.bottom || 0);
-            this.textWidth = this.textHolder.textWidth + extX;
-            this.textHeight = this.textHolder.textHeight + extY;
+            var extWidth = this.borderWidth + this.paddingLeft + this.paddingRight + (pixel.left || 0) + (pixel.right || 0);
+            var extHeight = this.borderWidth + this.paddingTop + this.paddingBottom + (pixel.top || 0) + (pixel.bottom || 0);
+            this.textWidth = this.textHolder.textWidth + extWidth;
+            this.textHeight = this.textHolder.textHeight + extHeight;
         },
 
         compute: function() {
@@ -6610,6 +6617,7 @@ var CUI = CUI || {};
             if (!info.img) {
                 return;
             }
+
             var w = displayObject.width;
             var h = displayObject.height;
 
@@ -6710,15 +6718,20 @@ var CUI = CUI || {};
         createSprite: function(image, sx, sy, sw, sh) {
             var sprite = new DisplayObject();
 
-            sprite.imageInfo = {
+            var info = {
                 img: image,
                 sx: sx || 0,
                 sy: sy || 0,
                 sw: sw || (image ? image.width : 0),
                 sh: sh || (image ? image.height : 0),
             };
-            sprite.textureWidth = sprite.imageInfo.sw;
-            sprite.textureHeight = sprite.imageInfo.sh;
+
+            info.w = info.sw;
+            info.h = info.sh;
+
+            sprite.imageInfo = info;
+            sprite.textureWidth = info.sw;
+            sprite.textureHeight = info.sh;
 
             return sprite;
         },
@@ -6738,6 +6751,9 @@ var CUI = CUI || {};
             if (sh !== null) {
                 info.sh = sh || sh === 0 ? sh : (image ? image.height : 0);
             }
+            info.w = info.sw;
+            info.h = info.sh;
+
             sprite.imageInfo = info;
             sprite.textureWidth = info.sw;
             sprite.textureHeight = info.sh;
@@ -6821,6 +6837,9 @@ var CUI = CUI || {};
             this.imageInfo.sh = this.canvas.height;
             this.imageInfo.w = this.canvas.width;
             this.imageInfo.h = this.canvas.height;
+
+            this.textureWidth = this.imageInfo.sw;
+            this.textureHeight = this.imageInfo.sh;
         },
 
         _updateTextContent: function() {

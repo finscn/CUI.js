@@ -144,8 +144,8 @@ var CUI = CUI || {};
             var pixel = this.pixel;
             var width;
             if (this.textHolder) {
-                var extX = (this.textHolder.pixel.left || 0) + (this.textHolder.pixel.right || 0);
-                width = this.textHolder.areaWidth + extX;
+                var extWidth = (this.textHolder.pixel.left || 0) + (this.textHolder.pixel.right || 0);
+                width = this.textHolder.areaWidth + extWidth;
             } else {
                 width = this.textWidth;
             }
@@ -157,8 +157,8 @@ var CUI = CUI || {};
             var pixel = this.pixel;
             var height;
             if (this.textHolder) {
-                var extY = (this.textHolder.pixel.top || 0) + (this.textHolder.pixel.bottom || 0);
-                height = this.textHolder.areaHeight + extY;
+                var extHeight = (this.textHolder.pixel.top || 0) + (this.textHolder.pixel.bottom || 0);
+                height = this.textHolder.areaHeight + extHeight;
             } else {
                 height = this.textHeight;
             }
@@ -209,10 +209,10 @@ var CUI = CUI || {};
             var pixel = this.textHolder.pixel;
 
             // var ext = this.sizePadding * 2 + this.borderWidth;
-            var extX = this.borderWidth + this.paddingLeft + this.paddingRight + (pixel.left || 0) + (pixel.right || 0);
-            var extY = this.borderWidth + this.paddingTop + this.paddingBottom + (pixel.top || 0) + (pixel.bottom || 0);
-            this.textWidth = this.textHolder.textWidth + extX;
-            this.textHeight = this.textHolder.textHeight + extY;
+            var extWidth = this.borderWidth + this.paddingLeft + this.paddingRight + (pixel.left || 0) + (pixel.right || 0);
+            var extHeight = this.borderWidth + this.paddingTop + this.paddingBottom + (pixel.top || 0) + (pixel.bottom || 0);
+            this.textWidth = this.textHolder.textWidth + extWidth;
+            this.textHeight = this.textHolder.textHeight + extHeight;
         },
 
         compute: function() {

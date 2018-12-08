@@ -103,6 +103,9 @@ var CUI = CUI || {};
             this._offsetX = 0;
             this._offsetY = 0;
 
+            this._displayOffsetX = 0;
+            this._displayOffsetY = 0;
+
             this._sizeChanged = true;
             this._positionChanged = true;
             this._needToCompute = true;
@@ -525,7 +528,7 @@ var CUI = CUI || {};
                 this._positionChanged = true;
                 this._absoluteX = value;
                 if (this.displayObject) {
-                    this.displayObject.position.x = this.relativeX + this._pivotX;
+                    this.displayObject.position.x = this.relativeX + this._pivotX + this._displayOffsetX;
                 }
             }
         },
@@ -542,7 +545,7 @@ var CUI = CUI || {};
                 this._positionChanged = true;
                 this._absoluteY = value;
                 if (this.displayObject) {
-                    this.displayObject.position.y = this.relativeY + this._pivotY;
+                    this.displayObject.position.y = this.relativeY + this._pivotY + this._displayOffsetY;
                 }
             }
         },

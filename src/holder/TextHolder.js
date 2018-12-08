@@ -104,6 +104,9 @@ var CUI = CUI || {};
 
         initDisplayObject: function() {
             if (this.useCache === true || !this.parent.root.renderer.canvas2d) {
+                this._displayOffsetX = -this.cachePadding;
+                this._displayOffsetY = -this.cachePadding;
+
                 this.createCache();
                 this.displayObject = this.parent.root.renderer.createTextObject(this.cacheContext);
             } else {
@@ -220,9 +223,8 @@ var CUI = CUI || {};
         },
 
         updateArea: function() {
-            this.areaWidth = this.textWidth + this.strokeWidth * 2;
-            this.areaHeight = this.textHeight + this.strokeWidth * 2;
-
+            this.areaWidth = this.textWidth + this.strokeWidth // * 2;
+            this.areaHeight = this.textHeight + this.strokeWidth // * 2;
             // debugger
             if (this.useCache === true || !this.parent.root.renderer.canvas2d) {
                 this.areaWidth += this.cachePadding * 2;
@@ -239,8 +241,8 @@ var CUI = CUI || {};
                 //     this.areaOffsetX = 0;
                 // }
 
-                this.areaOffsetX += this.strokeWidth + this.cachePadding;
-                this.areaOffsetY += this.strokeWidth + this.cachePadding;
+                this.areaOffsetX += this.strokeWidth / 2 + this.cachePadding;
+                this.areaOffsetY += this.strokeWidth / 2 + this.cachePadding;
 
                 this.cacheCanvas.width = this.areaWidth;
                 this.cacheCanvas.height = this.areaHeight;
@@ -257,11 +259,13 @@ var CUI = CUI || {};
             // this.displayObject.updateContent();
         },
 
-        computeAutoWidth: function() {
+        computeWidth: function() {
             this.pixel.width = this.areaWidth;
+            this.absoluteWidth = this.areaWidth;
         },
-        computeAutoHeight: function() {
+        computeHeight: function() {
             this.pixel.height = this.areaHeight;
+            this.absoluteHeight = this.areaHeight;
         },
 
         update: function(forceCompute) {

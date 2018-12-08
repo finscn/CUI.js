@@ -165,6 +165,7 @@ var CUI = CUI || {};
             if (!info.img) {
                 return;
             }
+
             var w = displayObject.width;
             var h = displayObject.height;
 
@@ -265,15 +266,20 @@ var CUI = CUI || {};
         createSprite: function(image, sx, sy, sw, sh) {
             var sprite = new DisplayObject();
 
-            sprite.imageInfo = {
+            var info = {
                 img: image,
                 sx: sx || 0,
                 sy: sy || 0,
                 sw: sw || (image ? image.width : 0),
                 sh: sh || (image ? image.height : 0),
             };
-            sprite.textureWidth = sprite.imageInfo.sw;
-            sprite.textureHeight = sprite.imageInfo.sh;
+
+            info.w = info.sw;
+            info.h = info.sh;
+
+            sprite.imageInfo = info;
+            sprite.textureWidth = info.sw;
+            sprite.textureHeight = info.sh;
 
             return sprite;
         },
@@ -293,6 +299,9 @@ var CUI = CUI || {};
             if (sh !== null) {
                 info.sh = sh || sh === 0 ? sh : (image ? image.height : 0);
             }
+            info.w = info.sw;
+            info.h = info.sh;
+
             sprite.imageInfo = info;
             sprite.textureWidth = info.sw;
             sprite.textureHeight = info.sh;
@@ -376,6 +385,9 @@ var CUI = CUI || {};
             this.imageInfo.sh = this.canvas.height;
             this.imageInfo.w = this.canvas.width;
             this.imageInfo.h = this.canvas.height;
+
+            this.textureWidth = this.imageInfo.sw;
+            this.textureHeight = this.imageInfo.sh;
         },
 
         _updateTextContent: function() {

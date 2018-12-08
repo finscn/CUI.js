@@ -56,11 +56,13 @@ function initUI() {
 
 
     var comp = new CUI.Button({
+    // var comp = new CUI.Label({
         // backgroundColor: renderer.colorRgb(255, 240, 230),
         borderWidth: 2,
+        borderColor: renderer.colorHex("#ff0000"),
+
         top: 50,
         left: 50,
-        // borderColor: renderer.colorHex("#ff0000"),
         parent: panel,
         width: 160,
         height: 80,
@@ -71,10 +73,13 @@ function initUI() {
         margin: 10,
         disabled: false,
         textInfo: {
+            // id:"tttt",
             // offsetY: 2,
-            // alignV:'top',
+            // valign:'top',
 
             useCache: true,
+
+            width: 30,
 
             color: '#ffffff',
             text: "按钮",
