@@ -206,14 +206,13 @@ var CUI = CUI || {};
             if (!this.textHolder || !this.textHolder.measure) {
                 return;
             }
-            var measure = this.textHolder.measure;
             var pixel = this.textHolder.pixel;
 
             // var ext = this.sizePadding * 2 + this.borderWidth;
             var extX = this.borderWidth + this.paddingLeft + this.paddingRight + (pixel.left || 0) + (pixel.right || 0);
             var extY = this.borderWidth + this.paddingTop + this.paddingBottom + (pixel.top || 0) + (pixel.bottom || 0);
-            this.textWidth = measure.width + extX;
-            this.textHeight = measure.height * this.textHolder.lineCount + extY;
+            this.textWidth = this.textHolder.textWidth + extX;
+            this.textHeight = this.textHolder.textHeight + extY;
         },
 
         compute: function() {

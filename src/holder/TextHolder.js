@@ -183,29 +183,36 @@ var CUI = CUI || {};
             this._needToCompute = true;
         },
 
-        updateText: function(force) {
+        updateText: function() {
             if (!this.lines) {
                 // this._needToCompute = false;
                 return;
             }
 
-            if (force || (this._width === "auto" || this._height === "auto")) {
+            if (!this.lineHeight) {
+                this.lineHeight = Math.ceil(this.fontSize * 1.4) + (this.strokeWidth || 1) + 2;
+            }
+
+            // if (this._width === "auto" || this._height === "auto") {
+            if (this._width === "auto") {
                 var ctx = textContext;
                 ctx.font = this.fontStyle;
                 var measure = ctx.measureText(this.lines[0]);
-                measure.height = Math.ceil(this.fontSize * 1.4) + (this.strokeWidth || 1) + 2;
                 this.measure = measure;
-                this.lineHeight = this.lineHeight || measure.height;
-                this.textWidth = measure.width;
             } else {
-                this.lineHeight = this.lineHeight || this.height;
                 this.measure = {
-                    width: this.width,
-                    height: this.lineHeight,
+                    width: this._width,
                 }
             }
 
-            this.textHeight = this.lineHeight * this.lineCount;
+            if (this._height === "auto") {
+                this.measure.height = this.lineHeight * this.lineCount;
+            } else {
+                this.measure.height = this._height;
+            }
+
+            this.textWidth = this.measure.width;
+            this.textHeight = this.measure.height;
 
             this.updateArea();
 
@@ -238,7 +245,7 @@ var CUI = CUI || {};
                 this.cacheCanvas.width = this.areaWidth;
                 this.cacheCanvas.height = this.areaHeight;
 
-                CUI.Utils.renderContent(this.cacheContext, this, this.areaOffsetX, this.areaOffsetY, true);
+                CUI.Utils.renderTextContent(this.cacheContext, this, this.areaOffsetX, this.areaOffsetY, true);
 
                 // TEST
                 // this.cacheContext.strokeStyle = "#ff00ff";

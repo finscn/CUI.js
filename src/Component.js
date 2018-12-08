@@ -601,7 +601,7 @@ var CUI = CUI || {};
                 return false;
             }
             this.visible = true;
-            this.onShow();
+            this.onShow(force);
             this.reflow();
             return true;
         },
@@ -612,7 +612,7 @@ var CUI = CUI || {};
                 return false;
             }
             this.visible = false;
-            this.onHide();
+            this.onHide(force);
             this.reflow();
             return true;
         },

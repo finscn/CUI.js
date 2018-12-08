@@ -244,7 +244,7 @@ var CUI = CUI || {};
             var info = displayObject.textInfo;
             // x += info._absoluteX;
             // y += info._absoluteY;
-            CUI.Utils.renderContent(ctx, info, x, y);
+            CUI.Utils.renderTextContent(ctx, info, x, y);
         },
 
         /**

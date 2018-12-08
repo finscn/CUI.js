@@ -568,7 +568,14 @@ var CUI = CUI || {};
         ////////////////////////////////////////////////////////////////////
 
 
-        renderContent: function(context, textInfo, x, y) {
+        renderTextContent: function(context, textInfo, x, y) {
+
+            // var bak = context.lineWidth;
+            // context.lineWidth = 6;
+            // context.strokeStyle = "#FF00FF";
+            // context.strokeRect(0, 0, context.canvas.width, context.canvas.height)
+            // context.lineWidth = bak;
+
             // context.globalAlpha = textInfo.alpha;
             context.font = textInfo.fontStyle;
             // context.textAlign = textInfo.textAlign || "left";
@@ -602,7 +609,7 @@ var CUI = CUI || {};
                 // if (stroke) {
                 //     context.strokeStyle = textInfo.strokeColor;
                 // }
-                // this.renderLines(context, textInfo.lines, textInfo.lineHeight, x + textInfo.shadowOffsetX, y + textInfo.shadowOffsetY, stroke);
+                // this.renderTextLines(context, textInfo.lines, textInfo.lineHeight, x + textInfo.shadowOffsetX, y + textInfo.shadowOffsetY, stroke);
             }
 
             if (stroke) {
@@ -617,7 +624,7 @@ var CUI = CUI || {};
                 context.fillStyle = textInfo.color;
             }
 
-            this.renderLines(context, textInfo.lines, textInfo.lineHeight, x, y, stroke);
+            this.renderTextLines(context, textInfo.lines, textInfo.lineHeight, x, y, stroke);
 
             if (bakShadow) {
                 context.shadowBlur = bakShadow.blur;
@@ -629,7 +636,7 @@ var CUI = CUI || {};
             // context.globalAlpha = prevAlpha;
         },
 
-        renderLines: function(context, lines, lineHeight, x, y, stroke) {
+        renderTextLines: function(context, lines, lineHeight, x, y, stroke) {
             var Me = this;
             if (lines.length > 1) {
                 lines.forEach(function(line) {

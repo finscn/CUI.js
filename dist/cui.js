@@ -687,7 +687,14 @@ var CUI = CUI || {};
         ////////////////////////////////////////////////////////////////////
 
 
-        renderContent: function(context, textInfo, x, y) {
+        renderTextContent: function(context, textInfo, x, y) {
+
+            // var bak = context.lineWidth;
+            // context.lineWidth = 6;
+            // context.strokeStyle = "#FF00FF";
+            // context.strokeRect(0, 0, context.canvas.width, context.canvas.height)
+            // context.lineWidth = bak;
+
             // context.globalAlpha = textInfo.alpha;
             context.font = textInfo.fontStyle;
             // context.textAlign = textInfo.textAlign || "left";
@@ -721,7 +728,7 @@ var CUI = CUI || {};
                 // if (stroke) {
                 //     context.strokeStyle = textInfo.strokeColor;
                 // }
-                // this.renderLines(context, textInfo.lines, textInfo.lineHeight, x + textInfo.shadowOffsetX, y + textInfo.shadowOffsetY, stroke);
+                // this.renderTextLines(context, textInfo.lines, textInfo.lineHeight, x + textInfo.shadowOffsetX, y + textInfo.shadowOffsetY, stroke);
             }
 
             if (stroke) {
@@ -736,7 +743,7 @@ var CUI = CUI || {};
                 context.fillStyle = textInfo.color;
             }
 
-            this.renderLines(context, textInfo.lines, textInfo.lineHeight, x, y, stroke);
+            this.renderTextLines(context, textInfo.lines, textInfo.lineHeight, x, y, stroke);
 
             if (bakShadow) {
                 context.shadowBlur = bakShadow.blur;
@@ -748,7 +755,7 @@ var CUI = CUI || {};
             // context.globalAlpha = prevAlpha;
         },
 
-        renderLines: function(context, lines, lineHeight, x, y, stroke) {
+        renderTextLines: function(context, lines, lineHeight, x, y, stroke) {
             var Me = this;
             if (lines.length > 1) {
                 lines.forEach(function(line) {
@@ -3223,7 +3230,7 @@ var CUI = CUI || {};
                 return false;
             }
             this.visible = true;
-            this.onShow();
+            this.onShow(force);
             this.reflow();
             return true;
         },
@@ -3234,7 +3241,7 @@ var CUI = CUI || {};
                 return false;
             }
             this.visible = false;
-            this.onHide();
+            this.onHide(force);
             this.reflow();
             return true;
         },
@@ -4249,29 +4256,36 @@ var CUI = CUI || {};
             this._needToCompute = true;
         },
 
-        updateText: function(force) {
+        updateText: function() {
             if (!this.lines) {
                 // this._needToCompute = false;
                 return;
             }
 
-            if (force || (this._width === "auto" || this._height === "auto")) {
+            if (!this.lineHeight) {
+                this.lineHeight = Math.ceil(this.fontSize * 1.4) + (this.strokeWidth || 1) + 2;
+            }
+
+            // if (this._width === "auto" || this._height === "auto") {
+            if (this._width === "auto") {
                 var ctx = textContext;
                 ctx.font = this.fontStyle;
                 var measure = ctx.measureText(this.lines[0]);
-                measure.height = Math.ceil(this.fontSize * 1.4) + (this.strokeWidth || 1) + 2;
                 this.measure = measure;
-                this.lineHeight = this.lineHeight || measure.height;
-                this.textWidth = measure.width;
             } else {
-                this.lineHeight = this.lineHeight || this.height;
                 this.measure = {
-                    width: this.width,
-                    height: this.lineHeight,
+                    width: this._width,
                 }
             }
 
-            this.textHeight = this.lineHeight * this.lineCount;
+            if (this._height === "auto") {
+                this.measure.height = this.lineHeight * this.lineCount;
+            } else {
+                this.measure.height = this._height;
+            }
+
+            this.textWidth = this.measure.width;
+            this.textHeight = this.measure.height;
 
             this.updateArea();
 
@@ -4304,7 +4318,7 @@ var CUI = CUI || {};
                 this.cacheCanvas.width = this.areaWidth;
                 this.cacheCanvas.height = this.areaHeight;
 
-                CUI.Utils.renderContent(this.cacheContext, this, this.areaOffsetX, this.areaOffsetY, true);
+                CUI.Utils.renderTextContent(this.cacheContext, this, this.areaOffsetX, this.areaOffsetY, true);
 
                 // TEST
                 // this.cacheContext.strokeStyle = "#ff00ff";
@@ -5139,14 +5153,13 @@ var CUI = CUI || {};
             if (!this.textHolder || !this.textHolder.measure) {
                 return;
             }
-            var measure = this.textHolder.measure;
             var pixel = this.textHolder.pixel;
 
             // var ext = this.sizePadding * 2 + this.borderWidth;
             var extX = this.borderWidth + this.paddingLeft + this.paddingRight + (pixel.left || 0) + (pixel.right || 0);
             var extY = this.borderWidth + this.paddingTop + this.paddingBottom + (pixel.top || 0) + (pixel.bottom || 0);
-            this.textWidth = measure.width + extX;
-            this.textHeight = measure.height * this.textHolder.lineCount + extY;
+            this.textWidth = this.textHolder.textWidth + extX;
+            this.textHeight = this.textHolder.textHeight + extY;
         },
 
         compute: function() {
@@ -6676,7 +6689,7 @@ var CUI = CUI || {};
             var info = displayObject.textInfo;
             // x += info._absoluteX;
             // y += info._absoluteY;
-            CUI.Utils.renderContent(ctx, info, x, y);
+            CUI.Utils.renderTextContent(ctx, info, x, y);
         },
 
         /**
