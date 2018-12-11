@@ -691,8 +691,10 @@ var CUI = CUI || {};
 
             // var bak = context.lineWidth;
             // context.lineWidth = 6;
-            // context.strokeStyle = "#FF00FF";
+            // context.strokeStyle = "#0000FF";
             // context.strokeRect(0, 0, context.canvas.width, context.canvas.height)
+            // context.fillStyle = "#0000FF";
+            // context.fillRect(0, 0, context.canvas.width, context.canvas.height)
             // context.lineWidth = bak;
 
             // context.globalAlpha = textInfo.alpha;
@@ -702,9 +704,17 @@ var CUI = CUI || {};
 
             var strokeWidth = textInfo.strokeWidth || 1;
 
+            x += strokeWidth / 2;
+
             if (textInfo.textBaseline === "top") {
                 context.textBaseline = 'alphabetic';
-                y += textInfo.fontSize + strokeWidth;
+                y += (textInfo.fontSize + strokeWidth / 2);
+            } else if (textInfo.textBaseline === "bottom") {
+                context.textBaseline = 'alphabetic';
+                y -= (textInfo.fontSize / 4 + strokeWidth / 2);
+            } else if (textInfo.textBaseline === "middle") {
+                context.textBaseline = 'alphabetic';
+                y += (textInfo.fontSize / 2 - textInfo.fontSize / 4);
             } else {
                 context.textBaseline = textInfo.textBaseline;
             }
@@ -4269,7 +4279,7 @@ var CUI = CUI || {};
             }
 
             if (!this.lineHeight) {
-                this.lineHeight = Math.ceil(this.fontSize * 1.4) + (this.strokeWidth || 1) + 2;
+                this.lineHeight = Math.ceil(this.fontSize * 1.25) + (this.strokeWidth || 1) + 2;
             }
 
             // if (this._width === "auto" || this._height === "auto") {
@@ -4299,8 +4309,8 @@ var CUI = CUI || {};
         },
 
         updateArea: function() {
-            this.areaWidth = this.textWidth + this.strokeWidth // * 2;
-            this.areaHeight = this.textHeight + this.strokeWidth // * 2;
+            this.areaWidth = this.textWidth + this.strokeWidth; // * 2;
+            this.areaHeight = this.textHeight + this.strokeWidth; // * 2;
             // debugger
             if (this.useCache === true || !this.parent.root.renderer.canvas2d) {
                 this.areaWidth += this.cachePadding * 2;
@@ -4317,8 +4327,11 @@ var CUI = CUI || {};
                 //     this.areaOffsetX = 0;
                 // }
 
-                this.areaOffsetX += this.strokeWidth / 2 + this.cachePadding;
-                this.areaOffsetY += this.strokeWidth / 2 + this.cachePadding;
+                this.areaOffsetX += this.cachePadding;
+                this.areaOffsetY += this.cachePadding;
+
+                // this.areaOffsetX += this.strokeWidth / 2;
+                // this.areaOffsetY += this.strokeWidth / 2;
 
                 this.cacheCanvas.width = this.areaWidth;
                 this.cacheCanvas.height = this.areaHeight;
