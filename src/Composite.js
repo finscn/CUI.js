@@ -50,6 +50,18 @@ var CUI = CUI || {};
             }
             return false;
         },
+
+        removeAllChildren: function() {
+            for (var i = 0, len = this.children.length; i < len; i++) {
+                var child = this.children[i];
+                if (this.removeChild(child)) {
+                    i--;
+                    len--;
+                }
+            }
+            this.children.length = 0;
+        },
+
         indexOf: function(child) {
             for (var i = 0, len = this.children.length; i < len; i++) {
                 if (this.children[i] === child) {

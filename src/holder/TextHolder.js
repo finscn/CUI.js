@@ -201,7 +201,9 @@ var CUI = CUI || {};
                 var ctx = textContext;
                 ctx.font = this.fontStyle;
                 var measure = ctx.measureText(this.lines[0]);
-                this.measure = measure;
+                this.measure = measure || {
+                    width: 0,
+                };
             } else {
                 this.measure = {
                     width: this._width,

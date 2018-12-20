@@ -22,6 +22,9 @@ var CUI = CUI || {};
             this.width = "auto";
             this.height = "auto";
 
+            this.textExtWidth = 0;
+            this.textExtHeight = 0;
+
             this.scaleBg = false;
 
             this.backgroundColor = null;
@@ -46,6 +49,11 @@ var CUI = CUI || {};
                 this.iconHolder = this.addImageHolder(this.iconInfo);
             }
 
+            if (!this.textInfo && this.text) {
+                this.textInfo = {
+                    text: this.text
+                }
+            }
             this.setTextInfo(this.textInfo);
 
             this.computeTextSize();
@@ -146,8 +154,10 @@ var CUI = CUI || {};
             if (this.textHolder) {
                 var extWidth = (this.textHolder.pixel.left || 0) + (this.textHolder.pixel.right || 0);
                 width = this.textHolder.areaWidth + extWidth;
+            } else if (this.backgroundImageHolder) {
+                width = this.backgroundImageHolder.pixel.width;
             } else {
-                width = this.textWidth;
+                width = this.textExtWidth;
             }
             width += pixel.paddingLeft + pixel.paddingRight;
             pixel.width = width;
@@ -159,8 +169,10 @@ var CUI = CUI || {};
             if (this.textHolder) {
                 var extHeight = (this.textHolder.pixel.top || 0) + (this.textHolder.pixel.bottom || 0);
                 height = this.textHolder.areaHeight + extHeight;
+            } else if (this.backgroundImageHolder) {
+                height = this.backgroundImageHolder.pixel.height;
             } else {
-                height = this.textHeight;
+                height = this.textExtHeight;
             }
             height += pixel.paddingTop + pixel.paddingBottom;
             pixel.height = height;
@@ -211,8 +223,12 @@ var CUI = CUI || {};
             // var ext = this.sizePadding * 2 + this.borderWidth;
             var extWidth = this.borderWidth + this.paddingLeft + this.paddingRight + (pixel.left || 0) + (pixel.right || 0);
             var extHeight = this.borderWidth + this.paddingTop + this.paddingBottom + (pixel.top || 0) + (pixel.bottom || 0);
-            this.textWidth = this.textHolder.textWidth + extWidth;
-            this.textHeight = this.textHolder.textHeight + extHeight;
+
+            this.textWidth = this.textHolder.textWidth;
+            this.textHeight = this.textHolder.textHeight;
+
+            this.textExtWidth = this.textWidth + extWidth;
+            this.textExtHeight = this.textHeight + extHeight;
         },
 
         compute: function() {
@@ -250,7 +266,7 @@ var CUI = CUI || {};
 
             this.updateSelf(timeStep, now);
 
-            if (this._needToComputeSize) {
+            if (this._needToComputeSize || !this.textWidth) {
                 this.updateSizeWithText();
                 resized = true;
             }

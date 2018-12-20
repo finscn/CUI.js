@@ -30,7 +30,7 @@ var CUI = CUI || {};
             this.scrollDX = 0;
             this.scrollDY = 0;
 
-            this.clip = true;
+            this.clipArea = true;
 
             this.outEdge = 90;
             this.damping = 0.0025;
@@ -353,13 +353,11 @@ var CUI = CUI || {};
             this.layout.compute(this);
             this.computeScrollInfo();
             // this.resetScrollInfo();
-            this.updateMask();
+            if (this.clipArea) {
+                this.syncMask();
+            }
             this.updateHolders();
             this.updateAABB();
-        },
-
-        updateMask: function() {
-            this.setMask(0, 0, this._absoluteWidth, this._absoluteHeight);
         },
 
         updateSelf: function(timeStep, now) {

@@ -49,6 +49,8 @@ var CUI = CUI || {};
             this.modalMaskWidth = null;
             this.modalMaskHeight = null;
 
+            this.clipArea = false;
+
             this.maskX = 0;
             this.maskY = 0;
             this.maskWidth = 0;
@@ -134,10 +136,12 @@ var CUI = CUI || {};
             this.initDisplayObject();
 
             this.initModalMask();
+
             this.initBackgroundColor();
             this.initBorder();
-            this.initBorderImage();
+
             this.initBackgroundImage();
+            this.initBorderImage();
 
             this.initHolders();
 
@@ -167,7 +171,7 @@ var CUI = CUI || {};
             displayObject._ignoreResize = true;
             this.displayObject = displayObject;
 
-            if (this.maskWidth > 0 && this.maskHeight > 0) {
+            if (this.clipArea && this.maskWidth > 0 && this.maskHeight > 0) {
                 var mh = this.maskHeight;
                 this.maskHeight = 0;
                 this.setMask(this.maskX, this.maskY, this.maskWidth, mh);
@@ -444,6 +448,9 @@ var CUI = CUI || {};
                 removed = Composite.prototype.removeChild.call(this, child);
                 if (removed) {
                     child.setRoot(null);
+
+                    this.displayObject.removeChild(child.displayObject);
+
                     if (this._width === "auto") {
                         this.pixel.width = 0;
                     }
@@ -478,6 +485,10 @@ var CUI = CUI || {};
             this.paddingTop = this.paddingTop === null ? this.padding : this.paddingTop;
             this.paddingRight = this.paddingRight === null ? this.padding : this.paddingRight;
             this.paddingBottom = this.paddingBottom === null ? this.padding : this.paddingBottom;
+        },
+
+        syncMask: function() {
+            this.setMask(0, 0, this._absoluteWidth, this._absoluteHeight);
         },
 
         setMask: function(x, y, width, height) {
@@ -549,17 +560,30 @@ var CUI = CUI || {};
             if (this.modalMaskHolder) {
                 var holder = this.modalMaskHolder;
 
+                var rootWidth = this.root._absoluteWidth;
+                var rootHeight = this.root._absoluteHeight;
+
+                var modalMaskWidth = this.modalMaskWidth || rootWidth;
+                var modalMaskHeight = this.modalMaskHeight || rootHeight;
+
+                var fixX = 0;
+                var fixY = 0;
+
                 var mX = this.modalMaskX;
                 if (!this.modalMaskX && this.modalMaskX !== 0) {
-                    mX = -this._absoluteX + this.root._absoluteX - 50;
+                    fixX = 10;
+                    mX = -this._absoluteX + this.root._absoluteX - fixX;
+                    mX += (rootWidth - modalMaskWidth) / 2;
                 }
                 var mY = this.modalMaskY;
                 if (!this.modalMaskY && this.modalMaskY !== 0) {
-                    mY = -this._absoluteY + this.root._absoluteY - 50;
+                    fixY = 10;
+                    mY = -this._absoluteY + this.root._absoluteY - fixY;
+                    mY += (rootHeight - modalMaskHeight) / 2;
                 }
 
-                var modalMaskWidth = this.modalMaskWidth || (this.root._absoluteWidth + 100);
-                var modalMaskHeight = this.modalMaskHeight || (this.root._absoluteHeight + 100);
+                modalMaskWidth += fixX * 2;
+                modalMaskHeight += fixY * 2;
 
                 if (holder._left !== mX || holder._top !== mY) {
                     holder.left = mX;
@@ -581,12 +605,12 @@ var CUI = CUI || {};
                 this.borderHolder.update(this._sizeChanged);
             }
 
-            if (this.borderImageHolder) {
-                this.borderImageHolder.update(this._sizeChanged);
-            }
-
             if (this.backgroundImageHolder) {
                 this.backgroundImageHolder.update(this._sizeChanged);
+            }
+
+            if (this.borderImageHolder) {
+                this.borderImageHolder.update(this._sizeChanged);
             }
 
             this.holders.forEach(function(holder) {

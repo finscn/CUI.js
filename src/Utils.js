@@ -122,49 +122,52 @@ var CUI = CUI || {};
 
         getImageInfo: function(idOrImg, allowNull) {
             var img, id = idOrImg;
-            if (typeof id !== "string") {
-                if (id.tagName) {
-                    img = id;
-                    id = img.src;
-                } else {
-                    return idOrImg;
-                }
-            } else {
-                img = CUI.ImagePool[id];
-            }
-            if (img) {
-                var info = {
-                    "id": id,
-                    "img": img,
-                    "sx": 0,
-                    "sy": 0,
-                    "sw": img.width,
-                    "sh": img.height,
 
-                    "ox": 0,
-                    "oy": 0,
-                    "w": img.width,
-                    "h": img.height,
-                };
-                return info;
-            }
-            var mapping = CUI.ImageMapping[id];
-            if (mapping) {
-                var imgId = mapping["img"];
-                var img = CUI.ImagePool[imgId];
-                var info = {
-                    "id": id,
-                    "sx": mapping["x"],
-                    "sy": mapping["y"],
-                    "sw": mapping["w"],
-                    "sh": mapping["h"],
-                    "ox": mapping["ox"],
-                    "oy": mapping["oy"],
-                    "w": mapping["sw"],
-                    "h": mapping["sh"],
+            if (idOrImg) {
+                if (typeof id !== "string") {
+                    if (id.tagName) {
+                        img = id;
+                        id = img.src;
+                    } else {
+                        return idOrImg;
+                    }
+                } else {
+                    img = CUI.ImagePool[id];
                 }
-                info.img = img;
-                return info;
+                if (img) {
+                    var info = {
+                        "id": id,
+                        "img": img,
+                        "sx": 0,
+                        "sy": 0,
+                        "sw": img.width,
+                        "sh": img.height,
+
+                        "ox": 0,
+                        "oy": 0,
+                        "w": img.width,
+                        "h": img.height,
+                    };
+                    return info;
+                }
+                var mapping = CUI.ImageMapping[id];
+                if (mapping) {
+                    var imgId = mapping["img"];
+                    var img = CUI.ImagePool[imgId];
+                    var info = {
+                        "id": id,
+                        "sx": mapping["x"],
+                        "sy": mapping["y"],
+                        "sw": mapping["w"],
+                        "sh": mapping["h"],
+                        "ox": mapping["ox"],
+                        "oy": mapping["oy"],
+                        "w": mapping["sw"],
+                        "h": mapping["sh"],
+                    }
+                    info.img = img;
+                    return info;
+                }
             }
             console.log("Utils.getUIImgInfo err : ", id);
             if (allowNull) {

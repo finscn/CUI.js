@@ -241,49 +241,52 @@ var CUI = CUI || {};
 
         getImageInfo: function(idOrImg, allowNull) {
             var img, id = idOrImg;
-            if (typeof id !== "string") {
-                if (id.tagName) {
-                    img = id;
-                    id = img.src;
-                } else {
-                    return idOrImg;
-                }
-            } else {
-                img = CUI.ImagePool[id];
-            }
-            if (img) {
-                var info = {
-                    "id": id,
-                    "img": img,
-                    "sx": 0,
-                    "sy": 0,
-                    "sw": img.width,
-                    "sh": img.height,
 
-                    "ox": 0,
-                    "oy": 0,
-                    "w": img.width,
-                    "h": img.height,
-                };
-                return info;
-            }
-            var mapping = CUI.ImageMapping[id];
-            if (mapping) {
-                var imgId = mapping["img"];
-                var img = CUI.ImagePool[imgId];
-                var info = {
-                    "id": id,
-                    "sx": mapping["x"],
-                    "sy": mapping["y"],
-                    "sw": mapping["w"],
-                    "sh": mapping["h"],
-                    "ox": mapping["ox"],
-                    "oy": mapping["oy"],
-                    "w": mapping["sw"],
-                    "h": mapping["sh"],
+            if (idOrImg) {
+                if (typeof id !== "string") {
+                    if (id.tagName) {
+                        img = id;
+                        id = img.src;
+                    } else {
+                        return idOrImg;
+                    }
+                } else {
+                    img = CUI.ImagePool[id];
                 }
-                info.img = img;
-                return info;
+                if (img) {
+                    var info = {
+                        "id": id,
+                        "img": img,
+                        "sx": 0,
+                        "sy": 0,
+                        "sw": img.width,
+                        "sh": img.height,
+
+                        "ox": 0,
+                        "oy": 0,
+                        "w": img.width,
+                        "h": img.height,
+                    };
+                    return info;
+                }
+                var mapping = CUI.ImageMapping[id];
+                if (mapping) {
+                    var imgId = mapping["img"];
+                    var img = CUI.ImagePool[imgId];
+                    var info = {
+                        "id": id,
+                        "sx": mapping["x"],
+                        "sy": mapping["y"],
+                        "sw": mapping["w"],
+                        "sh": mapping["h"],
+                        "ox": mapping["ox"],
+                        "oy": mapping["oy"],
+                        "w": mapping["sw"],
+                        "h": mapping["sh"],
+                    }
+                    info.img = img;
+                    return info;
+                }
             }
             console.log("Utils.getUIImgInfo err : ", id);
             if (allowNull) {
@@ -1476,6 +1479,18 @@ var CUI = CUI || {};
             }
             return false;
         },
+
+        removeAllChildren: function() {
+            for (var i = 0, len = this.children.length; i < len; i++) {
+                var child = this.children[i];
+                if (this.removeChild(child)) {
+                    i--;
+                    len--;
+                }
+            }
+            this.children.length = 0;
+        },
+
         indexOf: function(child) {
             for (var i = 0, len = this.children.length; i < len; i++) {
                 if (this.children[i] === child) {
@@ -2691,6 +2706,8 @@ var CUI = CUI || {};
             this.modalMaskWidth = null;
             this.modalMaskHeight = null;
 
+            this.clipArea = false;
+
             this.maskX = 0;
             this.maskY = 0;
             this.maskWidth = 0;
@@ -2776,10 +2793,12 @@ var CUI = CUI || {};
             this.initDisplayObject();
 
             this.initModalMask();
+
             this.initBackgroundColor();
             this.initBorder();
-            this.initBorderImage();
+
             this.initBackgroundImage();
+            this.initBorderImage();
 
             this.initHolders();
 
@@ -2809,7 +2828,7 @@ var CUI = CUI || {};
             displayObject._ignoreResize = true;
             this.displayObject = displayObject;
 
-            if (this.maskWidth > 0 && this.maskHeight > 0) {
+            if (this.clipArea && this.maskWidth > 0 && this.maskHeight > 0) {
                 var mh = this.maskHeight;
                 this.maskHeight = 0;
                 this.setMask(this.maskX, this.maskY, this.maskWidth, mh);
@@ -3086,6 +3105,9 @@ var CUI = CUI || {};
                 removed = Composite.prototype.removeChild.call(this, child);
                 if (removed) {
                     child.setRoot(null);
+
+                    this.displayObject.removeChild(child.displayObject);
+
                     if (this._width === "auto") {
                         this.pixel.width = 0;
                     }
@@ -3120,6 +3142,10 @@ var CUI = CUI || {};
             this.paddingTop = this.paddingTop === null ? this.padding : this.paddingTop;
             this.paddingRight = this.paddingRight === null ? this.padding : this.paddingRight;
             this.paddingBottom = this.paddingBottom === null ? this.padding : this.paddingBottom;
+        },
+
+        syncMask: function() {
+            this.setMask(0, 0, this._absoluteWidth, this._absoluteHeight);
         },
 
         setMask: function(x, y, width, height) {
@@ -3191,17 +3217,30 @@ var CUI = CUI || {};
             if (this.modalMaskHolder) {
                 var holder = this.modalMaskHolder;
 
+                var rootWidth = this.root._absoluteWidth;
+                var rootHeight = this.root._absoluteHeight;
+
+                var modalMaskWidth = this.modalMaskWidth || rootWidth;
+                var modalMaskHeight = this.modalMaskHeight || rootHeight;
+
+                var fixX = 0;
+                var fixY = 0;
+
                 var mX = this.modalMaskX;
                 if (!this.modalMaskX && this.modalMaskX !== 0) {
-                    mX = -this._absoluteX + this.root._absoluteX - 50;
+                    fixX = 10;
+                    mX = -this._absoluteX + this.root._absoluteX - fixX;
+                    mX += (rootWidth - modalMaskWidth) / 2;
                 }
                 var mY = this.modalMaskY;
                 if (!this.modalMaskY && this.modalMaskY !== 0) {
-                    mY = -this._absoluteY + this.root._absoluteY - 50;
+                    fixY = 10;
+                    mY = -this._absoluteY + this.root._absoluteY - fixY;
+                    mY += (rootHeight - modalMaskHeight) / 2;
                 }
 
-                var modalMaskWidth = this.modalMaskWidth || (this.root._absoluteWidth + 100);
-                var modalMaskHeight = this.modalMaskHeight || (this.root._absoluteHeight + 100);
+                modalMaskWidth += fixX * 2;
+                modalMaskHeight += fixY * 2;
 
                 if (holder._left !== mX || holder._top !== mY) {
                     holder.left = mX;
@@ -3223,12 +3262,12 @@ var CUI = CUI || {};
                 this.borderHolder.update(this._sizeChanged);
             }
 
-            if (this.borderImageHolder) {
-                this.borderImageHolder.update(this._sizeChanged);
-            }
-
             if (this.backgroundImageHolder) {
                 this.backgroundImageHolder.update(this._sizeChanged);
+            }
+
+            if (this.borderImageHolder) {
+                this.borderImageHolder.update(this._sizeChanged);
             }
 
             this.holders.forEach(function(holder) {
@@ -4287,7 +4326,9 @@ var CUI = CUI || {};
                 var ctx = textContext;
                 ctx.font = this.fontStyle;
                 var measure = ctx.measureText(this.lines[0]);
-                this.measure = measure;
+                this.measure = measure || {
+                    width: 0,
+                };
             } else {
                 this.measure = {
                     width: this._width,
@@ -4989,6 +5030,9 @@ var CUI = CUI || {};
             this.width = "auto";
             this.height = "auto";
 
+            this.textExtWidth = 0;
+            this.textExtHeight = 0;
+
             this.scaleBg = false;
 
             this.backgroundColor = null;
@@ -5013,6 +5057,11 @@ var CUI = CUI || {};
                 this.iconHolder = this.addImageHolder(this.iconInfo);
             }
 
+            if (!this.textInfo && this.text) {
+                this.textInfo = {
+                    text: this.text
+                }
+            }
             this.setTextInfo(this.textInfo);
 
             this.computeTextSize();
@@ -5113,8 +5162,10 @@ var CUI = CUI || {};
             if (this.textHolder) {
                 var extWidth = (this.textHolder.pixel.left || 0) + (this.textHolder.pixel.right || 0);
                 width = this.textHolder.areaWidth + extWidth;
+            } else if (this.backgroundImageHolder) {
+                width = this.backgroundImageHolder.pixel.width;
             } else {
-                width = this.textWidth;
+                width = this.textExtWidth;
             }
             width += pixel.paddingLeft + pixel.paddingRight;
             pixel.width = width;
@@ -5126,8 +5177,10 @@ var CUI = CUI || {};
             if (this.textHolder) {
                 var extHeight = (this.textHolder.pixel.top || 0) + (this.textHolder.pixel.bottom || 0);
                 height = this.textHolder.areaHeight + extHeight;
+            } else if (this.backgroundImageHolder) {
+                height = this.backgroundImageHolder.pixel.height;
             } else {
-                height = this.textHeight;
+                height = this.textExtHeight;
             }
             height += pixel.paddingTop + pixel.paddingBottom;
             pixel.height = height;
@@ -5178,8 +5231,12 @@ var CUI = CUI || {};
             // var ext = this.sizePadding * 2 + this.borderWidth;
             var extWidth = this.borderWidth + this.paddingLeft + this.paddingRight + (pixel.left || 0) + (pixel.right || 0);
             var extHeight = this.borderWidth + this.paddingTop + this.paddingBottom + (pixel.top || 0) + (pixel.bottom || 0);
-            this.textWidth = this.textHolder.textWidth + extWidth;
-            this.textHeight = this.textHolder.textHeight + extHeight;
+
+            this.textWidth = this.textHolder.textWidth;
+            this.textHeight = this.textHolder.textHeight;
+
+            this.textExtWidth = this.textWidth + extWidth;
+            this.textExtHeight = this.textHeight + extHeight;
         },
 
         compute: function() {
@@ -5217,7 +5274,7 @@ var CUI = CUI || {};
 
             this.updateSelf(timeStep, now);
 
-            if (this._needToComputeSize) {
+            if (this._needToComputeSize || !this.textWidth) {
                 this.updateSizeWithText();
                 resized = true;
             }
@@ -5531,7 +5588,7 @@ var CUI = CUI || {};
             this.scrollDX = 0;
             this.scrollDY = 0;
 
-            this.clip = true;
+            this.clipArea = true;
 
             this.outEdge = 90;
             this.damping = 0.0025;
@@ -5854,13 +5911,11 @@ var CUI = CUI || {};
             this.layout.compute(this);
             this.computeScrollInfo();
             // this.resetScrollInfo();
-            this.updateMask();
+            if (this.clipArea) {
+                this.syncMask();
+            }
             this.updateHolders();
             this.updateAABB();
-        },
-
-        updateMask: function() {
-            this.setMask(0, 0, this._absoluteWidth, this._absoluteHeight);
         },
 
         updateSelf: function(timeStep, now) {
