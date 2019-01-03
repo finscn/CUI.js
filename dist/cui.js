@@ -124,8 +124,8 @@ var CUI = CUI || {};
     CUI.ImagePool = CUI.ImagePool || {};
     CUI.ImageMapping = CUI.ImageMapping || {};
 
-    var tempCanvas = document.createElement("canvas");
-    var tempContext = tempCanvas.getContext("2d");
+    var textHelperCanvas = document.createElement("canvas");
+    var textHelperContext = textHelperCanvas.getContext("2d");
 
     var Utils = {
 
@@ -228,15 +228,6 @@ var CUI = CUI || {};
             canvas.width = width;
             canvas.height = height;
             return canvas;
-        },
-
-        getTextWidth: function(text, size, fontName) {
-            var ctx = tempContext;
-            var font = ctx.font;
-            ctx.font = size + "px" + (fontName ? (" " + fontName) : "");
-            var measure = ctx.measureText(text);
-            ctx.font = font;
-            return measure.width;
         },
 
         getImageInfo: function(idOrImg, allowNull) {
@@ -689,6 +680,70 @@ var CUI = CUI || {};
         ////////////////////////////////////////////////////////////////////
         ////////////////////////////////////////////////////////////////////
 
+        getStringLength: function(str) {
+            var len = str.length;
+            var realLen = 0;
+            for (var i = 0; i < len; i++) {
+                if ((str.charCodeAt(i) & 0xff00) !== 0) {
+                    realLen += 2;
+                } else {
+                    realLen += 1;
+                }
+            }
+            return realLen;
+        },
+
+        getMaxLine: function(lines) {
+            var count = lines.length;
+            var row = 0;
+            if (count > 1) {
+                var max = 0;
+                for (var i = 0; i < count; i++) {
+                    var len = Utils.getStringLength(lines[i]);
+                    if (len > max) {
+                        max = len;
+                        row = i;
+                    }
+                }
+            }
+            return lines[row];
+        },
+
+
+        getTextWidth: function(text, size, fontName) {
+            var fontStyle = size + "px" + (fontName ? (" " + fontName) : "");
+            var measure = Utils.measureText(text, fontStyle);
+            return measure.width;
+        },
+
+        measureText: function(text, fontStyle) {
+            var lines;
+            if (Array.isArray(text)) {
+                lines = text;
+            } else {
+                lines = String(text).split(/(?:\r\n|\r|\n)/);
+            }
+
+            var ctx = textHelperContext;
+            var prevFont = ctx.font;
+            ctx.font = fontStyle;
+
+            var maxLine = CUI.Utils.getMaxLine(lines);
+            var measure = ctx.measureText(maxLine);
+
+            measure = measure || { width: 0 };
+            ctx.font = prevFont;
+            return measure;
+        },
+
+        createTextCanvas: function(textLines, style) {
+            var textInfo = {};
+            for (var p in style) {
+                textInfo[p] = style[p]
+            }
+            textInfo.lines = textLines;
+
+        },
 
         renderTextContent: function(context, textInfo, x, y) {
 
@@ -702,8 +757,8 @@ var CUI = CUI || {};
 
             // context.globalAlpha = textInfo.alpha;
             context.font = textInfo.fontStyle;
-            // context.textAlign = textInfo.textAlign || "left";
-            context.textAlign = "left";
+            // context.textAlign = "left";
+            context.textAlign = textInfo.textAlign || "left";
 
             var strokeWidth = textInfo.strokeWidth || 1;
 
@@ -2688,10 +2743,11 @@ var CUI = CUI || {};
             this.scrollX = 0;
             this.scrollY = 0;
 
-            this.extLeft = 0;
-            this.extRight = 0;
-            this.extTop = 0;
-            this.extBottom = 0;
+            this.extBound = null;
+            this.extLeft = null;
+            this.extRight = null;
+            this.extTop = null;
+            this.extBottom = null;
 
             this.layout = null;
 
@@ -2763,6 +2819,17 @@ var CUI = CUI || {};
 
         initBase: function() {
             this.aabb = [0, 0, 0, 0];
+            if (this.extBound !== null) {
+                (this.extLeft === null) && (this.extLeft = this.extBound);
+                (this.extRight === null) && (this.extRight = this.extBound);
+                (this.extTop === null) && (this.extTop = this.extBound);
+                (this.extBotom === null) && (this.extBotom = this.extBound);
+            }
+            this.extLeft = this.extLeft || 0;
+            this.extRight = this.extRight || 0;
+            this.extTop = this.extTop || 0;
+            this.extBotom = this.extBotom || 0;
+
             this.holders = [];
 
             this._defaultAlpha = this.alpha;
@@ -3071,7 +3138,7 @@ var CUI = CUI || {};
             if (_comp !== this) {
                 root.all[this.id] = this;
                 if (_comp) {
-                    console.log("Duplicate id : " + this.id);
+                    console.log("**** Duplicate id : " + this.id + " ****");
                 }
             }
         },
@@ -3102,8 +3169,14 @@ var CUI = CUI || {};
         removeChild: function(child) {
             var removed = false;
             if (this.composite) {
+                if (child.composite) {
+                    child.removeAllChildren();
+                }
                 removed = Composite.prototype.removeChild.call(this, child);
                 if (removed) {
+                    if (this.root) {
+                        delete this.root.all[child.id];
+                    }
                     child.setRoot(null);
 
                     this.displayObject.removeChild(child.displayObject);
@@ -4127,7 +4200,6 @@ var CUI = CUI || {};
 
 var CUI = CUI || {};
 
-
 (function(exports) {
 
     var Class = exports.Class;
@@ -4195,7 +4267,8 @@ var CUI = CUI || {};
             this.cachePadding = 2;
             this.useCache = null;
             this.useCachePool = true;
-            this.shareCache = false;
+
+            this.linkCache = null;
 
             this.lineHeight = 0;
         },
@@ -4203,6 +4276,10 @@ var CUI = CUI || {};
         init: function() {
 
             this.id = this.id || "text-holder-" + this.parent.id;
+
+            if (this.linkCache) {
+                this.useCache = true;
+            }
 
             this.setTextInfo(this);
 
@@ -4215,9 +4292,7 @@ var CUI = CUI || {};
 
         createCache: function() {
             if (!this.cacheCanvas) {
-                if (this.shareCache) {
-                    this.cacheCanvas = TextHolder.cacheCanvas;
-                } else if (this.useCachePool) {
+                if (this.useCachePool) {
                     this.cacheCanvas = Core.getCanvasFromPool(this.id);
                 } else {
                     this.cacheCanvas = document.createElement("canvas");
@@ -4232,8 +4307,12 @@ var CUI = CUI || {};
                 this._displayOffsetX = -this.cachePadding;
                 this._displayOffsetY = -this.cachePadding;
 
-                this.createCache();
-                this.displayObject = this.parent.root.renderer.createTextObject(this.cacheContext);
+                if (this.linkCache) {
+                    this.displayObject = this.parent.root.renderer.createSprite(this.linkCache);
+                } else {
+                    this.createCache();
+                    this.displayObject = this.parent.root.renderer.createTextObject(this.cacheContext);
+                }
             } else {
                 this.displayObject = this.parent.root.renderer.createTextObject();
                 this.displayObject.textInfo = this;
@@ -4323,9 +4402,7 @@ var CUI = CUI || {};
 
             // if (this._width === "auto" || this._height === "auto") {
             if (this._width === "auto") {
-                var ctx = textContext;
-                ctx.font = this.fontStyle;
-                var measure = ctx.measureText(this.lines[0]);
+                var measure = CUI.Utils.measureText(this.lines, this.fontStyle);
                 this.measure = measure || {
                     width: 0,
                 };
@@ -4350,6 +4427,12 @@ var CUI = CUI || {};
         },
 
         updateArea: function() {
+            if (this.linkCache) {
+                this.areaWidth = this.linkCache.width;
+                this.areaHeight = this.linkCache.height;
+                return;
+            }
+
             this.areaWidth = this.textWidth + this.strokeWidth; // * 2;
             this.areaHeight = this.textHeight + this.strokeWidth; // * 2;
             // debugger
@@ -4357,19 +4440,16 @@ var CUI = CUI || {};
                 this.areaWidth += this.cachePadding * 2;
                 this.areaHeight += this.cachePadding * 2;
 
-                this.areaOffsetX = 0;
-                this.areaOffsetY = 0;
+                // this.areaOffsetX = this.cachePadding;
+                // this.areaOffsetY = this.cachePadding;
 
-                // if (this.alignH === "center") {
-                //     this.areaOffsetX = Math.ceil(this.textWidth / 2);
-                // } else if (this.alignH === "right" || this.alignH === "end") {
-                //     this.areaOffsetX = this.textWidth;
-                // } else {
-                //     this.areaOffsetX = 0;
-                // }
-
-                this.areaOffsetX += this.cachePadding;
-                this.areaOffsetY += this.cachePadding;
+                if (this.alignH === "center") {
+                    this.areaOffsetX = Math.ceil(this.areaWidth / 2);
+                } else if (this.alignH === "right" || this.alignH === "end") {
+                    this.areaOffsetX = this.cachePadding + this.textWidth;
+                } else {
+                    this.areaOffsetX = this.cachePadding;
+                }
 
                 // this.areaOffsetX += this.strokeWidth / 2;
                 // this.areaOffsetY += this.strokeWidth / 2;
@@ -4409,13 +4489,6 @@ var CUI = CUI || {};
             }
         },
     });
-
-    var textCanvas = document.createElement("canvas");
-    var textContext = textCanvas.getContext("2d");
-
-    TextHolder.cacheCanvas = document.createElement('canvas');
-    TextHolder.cacheCanvas.width = 3;
-    TextHolder.cacheCanvas.height = 3;
 
     exports.TextHolder = TextHolder;
 

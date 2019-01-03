@@ -5,8 +5,8 @@ var CUI = CUI || {};
     CUI.ImagePool = CUI.ImagePool || {};
     CUI.ImageMapping = CUI.ImageMapping || {};
 
-    var tempCanvas = document.createElement("canvas");
-    var tempContext = tempCanvas.getContext("2d");
+    var textHelperCanvas = document.createElement("canvas");
+    var textHelperContext = textHelperCanvas.getContext("2d");
 
     var Utils = {
 
@@ -109,15 +109,6 @@ var CUI = CUI || {};
             canvas.width = width;
             canvas.height = height;
             return canvas;
-        },
-
-        getTextWidth: function(text, size, fontName) {
-            var ctx = tempContext;
-            var font = ctx.font;
-            ctx.font = size + "px" + (fontName ? (" " + fontName) : "");
-            var measure = ctx.measureText(text);
-            ctx.font = font;
-            return measure.width;
         },
 
         getImageInfo: function(idOrImg, allowNull) {
@@ -570,6 +561,70 @@ var CUI = CUI || {};
         ////////////////////////////////////////////////////////////////////
         ////////////////////////////////////////////////////////////////////
 
+        getStringLength: function(str) {
+            var len = str.length;
+            var realLen = 0;
+            for (var i = 0; i < len; i++) {
+                if ((str.charCodeAt(i) & 0xff00) !== 0) {
+                    realLen += 2;
+                } else {
+                    realLen += 1;
+                }
+            }
+            return realLen;
+        },
+
+        getMaxLine: function(lines) {
+            var count = lines.length;
+            var row = 0;
+            if (count > 1) {
+                var max = 0;
+                for (var i = 0; i < count; i++) {
+                    var len = Utils.getStringLength(lines[i]);
+                    if (len > max) {
+                        max = len;
+                        row = i;
+                    }
+                }
+            }
+            return lines[row];
+        },
+
+
+        getTextWidth: function(text, size, fontName) {
+            var fontStyle = size + "px" + (fontName ? (" " + fontName) : "");
+            var measure = Utils.measureText(text, fontStyle);
+            return measure.width;
+        },
+
+        measureText: function(text, fontStyle) {
+            var lines;
+            if (Array.isArray(text)) {
+                lines = text;
+            } else {
+                lines = String(text).split(/(?:\r\n|\r|\n)/);
+            }
+
+            var ctx = textHelperContext;
+            var prevFont = ctx.font;
+            ctx.font = fontStyle;
+
+            var maxLine = CUI.Utils.getMaxLine(lines);
+            var measure = ctx.measureText(maxLine);
+
+            measure = measure || { width: 0 };
+            ctx.font = prevFont;
+            return measure;
+        },
+
+        createTextCanvas: function(textLines, style) {
+            var textInfo = {};
+            for (var p in style) {
+                textInfo[p] = style[p]
+            }
+            textInfo.lines = textLines;
+
+        },
 
         renderTextContent: function(context, textInfo, x, y) {
 
@@ -583,8 +638,8 @@ var CUI = CUI || {};
 
             // context.globalAlpha = textInfo.alpha;
             context.font = textInfo.fontStyle;
-            // context.textAlign = textInfo.textAlign || "left";
-            context.textAlign = "left";
+            // context.textAlign = "left";
+            context.textAlign = textInfo.textAlign || "left";
 
             var strokeWidth = textInfo.strokeWidth || 1;
 

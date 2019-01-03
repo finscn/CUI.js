@@ -31,10 +31,11 @@ var CUI = CUI || {};
             this.scrollX = 0;
             this.scrollY = 0;
 
-            this.extLeft = 0;
-            this.extRight = 0;
-            this.extTop = 0;
-            this.extBottom = 0;
+            this.extBound = null;
+            this.extLeft = null;
+            this.extRight = null;
+            this.extTop = null;
+            this.extBottom = null;
 
             this.layout = null;
 
@@ -106,6 +107,17 @@ var CUI = CUI || {};
 
         initBase: function() {
             this.aabb = [0, 0, 0, 0];
+            if (this.extBound !== null) {
+                (this.extLeft === null) && (this.extLeft = this.extBound);
+                (this.extRight === null) && (this.extRight = this.extBound);
+                (this.extTop === null) && (this.extTop = this.extBound);
+                (this.extBotom === null) && (this.extBotom = this.extBound);
+            }
+            this.extLeft = this.extLeft || 0;
+            this.extRight = this.extRight || 0;
+            this.extTop = this.extTop || 0;
+            this.extBotom = this.extBotom || 0;
+
             this.holders = [];
 
             this._defaultAlpha = this.alpha;
@@ -414,7 +426,7 @@ var CUI = CUI || {};
             if (_comp !== this) {
                 root.all[this.id] = this;
                 if (_comp) {
-                    console.log("Duplicate id : " + this.id);
+                    console.log("**** Duplicate id : " + this.id + " ****");
                 }
             }
         },
@@ -445,8 +457,14 @@ var CUI = CUI || {};
         removeChild: function(child) {
             var removed = false;
             if (this.composite) {
+                if (child.composite) {
+                    child.removeAllChildren();
+                }
                 removed = Composite.prototype.removeChild.call(this, child);
                 if (removed) {
+                    if (this.root) {
+                        delete this.root.all[child.id];
+                    }
                     child.setRoot(null);
 
                     this.displayObject.removeChild(child.displayObject);

@@ -2,7 +2,6 @@
 
 var CUI = CUI || {};
 
-
 (function(exports) {
 
     var Class = exports.Class;
@@ -70,7 +69,8 @@ var CUI = CUI || {};
             this.cachePadding = 2;
             this.useCache = null;
             this.useCachePool = true;
-            this.shareCache = false;
+
+            this.linkCache = null;
 
             this.lineHeight = 0;
         },
@@ -78,6 +78,10 @@ var CUI = CUI || {};
         init: function() {
 
             this.id = this.id || "text-holder-" + this.parent.id;
+
+            if (this.linkCache) {
+                this.useCache = true;
+            }
 
             this.setTextInfo(this);
 
@@ -90,9 +94,7 @@ var CUI = CUI || {};
 
         createCache: function() {
             if (!this.cacheCanvas) {
-                if (this.shareCache) {
-                    this.cacheCanvas = TextHolder.cacheCanvas;
-                } else if (this.useCachePool) {
+                if (this.useCachePool) {
                     this.cacheCanvas = Core.getCanvasFromPool(this.id);
                 } else {
                     this.cacheCanvas = document.createElement("canvas");
@@ -107,8 +109,12 @@ var CUI = CUI || {};
                 this._displayOffsetX = -this.cachePadding;
                 this._displayOffsetY = -this.cachePadding;
 
-                this.createCache();
-                this.displayObject = this.parent.root.renderer.createTextObject(this.cacheContext);
+                if (this.linkCache) {
+                    this.displayObject = this.parent.root.renderer.createSprite(this.linkCache);
+                } else {
+                    this.createCache();
+                    this.displayObject = this.parent.root.renderer.createTextObject(this.cacheContext);
+                }
             } else {
                 this.displayObject = this.parent.root.renderer.createTextObject();
                 this.displayObject.textInfo = this;
@@ -198,9 +204,7 @@ var CUI = CUI || {};
 
             // if (this._width === "auto" || this._height === "auto") {
             if (this._width === "auto") {
-                var ctx = textContext;
-                ctx.font = this.fontStyle;
-                var measure = ctx.measureText(this.lines[0]);
+                var measure = CUI.Utils.measureText(this.lines, this.fontStyle);
                 this.measure = measure || {
                     width: 0,
                 };
@@ -225,6 +229,12 @@ var CUI = CUI || {};
         },
 
         updateArea: function() {
+            if (this.linkCache) {
+                this.areaWidth = this.linkCache.width;
+                this.areaHeight = this.linkCache.height;
+                return;
+            }
+
             this.areaWidth = this.textWidth + this.strokeWidth; // * 2;
             this.areaHeight = this.textHeight + this.strokeWidth; // * 2;
             // debugger
@@ -232,19 +242,16 @@ var CUI = CUI || {};
                 this.areaWidth += this.cachePadding * 2;
                 this.areaHeight += this.cachePadding * 2;
 
-                this.areaOffsetX = 0;
-                this.areaOffsetY = 0;
+                // this.areaOffsetX = this.cachePadding;
+                // this.areaOffsetY = this.cachePadding;
 
-                // if (this.alignH === "center") {
-                //     this.areaOffsetX = Math.ceil(this.textWidth / 2);
-                // } else if (this.alignH === "right" || this.alignH === "end") {
-                //     this.areaOffsetX = this.textWidth;
-                // } else {
-                //     this.areaOffsetX = 0;
-                // }
-
-                this.areaOffsetX += this.cachePadding;
-                this.areaOffsetY += this.cachePadding;
+                if (this.alignH === "center") {
+                    this.areaOffsetX = Math.ceil(this.areaWidth / 2);
+                } else if (this.alignH === "right" || this.alignH === "end") {
+                    this.areaOffsetX = this.cachePadding + this.textWidth;
+                } else {
+                    this.areaOffsetX = this.cachePadding;
+                }
 
                 // this.areaOffsetX += this.strokeWidth / 2;
                 // this.areaOffsetY += this.strokeWidth / 2;
@@ -284,13 +291,6 @@ var CUI = CUI || {};
             }
         },
     });
-
-    var textCanvas = document.createElement("canvas");
-    var textContext = textCanvas.getContext("2d");
-
-    TextHolder.cacheCanvas = document.createElement('canvas');
-    TextHolder.cacheCanvas.width = 3;
-    TextHolder.cacheCanvas.height = 3;
 
     exports.TextHolder = TextHolder;
 
