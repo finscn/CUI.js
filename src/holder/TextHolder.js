@@ -246,9 +246,9 @@ var CUI = CUI || {};
                 // this.areaOffsetY = this.cachePadding;
 
                 if (this.alignH === "center") {
-                    this.areaOffsetX = Math.ceil(this.areaWidth / 2);
+                    this.areaOffsetX = Math.round(this.areaWidth / 2);
                 } else if (this.alignH === "right" || this.alignH === "end") {
-                    this.areaOffsetX = this.cachePadding + this.textWidth;
+                    this.areaOffsetX = this.areaWidth - this.cachePadding;
                 } else {
                     this.areaOffsetX = this.cachePadding;
                 }

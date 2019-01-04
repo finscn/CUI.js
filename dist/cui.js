@@ -747,6 +747,7 @@ var CUI = CUI || {};
 
         renderTextContent: function(context, textInfo, x, y) {
 
+            // // DEBUG
             // var bak = context.lineWidth;
             // context.lineWidth = 6;
             // context.strokeStyle = "#0000FF";
@@ -760,9 +761,16 @@ var CUI = CUI || {};
             // context.textAlign = "left";
             context.textAlign = textInfo.textAlign || "left";
 
-            var strokeWidth = textInfo.strokeWidth || 1;
-
-            x += strokeWidth / 2;
+            var strokeWidth = textInfo.strokeWidth || 0;
+            if (strokeWidth) {
+                if (context.textAlign === "left") {
+                    x += strokeWidth / 2;
+                } else if (context.textAlign === "center") {
+                    // do nothing
+                } else {
+                    x -= strokeWidth / 2;
+                }
+            }
 
             if (textInfo.textBaseline === "top") {
                 context.textBaseline = 'alphabetic';
@@ -4444,9 +4452,9 @@ var CUI = CUI || {};
                 // this.areaOffsetY = this.cachePadding;
 
                 if (this.alignH === "center") {
-                    this.areaOffsetX = Math.ceil(this.areaWidth / 2);
+                    this.areaOffsetX = Math.round(this.areaWidth / 2);
                 } else if (this.alignH === "right" || this.alignH === "end") {
-                    this.areaOffsetX = this.cachePadding + this.textWidth;
+                    this.areaOffsetX = this.areaWidth - this.cachePadding;
                 } else {
                     this.areaOffsetX = this.cachePadding;
                 }
