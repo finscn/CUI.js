@@ -67,7 +67,7 @@ var CUI = CUI || {};
             this.areaOffsetY = 0;
 
             this.cachePadding = 2;
-            this.useCache = null;
+            this.useCache = true;
             this.useCachePool = true;
 
             this.linkCache = null;
