@@ -4545,7 +4545,16 @@ var CUI = CUI || {};
 
             this.tint = null;
 
-            this.config = {};
+            this.config = {
+                sx: 0,
+                sy: 0,
+                sw: 0,
+                sh: 0,
+                ox: 0,
+                oy: 0,
+                w: 0,
+                h: 0,
+            };
         },
 
         init: function() {
@@ -5573,6 +5582,20 @@ var CUI = CUI || {};
             this._needToCompute = true;
         },
 
+        getImageInfo: function() {
+            if (!this.imageHolder){
+                return null;
+            }
+            var cfg = this.imageHolder.config;
+            return {
+                sx: cfg.sx,
+                sy: cfg.sy,
+                sw: cfg.sw,
+                sh: cfg.sh,
+                img: this.imageHolder.img
+            }
+        },
+
         computeAutoWidth: function() {
             var width = this.imageHolder ? this.imageHolder._displayWidth : 0;
             this.pixel.width = width;
@@ -5594,9 +5617,9 @@ var CUI = CUI || {};
             this.updateAABB();
         },
 
-        refreshImage: function(){
+        refreshImage: function() {
             var displayObject = this.imageHolder.displayObject;
-            if (displayObject){
+            if (displayObject) {
                 displayObject.updateTexture();
             }
         },

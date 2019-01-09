@@ -37,7 +37,16 @@ var CUI = CUI || {};
 
             this.tint = null;
 
-            this.config = {};
+            this.config = {
+                sx: 0,
+                sy: 0,
+                sw: 0,
+                sh: 0,
+                ox: 0,
+                oy: 0,
+                w: 0,
+                h: 0,
+            };
         },
 
         init: function() {
