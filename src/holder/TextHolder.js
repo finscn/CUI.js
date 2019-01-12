@@ -51,6 +51,7 @@ var CUI = CUI || {};
 
             this.lines = null;
             this.lineCount = 1;
+            this.maxLine = null;
 
             this.shadowColor = null;
             this.shadowBlur = 0;
@@ -204,10 +205,15 @@ var CUI = CUI || {};
 
             // if (this._width === "auto" || this._height === "auto") {
             if (this._width === "auto") {
-                var measure = CUI.Utils.measureText(this.lines, this.fontStyle);
-                this.measure = measure || {
-                    width: 0,
-                };
+                var maxLine;
+                if ((this.maxLine || this.maxLine === 0) &&
+                    this.lines[this.maxLine]) {
+                    maxLine = this.lines[this.maxLine];
+                } else {
+                    maxLine = CUI.Utils.getMaxLine(this.lines);
+                }
+
+                this.measure = CUI.Utils.measureText(maxLine, this.fontStyle);
             } else {
                 this.measure = {
                     width: this._width,

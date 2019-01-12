@@ -12,6 +12,7 @@ var CUI = CUI || {};
 
         loadImage: function(src, callback) {
             var img = new Image();
+            img.crossOrigin = 'anonymous';
             img.onload = function(event) {
                 callback && callback(img, event);
             };
@@ -35,6 +36,7 @@ var CUI = CUI || {};
                 }
                 var cfg = cfgList[idx];
                 var img = new Image();
+                img.crossOrigin = 'anonymous';
                 img.src = cfg.src;
                 img.id = cfg.id;
                 img.onload = function(event) {
@@ -580,7 +582,9 @@ var CUI = CUI || {};
             if (count > 1) {
                 var max = 0;
                 for (var i = 0; i < count; i++) {
-                    var len = Utils.getStringLength(lines[i]);
+                    var str = lines[i];
+                    str = str === null || str === undefined ? "" : String(str);
+                    var len = Utils.getStringLength(str);
                     if (len > max) {
                         max = len;
                         row = i;
@@ -598,6 +602,17 @@ var CUI = CUI || {};
         },
 
         measureText: function(text, fontStyle) {
+            var ctx = textHelperContext;
+            var prevFont = ctx.font;
+            ctx.font = fontStyle;
+
+            var measure = ctx.measureText(text);
+
+            measure = measure || { width: 0 };
+            ctx.font = prevFont;
+            return measure;
+        },
+        measureLines: function(text, fontStyle) {
             var lines;
             if (Array.isArray(text)) {
                 lines = text;
@@ -716,7 +731,9 @@ var CUI = CUI || {};
             var Me = this;
             if (lines.length > 1) {
                 lines.forEach(function(line) {
-                    Me.renderText(context, line, x, y, stroke);
+                    if (line !== null && line !== undefined) {
+                        Me.renderText(context, line, x, y, stroke);
+                    }
                     y += lineHeight;
                 });
             } else {

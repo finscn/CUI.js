@@ -642,29 +642,41 @@ var CUI = CUI || {};
             if (this.visible && !force) {
                 return false;
             }
+
+            if (this.beforeShow() === false) {
+                return;
+            }
+
             this.visible = true;
             this.onShow(force);
             this.reflow();
             return true;
         },
+        beforeShow: noop,
         onShow: noop,
 
         hide: function(force) {
             if (!this.visible && !force) {
                 return false;
             }
+
+            if (this.beforeHide() === false) {
+                return;
+            }
+
             this.visible = false;
             this.onHide(force);
             this.reflow();
             return true;
         },
+        beforeHide: noop,
         onHide: noop,
 
-        toggle: function() {
+        toggle: function(force) {
             if (this.visible) {
-                return this.hide();
+                return this.hide(force);
             }
-            return this.show();
+            return this.show(force);
         },
 
         /////////////////////////////////////////////////////////////////////////////

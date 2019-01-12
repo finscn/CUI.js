@@ -131,6 +131,7 @@ var CUI = CUI || {};
 
         loadImage: function(src, callback) {
             var img = new Image();
+            img.crossOrigin = 'anonymous';
             img.onload = function(event) {
                 callback && callback(img, event);
             };
@@ -154,6 +155,7 @@ var CUI = CUI || {};
                 }
                 var cfg = cfgList[idx];
                 var img = new Image();
+                img.crossOrigin = 'anonymous';
                 img.src = cfg.src;
                 img.id = cfg.id;
                 img.onload = function(event) {
@@ -699,7 +701,9 @@ var CUI = CUI || {};
             if (count > 1) {
                 var max = 0;
                 for (var i = 0; i < count; i++) {
-                    var len = Utils.getStringLength(lines[i]);
+                    var str = lines[i];
+                    str = str === null || str === undefined ? "" : String(str);
+                    var len = Utils.getStringLength(str);
                     if (len > max) {
                         max = len;
                         row = i;
@@ -717,6 +721,17 @@ var CUI = CUI || {};
         },
 
         measureText: function(text, fontStyle) {
+            var ctx = textHelperContext;
+            var prevFont = ctx.font;
+            ctx.font = fontStyle;
+
+            var measure = ctx.measureText(text);
+
+            measure = measure || { width: 0 };
+            ctx.font = prevFont;
+            return measure;
+        },
+        measureLines: function(text, fontStyle) {
             var lines;
             if (Array.isArray(text)) {
                 lines = text;
@@ -835,7 +850,9 @@ var CUI = CUI || {};
             var Me = this;
             if (lines.length > 1) {
                 lines.forEach(function(line) {
-                    Me.renderText(context, line, x, y, stroke);
+                    if (line !== null && line !== undefined) {
+                        Me.renderText(context, line, x, y, stroke);
+                    }
                     y += lineHeight;
                 });
             } else {
@@ -3362,29 +3379,41 @@ var CUI = CUI || {};
             if (this.visible && !force) {
                 return false;
             }
+
+            if (this.beforeShow() === false) {
+                return;
+            }
+
             this.visible = true;
             this.onShow(force);
             this.reflow();
             return true;
         },
+        beforeShow: noop,
         onShow: noop,
 
         hide: function(force) {
             if (!this.visible && !force) {
                 return false;
             }
+
+            if (this.beforeHide() === false) {
+                return;
+            }
+
             this.visible = false;
             this.onHide(force);
             this.reflow();
             return true;
         },
+        beforeHide: noop,
         onHide: noop,
 
-        toggle: function() {
+        toggle: function(force) {
             if (this.visible) {
-                return this.hide();
+                return this.hide(force);
             }
-            return this.show();
+            return this.show(force);
         },
 
         /////////////////////////////////////////////////////////////////////////////
@@ -4257,6 +4286,7 @@ var CUI = CUI || {};
 
             this.lines = null;
             this.lineCount = 1;
+            this.maxLine = null;
 
             this.shadowColor = null;
             this.shadowBlur = 0;
@@ -4410,10 +4440,15 @@ var CUI = CUI || {};
 
             // if (this._width === "auto" || this._height === "auto") {
             if (this._width === "auto") {
-                var measure = CUI.Utils.measureText(this.lines, this.fontStyle);
-                this.measure = measure || {
-                    width: 0,
-                };
+                var maxLine;
+                if ((this.maxLine || this.maxLine === 0) &&
+                    this.lines[this.maxLine]) {
+                    maxLine = this.lines[this.maxLine];
+                } else {
+                    maxLine = CUI.Utils.getMaxLine(this.lines);
+                }
+
+                this.measure = CUI.Utils.measureText(maxLine, this.fontStyle);
             } else {
                 this.measure = {
                     width: this._width,
