@@ -305,6 +305,7 @@ var CUI = CUI || {};
                 // this.borderImageHolder.destroy();
                 this.borderImageHolder = null;
                 this._needToCompute = true;
+                this._sizeChanged = true;
             }
             if (!info) {
                 return;
@@ -315,6 +316,7 @@ var CUI = CUI || {};
             holder.init();
             this.borderImageHolder = holder;
             this._needToCompute = true;
+            this._sizeChanged = true;
         },
 
         initBackgroundImage: function() {
@@ -737,14 +739,17 @@ var CUI = CUI || {};
         },
 
         update: function(timeStep, now, forceCompute) {
-            this.beforeUpdate && this.beforeUpdate(timeStep, now);
+            this.beforeUpdate && this.beforeUpdate(timeStep, now, forceCompute);
 
-            this.updateSelf(timeStep, now, forceCompute);
 
             forceCompute = ((this.reflowComputeTimes--) > 0) || forceCompute;
             // this._sizeChanged = this._sizeChanged || forceCompute;
             // this._positionChanged = this._positionChanged || forceCompute;
             this._needToCompute = this._needToCompute || forceCompute;
+
+            if (this.visible || this._needToCompute) {
+                this.updateSelf(timeStep, now);
+            }
 
             if (this.composite) {
                 if (this._needToCompute && (this._width !== "auto" || this._height !== "auto")) {
@@ -773,10 +778,14 @@ var CUI = CUI || {};
             this._positionChanged = false;
             this._needToCompute = false;
             this._needToComputeChildren = false;
-        },
 
+            if (this.visible) {
+                this.beforeRender(timeStep, now);
+            }
+        },
         beforeUpdate: null,
         afterUpdate: null,
+        beforeRender: CUI.noop,
 
         ////////////////////////////////////////////////////////////////////////
         ////////////////////////////////////////////////////////////////////////

@@ -30,7 +30,7 @@ var CUI = CUI || {};
             this.scaleImg = true;
             this.lockScaleRatio = true;
 
-            this.crossOrigin = 'Anonymous';
+            this.crossOrigin = 'anonymous';
         },
 
         init: function() {
@@ -119,7 +119,7 @@ var CUI = CUI || {};
         },
 
         getImageInfo: function() {
-            if (!this.imageHolder){
+            if (!this.imageHolder) {
                 return null;
             }
             var cfg = this.imageHolder.config;
@@ -166,9 +166,13 @@ var CUI = CUI || {};
             forceCompute = ((this.reflowComputeTimes--) > 0) || forceCompute;
             this._needToCompute = this._needToCompute || forceCompute;
 
-            var resized = (this._width === "auto" || this._height === "auto") && this._sizeChanged;
-
-            this.updateSelf(timeStep, now);
+            // TODO
+            var autoSize = this._width === "auto" || this._height === "auto";
+            var resized = autoSize && this._sizeChanged;
+            if (this.visible || this._needToCompute || resized) {
+                this.updateSelf(timeStep, now);
+                resized = autoSize && this._sizeChanged;
+            }
 
             if (this._needToCompute) {
                 // console.log("compute of Picture.", this.id);
@@ -185,6 +189,10 @@ var CUI = CUI || {};
             this._positionChanged = false;
             this._needToCompute = false;
             this._needToComputeChildren = false;
+
+            if (this.visible) {
+                this.beforeRender(timeStep, now);
+            }
         },
     });
 

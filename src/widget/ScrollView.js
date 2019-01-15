@@ -374,7 +374,6 @@ var CUI = CUI || {};
                 this.scorllOver = true;
                 this.startTween();
             }
-
         },
 
         updateChildren: function(timeStep, now) {
