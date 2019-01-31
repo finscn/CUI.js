@@ -5845,6 +5845,7 @@ var CUI = CUI || {};
             this.thumbX = this.scrollX * this.rateWidth >> 0;
             this.thumbY = this.scrollY * this.rateHeight >> 0;
 
+            this._lazyUpdate = 0;
             this.stopTween();
 
             this.onReset();
@@ -6108,22 +6109,24 @@ var CUI = CUI || {};
             this.scrollDY = this.scrollY - this.lastScrollY;
 
             var vc = this.visibleChildren;
-            var scrollChanged = this.scrollDX || this.scrollDY || vc.length === 0;
+            var scrollChanged = this.scrollDX || this.scrollDY || vc.length === 0 || ((this._lazyUpdate++) < 2);
             if (scrollChanged) {
                 // console.log("scrolling : ", this.id, this.scrollDX, this.scrollDY, vc.length);
                 vc.length = 0;
-            }
-            this.children.forEach(function(child, idx) {
-                if (scrollChanged) {
+                this.children.forEach(function(child, idx) {
                     //     // child.moveBy(-Me.scrollDX, -Me.scrollDY);
                     child.syncPosition();
                     child.visible = Me.checkCollideAABB(child.aabb);
                     if (child.visible) {
                         vc.push(child);
                     }
-                }
-                child.update(timeStep, now);
-            });
+                    child.update(timeStep, now);
+                });
+            } else {
+                this.visibleChildren.forEach(function(child, idx) {
+                    child.update(timeStep, now);
+                });
+            }
 
             // console.log(frame, vc.length)
             this.scrollDX = 0;
