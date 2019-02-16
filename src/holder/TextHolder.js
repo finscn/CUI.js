@@ -127,6 +127,13 @@ var CUI = CUI || {};
             }
         },
 
+        parseColor: function(color) {
+            if (typeof color === "number") {
+                color = "#" + Number(color).toString(16).toUpperCase();
+            }
+            return color;
+        },
+
         setTextInfo: function(info) {
             if (info.alignH) {
                 this.alignH = info.alignH;
@@ -141,18 +148,23 @@ var CUI = CUI || {};
 
             this.setText(info.text);
             // this.fontName = Font.getName(info.fontName || this.fontName);
-            this.color = info.color || this.color;
-            this.fontName = info.fontName || this.fontName;
+            this.color = this.parseColor(info.color || this.color);
+            this.strokeColor = this.parseColor(info.strokeColor || this.strokeColor);
+            this.shadowColor = this.parseColor(info.shadowColor || this.shadowColor);
+
             this.fontSize = info.fontSize || this.fontSize;
+            this.fontName = info.fontName || this.fontName;
             this.fontWeight = info.fontWeight;
+            this.fontStyle = Font.getStyle(this.fontSize, this.fontName, this.fontWeight);
+
+            this._needToCompute = true;
+        },
+        setFontSize: function(fontSize) {
+            this.fontSize = fontSize;
             this.fontStyle = Font.getStyle(this.fontSize, this.fontName, this.fontWeight);
         },
         setFontName: function(fontName) {
             this.fontName = fontName;
-            this.fontStyle = Font.getStyle(this.fontSize, this.fontName, this.fontWeight);
-        },
-        setFontSize: function(fontSize) {
-            this.fontSize = fontSize;
             this.fontStyle = Font.getStyle(this.fontSize, this.fontName, this.fontWeight);
         },
         setFontWeight: function(fontWeight) {
@@ -161,6 +173,7 @@ var CUI = CUI || {};
         },
 
         setColor: function(color) {
+            color = this.parseColor(color);
             if (this.color === color) {
                 return;
             }
