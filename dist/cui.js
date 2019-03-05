@@ -4379,16 +4379,11 @@ var CUI = CUI || {};
         },
 
         setTextInfo: function(info) {
-            if (info.alignH) {
-                this.alignH = info.alignH;
-            } else {
-                this.alignH = info.textAlign || this.textAlign;
-            }
-            if (info.alignV) {
-                this.alignV = info.alignV;
-            } else {
-                this.alignV = info.verticalAlign || this.verticalAlign;
-            }
+            this.alignH = info.align || info.textAlign || this.textAlign;
+            this.textAlign = this.alignH;
+
+            this.alignV = info.valign || info.verticalAlign || this.verticalAlign;
+            this.verticalAlign = this.alignV;
 
             this.setText(info.text);
             // this.fontName = Font.getName(info.fontName || this.fontName);
@@ -4403,6 +4398,7 @@ var CUI = CUI || {};
 
             this._needToCompute = true;
         },
+
         setFontSize: function(fontSize) {
             this.fontSize = fontSize;
             this.fontStyle = Font.getStyle(this.fontSize, this.fontName, this.fontWeight);
@@ -6321,7 +6317,7 @@ var CUI = CUI || {};
             this.max = 1;
             this.value = 0.5;
 
-            this.step = 0.2;
+            this.step = 0.25;
 
             this.trackInfo = null;
             this.handleInfo = null;
@@ -6340,11 +6336,12 @@ var CUI = CUI || {};
                 parent: Me,
 
                 width: "100%",
-                height: "70%",
-                alignH: "center",
-                alignV: "center",
+                height: "100%",
+                align: "center",
+                valign: "center",
 
                 // borderWidth: 2,
+                backgroundColor: this.trackColor,
 
                 onDown: function(x, y, id) {
                     // this.offsetY = 2;
@@ -6357,13 +6354,19 @@ var CUI = CUI || {};
                 // },
                 onTap: function(x, y, id) {
                     if (Me.vertical) {
-                        var distance = Me.handle.relativeY + Me.handle._absoluteHeight / 2;
                         var sign = y < Me.handle._absoluteY ? -1 : 1;
+                        var distance = Me.handle.relativeY + Me.handle._absoluteHeight / 2;
+                        if (sign > 0) {
+                            distance = this._absoluteHeight - distance;
+                        }
                         var stepPixel = distance * Me.step * sign;
                         Me.scrollBy(0, stepPixel);
                     } else {
-                        var distance = Me.handle.relativeX + Me.handle._absoluteWidth / 2;
                         var sign = x < Me.handle._absoluteX ? -1 : 1;
+                        var distance = Me.handle.relativeX + Me.handle._absoluteWidth / 2;
+                        if (sign > 0) {
+                            distance = this._absoluteWidth - distance;
+                        }
                         var stepPixel = distance * Me.step * sign;
                         Me.scrollBy(stepPixel, 0);
                     }
@@ -6379,10 +6382,12 @@ var CUI = CUI || {};
 
                 width: 60,
                 height: "100%",
-                alignH: "center",
-                alignV: "center",
+                align: "center",
+                valign: "center",
 
                 // borderWidth: 2,
+                // borderColor: 0xFF0000,
+                backgroundColor: this.handleColor,
 
                 pressX: null,
                 pressY: null,

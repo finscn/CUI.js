@@ -135,16 +135,11 @@ var CUI = CUI || {};
         },
 
         setTextInfo: function(info) {
-            if (info.alignH) {
-                this.alignH = info.alignH;
-            } else {
-                this.alignH = info.textAlign || this.textAlign;
-            }
-            if (info.alignV) {
-                this.alignV = info.alignV;
-            } else {
-                this.alignV = info.verticalAlign || this.verticalAlign;
-            }
+            this.alignH = info.align || info.textAlign || this.textAlign;
+            this.textAlign = this.alignH;
+
+            this.alignV = info.valign || info.verticalAlign || this.verticalAlign;
+            this.verticalAlign = this.alignV;
 
             this.setText(info.text);
             // this.fontName = Font.getName(info.fontName || this.fontName);
@@ -159,6 +154,7 @@ var CUI = CUI || {};
 
             this._needToCompute = true;
         },
+
         setFontSize: function(fontSize) {
             this.fontSize = fontSize;
             this.fontStyle = Font.getStyle(this.fontSize, this.fontName, this.fontWeight);
